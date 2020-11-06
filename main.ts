@@ -1,101 +1,110 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { App, HoverPopover, MarkdownSourceView, MarkdownView, MenuDom, MenuGroupDom, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile, WorkspaceLeaf } from 'obsidian';
 import { execSync } from 'child_process';
+import { setFlagsFromString } from 'v8';
 
-export default class MyPlugin extends Plugin {
+export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings;
 
 	async onload() {
 		this.settings = (await this.loadData()) || new TemplaterSettings();
 
-		console.log('loading plugin');
-		
-		/*
-		exec("ls -la", (error, stdout, stderr) => {
-		    if (error) {
-			console.log(`error: ${error.message}`);
-			return;
-		    }
-		    if (stderr) {
-			console.log(`stderr: ${stderr}`);
-			return;
-		    }
-		    console.log(`stdout: ${stdout}`);
-		});
-		*/
-		
 		this.addRibbonIcon('dice', 'Templater', async () => {
-			console.log(this.settings);
+			this.replace_templates();
 
-			let files = this.app.vault.getFiles();
-
-			let file = files[0];
-
-			let i = 1;
-
-			let content = await this.app.vault.read(file);
-
-			for (let template in this.settings.templates) {	
-				let cmd = this.settings.templates[template];
-
-				if (template === "" || cmd === "") {
-					continue;
-				}
-
-				console.log("i:",i);
-				if (content.contains(template)) {
-					try {
-						let stdout = execSync(cmd);
-						console.log(stdout);
-						console.log(stdout.toString());
-
-						content = content.replace(
-							template, 
-							stdout.toString()
-						);
-						console.log("ii:",i);
-						this.app.vault.modify(file, content);
-					}
-					catch (error) {
-						new Notice('ERROR !');
-						console.log(`error: ${error.message}`);
-					}
-				
-					i += 1;
-				}
+			let leaf = this.app.workspace.activeLeaf;
+			console.log(leaf);
+			if (leaf instanceof MarkdownView) {
+				let m_leaf: MarkdownView = leaf;
+				console.log(m_leaf.getMode());
+				m_leaf.showSearch();
 			}
-
+			else {
+				console.log("here");
+			}
 		});
 
 		this.addStatusBarItem().setText('TEST STATUS BAR TEXT');
 
 		//new SampleModal(this.app).open();
 
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		this.registerEvent(this.app.on('codemirror', (cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
-		}));
-
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		this.addSettingTab(new TemplaterSettingTab(this.app, this));
 	}
 
 	async onunload() {
 		await this.saveData(this.settings);
 	}
+
+	async replace_templates(): Promise<void> {
+		let files = this.app.vault.getFiles();
+		let file = files[0];
+		let content = await this.app.vault.read(file);
+
+		/*
+		let content: string;
+		let activeLeaf = this.app.workspace.activeLeaf;
+		if (activeLeaf && activeLeaf.view instanceof MarkdownView) {
+			content = activeLeaf.view.data;
+		}
+		*/
+
+		let i = 1;
+		
+		this.settings.templates_pairs.forEach((template_pair) => {	
+			let template = template_pair[0];
+			let cmd = template_pair[1];
+
+			if (template === "" || cmd === "") {
+				return;
+			}
+
+			if (content.contains(template)) {
+				try {
+					let stdout = execSync(cmd);
+					let output = stdout.toString().trim();
+
+					content = content.replace(
+						new RegExp(template, "g"), 
+						output
+					);
+
+					this.app.vault.modify(file, content);
+				}
+				catch (error) {
+					new Notice('ERROR !');
+					console.log(`error: ${error.message}`);
+				}
+			}
+		});
+	}
 }
 
-class SampleModal extends Modal {
+class TemplaterSettings {
+	templates_pairs: Array<[string, string]> = [["", ""]];
+}
+
+class AddTemplateModal extends Modal {
 	constructor(app: App) {
 		super(app);
 	}
 
 	onOpen() {
 		let {contentEl} = this;
-		contentEl.setText('TEST WHOAH!');
+
+		new Setting(contentEl)
+			.setName('Template ')
+			.addText(text => {
+					text.setPlaceholder('Template')
+					.setValue("test")
+					.onChange((value) => {
+
+					})
+				}
+			)
+			.addText(text => text.setPlaceholder('Command')
+				.setValue("test2")
+				.onChange((value) => {
+				})
+			);
 	}
 
 	onClose() {
@@ -103,68 +112,96 @@ class SampleModal extends Modal {
 	}
 }
 
-class TemplaterSettings {
-	templates: {[template: string]: string} = {"": ""};
-}
+class TemplaterSettingTab extends PluginSettingTab {
 
-class SampleSettingTab extends PluginSettingTab {
 	display(): void {
-		const plugin: MyPlugin = (this as any).plugin;
+		const plugin: TemplaterPlugin = (this as any).plugin;
 		let {containerEl} = this;
-
 		containerEl.empty();
 
 		let i = 1;
+		plugin.settings.templates_pairs.forEach((template_pair) => {
+			let div = containerEl.createEl('div');
+			div.addClass("templater_div");
 
-		for (let template in plugin.settings.templates) {
-			let old_value = template;
-			let cmd = plugin.settings.templates[template];
+			let title = containerEl.createEl('h4', { 
+				text: 'Template n°' + i,
+			});
+			title.addClass("templater_title");
 
-			new Setting(containerEl)
-				.setName('Template ' + i)
-				.addText(text => {
-						text.setPlaceholder('Template')
-						.setValue(template)
-						.onChange((value) => {
-							cmd = plugin.settings.templates[old_value];
-							console.log("cmd", cmd);
-							delete plugin.settings.templates[old_value];
-							console.log("old_value:",old_value);
+			let setting = new Setting(containerEl)
+				.addExtraSetting(extra => {
+					extra.setIcon("cross")
+						.setTooltip("Delete")
+						.onClick(() => {
+							let index = plugin.settings.templates_pairs.indexOf(template_pair);
 
-							if (value !== "") {
-								console.log("new_value:",value);
-								plugin.settings.templates[value] = cmd;
-								old_value = value;
-							}
-							else {
+							if (index > -1) {
+								plugin.settings.templates_pairs.splice(index, 1);
 								// Force refresh
 								this.display();
 							}
-							
-							plugin.saveData(plugin.settings);
-							console.log(plugin.settings);
 						})
+				})
+				.addText(text => {
+						let t = text.setPlaceholder('Template')
+						.setValue(template_pair[0])
+						.onChange((new_value) => {
+							let index = plugin.settings.templates_pairs.indexOf(template_pair);
+							if (index > -1) {
+								plugin.settings.templates_pairs[index][0] = new_value;
+								plugin.saveData(plugin.settings);
+								console.log(plugin.settings);
+							}
+						});
+						t.inputEl.addClass("templater_template");
+
+						return t;
 					}
 				)
-				.addText(text => text.setPlaceholder('Command')
-					.setValue(cmd)
-					.onChange((value) => {
-						plugin.settings.templates[old_value] = value;
-						plugin.saveData(plugin.settings);
-						console.log(plugin.settings);
-					})
-				);
+				.addTextArea(text => {
+					let t = text.setPlaceholder('Command')
+					.setValue(template_pair[1])
+					.onChange((new_cmd) => {
+						let index = plugin.settings.templates_pairs.indexOf(template_pair);
+						if (index > -1) {
+							plugin.settings.templates_pairs[index][1] = new_cmd;
+							plugin.saveData(plugin.settings);
+							console.log(plugin.settings);
+						}	
+					});
 
-				i+=1;
-		}
+					t.inputEl.setAttr("rows", 4);
+					t.inputEl.addClass("templater_cmd");
 
-		new Setting(containerEl)
+					return t;
+				});
+
+			setting.infoEl.remove();
+
+			div.appendChild(title);
+			div.appendChild(containerEl.lastChild);
+
+			i+=1;
+		});
+
+		let div = containerEl.createEl('div');
+		div.addClass("templater_div2");
+
+		let setting = new Setting(containerEl)
 			.addButton(button => {
-				button.setButtonText("Add Template").onClick(() => {
-					plugin.settings.templates[""] = "";
+				let b = button.setButtonText("Add Template").onClick(() => {
+					plugin.settings.templates_pairs.push(["", ""]);
 					// Force refresh
 					this.display();
-				})
-			});
+				});
+
+				b.buttonEl.addClass("templater_button");
+
+				return b;
+			});		
+		setting.infoEl.remove();
+
+		div.appendChild(containerEl.lastChild);
 	}
 }
