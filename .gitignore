@@ -9,3 +9,5 @@ package-lock.json
 # build
 main.js
 *.js.map
+
+RESOURCES.md

@@ -24,33 +24,28 @@ TODO
 
 ## Configuration examples
 
-| Custom Template | Linux / Mac OS command               | Output           |
-| --------------- | ------------------------------------ | ---------------- |
-| `{{yesterday}}` | `date --date "1 day ago" +"%Y-%m-%d` | `2020-11-05`     |
-| `{{tomorrow}}`  | `date --date "1 day" +"%Y-%m-%d`     | `2020-11-07`     |
-| `{{weather}}`   | `curl "wttr.in/Paris?format=3"`      | `Paris: ☀️ +12°C` |
-| `{{}}`          |                                      |                  |
+| Custom Template | Linux / Mac OS command                | Output           |
+| --------------- | ------------------------------------- | ---------------- |
+| `{{yesterday}}` | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`     |
+| `{{tomorrow}}`  | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`     |
+| `{{weather}}`   | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C` |
+| `{{}}`          |                                       |                  |
 
 ## Installation
 
-You can activate this plugin within Obsidian by doing the following:
+After disabling Safe Mode, you can find third-party plugins created by the community in Settings -> Third-party plugin > Community plugins > Browse > Search for "Templater"
 
-- Open Settings > Third-party plugin
-- Make sure Safe mode is **off**
-- Click Browse community plugins
-- Search for "Templater"
-- Click Install
-- Once installed, close the community plugins window and activate the newly installed plugin
+After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect. You can also uninstall them there.
+
+### Updates
+
+You can follow the same procedure as installation to update the plugin once installed.
 
 ### Compatibility
 
 This plugin should work on Obsidian **v0.9.10+**.
 
 It was tested on Obsidian **v0.9.10**.
-
-### Updates
-
-You can follow the same procedure to update the plugin.
 
 ## Contributing
 
