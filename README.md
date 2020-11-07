@@ -36,7 +36,7 @@ I invite all developers to contribute to this plugin development by adding new i
 
 | Internal Template           | Description                                                  | Example Output                                           |
 | --------------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
-| `{{templater_daily_quote}}` | This templates retrieves and parse a daily quote from the API https://quotes.rest/. | ![templater_daily_quote](imgs/templater_daily_quote.png) |
+| `{{templater_daily_quote}}` | This templates retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](imgs/templater_daily_quote.png) |
 
 ## User Configuration example
 
