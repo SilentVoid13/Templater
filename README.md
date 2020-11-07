@@ -14,7 +14,7 @@ TODO
 
 To start using this plugin, you need to define your own templates pattern, with the associated system command. To configure that, go to the plugin settings.
 
-The left input field defines the template pattern. I strongly suggest placing the template word between braces like so `{{<template_word>}}`. 
+The left input field defines the template pattern. I strongly suggest placing the template word between braces like so `{{<template_word>}}` to avoid disruption with existing words. 
 
 The right input field defines the command to run from your system that will replace the template pattern in your files. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
@@ -33,7 +33,7 @@ TODO
 
 ## Installation
 
-After disabling Safe Mode, you can find third-party plugins created by the community in Settings -> Third-party plugin > Community plugins > Browse > Search for "Templater"
+After disabling Safe Mode, you can find third-party plugins in Settings > Third-party plugin > Community plugins > Browse > Search for "Templater".
 
 After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect. You can also uninstall them there.
 

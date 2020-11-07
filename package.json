@@ -7,9 +7,14 @@
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
+  "keywords": [
+    "obsidian",
+    "obsidian-md",
+    "obsidian-plugin",
+    "obsidian-md-plugin"
+  ],
+  "author": "SilentVoid13",
+  "license": "GNU AGPLv3",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",

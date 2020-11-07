@@ -13,10 +13,6 @@ function getQuickSwitcher(app: App) {
 	return switcher.instance.modal.constructor;
 }
 
-function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-}
-
 export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
 
@@ -25,9 +21,6 @@ export default class TemplaterPlugin extends Plugin {
 		class testSwitcher extends quickSwitcher {
 			constructor(appObj) {
 				super(appObj);
-
-				//console.log(this);
-				//console.log(this.chooser);
 			}
 
 			onOpen() {
@@ -48,10 +41,7 @@ export default class TemplaterPlugin extends Plugin {
 
 			//new TemplaterFileList(this.app).open();
 
-			console.log("launching_function");
-			this.test_async();
 			this.replace_templates();
-			console.log("exiting_function");
 		});
 
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
@@ -59,11 +49,6 @@ export default class TemplaterPlugin extends Plugin {
 
 	async onunload() {
 		await this.saveData(this.settings);
-	}
-
-	async test_async() {
-		await delay(4000);
-		console.log("test_async finished");
 	}
 
 	async replace_templates() {
@@ -74,8 +59,6 @@ export default class TemplaterPlugin extends Plugin {
 
 		let content = activeLeaf.view.data;
 		let file = activeLeaf.view.file;
-
-		console.log("starting_replace_templates");
 
 		for (let i = 0; i < this.settings.templates_pairs.length; i++) {
 			let template_pair = this.settings.templates_pairs[i];
@@ -88,13 +71,7 @@ export default class TemplaterPlugin extends Plugin {
 
 			if (content.contains(template)) {
 				try {
-					let n = Number(this.settings.command_timeout);
-					if (isNaN(n)) {
-						continue;
-					}
-					n *= 1000;
-
-					let {stdout, stderr} = await exec_promise(cmd, {timeout: n});
+					let {stdout, stderr} = await exec_promise(cmd, {timeout: this.settings.command_timeout*1000});
 
 					content = content.replace(
 						new RegExp(template, "g"), 
@@ -114,7 +91,7 @@ export default class TemplaterPlugin extends Plugin {
 
 class TemplaterSettings {
 	templates_pairs: Array<[string, string]> = [["", ""]];
-	command_timeout = "5";
+	command_timeout = 5;
 }
 
 class TemplaterFileList extends Modal {
@@ -145,12 +122,12 @@ class TemplaterSettingTab extends PluginSettingTab {
 				text.setPlaceholder("Timeout")
 					.setValue(plugin.settings.command_timeout.toString())
 					.onChange((new_value) => {
-						if (isNaN(+new_value)) {
+						let new_timeout = Number(new_value);
+						if (isNaN(new_timeout)) {
 							new Notice("Timeout must be a number");
 							return;
 						} 
-
-						plugin.settings.command_timeout = new_value;
+						plugin.settings.command_timeout = new_timeout;
 					})
 			});
 
