@@ -1,6 +1,6 @@
 {
   "name": "templater",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "Create custom templates",
   "main": "main.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "license": "GNU AGPLv3",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/node": "^14.14.2",
@@ -26,6 +27,10 @@
     "typescript": "^4.0.3"
   },
   "dependencies": {
-    "child_process": "^1.0.2"
+    "axios": "^0.21.0",
+    "child_process": "^1.0.2",
+    "debug": "^4.2.0",
+    "obsidian-sample-plugin": "https://github.com/obsidianmd/obsidian-api/tarball/master",
+    "supports-color": "^7.2.0"
   }
 }
