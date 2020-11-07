@@ -1,7 +1,5 @@
-import { App, HoverPopover, MarkdownSourceView, MarkdownView, MenuDom, MenuGroupDom, Modal, Notice, Plugin, PluginSettingTab, Setting, TAbstractFile, TFile, WorkspaceLeaf } from 'obsidian';
-import { exec, execSync } from 'child_process';
-import { setFlagsFromString } from 'v8';
-import { textSpanContainsPosition } from 'typescript';
+import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TAbstractFile, TFile } from 'obsidian';
+import { exec } from 'child_process';
 import { promisify } from "util";
 
 import { internal_templates_map, replace_internal_templates } from "./internal_templates";

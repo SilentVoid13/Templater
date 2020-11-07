@@ -1,12 +1,11 @@
-import { request } from 'http';
 import axios from 'axios';
 
 // An Internal template function takes no argument and must return a string.
-// Give your function the same name as the associated template pattern. 
+// Your function should have the same name as the associated template pattern. 
 // This string will replace the template pattern (see the replace_internal_templates function)
 
 // Hashmap where the template pattern is the key and the associated function is the value.
-// Just add your template pattern and your internal template function here to add it to the plugin.
+// Just add them here to add your internal template to the plugin.
 export const internal_templates_map: {[id: string]: Function} = {
     "{{templater_daily_quote}}": templater_daily_quote,
 };
