@@ -85,7 +85,8 @@ export default class TemplaterPlugin extends Plugin {
 							);
 						}
 						catch(error) {
-							new Notice("Error with the template n°" + (i+1));
+							console.log(error);
+							new Notice("Error with the template n°" + (i+1) + " (check console for more informations)");
 						}
 					}
 				}

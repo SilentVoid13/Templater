@@ -4,9 +4,9 @@
 
 This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
-- [Users defined templates](#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
+- [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
 
-- [Internal templates](#internal-templates). These templates are built within the plugin, with a unique template pattern and a pre-defined replacement output. For example `{{templater_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
+- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template pattern and a pre-defined replacement output. For example `{{templater_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
 
 ## Demonstration
 
