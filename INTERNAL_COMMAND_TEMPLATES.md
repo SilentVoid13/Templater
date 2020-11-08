@@ -2,7 +2,7 @@
 
 Thanks for considering contributing to [Templater](https://github.com/SilentVoid13/Templater) !
 
-Developing a new internal command template is almost the same process as developing a [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md).
+Developing a new internal command template is almost the same process as developing an [Internal Template](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md).
 
 The only differences are the following:
 

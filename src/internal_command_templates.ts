@@ -35,7 +35,7 @@ async function note_title(app: App): Promise<string> {
 
 async function note_content(app: App): Promise<string> {
     let activeLeaf = app.workspace.activeLeaf;
-    if (!(activeLeaf && activeLeaf.view instanceof MarkdownView)) {
+    if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
         throw new Error("activeLeaf.view is not an instance of MarkdownView")
     }
 

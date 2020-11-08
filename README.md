@@ -26,7 +26,7 @@ The right input field defines the system command that will be run. The output of
 
 ##### Internal Command Templates
 
-You can also use some Internal command templates inside your commands. The template patterns will be replaced before your command gets executed.
+You can also use some Internal command templates inside your commands. The command template will be replaced before your command gets executed.
 
 I invite everyone to contribute to this plugin development by adding new internal command templates. (Check [INTERNAL_COMMAND_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_COMMAND_TEMPLATES.md) for more informations).
 

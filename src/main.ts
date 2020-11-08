@@ -59,7 +59,7 @@ export default class TemplaterPlugin extends Plugin {
 				let content = await this.app.vault.read(file);
 
 				let activeLeaf = this.app.workspace.activeLeaf;
-				if (!(activeLeaf && activeLeaf.view instanceof MarkdownView)) {
+				if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
 					return;
 				}
 
