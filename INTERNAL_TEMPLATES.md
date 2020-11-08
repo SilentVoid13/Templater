@@ -9,7 +9,7 @@ All internal templates are located in the file https://github.com/SilentVoid13/T
 Let's take the `{{templater_daily_quote}}` internal template as an example:
 
 ```typescript
-async function templater_daily_quote() {
+async function templater_daily_quote(app: App): Promise<String> {
     let response = await axios.get("https://quotes.rest/qod");
     let author = response.data.contents.quotes[0].author;
     let quote = response.data.contents.quotes[0].quote;
@@ -19,7 +19,7 @@ async function templater_daily_quote() {
 }
 ```
 
-**1st step:** First you need to develop your internal template function. As you can see, an internal template function is a function that takes no arguments and returns a string. This string will replace the template pattern (here `{{templater_daily_quote}}`) in the file.
+**1st step:** First you need to develop your internal template function. As you can see, an internal template function is an asynchronous function that takes the `App` object as an argument and returns a string. This string will replace the template pattern (here `{{templater_daily_quote}}`) in the file.
 
 **2nd step:** When you finished your function, just add it to the `internal_templates_map` hashmap located at the top of the [internal_templates](https://github.com/SilentVoid13/Templater/blob/master/src/internal_templates.ts) file. Your desired template pattern is the key, and your internal template function is the value:
 

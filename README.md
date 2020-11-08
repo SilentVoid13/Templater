@@ -38,6 +38,7 @@ I invite all developers to contribute to this plugin development by adding new i
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `{{templater_daily_quote}}`  | This template retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `{{templater_random_image}}` | This template gets a random image from https://source.unsplash.com/random | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+| `{{templater_title}}`        | This template retrieves the active file name.                | `MyFile`                                                     |
 
 ## User Configuration example
 
