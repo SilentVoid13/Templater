@@ -102,7 +102,7 @@ export default class TemplaterPlugin extends Plugin {
 			update_template_files() {
 				if (this.settings.template_folder === "") {
 					let files = this.app.vault.getFiles();
-					this.templatePlugin.templateFiles = this.templatePlugin.templateFiles.concat(files);
+					this.templatePlugin.templateFiles = files;
 				}
 				else {
 					let settings_folder = this.settings.template_folder;
