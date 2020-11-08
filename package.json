@@ -1,6 +1,6 @@
 {
   "name": "templater-obsidian",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Create and use templates",
   "main": "main.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "axios": "^0.21.0",
     "child_process": "^1.0.2",
     "debug": "^4.2.0",
+    "moment": "^2.29.1",
     "obsidian-sample-plugin": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "supports-color": "^7.2.0"
   }

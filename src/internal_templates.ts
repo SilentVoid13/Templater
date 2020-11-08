@@ -1,5 +1,6 @@
 import { App } from 'obsidian';
 import axios from 'axios';
+import moment from 'moment';
 
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
 
@@ -10,9 +11,12 @@ import axios from 'axios';
 // Hashmap where the template pattern is the key and the associated function is the value.
 // Just add them here to add your internal template to the plugin.
 export const internal_templates_map: {[id: string]: Function} = {
+    "{{templater_title}}": templater_title,
+    "{{templater_today}}": templater_today,
+    "{{templater_tomorrow}}": templater_tomorrow,
+    "{{templater_yesterday}}": templater_yesterday,
     "{{templater_daily_quote}}": templater_daily_quote,
     "{{templater_random_picture}}": templater_random_picture,
-    "{{templater_title}}": templater_title,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -49,4 +53,19 @@ async function templater_random_picture(_app: App): Promise<String> {
 async function templater_title(app: App): Promise<String> {
     let activeLeaf = app.workspace.activeLeaf;
     return activeLeaf.getDisplayText();
+}
+
+async function templater_today(app: App): Promise<String> {
+    let today = moment().format("YYYY-MM-DD");
+    return today;
+}
+
+async function templater_tomorrow(app: App): Promise<String> {
+    let tomorrow  = moment().add(1,'days').format("YYYY-MM-DD");
+    return tomorrow;
+}
+
+async function templater_yesterday(app: App): Promise<String> {
+    let yesterday = moment().add(-1, 'days').format("YYYY-MM-DD");
+    return yesterday;
 }
