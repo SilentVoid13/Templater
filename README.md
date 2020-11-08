@@ -8,7 +8,7 @@ This plugin also offers some internal templates. A complete list of all the inte
 
 ## Demonstration
 
-![demo_templater](imgs/demo_templater.gif)
+![demo_templater](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/demo_templater.gif)
 
 ## Usage
 
@@ -36,7 +36,7 @@ I invite all developers to contribute to this plugin development by adding new i
 
 | Internal Template            | Description                                                  | Example Output                                               |
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `{{templater_daily_quote}}`  | This template retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](imgs/templater_daily_quote.png)     |
+| `{{templater_daily_quote}}`  | This template retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `{{templater_random_image}}` | This template gets a random image from https://source.unsplash.com/random | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## User Configuration example
@@ -68,15 +68,15 @@ It was tested on Obsidian **v0.9.10** running on Linux. Windows users feedback w
 
 Feel free to contribute.
 
-Check [INTERNAL_TEMPLATES](INTERNAL_TEMPLATES.md) for informations on how to develop a new internal template.
+Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for informations on how to develop a new internal template.
 
-You can create an [issue](https://github.com/SilentVoid13/Templater) to report a bug, suggest an improvement for this plugin, etc.
+You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to report a bug, suggest an improvement for this plugin, etc.
 
-You can make a [pull request](https://github.com/SilentVoid13/Templater) to contribute to this plugin development.
+You can make a [pull request](https://github.com/SilentVoid13/Templater/pulls) to contribute to this plugin development.
 
 ## License
 
-[Templater](https://github.com/SilentVoid13/Templater) is licensed under the GNU AGPLv3 license. Refer to [LICENSE](https://github.com/SilentVoid13/Templater/blob/master/LICENSE.txt) for more informations.
+[Templater](https://github.com/SilentVoid13/Templater) is licensed under the GNU AGPLv3 license. Refer to [LICENSE](https://github.com/SilentVoid13/Templater/blob/master/LICENSE.TXT) for more informations.
 
 ## Support
 

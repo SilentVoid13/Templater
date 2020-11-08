@@ -36,5 +36,5 @@ Here are some basic rules in order to keep the code clean:
 - All internal templates patterns should be prefixed with the keyword `templater_`.
 - Your internal template function should have the same name as your template pattern.
 
-Just submit a [pull request](https://github.com/SilentVoid13/Templater) when you're finished, I'll try to be as reactive as possible.
+Just submit a [pull request](https://github.com/SilentVoid13/Templater/pulls) when you're finished, I'll try to be as reactive as possible.
 
