@@ -9,6 +9,7 @@ const exec_promise = promisify(exec);
 
 export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
+	public modal: any;
 
 	async onload() {
 		let templates = this.app.internalPlugins.getPluginById("templates");
@@ -17,7 +18,7 @@ export default class TemplaterPlugin extends Plugin {
 			return;
 		}
 		if (templates.instance.modal === null) {
-			//new Notice("This plugin relies on the internal Templates plugin, enabling Templates ...");
+			console.log("Templater relies on the internal Templates plugin, enabling Templates ...");
 			templates.enable();
 		}
 
@@ -47,7 +48,6 @@ export default class TemplaterPlugin extends Plugin {
 				this.app = app;
 				this.templatePlugin = template_plugin;
 				this.settings = settings;
-				this.update_template_files();
 			}
 
 			onChooseOption(suggestionItem: TFile, evt: Event) {
@@ -126,17 +126,38 @@ export default class TemplaterPlugin extends Plugin {
 			}
 		}
 
+		let plugin_template = new CustomPluginTemplates(this.app);
+		this.modal = new CustomModalTemplates(this.app, plugin_template, this.settings);
+		
 		// TODO: find a good icon
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
-			let plugin_template = new CustomPluginTemplates(this.app);
-
 			try {
-				let m = new CustomModalTemplates(this.app, plugin_template, this.settings);
-				m.open();
+				this.modal.update_template_files();
+				this.modal.open();
 			}
 			catch(error) {
 				new Notice(error);
 			}
+		});
+
+		this.addCommand({
+			id: "insert-templater",
+			name: "Insert Template",
+			hotkeys: [
+				{
+					modifiers: ["Alt"],
+					key: 'e',
+				},
+			],
+			callback: () => {
+				try {
+					this.modal.update_template_files();
+					this.modal.open();
+				}
+				catch(error) {
+					new Notice(error);
+				}
+			},
 		});
 
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));

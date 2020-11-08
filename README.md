@@ -12,23 +12,27 @@ This plugin also offers some internal templates. A complete list of all the inte
 
 ## Usage
 
-### 1. Define templates
+### User templates
 
-To start using this plugin, you need to define your own templates pattern, along with an associated system command. To configure that, go to the plugin settings.
+#### 1. Define templates
+
+To define your own templates, you need to define a template pattern, associated with a system command. To configure that, go to the plugin settings.
 
 The left input field defines the template pattern. I strongly suggest placing the template word between braces like so `{{<template_word>}}` to avoid disruption with existing words.
 
-The right input field defines the system command that will be run. The command output will replace the template pattern in your files. You can define multiple commands for the same template pattern, just have to separate the commands with a newline.
+The right input field defines the system command that will be run. The command output will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
-### 2. Create template files
+#### 2. Create template files
 
 Now, you can start creating some template files that contains your template patterns defined in **step 1**. I suggest to group these template files into a dedicated folder. You can then specify this folder in the plugin settings.
 
-### 3. Use your template files
+#### 3. Use your template files
 
-Now you can click on the **Templater** icon located on the left-side ribbon. You can now choose your template file created in **step 2**. It will then automatically replace all the template patterns with the corresponding output.
+Now you can click on the **Templater** icon located on the left-side ribbon. You can also configure a **hotkey** to insert a template (default: `Alt+E`). 
 
-## Internal Templates
+You can now choose your template file created in **step 2**. It will then automatically replace all the template patterns with the corresponding output.
+
+### Internal Templates
 
 Here is the list of all of the internal templates that are already included in this plugin. All internal templates patterns are prefixed with the keyword `templater_` to avoid disruption with user defined templates. 
 
