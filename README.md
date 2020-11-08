@@ -2,9 +2,11 @@
 
 # Templater Obsidian Plugin
 
-This plugin for [Obsidian](https://obsidian.md/) allows users to define some custom template patterns that will be replaced in files with a custom system command output.
+This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
-This plugin also offers some internal templates. A complete list of all the internal templates is given below.
+- Users defined templates. Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
+
+- Internal templates. These templates are templates developed by me or a contributor, with a pre-defined replacement output. For example `{{templater_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
 
 ## Demonstration
 
@@ -16,15 +18,15 @@ This plugin also offers some internal templates. A complete list of all the inte
 
 #### 1. Define templates
 
-To define your own templates, you need to define a template pattern, associated with a system command. To configure that, go to the plugin settings.
+To define your own templates, you need to define a template pattern, associated with a system command. To configure that, go to the plugin settings and click `Add Template`.
 
 The left input field defines the template pattern. I strongly suggest placing the template word between braces like so `{{<template_word>}}` to avoid disruption with existing words.
 
-The right input field defines the system command that will be run. The command output will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
+The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
 #### 2. Create template files
 
-Now, you can start creating some template files that contains your template patterns defined in **step 1**. I suggest to group these template files into a dedicated folder. You can then specify this folder in the plugin settings.
+Now, you can start creating some template files that contains your template patterns defined in **step 1** (or some internal templates). I suggest to group these template files into a dedicated folder. You can then specify this folder in the plugin settings.
 
 #### 3. Use your template files
 
@@ -34,7 +36,7 @@ You can now choose your template file created in **step 2**. It will then automa
 
 ### Internal Templates
 
-Here is the list of all of the internal templates that are already included in this plugin. All internal templates patterns are prefixed with the keyword `templater_` to avoid disruption with user defined templates. 
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `templater_` to avoid disruption with user defined templates. 
 
 I invite all developers to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](INTERNAL_TEMPLATES.md) for more informations).
 
