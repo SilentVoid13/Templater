@@ -4,6 +4,7 @@ import { promisify } from "util";
 
 import { replace_internal_templates } from "./internal_templates";
 import { TemplaterSettings, TemplaterSettingTab } from './settings';
+import { replace_internal_command_templates } from './internal_command_templates';
 
 const exec_promise = promisify(exec);
 
@@ -58,7 +59,7 @@ export default class TemplaterPlugin extends Plugin {
 				let content = await this.app.vault.read(file);
 
 				let activeLeaf = this.app.workspace.activeLeaf;
-				if (! activeLeaf && activeLeaf instanceof MarkdownView) {
+				if (!(activeLeaf && activeLeaf.view instanceof MarkdownView)) {
 					return;
 				}
 
@@ -70,6 +71,7 @@ export default class TemplaterPlugin extends Plugin {
 					let template_pair = this.settings.templates_pairs[i];
 					let template = template_pair[0];
 					let cmd = template_pair[1];
+					cmd = await replace_internal_command_templates(this.app, cmd);
 
 					if (template === "" || cmd === "") {
 						continue;
@@ -85,7 +87,7 @@ export default class TemplaterPlugin extends Plugin {
 							);
 						}
 						catch(error) {
-							console.log(error);
+							console.log(`Error with the template n° ${(i+1)}:\n`, error);
 							new Notice("Error with the template n°" + (i+1) + " (check console for more informations)");
 						}
 					}

@@ -1,6 +1,8 @@
 import { App } from 'obsidian';
 import axios from 'axios';
 
+// Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
+
 // An Internal template method takes the App object as an argument and must return a string.
 // Your method should have the same name as the associated template pattern. 
 // This string will replace the template pattern (see the replace_internal_templates method)

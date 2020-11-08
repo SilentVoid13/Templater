@@ -24,6 +24,17 @@ The left input field defines the template pattern. I strongly suggest placing th
 
 The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
+##### Internal Command Templates
+
+You can also use some Internal command templates inside your commands. They will be replaced before your command gets executed.
+
+Here is the complete list of all the available internal command templates:
+
+| Internal Command Template | Description                                              | Example Output            |
+| ------------------------- | -------------------------------------------------------- | ------------------------- |
+| `{{note_title}}`          | This command template retrieves the active file name.    | `MyFile`                  |
+| `{{note_content}}`        | This command template retrieves the active file content. | `This is my note content` |
+
 ##### 2. Create template files
 
 Now, you can start creating some template files that contains your template patterns defined in **step 1** (or some internal templates). I suggest to group these template files into a dedicated folder. You can then specify this folder in the plugin settings.
