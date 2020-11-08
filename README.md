@@ -26,7 +26,7 @@ Now, you can start creating some template files that contains your template patt
 
 ### 3. Use your template files
 
-Now you can click on the **Templater** icon located on the left-side bar. You can now choose your template file created in **step 2**. It will then automatically replace all the template patterns with the corresponding output.
+Now you can click on the **Templater** icon located on the left-side ribbon. You can now choose your template file created in **step 2**. It will then automatically replace all the template patterns with the corresponding output.
 
 ## Internal Templates
 
@@ -34,9 +34,10 @@ Here is the list of all of the internal templates that are already included in t
 
 I invite all developers to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](INTERNAL_TEMPLATES.md) for more informations).
 
-| Internal Template           | Description                                                  | Example Output                                           |
-| --------------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
-| `{{templater_daily_quote}}` | This templates retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](imgs/templater_daily_quote.png) |
+| Internal Template            | Description                                                  | Example Output                                               |
+| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `{{templater_daily_quote}}`  | This template retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](imgs/templater_daily_quote.png)     |
+| `{{templater_random_image}}` | This template gets a random image from https://source.unsplash.com/random | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## User Configuration example
 

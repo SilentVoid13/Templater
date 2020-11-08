@@ -8,6 +8,7 @@ import axios from 'axios';
 // Just add them here to add your internal template to the plugin.
 export const internal_templates_map: {[id: string]: Function} = {
     "{{templater_daily_quote}}": templater_daily_quote,
+    "{{templater_random_picture}}": templater_random_picture,
 };
 
 export async function replace_internal_templates(content: string) {
@@ -30,5 +31,14 @@ async function templater_daily_quote() {
     let quote = response.data.contents.quotes[0].quote;
 
     let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
+    return new_content;
+}
+
+async function templater_random_picture() {
+    console.log("HERE");
+    let response = await axios.get("https://source.unsplash.com/random");
+    let url = response.request.responseURL;
+
+    let new_content = `![random_image](${url})`
     return new_content;
 }
