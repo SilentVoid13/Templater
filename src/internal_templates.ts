@@ -35,7 +35,6 @@ async function templater_daily_quote() {
 }
 
 async function templater_random_picture() {
-    console.log("HERE");
     let response = await axios.get("https://source.unsplash.com/random");
     let url = response.request.responseURL;
 
