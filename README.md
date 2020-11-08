@@ -38,13 +38,13 @@ You can now choose your template file created in **step 2**. It will then automa
 
 Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `templater_` to avoid disruption with user defined templates. 
 
-I invite all developers to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](INTERNAL_TEMPLATES.md) for more informations).
+I invite all developers to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
 
 | Internal Template            | Description                                                  | Example Output                                               |
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `{{templater_title}}`        | This template retrieves the active file name.                | `MyFile`                                                     |
 | `{{templater_daily_quote}}`  | This template retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `{{templater_random_image}}` | This template gets a random image from https://source.unsplash.com/random | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
-| `{{templater_title}}`        | This template retrieves the active file name.                | `MyFile`                                                     |
 
 ## User Configuration example
 
