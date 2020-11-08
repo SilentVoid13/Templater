@@ -16,7 +16,7 @@ This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
 ### User templates
 
-#### 1. Define templates
+##### 1. Define templates
 
 To define your own templates, you need to define a template pattern, associated with a system command. To configure that, go to the plugin settings and click `Add Template`.
 
@@ -24,11 +24,11 @@ The left input field defines the template pattern. I strongly suggest placing th
 
 The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
-#### 2. Create template files
+##### 2. Create template files
 
 Now, you can start creating some template files that contains your template patterns defined in **step 1** (or some internal templates). I suggest to group these template files into a dedicated folder. You can then specify this folder in the plugin settings.
 
-#### 3. Use your template files
+##### 3. Use your template files
 
 Now you can click on the **Templater** icon located on the left-side ribbon. You can also configure a **hotkey** to insert a template (default: `Alt+E`). 
 
@@ -61,11 +61,11 @@ After disabling Safe Mode, you can find third-party plugins in Settings > Third-
 
 After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect. You can also uninstall them there.
 
-### Updates
+#### Updates
 
 You can follow the same procedure as installation to update the plugin once installed.
 
-### Compatibility
+## Compatibility
 
 This plugin should work on Obsidian **v0.9.10+**.
 
