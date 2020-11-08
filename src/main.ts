@@ -102,13 +102,17 @@ export default class TemplaterPlugin extends Plugin {
 					this.templatePlugin.templateFiles = this.templatePlugin.templateFiles.concat(files);
 				}
 				else {
-					let abstract_files = this.app.vault.getAbstractFileByPath(this.settings.template_folder);
-					if (!abstract_files) {
-						throw new Error("Template folder doesn't exist");
-					}
-					let files = this.getAllFilesFrom(abstract_files);
+					let settings_folder = this.settings.template_folder;
 
-					this.templatePlugin.templateFiles = this.templatePlugin.templateFiles.concat(files);
+					if (this.settings.template_folder.endsWith("/")) {
+						settings_folder = this.settings.template_folder.slice(0, -1);
+					}
+
+					let abstract_files = this.app.vault.getAbstractFileByPath(settings_folder);
+					if (!abstract_files) {
+						throw new Error(settings_folder + " folder doesn't exist");
+					}
+					this.templatePlugin.templateFiles = this.getAllFilesFrom(abstract_files);
 				}
 			}
 
