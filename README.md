@@ -61,7 +61,7 @@ I invite everyone to contribute to this plugin development by adding new interna
 | `{{templater_tomorrow}}`     | Retrieves tomorrow's date in the `YYYY-MM-DD` format.        | `2020-11-07`                                                 |
 | `{{templater_daily_quote}}`  | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `{{templater_random_image}}` | Gets a random image from https://unsplash.com/  | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
-| `{{templater_title_image}}` | Gets a image from https://unsplash.com/ based on the note title  | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+| `{{templater_title_image}}` | Gets an image from https://unsplash.com/ based on the note title | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## User Configuration example
 
