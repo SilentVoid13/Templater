@@ -17,6 +17,7 @@ export const internal_templates_map: {[id: string]: Function} = {
     "{{templater_yesterday}}": templater_yesterday,
     "{{templater_daily_quote}}": templater_daily_quote,
     "{{templater_random_picture}}": templater_random_picture,
+    "{{templater_title_picture}}": templater_title_picture,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -43,10 +44,19 @@ async function templater_daily_quote(_app: App): Promise<String> {
 }
 
 async function templater_random_picture(_app: App): Promise<String> {
-    let response = await axios.get("https://source.unsplash.com/random");
+    let response = await axios.get("https://source.unsplash.com/random/1600x900");
     let url = response.request.responseURL;
 
     let new_content = `![random_image](${url})`
+    return new_content;
+}
+
+async function templater_title_picture(app: App): Promise<String> {
+    let title = app.workspace.activeLeaf.getDisplayText();
+    let response = await axios.get(`https://source.unsplash.com/featured/1600x900/?${title}`);
+    let url = response.request.responseURL;
+
+    let new_content = `![title_image](${url})`
     return new_content;
 }
 
