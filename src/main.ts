@@ -97,6 +97,7 @@ export default class TemplaterPlugin extends Plugin {
 				content = await replace_internal_templates(this.app, content);
 				
 				doc.replaceSelection(content);
+				editor.focus();
 			}
 
 			update_template_files() {

@@ -59,17 +59,17 @@ I invite everyone to contribute to this plugin development by adding new interna
 | `{{templater_today}}`        | Retrieves today's date in the `YYYY-MM-DD` format.           | `2020-11-06`                                                 |
 | `{{templater_yesterday}}`    | Retrieves yesterday's date in the `YYYY-MM-DD` format.       | `2020-11-05`                                                 |
 | `{{templater_tomorrow}}`     | Retrieves tomorrow's date in the `YYYY-MM-DD` format.        | `2020-11-07`                                                 |
-| `{{templater_daily_quote}}`  | Retrieves and parse the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
+| `{{templater_daily_quote}}`  | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `{{templater_random_image}}` | Gets a random image from https://source.unsplash.com/random  | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## User Configuration example
 
-| Template pattern | Windows command                             | Linux / Mac OS command                | Example Output             |
-| ---------------- | ------------------------------------------- | ------------------------------------- | -------------------------- |
-| `{{today}}`      | `echo %date:~10,4%-%date:~4,2%-%date:~7,2%` | `date +"%A, %d %B %Y"`                | `Friday, 06 November 2020` |
-| `{{yesterday}}`  | N / A                                       | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`               |
-| `{{tomorrow}}`   | N / A                                       | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
-| `{{weather}}`    | N / A                                       | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
+| Template pattern | Windows command | Linux / Mac OS command                | Example Output             |
+| ---------------- | --------------- | ------------------------------------- | -------------------------- |
+| `{{today}}`      | N / A           | `date +"%A, %d %B %Y"`                | `Friday, 06 November 2020` |
+| `{{yesterday}}`  | N / A           | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`               |
+| `{{tomorrow}}`   | N / A           | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
+| `{{weather}}`    | N / A           | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
 
 ## Installation
 
