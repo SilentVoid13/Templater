@@ -16,7 +16,8 @@ which you're running `Templater` on.
 
 **Plugin informations (please complete the following information):**
  - OS: [e.g. Windows 10]
- - Version: [e.g. 0.3.4]
+ - Templater version: [e.g. 0.3.4]
+ - Obsidian version: [e.g. 0.9.11]
  - Templater settings: [e.g. Template folder location: "Templates/", Timeout: "5" (add the templates not working with their associated command)]
 
 **Describe the bug**
