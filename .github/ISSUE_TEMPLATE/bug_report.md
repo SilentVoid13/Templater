@@ -16,7 +16,8 @@ which you're running `Templater` on.
 
 **Plugin informations (please complete the following information):**
  - OS: [e.g. Windows 10]
- - Version [e.g. 0.3.4]
+ - Version: [e.g. 0.3.4]
+ - Templater settings: [e.g. Template folder location: "Templates/", Timeout: "5" (add the templates not working with their associated command)]
 
 **Describe the bug**
 A clear and concise description of what the bug is.
