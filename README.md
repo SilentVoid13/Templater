@@ -65,12 +65,12 @@ I invite everyone to contribute to this plugin development by adding new interna
 
 ## User Configuration example
 
-| Template pattern | Windows command | Linux / Mac OS command                | Example Output             |
-| ---------------- | --------------- | ------------------------------------- | -------------------------- |
-| `{{today}}`      | N / A           | `date +"%A, %d %B %Y"`                | `Friday, 06 November 2020` |
-| `{{yesterday}}`  | N / A           | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`               |
-| `{{tomorrow}}`   | N / A           | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
-| `{{weather}}`    | N / A           | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
+| Template pattern | Windows command (Only working with Powershell 3.0+)          | Linux / Mac OS command                | Example Output             |
+| ---------------- | ------------------------------------------------------------ | ------------------------------------- | -------------------------- |
+| `{{today}}`      | `powershell (Get-Date -UFormat '%A, %d %B %Y')`              | `date +"%A, %d %B %Y"`                | `Friday, 06 November 2020` |
+| `{{yesterday}}`  | `powershell (Get-Date -UFormat '%Y-%m-%d' (Get-Date).addDays(-1))` | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`               |
+| `{{tomorrow}}`   | `powershell (Get-Date -UFormat '%Y-%m-%d' (Get-Date).addDays(1))` | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
+| `{{weather}}`    | `powershell ((Invoke-WebRequest -Uri wttr.in/Paris?format=3).Content)` | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
 
 ## Installation
 
