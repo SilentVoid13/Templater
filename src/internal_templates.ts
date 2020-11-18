@@ -18,20 +18,46 @@ export const internal_templates_map: {[id: string]: Function} = {
     "{{templater_daily_quote}}": templater_daily_quote,
     "{{templater_random_picture}}": templater_random_picture,
     "{{templater_title_picture}}": templater_title_picture,
+    "templater_test": templater_title,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
     for (let template_pattern in internal_templates_map) {
-        if (content.contains(template_pattern)) {
+        let pattern = `{{\\s*${template_pattern}\\s*(?::(.*?))?}}`;
+        console.log(pattern);
+        let regex = new RegExp(pattern);
+        let match; 
+        while((match = regex.exec(content)) !== null) {
+            if (match[1] !== null) {
+                let args = await parse_arguments(match[1]);
+            }
+            else {
+                let args = {};
+            }
+
             let new_content = await internal_templates_map[template_pattern](app);
             content = content.replace(
-                new RegExp(template_pattern, "g"), 
+                match[0], 
                 new_content
             );
+
+            match = regex.exec(content); 
         }
     }
 
     return content;
+}
+
+async function parse_arguments(arg_str: string) {
+    arg_str += ",";
+    let regex = /\s*([\w]+)=([^,]*),\s*/gmi;
+    let args: {[key: string]: string} = {};
+    let match;
+    while((match = regex.exec(arg_str)) !== null) {
+        args[match[1]] = match[2];
+    }
+
+    return args;
 }
 
 async function templater_daily_quote(_app: App): Promise<String> {
