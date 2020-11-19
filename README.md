@@ -13,7 +13,9 @@ This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
 ### Internal Templates
 
-Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` to avoid conflicts with user defined templates. All internal templates are placed between double braces like so `{{tp_<name>}}`. Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. If your argument contain a special character (`,` or `=`) you can add quotes around your argument value like so `<argument_name>:"<argument_value>"`. If you want to use a quote inside a quote, you can escape it like so `\"`.
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` to avoid conflicts with user defined templates. All internal templates are placed between double braces like so `{{tp_<name>}}`. Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. 
+
+If your argument value contains a special character (`,` or `=`) you can add quotes around your argument value like so: `<argument_name>:"<argument_value>"`. If you want to use a quote inside quotes, you can escape it like so `\"`.
 
 I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
 
