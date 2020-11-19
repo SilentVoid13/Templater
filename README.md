@@ -69,6 +69,12 @@ You can now choose your template file created in **step 2**. It will then automa
 | `{{tomorrow}}`   | `powershell (Get-Date -UFormat '%Y-%m-%d' (Get-Date).addDays(1))` | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
 | `{{weather}}`    | `powershell ((Invoke-WebRequest -Uri wttr.in/Paris?format=3).Content)` | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
 
+## Settings
+
+You can make Templater work with the Daily Notes core plugin, you just to enable the `Overload  Daily Notes` option in the settings.
+
+You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
+
 ## Installation
 
 After disabling Safe Mode, you can find third-party plugins in Settings > Third-party plugin > Community plugins > Browse > Search for "Templater".
