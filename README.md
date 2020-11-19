@@ -7,7 +7,7 @@ This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
 ## Demonstration
 
-![demo_templater](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/demo_templater.gif)
+![templater_demo](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_demo.gif)
 
 ## Usage
 
@@ -71,7 +71,7 @@ You can now choose your template file created in **step 2**. It will then automa
 
 ## Settings
 
-You can make Templater work with the Daily Notes core plugin, you just to enable the `Overload  Daily Notes` option in the settings.
+You can make Templater work with the Daily Notes core plugin, you just need to enable the `Overload  Daily Notes` option in the settings.
 
 You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
 
