@@ -20,7 +20,7 @@ export async function replace_internal_templates(app: App, content: string) {
     }
 
     for (let template_pattern in internal_templates_map) {
-        let pattern = `{{\\s*tp_${template_pattern}\\s*(?::(.*?))?}}`;
+        let pattern = `{{[ \\t]*tp_${template_pattern}[ \\t]*(?::(.*?))?}}`;
         let regex = new RegExp(pattern);
         let match; 
         while((match = regex.exec(content)) !== null) {
@@ -29,11 +29,22 @@ export async function replace_internal_templates(app: App, content: string) {
                 args = await parse_arguments(match[1]);
             }
 
-            let new_content = await internal_templates_map[template_pattern](app, args);
-            content = content.replace(
-                match[0], 
-                new_content
-            );
+            try {
+                let new_content = await internal_templates_map[template_pattern](app, args);
+                content = content.replace(
+                    match[0], 
+                    new_content
+                );
+            }
+            catch(error) {
+                console.log(`Error with internal template tp_${template_pattern}: ${error}`);
+                new Notice(`Error with internal template tp_${template_pattern}, check the console for more informations.`);
+
+                content = content.replace(
+                    match[0], 
+                    "Internal_Template_Error"
+                );
+            }
         }
     }
 
@@ -42,12 +53,32 @@ export async function replace_internal_templates(app: App, content: string) {
 
 async function parse_arguments(arg_str: string) {
     arg_str += ",";
-    let regex = /\s*([\w]+)=([^,]*),\s*/gmi;
+    let regex = /[ \t]*([^=\n\r]+)=(?:(?:[ \t]*(?:"([^"\\\n\r]*(?:\\.[^"\\\n\r]*)*)")[ \t]*)|(?:[ \t]*(?:'([^'\\\n\r]*(?:\\.[^'\\\n\r]*)*)')[ \t]*)|([^,\n\r]+)),[ \t]*/gmi;
     let args: {[key: string]: string} = {};
     let match;
+
     while((match = regex.exec(arg_str)) !== null) {
-        args[match[1]] = match[2];
+        let value; 
+        
+        // Double quotes
+        if (match[2] !== undefined) {
+            value = match[2];
+        }
+        // Single quotes
+        else if (match[3] !== undefined) {
+            value = match[3];
+        }
+        // No quotes
+        else {
+            value = match[4];
+        }
+
+        value = value.replace(new RegExp("\\\\'", "g"), "'");
+        value = value.replace(new RegExp("\\\\\"", "g"), "\"");
+
+        args[match[1]] = value;
     }
+    console.log(args);
 
     return args;
 }
