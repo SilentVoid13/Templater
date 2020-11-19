@@ -78,7 +78,6 @@ async function parse_arguments(arg_str: string) {
 
         args[match[1]] = value;
     }
-    console.log(args);
 
     return args;
 }
