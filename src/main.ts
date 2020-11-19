@@ -8,6 +8,9 @@ import { replace_internal_command_templates } from './internal_command_templates
 
 const exec_promise = promisify(exec);
 
+let daily_note_callback: any;
+let templater: TemplaterPlugin;
+
 export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
 	public modal: any;
@@ -52,12 +55,10 @@ export default class TemplaterPlugin extends Plugin {
 			}
 
 			onChooseOption(suggestionItem: TFile, evt: Event) {
-				this.replace_templates(suggestionItem);
+				this.replace_templates_and_append(suggestionItem);
 			}
 
-			async replace_templates(file: TFile) {
-				let content = await this.app.vault.read(file);
-
+			async replace_templates_and_append(template_file: TFile) {
 				let activeLeaf = this.app.workspace.activeLeaf;
 				if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
 					return;
@@ -66,6 +67,28 @@ export default class TemplaterPlugin extends Plugin {
 				let editor = activeLeaf.view.sourceMode.cmEditor;
 				let doc = editor.getDoc();
 
+				let content = await this.app.vault.read(template_file);
+				content = await this.replace_templates(content);
+
+				doc.replaceSelection(content);
+				editor.focus();
+			}
+
+			async replace_templates_and_overwrite_in_current_file() {
+				let activeLeaf = this.app.workspace.activeLeaf;
+				if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
+					return;
+				}
+
+				let file = activeLeaf.view.file;
+
+				let content = await this.app.vault.read(file);
+				content = await this.replace_templates(content);
+
+				await this.app.vault.modify(file, content);
+			}
+
+			async replace_templates(content: string) {
 				// User defined templates
 				for (let i = 0; i < this.settings.templates_pairs.length; i++) {
 					let template_pair = this.settings.templates_pairs[i];
@@ -96,8 +119,7 @@ export default class TemplaterPlugin extends Plugin {
 				// Internal templates
 				content = await replace_internal_templates(this.app, content);
 				
-				doc.replaceSelection(content);
-				editor.focus();
+				return content;
 			}
 
 			update_template_files() {
@@ -136,7 +158,14 @@ export default class TemplaterPlugin extends Plugin {
 
 		let plugin_template = new CustomPluginTemplates(this.app);
 		this.modal = new CustomModalTemplates(this.app, plugin_template, this.settings);
-		
+
+		daily_note_callback = this.app.internalPlugins.getPluginById("daily-notes").ribbonActions[0].callback;
+		templater = this;
+
+		if (this.settings.overload_daily_notes) {
+			this.overload_daily_notes();
+		}
+
 		// TODO: find a good icon
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
 			try {
@@ -171,7 +200,31 @@ export default class TemplaterPlugin extends Plugin {
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
 	}
 
+	async overload_daily_notes() {
+		this.app.internalPlugins.getPluginById("daily-notes").ribbonActions[0].callback = new_daily_note_callback;
+		this.app.internalPlugins.getPluginById("daily-notes").commands[0].callback = new_daily_note_callback;
+
+		// We have to reload the plugin to get the callback working (it will use the old one otherwise idk why)
+		await this.app.internalPlugins.getPluginById("daily-notes").disable();
+		await this.app.internalPlugins.getPluginById("daily-notes").enable();
+	}
+
+	async unload_daily_notes() {
+		this.app.internalPlugins.getPluginById("daily-notes").ribbonActions[0].callback = daily_note_callback;
+		this.app.internalPlugins.getPluginById("daily-notes").commands[0].callback = daily_note_callback;
+
+		// We have to reload the plugin to get the callback working (it will use the old one otherwise idk why)
+		await this.app.internalPlugins.getPluginById("daily-notes").disable();
+		await this.app.internalPlugins.getPluginById("daily-notes").enable();
+	}
+
 	async onunload() {
 		await this.saveData(this.settings);
 	}
+}
+
+async function new_daily_note_callback() {
+	await daily_note_callback();
+	templater.modal.update_template_files();
+	templater.modal.replace_templates_and_overwrite_in_current_file();
 }
