@@ -1,47 +1,40 @@
-import { App } from 'obsidian';
+import { App, Notice } from 'obsidian';
 import axios from 'axios';
 import moment from 'moment';
 
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
 
-// An Internal template method takes the App object as an argument and must return a string.
-// Your method should have the same name as the associated template pattern. 
-// This string will replace the template pattern (see the replace_internal_templates method)
-
-// Hashmap where the template pattern is the key and the associated function is the value.
-// Just add them here to add your internal template to the plugin.
 export const internal_templates_map: {[id: string]: Function} = {
-    "{{templater_title}}": templater_title,
-    "{{templater_today}}": templater_today,
-    "{{templater_tomorrow}}": templater_tomorrow,
-    "{{templater_yesterday}}": templater_yesterday,
-    "{{templater_daily_quote}}": templater_daily_quote,
-    "{{templater_random_picture}}": templater_random_picture,
-    "{{templater_title_picture}}": templater_title_picture,
-    "templater_test": templater_title,
+    "title": tp_title,
+    "today": tp_today,
+    "tomorrow": tp_tomorrow,
+    "yesterday": tp_yesterday,
+    "daily_quote": tp_daily_quote,
+    "random_picture": tp_random_picture,
+    "title_picture": tp_title_picture,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
+    if (content.contains("templater_")) {
+        new Notice("Internal templates changed ! They are now prefixed with tp_ and you can pass them arguments ! Check the plugin README page on Internal templates for more informations.");
+    }
+
     for (let template_pattern in internal_templates_map) {
-        let pattern = `{{\\s*${template_pattern}\\s*(?::(.*?))?}}`;
+        let pattern = `{{\\s*tp_${template_pattern}\\s*(?::(.*?))?}}`;
         console.log(pattern);
         let regex = new RegExp(pattern);
         let match; 
         while((match = regex.exec(content)) !== null) {
+            let args = {};
             if (match[1] !== null) {
-                let args = await parse_arguments(match[1]);
-            }
-            else {
-                let args = {};
+                args = await parse_arguments(match[1]);
             }
 
-            let new_content = await internal_templates_map[template_pattern](app);
+            let new_content = await internal_templates_map[template_pattern](app, args);
             content = content.replace(
                 match[0], 
                 new_content
             );
-
-            match = regex.exec(content); 
         }
     }
 
@@ -60,7 +53,7 @@ async function parse_arguments(arg_str: string) {
     return args;
 }
 
-async function templater_daily_quote(_app: App): Promise<String> {
+async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promise<String> {
     let response = await axios.get("https://quotes.rest/qod");
     let author = response.data.contents.quotes[0].author;
     let quote = response.data.contents.quotes[0].quote;
@@ -69,39 +62,74 @@ async function templater_daily_quote(_app: App): Promise<String> {
     return new_content;
 }
 
-async function templater_random_picture(_app: App): Promise<String> {
-    let response = await axios.get("https://source.unsplash.com/random/1600x900");
-    let url = response.request.responseURL;
+async function tp_random_picture(_app: App, args: {[key: string]: string}): Promise<String> {
+    let response;
+    if (Object.keys(args).length === 0) {
+        response = await axios.get("https://source.unsplash.com/1600x900");
+    }
+    else {
+        let size = args["size"];
+        response = await axios.get(`https://source.unsplash.com/random/${size}`);
+    }
 
+    let url = response.request.responseURL;
     let new_content = `![random_image](${url})`
     return new_content;
 }
 
-async function templater_title_picture(app: App): Promise<String> {
+async function tp_title_picture(app: App, args: {[key: string]: string}): Promise<String> {
     let title = app.workspace.activeLeaf.getDisplayText();
-    let response = await axios.get(`https://source.unsplash.com/featured/1600x900/?${title}`);
-    let url = response.request.responseURL;
+    let response;
+    if (Object.keys(args).length === 0) {
+        response = await axios.get(`https://source.unsplash.com/featured/1600x900/?${title}`);
+    }
+    else {
+        let size = args["size"];
+        response = await axios.get(`https://source.unsplash.com/featured/${size}/?${title}`);
+    }
 
+    let url = response.request.responseURL;
     let new_content = `![title_image](${url})`
     return new_content;
 }
 
-async function templater_title(app: App): Promise<String> {
+async function tp_title(app: App, _args: {[key: string]: string}): Promise<String> {
     let activeLeaf = app.workspace.activeLeaf;
     return activeLeaf.getDisplayText();
 }
 
-async function templater_today(app: App): Promise<String> {
-    let today = moment().format("YYYY-MM-DD");
+async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
+    let today;
+    if (Object.keys(args).length === 0) {
+        today = moment().format("YYYY-MM-DD");
+    }
+    else {
+        let format = args["f"];
+        today = moment().format(format);
+    }
     return today;
 }
 
-async function templater_tomorrow(app: App): Promise<String> {
-    let tomorrow  = moment().add(1,'days').format("YYYY-MM-DD");
+async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<String> {
+    let tomorrow;
+    if (Object.keys(args).length === 0) {
+        tomorrow = moment().add(1,'days').format("YYYY-MM-DD");
+    }
+    else {
+        let format = args["f"];
+        tomorrow = moment().add(1,'days').format(format);
+    }
     return tomorrow;
 }
 
-async function templater_yesterday(app: App): Promise<String> {
-    let yesterday = moment().add(-1, 'days').format("YYYY-MM-DD");
+async function tp_yesterday(_app: App, args: {[key: string]: string}): Promise<String> {
+    let yesterday;
+    if (Object.keys(args).length === 0) {
+        yesterday = moment().add(-1,'days').format("YYYY-MM-DD");
+    }
+    else {
+        let format = args["f"];
+        yesterday = moment().add(-1,'days').format(format);
+    }
     return yesterday;
 }

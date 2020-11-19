@@ -1,18 +1,31 @@
-
-
 # Templater Obsidian Plugin
 
 This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
+- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template keyword and a pre-defined replacement output. For example `{{tp_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
 - [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
-
-- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template pattern and a pre-defined replacement output. For example `{{templater_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
 
 ## Demonstration
 
 ![demo_templater](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/demo_templater.gif)
 
 ## Usage
+
+### Internal Templates
+
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` to avoid conflicts with user defined templates. All internal templates are placed between double braces like so `{{tp_<name>}}`. Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`.
+
+I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
+
+| Internal Template            | Arguments   | Description                                                  | Example Output                                               |
+| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `{{tp_title}}`        | None    | Retrieves the active file name.                              | `MyFile`                                                     |
+| `{{tp_today}}`       | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves today's date.          | `2020-11-06`                                                 |
+| `{{tp_yesterday}}`    | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves yesterday's date.      | `2020-11-05`                                                 |
+| `{{tp_tomorrow}}`     | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves tomorrow's date in the  format.        | `2020-11-07`                                                 |
+| `{{tp_daily_quote}}`  | None | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
+| `{{tp_random_picture}}` | - `size`: Image size in the format `<width>x<height>`(default: `1600x900`). | Gets a random image from https://unsplash.com/. | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+| `{{tp_title_picture}}` | - `size`: Image size in the format `<width>x<height> ` (default: `1600x900`). | Gets an image from https://unsplash.com/ based on the note title. | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ### User templates
 
@@ -46,22 +59,6 @@ Now, you can start creating some template files that contains your template patt
 Now you can click on the **Templater** icon located on the left-side ribbon. You can also configure a **hotkey** to insert a template (default: `Alt+E`). 
 
 You can now choose your template file created in **step 2**. It will then automatically replace all the template patterns with the corresponding output.
-
-### Internal Templates
-
-Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `templater_` to avoid conflicts with user defined templates. 
-
-I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
-
-| Internal Template            | Description                                                  | Example Output                                               |
-| ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `{{templater_title}}`        | Retrieves the active file name.                              | `MyFile`                                                     |
-| `{{templater_today}}`        | Retrieves today's date in the `YYYY-MM-DD` format.           | `2020-11-06`                                                 |
-| `{{templater_yesterday}}`    | Retrieves yesterday's date in the `YYYY-MM-DD` format.       | `2020-11-05`                                                 |
-| `{{templater_tomorrow}}`     | Retrieves tomorrow's date in the `YYYY-MM-DD` format.        | `2020-11-07`                                                 |
-| `{{templater_daily_quote}}`  | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
-| `{{templater_random_picture}}` | Gets a random image from https://unsplash.com/  | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
-| `{{templater_title_picture}}` | Gets an image from https://unsplash.com/ based on the note title | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## User Configuration example
 

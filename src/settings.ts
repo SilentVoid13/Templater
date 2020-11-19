@@ -71,8 +71,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						.onChange((new_value) => {
 							let index = plugin.settings.templates_pairs.indexOf(template_pair);
 							if (index > -1) {
-								if (new_value in internal_templates_map) {
+								let internal_templates = Object.keys(internal_templates_map).map((el: string) => `{{tp_${el}}}`);
+								if (internal_templates.contains(new_value)) {
 									new Notice("This template pattern is used as an internal template.");
+									console.log(plugin.settings.templates_pairs);
 									return;
 								}
 								plugin.settings.templates_pairs[index][0] = new_value;
