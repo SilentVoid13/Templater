@@ -45,7 +45,7 @@ And you're done ! The function `replace_internal_templates` will loop through ea
 
 Here are some basic rules in order to keep the code clean:
 
-- Your internal template function name should be prefixed with the keyword `tp_` and have the same name as your template keyword (e.g. `tp_title` function for the `title` keyword).
+- Your internal template function name should be prefixed with the keyword `tp_` and have the same name as your template keyword (e.g. `tp_title` function name for the `title` keyword).
 
 Just submit a [pull request](https://github.com/SilentVoid13/Templater/pulls) when you're finished, I'll try to be as reactive as possible.
 

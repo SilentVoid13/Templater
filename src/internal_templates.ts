@@ -21,7 +21,6 @@ export async function replace_internal_templates(app: App, content: string) {
 
     for (let template_pattern in internal_templates_map) {
         let pattern = `{{\\s*tp_${template_pattern}\\s*(?::(.*?))?}}`;
-        console.log(pattern);
         let regex = new RegExp(pattern);
         let match; 
         while((match = regex.exec(content)) !== null) {
