@@ -13,9 +13,11 @@ This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
 ### Internal Templates
 
-Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` to avoid conflicts with user defined templates. All internal templates are placed between double braces like so `{{tp_<name>}}`. Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. 
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` and are placed between double braces like so `{{tp_<name>}}`. This is to recognize them and to avoid conflicts with user defined templates.
 
-If your argument value contains a special character (`,` or `=`) you can add quotes around your argument value like so: `<argument_name>="<argument_value>"`. If you want to use a quote inside quotes, you can escape it like so `\"`.
+Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. 
+
+If your argument value contains a special character (`,` or `=`) you can add quotes around your argument value like so: `<argument_name>="<argument_value>"`. If you want to use a quote inside quotes, you can escape it like so: `\"`.
 
 I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
 
@@ -35,7 +37,7 @@ I invite everyone to contribute to this plugin development by adding new interna
 
 To define your own templates, you need to define a template pattern, associated with a system command. To configure that, go to the plugin settings and click `Add Template`.
 
-The left input field defines the template pattern. I strongly suggest placing the template word between braces like so `{{<template_word>}}` to avoid conflicts with existing words.
+The left input field defines the template pattern. I strongly suggest placing the template pattern between braces like so `{{<template_pattern>}}` to avoid conflicts with existing words. This is entirely up to you, you can set a template pattern that looks like this: `[[<template_pattern>]]` or whatever.
 
 The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
