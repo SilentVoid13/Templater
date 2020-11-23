@@ -5,6 +5,7 @@ import { promisify } from "util";
 import { replace_internal_templates } from "./internal_templates";
 import { TemplaterSettings, TemplaterSettingTab } from './settings';
 import { replace_internal_command_templates } from './internal_command_templates';
+import moment from 'moment';
 
 const exec_promise = promisify(exec);
 
@@ -166,6 +167,8 @@ export default class TemplaterPlugin extends Plugin {
 			this.overload_daily_notes();
 		}
 
+		this.change_locale(this.settings.locale);
+
 		// TODO: find a good icon
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
 			try {
@@ -220,6 +223,10 @@ export default class TemplaterPlugin extends Plugin {
 
 	async onunload() {
 		await this.saveData(this.settings);
+	}
+
+	change_locale(locale: string) {
+		moment.locale(locale);
 	}
 }
 
