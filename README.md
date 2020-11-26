@@ -79,6 +79,8 @@ You can make Templater work with the Daily Notes core plugin, you just need to e
 
 You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
 
+You set your locale in the settings, so the dates used in internal templates are formatted according to your language (e.g. `Montag` instead of `Monday` in german).
+
 ## Installation
 
 After disabling Safe Mode, you can find third-party plugins in Settings > Third-party plugin > Community plugins > Browse > Search for "Templater".

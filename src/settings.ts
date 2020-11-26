@@ -65,7 +65,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Locale")
-			.setDesc("The language and country used to format dates.")
+			.setDesc("The language and country used to format dates in internal templates.")
 			.addDropdown(dropdown => {
 				moment.locales()
 					.map(locale => [locale, languageName(locale)])
