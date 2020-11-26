@@ -71,7 +71,7 @@ You can now choose your template file created in **step 2**. It will then automa
 | `{{today}}`      | `powershell (Get-Date -UFormat '%A, %d %B %Y')`              | `date +"%A, %d %B %Y"`                | `Friday, 06 November 2020` |
 | `{{yesterday}}`  | `powershell (Get-Date -UFormat '%Y-%m-%d' (Get-Date).addDays(-1))` | `date --date "1 day ago" +"%Y-%m-%d"` | `2020-11-05`               |
 | `{{tomorrow}}`   | `powershell (Get-Date -UFormat '%Y-%m-%d' (Get-Date).addDays(1))` | `date --date "1 day" +"%Y-%m-%d"`     | `2020-11-07`               |
-| `{{weather}}`    | `powershell ((Invoke-WebRequest -Uri wttr.in/Paris?format=3).Content)` | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
+| `{{weather}}`    | `powershell ((Invoke-WebRequest -UseBasicParsing -Uri wttr.in/Paris?format=3).Content)` | `curl "wttr.in/Paris?format=3"`       | `Paris: ☀️ +12°C`           |
 
 ## Settings
 
