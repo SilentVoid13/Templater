@@ -1,12 +1,16 @@
 import { Notice, PluginSettingTab, Setting } from "obsidian";
 import { internal_templates_map } from './internal_templates';
 import TemplaterPlugin from './main';
+import moment from 'moment';
+import 'moment/min/locales';
+import { languageName } from './i18n'
 
 export class TemplaterSettings {
 	command_timeout = 5;
 	template_folder = "";
 	overload_daily_notes = false;
 	templates_pairs: Array<[string, string]> = [["", ""]];
+	locale: string = 'en';
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -37,7 +41,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						if (isNaN(new_timeout)) {
 							new Notice("Timeout must be a number");
 							return;
-						} 
+						}
 						plugin.settings.command_timeout = new_timeout;
 					})
 			});
@@ -59,12 +63,31 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					})
 			});
 
+		new Setting(containerEl)
+			.setName("Locale")
+			.setDesc("The language and country used to format dates.")
+			.addDropdown(dropdown => {
+				moment.locales()
+					.map(locale => [locale, languageName(locale)])
+					.sort((a,b) => a[1] > b[1] ? 1: -1)
+					.forEach(item => dropdown.addOption(item[0], item[1]));
+
+				dropdown
+					.setValue(plugin.settings.locale)
+					.onChange(locale => {
+						plugin.settings.locale = locale;
+						plugin.saveData(plugin.settings);
+
+						plugin.change_locale(locale);
+					})
+			});
+
 		let i = 1;
 		plugin.settings.templates_pairs.forEach((template_pair) => {
 			let div = containerEl.createEl('div');
 			div.addClass("templater_div");
 
-			let title = containerEl.createEl('h4', { 
+			let title = containerEl.createEl('h4', {
 				text: 'Template n°' + i,
 			});
 			title.addClass("templater_title");
@@ -111,7 +134,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						if (index > -1) {
 							plugin.settings.templates_pairs[index][1] = new_cmd;
 							plugin.saveData(plugin.settings);
-						}	
+						}
 					});
 
 					t.inputEl.setAttr("rows", 4);
@@ -142,7 +165,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				b.buttonEl.addClass("templater_button");
 
 				return b;
-			});		
+			});
 		setting.infoEl.remove();
 
 		div.appendChild(containerEl.lastChild);

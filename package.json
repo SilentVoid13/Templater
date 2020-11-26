@@ -21,6 +21,7 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/node": "^14.14.8",
+    "countries-list": "^2.5.6",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "obsidian-sample-plugin": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "rollup": "^2.33.3",
