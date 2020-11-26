@@ -93,7 +93,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			title.addClass("templater_title");
 
 			let setting = new Setting(containerEl)
-				.addExtraSetting(extra => {
+				.addExtraButton(extra => {
 					extra.setIcon("cross")
 						.setTooltip("Delete")
 						.onClick(() => {
