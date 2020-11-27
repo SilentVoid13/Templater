@@ -27,6 +27,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.setValue(plugin.settings.template_folder)
 					.onChange((new_folder) => {
 						plugin.settings.template_folder = new_folder;
+						plugin.saveData(plugin.settings);
 					})
 			});
 
@@ -43,6 +44,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							return;
 						}
 						plugin.settings.command_timeout = new_timeout;
+						plugin.saveData(plugin.settings);
 					})
 			});
 
@@ -53,6 +55,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				toggle.setValue(plugin.settings.overload_daily_notes)
 					.onChange((new_value) => {
 						plugin.settings.overload_daily_notes = new_value;
+						plugin.saveData(plugin.settings);
 
 						if (new_value) {
 							plugin.overload_daily_notes();
