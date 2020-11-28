@@ -85,6 +85,19 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					})
 			});
 
+		let fragment = document.createDocumentFragment();
+		let link = document.createElement("a");
+		link.href = "https://github.com/SilentVoid13/Templater#internal-templates";
+		link.text = "here";
+
+		fragment.append("Click ");
+		fragment.append(link);
+		fragment.append(" to get a list of all the available internal templates.");
+
+		new Setting(containerEl)
+			.setName("Internal templates")
+			.setDesc(fragment);
+
 		let i = 1;
 		plugin.settings.templates_pairs.forEach((template_pair) => {
 			let div = containerEl.createEl('div');

@@ -9,6 +9,7 @@ export const internal_templates_map: {[id: string]: Function} = {
     "today": tp_today,
     "tomorrow": tp_tomorrow,
     "yesterday": tp_yesterday,
+    "time": tp_time,
     "daily_quote": tp_daily_quote,
     "random_picture": tp_random_picture,
     "title_picture": tp_title_picture,
@@ -82,6 +83,13 @@ async function parse_arguments(arg_str: string) {
     return args;
 }
 
+function existing_argument(args: {[key: string]: string}, arg_name: string) {
+    if (Object.keys(args).length === 0 || args[arg_name] === undefined) {
+        return false;
+    }
+    return true;
+}
+
 async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promise<String> {
     let response = await axios.get("https://quotes.rest/qod");
     let author = response.data.contents.quotes[0].author;
@@ -93,12 +101,12 @@ async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promis
 
 async function tp_random_picture(_app: App, args: {[key: string]: string}): Promise<String> {
     let response;
-    if (Object.keys(args).length === 0) {
-        response = await axios.get("https://source.unsplash.com/1600x900");
-    }
-    else {
+    if (existing_argument(args, "size")) {
         let size = args["size"];
         response = await axios.get(`https://source.unsplash.com/random/${size}`);
+    }
+    else {
+        response = await axios.get("https://source.unsplash.com/1600x900");
     }
 
     let url = response.request.responseURL;
@@ -109,12 +117,12 @@ async function tp_random_picture(_app: App, args: {[key: string]: string}): Prom
 async function tp_title_picture(app: App, args: {[key: string]: string}): Promise<String> {
     let title = app.workspace.activeLeaf.getDisplayText();
     let response;
-    if (Object.keys(args).length === 0) {
-        response = await axios.get(`https://source.unsplash.com/featured/1600x900/?${title}`);
-    }
-    else {
+    if (existing_argument(args, "size")) {
         let size = args["size"];
         response = await axios.get(`https://source.unsplash.com/featured/${size}/?${title}`);
+    }
+    else {
+        response = await axios.get(`https://source.unsplash.com/featured/1600x900/?${title}`);
     }
 
     let url = response.request.responseURL;
@@ -129,36 +137,48 @@ async function tp_title(app: App, _args: {[key: string]: string}): Promise<Strin
 
 async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
     let today;
-    if (Object.keys(args).length === 0) {
-        today = moment().format("YYYY-MM-DD");
-    }
-    else {
+    if (existing_argument(args, "f")) {
         let format = args["f"];
         today = moment().format(format);
+    }
+    else {
+        today = moment().format("YYYY-MM-DD");
     }
     return today;
 }
 
 async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<String> {
     let tomorrow;
-    if (Object.keys(args).length === 0) {
-        tomorrow = moment().add(1,'days').format("YYYY-MM-DD");
-    }
-    else {
+    if (existing_argument(args, "f")) {
         let format = args["f"];
         tomorrow = moment().add(1,'days').format(format);
+    }
+    else {
+        tomorrow = moment().add(1,'days').format("YYYY-MM-DD");
     }
     return tomorrow;
 }
 
 async function tp_yesterday(_app: App, args: {[key: string]: string}): Promise<String> {
     let yesterday;
-    if (Object.keys(args).length === 0) {
-        yesterday = moment().add(-1,'days').format("YYYY-MM-DD");
-    }
-    else {
+    if (existing_argument(args, "f")) {
         let format = args["f"];
         yesterday = moment().add(-1,'days').format(format);
     }
+    else {
+        yesterday = moment().add(-1,'days').format("YYYY-MM-DD");
+    }
     return yesterday;
+}
+
+async function tp_time(app: App, args: {[key: string]: string}): Promise<String> {
+    let time;
+    if (existing_argument(args, "f")) {
+        let format = args["f"];
+        time = moment().format(format);
+    }
+    else {
+        time = moment().format("HH:mm");
+    }
+    return time;
 }
