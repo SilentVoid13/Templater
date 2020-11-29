@@ -115,7 +115,12 @@ async function tp_random_picture(_app: App, args: {[key: string]: string}): Prom
 }
 
 async function tp_title_picture(app: App, args: {[key: string]: string}): Promise<String> {
-    let title = app.workspace.activeLeaf.getDisplayText();
+    let activeLeaf = app.workspace.activeLeaf;
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+
+    let title = activeLeaf.getDisplayText();
     let response;
     if (existing_argument(args, "size")) {
         let size = args["size"];
@@ -132,6 +137,10 @@ async function tp_title_picture(app: App, args: {[key: string]: string}): Promis
 
 async function tp_title(app: App, _args: {[key: string]: string}): Promise<String> {
     let activeLeaf = app.workspace.activeLeaf;
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    
     return activeLeaf.getDisplayText();
 }
 

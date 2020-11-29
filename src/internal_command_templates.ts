@@ -18,8 +18,8 @@ export async function replace_internal_command_templates(app: App, command: stri
                 );
             }
             catch(error) {
-                console.log(`Error with the internal template ${template_pattern}:\n`, error);
-				new Notice(`Error with the internal template ${template_pattern} (check console for more informations)`);
+                console.log(`Error with the command internal template ${template_pattern}: ${error}`);
+				new Notice(`Error with the command internal template ${template_pattern} (check console for more informations)`);
             }
         }
     }
@@ -30,14 +30,18 @@ export async function replace_internal_command_templates(app: App, command: stri
 // This is a duplicate of the templater_title() function, but i prefer to keep things separated
 async function note_title(app: App): Promise<string> {
     let activeLeaf = app.workspace.activeLeaf;
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+
     return activeLeaf.getDisplayText();
 }
 
 async function note_content(app: App): Promise<string> {
-    let activeLeaf = app.workspace.activeLeaf;
-    if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
-        throw new Error("activeLeaf.view is not an instance of MarkdownView")
+    let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is not of type MarkdownView");
     }
 
-    return activeLeaf.view.data;
+    return active_view.data;
 }

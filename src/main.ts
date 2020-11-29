@@ -60,12 +60,12 @@ export default class TemplaterPlugin extends Plugin {
 			}
 
 			async replace_templates_and_append(template_file: TFile) {
-				let activeLeaf = this.app.workspace.activeLeaf;
-				if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
+				let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (active_view == null) {
 					return;
 				}
 
-				let editor = activeLeaf.view.sourceMode.cmEditor;
+				let editor = active_view.sourceMode.cmEditor;
 				let doc = editor.getDoc();
 
 				let content = await this.app.vault.read(template_file);
@@ -76,12 +76,12 @@ export default class TemplaterPlugin extends Plugin {
 			}
 
 			async replace_templates_and_overwrite_in_current_file() {
-				let activeLeaf = this.app.workspace.activeLeaf;
-				if (!(activeLeaf) || !(activeLeaf.view instanceof MarkdownView)) {
+				let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (active_view == null) {
 					return;
 				}
 
-				let file = activeLeaf.view.file;
+				let file = active_view.file;
 
 				let content = await this.app.vault.read(file);
 				content = await this.replace_templates(content);
