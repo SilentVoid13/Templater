@@ -101,12 +101,22 @@ async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promis
 
 async function tp_random_picture(_app: App, args: {[key: string]: string}): Promise<String> {
     let response;
-    if (existing_argument(args, "size")) {
+    if (existing_argument(args, "size") || existing_argument(args, "query")) {
         let size = args["size"];
-        response = await axios.get(`https://source.unsplash.com/random/${size}`);
+        let query = args["query"];
+
+        let u = "https://source.unsplash.com/random/";
+
+        if (size) {
+            u += size;
+        }
+        if (query) {
+            u += `?${query}`;
+        }
+        response = await axios.get(u);
     }
     else {
-        response = await axios.get("https://source.unsplash.com/1600x900");
+        response = await axios.get("https://source.unsplash.com/random/1600x900");
     }
 
     let url = response.request.responseURL;

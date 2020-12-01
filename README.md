@@ -29,7 +29,7 @@ I invite everyone to contribute to this plugin development by adding new interna
 | `{{tp_tomorrow}}`     | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves tomorrow's date in the  format.        | `2020-11-07`                                                 |
 | `{{tp_time}}` | - `f`: Format for the time, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `HH:mm`). | Retrieves the current time. | `08:36` |
 | `{{tp_daily_quote}}`  | None | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
-| `{{tp_random_picture}}` | - `size`: Image size in the format `<width>x<height>`(default: `1600x900`). | Gets a random image from https://unsplash.com/. | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+| `{{tp_random_picture}}` | - `size`: Image size in the format `<width>x<height>`(default: `1600x900`).<br />- `query`: Limit selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` (don't forget to add quotes around the whole argument value) (default: `None`). | Gets a random image from https://unsplash.com/. | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 | `{{tp_title_picture}}` | - `size`: Image size in the format `<width>x<height> ` (default: `1600x900`). | Gets an image from https://unsplash.com/ based on the note title. | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ### User templates

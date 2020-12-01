@@ -38,7 +38,7 @@ async function note_title(app: App): Promise<string> {
 }
 
 async function note_content(app: App): Promise<string> {
-    let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
     if (active_view == null) {
         throw new Error("Active view is not of type MarkdownView");
     }
