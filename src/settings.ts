@@ -1,8 +1,9 @@
 import { Notice, PluginSettingTab, Setting } from "obsidian";
-import { internal_templates_map } from './internal_templates';
-import TemplaterPlugin from './main';
 import moment from 'moment';
 import 'moment/min/locales';
+
+import { internal_templates_map } from './internal_templates';
+import TemplaterPlugin from './main';
 import { languageName } from './i18n'
 
 export class TemplaterSettings {

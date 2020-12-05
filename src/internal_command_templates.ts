@@ -1,4 +1,4 @@
-import { App, MarkdownSourceView, MarkdownView, Notice } from 'obsidian';
+import { App, MarkdownView, Notice } from 'obsidian';
 
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_COMMAND_TEMPLATES.md to see how to develop your own internal command template
 
