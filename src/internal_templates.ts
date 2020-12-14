@@ -1,4 +1,4 @@
-import { App, Notice } from 'obsidian';
+import { App, MarkdownView, Notice } from 'obsidian';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -6,6 +6,7 @@ import moment from 'moment';
 
 export const internal_templates_map: {[id: string]: Function} = {
     "title": tp_title,
+    "folder": tp_folder,
     "today": tp_today,
     "tomorrow": tp_tomorrow,
     "yesterday": tp_yesterday,
@@ -152,6 +153,24 @@ async function tp_title(app: App, _args: {[key: string]: string}): Promise<Strin
     }
     
     return activeLeaf.getDisplayText();
+}
+
+async function tp_folder(app: App, args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+    let parent = active_view.file.parent;
+    let folder;
+
+    if (existing_argument(args, "vault_path")) {
+        folder = parent.path;
+    }
+    else {
+        folder = parent.name;
+    }
+
+    return folder;
 }
 
 async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {

@@ -24,6 +24,7 @@ I invite everyone to contribute to this plugin development by adding new interna
 | Internal Template            | Arguments   | Description                                                  | Example Output                                               |
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `{{tp_title}}`        | None    | Retrieves the active file name.                              | `MyFile`                                                     |
+| `{{tp_folder}}` | - `vault_path`: Appends the vault relative path to the folder name. Takes `true` or `false` as a value (default: `false`). | Retrieves the folder name in which the active file is. | `Permanent Notes` |
 | `{{tp_today}}`       | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves today's date.          | `2020-11-06`                                                 |
 | `{{tp_yesterday}}`    | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves yesterday's date.      | `2020-11-05`                                                 |
 | `{{tp_tomorrow}}`     | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves tomorrow's date in the  format.        | `2020-11-07`                                                 |
@@ -40,7 +41,7 @@ To define your own templates, you need to define a template pattern, associated 
 
 The left input field defines the template pattern. I strongly suggest placing the template pattern between braces like so `{{<template_pattern>}}` to avoid conflicts with existing words. This is entirely up to you, you can set a template pattern that looks like this: `[[<template_pattern>]]` or whatever.
 
-The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
+The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. The current working directory for the shell is the vault root. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
 ##### Internal Command Templates
 

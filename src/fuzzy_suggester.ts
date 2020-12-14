@@ -1,4 +1,4 @@
-import { App, FuzzySuggestModal, MarkdownView, Notice, TAbstractFile, TFile } from "obsidian";
+import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TAbstractFile, TFile } from "obsidian";
 import { exec } from 'child_process';
 import { promisify } from "util";
 
@@ -11,11 +11,19 @@ const exec_promise = promisify(exec);
 export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     app: App;
     plugin: TemplaterPlugin;
+    cwd: string;
 
     constructor(app: App, plugin: TemplaterPlugin) {
         super(app);
         this.app = app;
         this.plugin = plugin;
+
+        if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
+            this.cwd = "";
+        }
+        else {
+            this.cwd = this.app.vault.adapter.getBasePath();
+        }
     }
 
     getItems(): TFile[] {
@@ -95,7 +103,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             if (content.contains(template)) {
                 try {
                     // 80 97 114 105 115 58 32 9925 65039 32 32 43 54 176 67 10 
-                    let {stdout, stderr} = await exec_promise(cmd, {timeout: this.plugin.settings.command_timeout*1000});
+                    let {stdout, stderr} = await exec_promise(cmd, {
+                        timeout: this.plugin.settings.command_timeout*1000,
+                        cwd: this.cwd
+                    });
                     
                     let a = "";
                     for (let i = 0; i < stdout.length; i++) {
