@@ -60,7 +60,13 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
 
     start(): void {
         try {
-            this.fuzzy_suggester.open();
+            let files = this.getItems();
+            if (files.length == 1) {
+                this.replace_templates_and_append(files[0]);
+            }
+            else {
+                this.open();
+            }
         }
         catch(error) {
             new Notice(error);

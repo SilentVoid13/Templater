@@ -17,12 +17,7 @@ export default class TemplaterPlugin extends Plugin {
 
 		// TODO: find a good icon
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
-			try {
-				this.fuzzy_suggester.open();
-			}
-			catch(error) {
-				new Notice(error);
-			}
+			this.fuzzy_suggester.start();
 		});
 
 		this.addCommand({
@@ -35,12 +30,7 @@ export default class TemplaterPlugin extends Plugin {
 				},
 			],
 			callback: () => {
-				try {
-					this.fuzzy_suggester.open();
-				}
-				catch(error) {
-					new Notice(error);
-				}
+				this.fuzzy_suggester.start();
 			},
 		});
 
