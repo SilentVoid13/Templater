@@ -58,6 +58,15 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
        this.replace_templates_and_append(item);
     }
 
+    start(): void {
+        try {
+            this.fuzzy_suggester.open();
+        }
+        catch(error) {
+            new Notice(error);
+        }
+    }
+
     async replace_templates_and_append(template_file: TFile) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view == null) {
@@ -74,17 +83,9 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         editor.focus();
     }
 
-    async replace_templates_and_overwrite_in_current_file() {
-        let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view == null) {
-            return;
-        }
-
-        let file = active_view.file;
-
+    async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
         content = await this.replace_templates(content);
-
         await this.app.vault.modify(file, content);
     }
 
@@ -94,11 +95,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             let template_pair = this.plugin.settings.templates_pairs[i];
             let template = template_pair[0];
             let cmd = template_pair[1];
-            cmd = await replace_internal_command_templates(this.app, cmd);
-
             if (template === "" || cmd === "") {
                 continue;
             }
+            cmd = await replace_internal_command_templates(this.app, cmd);
 
             if (content.contains(template)) {
                 try {

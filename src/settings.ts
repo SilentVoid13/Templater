@@ -9,7 +9,6 @@ import { languageName } from './i18n'
 export class TemplaterSettings {
 	command_timeout = 5;
 	template_folder = "";
-	overload_daily_notes = false;
 	templates_pairs: Array<[string, string]> = [["", ""]];
 	locale: string = 'en';
 }
@@ -46,24 +45,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						}
 						plugin.settings.command_timeout = new_timeout;
 						plugin.saveData(plugin.settings);
-					})
-			});
-
-		new Setting(containerEl)
-			.setName("Overload Daily Notes")
-			.setDesc("This will trigger Templater when using the Daily Notes core plugin.")
-			.addToggle(toggle => {
-				toggle.setValue(plugin.settings.overload_daily_notes)
-					.onChange((new_value) => {
-						plugin.settings.overload_daily_notes = new_value;
-						plugin.saveData(plugin.settings);
-
-						if (new_value) {
-							plugin.overload_daily_notes();
-						}
-						else {
-							plugin.unload_daily_notes();
-						}
 					})
 			});
 
