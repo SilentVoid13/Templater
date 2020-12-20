@@ -5,6 +5,8 @@ This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 - [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template keyword and a pre-defined replacement output. For example `{{tp_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
 - [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
 
+Templater will automatically be triggered on new file creation. This means Templater will work well with the core Daily Note or the Calendar plugin.
+
 ## Demonstration
 
 ![templater_demo](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_demo.gif)
@@ -77,8 +79,6 @@ You can now choose your template file created in **step 2**. It will then automa
 
 ## Settings
 
-You can make Templater work with the Daily Notes core plugin, you just need to enable the `Overload  Daily Notes` option in the settings.
-
 You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
 
 You set your locale in the settings, so the dates used in internal templates are formatted according to your language (e.g. `Montag` instead of `Monday` in german).
@@ -92,12 +92,6 @@ After installing, you can then find the installed plugins under Settings > Third
 #### Updates
 
 You can follow the same procedure as installation to update the plugin once installed.
-
-## Compatibility
-
-This plugin should work on Obsidian **v0.9.10+**.
-
-It was tested on Obsidian **v0.9.10** running on Linux. Windows users feedback would be appreciated as i didn't test it on Windows.
 
 ## Contributing
 
