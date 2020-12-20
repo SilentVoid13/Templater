@@ -4,12 +4,15 @@ import moment from 'moment';
 import { TemplaterSettings, TemplaterSettingTab } from './settings';
 import { TemplaterFuzzySuggestModal } from './fuzzy_suggester';
 
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 export default class TemplaterPlugin extends Plugin {
 	public fuzzy_suggester: TemplaterFuzzySuggestModal;
 	public settings: TemplaterSettings; 
 
-	async onload() {
-		// loadData() refresh the modal value
+	async onload() {		
 		this.settings = (await this.loadData()) || new TemplaterSettings();
 		this.fuzzy_suggester = new TemplaterFuzzySuggestModal(this.app, this);
 
@@ -35,8 +38,10 @@ export default class TemplaterPlugin extends Plugin {
 		});
 
 		this.app.workspace.on("layout-ready", () => {
+			// TODO: Find a way to not trigger this on files copy
 			this.app.vault.on("create", async (file: TAbstractFile) => {
-				// TODO: Find a way to not trigger this on files copy
+				// TODO: find a better way
+				await delay(300);
 				if (!(file instanceof TFile)) {
 					return;
 				}
