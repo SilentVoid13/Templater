@@ -1,7 +1,7 @@
 import { Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import moment from 'moment';
 
-import { TemplaterSettings, TemplaterSettingTab } from './settings';
+import { default_settings, TemplaterSettings, TemplaterSettingTab } from './settings';
 import { TemplaterFuzzySuggestModal } from './fuzzy_suggester';
 
 function delay(ms: number) {
@@ -13,12 +13,12 @@ export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
 
 	async onload() {		
-		this.settings = (await this.loadData()) || new TemplaterSettings();
+		this.settings = Object.assign(default_settings, await this.loadData());
+
 		this.fuzzy_suggester = new TemplaterFuzzySuggestModal(this.app, this);
 
 		this.change_locale(this.settings.locale);
 
-		// TODO: find a good icon
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
 			this.fuzzy_suggester.start();
 		});

@@ -110,7 +110,6 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
 
             if (content.contains(template)) {
                 try {
-                    // 80 97 114 105 115 58 32 9925 65039 32 32 43 54 176 67 10 
                     let {stdout, stderr} = await exec_promise(cmd, {
                         timeout: this.plugin.settings.command_timeout*1000,
                         cwd: this.cwd

@@ -6,11 +6,18 @@ import { internal_templates_map } from './internal_templates';
 import TemplaterPlugin from './main';
 import { languageName } from './i18n'
 
-export class TemplaterSettings {
-	command_timeout = 5;
-	template_folder = "";
-	templates_pairs: Array<[string, string]> = [["", ""]];
-	locale: string = 'en';
+export const default_settings = {
+	command_timeout: 5,
+	template_folder: "",
+	templates_pairs: [["", ""]],
+	locale: 'en',
+};
+
+export interface TemplaterSettings {
+	command_timeout: number;
+	template_folder: string;
+	templates_pairs: Array<[string, string]>;
+	locale: string;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
