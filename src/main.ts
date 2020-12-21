@@ -40,9 +40,12 @@ export default class TemplaterPlugin extends Plugin {
 		this.app.workspace.on("layout-ready", () => {
 			// TODO: Find a way to not trigger this on files copy
 			this.app.vault.on("create", async (file: TAbstractFile) => {
-				// TODO: find a better way
+				// TODO: find a better way to do this
+				// Currently, I have to wait for the daily note plugin to add the file content before replacing
+				// Not a problem with Calendar however since it creates the file with the existing content
 				await delay(300);
-				if (!(file instanceof TFile)) {
+				// ! This could corrupt binary files
+				if (!(file instanceof TFile) || file.extension !== "md") {
 					return;
 				}
 				this.fuzzy_suggester.replace_templates_and_overwrite_in_file(file);

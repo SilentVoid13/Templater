@@ -91,8 +91,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
 
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
-        content = await this.replace_templates(content);
-        await this.app.vault.modify(file, content);
+        let new_content = await this.replace_templates(content);
+        if (content !== new_content) {
+            await this.app.vault.modify(file, content);
+        }
     }
 
     async replace_templates(content: string) {
@@ -130,7 +132,6 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                 }
             }
         }
-
         // Internal templates
         content = await replace_internal_templates(this.app, content);
         
