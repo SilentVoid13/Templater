@@ -6,7 +6,7 @@ import { internal_templates_map } from './internal_templates';
 import TemplaterPlugin from './main';
 import { languageName } from './i18n'
 
-export const default_settings = {
+export const default_settings: TemplaterSettings = {
 	command_timeout: 5,
 	template_folder: "",
 	templates_pairs: [["", ""]],
