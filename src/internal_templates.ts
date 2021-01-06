@@ -14,6 +14,8 @@ export const internal_templates_map: {[id: string]: Function} = {
     "daily_quote": tp_daily_quote,
     "random_picture": tp_random_picture,
     "title_picture": tp_title_picture,
+    "creation_date": tp_creation_date,
+    "last_modif_date": tp_last_modif_date,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -209,7 +211,7 @@ async function tp_yesterday(_app: App, args: {[key: string]: string}): Promise<S
     return yesterday;
 }
 
-async function tp_time(app: App, args: {[key: string]: string}): Promise<String> {
+async function tp_time(_app: App, args: {[key: string]: string}): Promise<String> {
     let time;
     if (existing_argument(args, "f")) {
         let format = args["f"];
@@ -219,4 +221,40 @@ async function tp_time(app: App, args: {[key: string]: string}): Promise<String>
         time = moment().format("HH:mm");
     }
     return time;
+}
+
+async function tp_creation_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+    
+    let creation_date;
+    if (existing_argument(args, "f")) {
+        let format = args["f"];
+        creation_date = moment(active_view.file.stat.ctime).format(format);
+    }
+    else {
+        creation_date = moment(active_view.file.stat.ctime).format("YYYY-MM-DD HH:mm");
+    }
+
+    return creation_date;
+}
+
+async function tp_last_modif_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+
+    let modif_date;
+    if (existing_argument(args, "f")) {
+        let format = args["f"];
+        modif_date = moment(active_view.file.stat.mtime).format(format);
+    }
+    else {
+        modif_date = moment(active_view.file.stat.mtime).format("YYYY-MM-DD HH:mm");
+    }
+
+    return modif_date;
 }
