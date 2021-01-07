@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TAbstractFile, TFile, prepareQuery, fuzzySearch } from "obsidian";
+import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TAbstractFile, TFile, prepareQuery, fuzzySearch, TFolder, normalizePath } from "obsidian";
 import { exec } from 'child_process';
 import { promisify } from "util";
 
@@ -6,6 +6,7 @@ import { replace_internal_command_templates } from './internal_command_templates
 import { internal_templates_map, replace_internal_templates } from "./internal_templates";
 import TemplaterPlugin from './main';
 import { TP_CURSOR } from "./constants";
+import { settings } from "cluster";
 
 const exec_promise = promisify(exec);
 
@@ -35,15 +36,14 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             template_files = files;
         }
         else {
-            let settings_folder = this.plugin.settings.template_folder;
-
-            if (this.plugin.settings.template_folder.endsWith("/")) {
-                settings_folder = this.plugin.settings.template_folder.slice(0, -1);
-            }
+            let settings_folder = normalizePath(this.plugin.settings.template_folder);
 
             let abstract_files = this.app.vault.getAbstractFileByPath(settings_folder);
             if (!abstract_files) {
                 throw new Error(settings_folder + " folder doesn't exist");
+            }
+            if (! (abstract_files instanceof TFolder)) {
+                throw new Error(settings_folder + " is a file, not a folder");
             }
             template_files = this.get_all_files_from(abstract_files);
         }
@@ -140,11 +140,6 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                         cwd: this.cwd
                     });
                     
-                    let a = "";
-                    for (let i = 0; i < stdout.length; i++) {
-                        a += stdout.charCodeAt(i) + " ";
-                    }
-                    
                     content = content.replace(
                         new RegExp(template, "g"), 
                         stdout.trim()
@@ -155,21 +150,27 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                     new Notice("Error with the template n°" + (i+1) + " (check console for more informations)");
                 }
             }
-        }        
+        }   
+        
         // Internal templates
         content = await replace_internal_templates(this.app, content);
                 
         return content;
     }
 
-    get_all_files_from(file: TAbstractFile) {
+    get_all_files_from(file: TFolder) {
         let files: Array<TFile> = [];
         for (let f of file.children) {
             if (f instanceof TFile) {
                 files.push(f);
             }
             else {
-                files = files.concat(this.get_all_files_from(f));
+                if (f instanceof TFolder) {
+                    files = files.concat(this.get_all_files_from(f));
+                }
+                else {
+                    throw new Error("Unknown TAbstractFile type");
+                }
             }
         }
         return files;

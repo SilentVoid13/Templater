@@ -1,10 +1,12 @@
-import { App, MarkdownView, Notice } from 'obsidian';
+import { App, MarkdownView, normalizePath, Notice, TFile } from 'obsidian';
 import axios from 'axios';
 import moment from 'moment';
+import { INCLUSION_LIMIT } from './constants';
 
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
 
 export const internal_templates_map: {[id: string]: Function} = {
+    "include": tp_include,
     "title": tp_title,
     "folder": tp_folder,
     "today": tp_today,
@@ -23,9 +25,13 @@ export async function replace_internal_templates(app: App, content: string) {
         new Notice("Internal templates changed ! They are now prefixed with tp_ and you can pass them arguments ! Check the plugin README page on Internal templates for more informations.");
     }
 
+    let nested_count = 0;
+    let children: Array<number> = Array();
+
     for (let template_pattern in internal_templates_map) {
         let pattern = `{{[ \\t]*tp_${template_pattern}[ \\t]*(?::(.*?))?}}`;
         let regex = new RegExp(pattern);
+        let global_regex = new RegExp(pattern, "g");
         let match;
 
         while((match = regex.exec(content)) !== null) {
@@ -35,11 +41,33 @@ export async function replace_internal_templates(app: App, content: string) {
             }
 
             try {
-                let new_content = await internal_templates_map[template_pattern](app, args);
-                content = content.replace(
-                    match[0], 
-                    new_content
-                );
+                if (nested_count < INCLUSION_LIMIT) {
+                    let new_content: string = await internal_templates_map[template_pattern](app, args);
+                    content = content.replace(
+                        match[0], 
+                        new_content
+                    );
+
+                    if (template_pattern === "include") {
+                        let n_child = (new_content.match(global_regex) || []).length;
+
+                        if (n_child > 0) {
+                            nested_count += 1;
+                            children.push(n_child);
+                        }
+                        else {
+                            let i = children.length-1;
+                            while (children[i--] === 1) {
+                                children.pop();
+                                nested_count -= 1;
+                            }
+                            children[children.length-1] -= 1;
+                        }
+                    }
+                }
+                else {
+                    throw new Error("Reached inclusion depth limit (max: 10), tp_include ignored");
+                }
             }
             catch(error) {
                 console.log(`Error with internal template tp_${template_pattern}: ${error}`);
@@ -258,4 +286,23 @@ async function tp_last_modif_date(app: App, args: {[key: string]: string}): Prom
     }
 
     return modif_date;
+}
+
+async function tp_include(app: App, args: {[key: string]: string}): Promise<String> {
+    if (!existing_argument(args, "f")) {
+        throw new Error("No file argument passed to tp_include");
+    }
+    let f = args["f"];
+
+    let file = app.metadataCache.getFirstLinkpathDest(normalizePath(f), "");
+    if (!file) {
+        throw new Error(`File ${f} passed to tp_include doesn't exist`);
+    }
+    if (!(file instanceof TFile)) {
+        throw new Error(`tp_include: ${f} is a folder, not a file`);
+    }
+
+    let content = await app.vault.read(file);
+
+    return content;
 }
