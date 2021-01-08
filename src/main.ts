@@ -1,4 +1,4 @@
-import { Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
+import { Plugin, TAbstractFile, TFile } from 'obsidian';
 import moment from 'moment';
 
 import { default_settings, TemplaterSettings, TemplaterSettingTab } from './settings';

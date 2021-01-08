@@ -1,12 +1,11 @@
-import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TAbstractFile, TFile, prepareQuery, fuzzySearch, TFolder, normalizePath } from "obsidian";
+import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TFile, TFolder, normalizePath } from "obsidian";
 import { exec } from 'child_process';
 import { promisify } from "util";
 
 import { replace_internal_command_templates } from './internal_command_templates';
-import { internal_templates_map, replace_internal_templates } from "./internal_templates";
+import { replace_internal_templates } from "./internal_templates";
 import TemplaterPlugin from './main';
 import { TP_CURSOR } from "./constants";
-import { settings } from "cluster";
 
 const exec_promise = promisify(exec);
 
