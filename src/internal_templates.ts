@@ -18,6 +18,8 @@ export const internal_templates_map: {[id: string]: Function} = {
     "title_picture": tp_title_picture,
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
+    "nextday": tp_nextday,
+    "prevday": tp_prevday
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -305,4 +307,38 @@ async function tp_include(app: App, args: {[key: string]: string}): Promise<Stri
     let content = await app.vault.read(file);
 
     return content;
+}
+
+async function tp_nextday(_app: App, args: {[key: string]: string}): Promise<String> {
+    let nextday;
+    let activeLeaf = app.workspace.activeLeaf;
+    let title;
+    //check for title and store value
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    title = activeLeaf.getDisplayText();
+
+    //check for format flags
+    if (existing_argument(args, "f")) {
+        let format = args["f"];
+        nextday = moment(title).add(1,'days').format(format);
+    }
+    else {
+        let m = moment(title).add(1,'days');
+        nextday = m.format(m.creationData().format); //create the next day with the original formatting
+    }
+    return nextday;
+}
+
+async function tp_prevday(_app: App, args: {[key: string]: string}): Promise<String> {
+    let prevday;
+    if (existing_argument(args, "f")) {
+        let format = args["f"];
+        prevday = moment().add(-1,'days').format(format);
+    }
+    else {
+        prevday = moment().add(-1,'days').format("YYYY-MM-DD");
+    }
+    return prevday;
 }
