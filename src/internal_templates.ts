@@ -333,12 +333,22 @@ async function tp_nextday(_app: App, args: {[key: string]: string}): Promise<Str
 
 async function tp_prevday(_app: App, args: {[key: string]: string}): Promise<String> {
     let prevday;
+    let activeLeaf = app.workspace.activeLeaf;
+    let title;
+    //check for title and store value
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    title = activeLeaf.getDisplayText();
+
+    //check for format flags
     if (existing_argument(args, "f")) {
         let format = args["f"];
-        prevday = moment().add(-1,'days').format(format);
+        prevday = moment(title).add(-1,'days').format(format);
     }
     else {
-        prevday = moment().add(-1,'days').format("YYYY-MM-DD");
+        let m = moment(title).add(-1,'days');
+        prevday = m.format(m.creationData().format); //create the next day with the original formatting
     }
     return prevday;
 }
