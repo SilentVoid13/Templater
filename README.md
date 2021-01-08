@@ -36,6 +36,8 @@ I invite everyone to contribute to this plugin development by adding new interna
 | `{{tp_title_picture}}` | - `size`: Image size in the format `<width>x<height> ` (default: `1600x900`). | Gets an image from https://unsplash.com/ based on the note title. | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 | `{{tp_creation_date}}` | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Gets the creation date of the active file. | `2021-01-06 20:27` |
 | `{{tp_last_modif_date}}` | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Gets the last modification date of the active file. | `2020-11-08 12:31` |
+| `{{tp_cursor}}` | None | This will set the cursor to this location after the template has been inserted. | None |
+| `{{tp_include}}` | - `f`: The relative path from the vault root of the file to include. | Includes the file content. This file can be another template file, templates will be resolved recursively (Max inclusion depth: `10`) | `My header for all files` |
 
 ### User templates
 
