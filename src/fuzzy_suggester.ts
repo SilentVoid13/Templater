@@ -87,7 +87,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         
         let rel_pos = await this.get_cursor_location(content);
         if (rel_pos.length !== 0) {
-            content = content.replace(new RegExp(TP_CURSOR), "");
+            content = content.replace(new RegExp(TP_CURSOR, "g"), "");
         }
         let current_pos = doc.getCursor();
 
@@ -110,7 +110,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         if (new_content !== content) {
             let pos = await this.get_cursor_location(new_content);
             if (pos.length !== 0) {
-                new_content = new_content.replace(new RegExp(TP_CURSOR), "");
+                new_content = new_content.replace(new RegExp(TP_CURSOR, "g"), "");
             }
 
             await this.app.vault.modify(file, new_content);
@@ -122,6 +122,9 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     }
 
     async replace_templates(content: string) {
+        // Internal templates
+        content = await replace_internal_templates(this.app, content);
+
         // User defined templates
         for (let i = 0; i < this.plugin.settings.templates_pairs.length; i++) {
             let template_pair = this.plugin.settings.templates_pairs[i];
@@ -149,11 +152,8 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                     new Notice("Error with the template n°" + (i+1) + " (check console for more informations)");
                 }
             }
-        }   
+        }
         
-        // Internal templates
-        content = await replace_internal_templates(this.app, content);
-                
         return content;
     }
 
