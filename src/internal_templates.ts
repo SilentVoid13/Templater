@@ -2,6 +2,8 @@ import { App, MarkdownView, normalizePath, Notice, TFile } from 'obsidian';
 import axios from 'axios';
 import moment from 'moment';
 import { INCLUSION_LIMIT } from './constants';
+import { get_date_string } from './i18n';
+import { format } from 'path';
 
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
 
@@ -9,8 +11,8 @@ export const internal_templates_map: {[id: string]: Function} = {
     "include": tp_include,
     "title": tp_title,
     "folder": tp_folder,
-    "today": tp_today,
     "tomorrow": tp_tomorrow,
+    "today": tp_today,
     "yesterday": tp_yesterday,
     "time": tp_time,
     "daily_quote": tp_daily_quote,
@@ -18,15 +20,12 @@ export const internal_templates_map: {[id: string]: Function} = {
     "title_picture": tp_title_picture,
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
-    "nextday": tp_nextday,
-    "prevday": tp_prevday
+    "title_tomorrow": tp_title_tomorrow,
+    "title_today": tp_title_today,
+    "title_yesterday": tp_title_yesterday,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
-    if (content.contains("templater_")) {
-        new Notice("Internal templates changed ! They are now prefixed with tp_ and you can pass them arguments ! Check the plugin README page on Internal templates for more informations.");
-    }
-
     let nested_count = 0;
     let children: Array<number> = Array();
 
@@ -124,14 +123,98 @@ function existing_argument(args: {[key: string]: string}, arg_name: string) {
     return true;
 }
 
-async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promise<String> {
-    let response = await axios.get("https://quotes.rest/qod");
-    let author = response.data.contents.quotes[0].author;
-    let quote = response.data.contents.quotes[0].quote;
-
-    let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
-    return new_content;
+function get_argument(args: {[key: string]: string}, arg_name: string, default_value: string) {
+    if (existing_argument(args, arg_name)) {
+        return args[arg_name];
+    }
+    return default_value;
 }
+
+///////////////////////////////////////////
+// Date Internal Templates
+///////////////////////////////////////////
+
+async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<String> {
+    let format = get_argument(args, "f", "YYYY-MM-DD");
+    let tomorrow = get_date_string(format, 1);
+    return tomorrow;
+}
+
+async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
+    let format = get_argument(args, "f", "YYYY-MM-DD");
+    let today = get_date_string(format);
+    return today;
+}
+
+async function tp_yesterday(_app: App, args: {[key: string]: string}): Promise<String> {
+    let format = get_argument(args, "f", "YYYY-MM-DD");
+    let yesterday = get_date_string(format, -1);
+    return yesterday;
+}
+
+async function tp_time(_app: App, args: {[key: string]: string}): Promise<String> {
+    let format = get_argument(args, "f", "HH:mm");
+    let time = get_date_string(format);
+    return time;
+}
+
+function parse_tp_title_date_args(app: App, args: {[key: string]: string}) {
+    let activeLeaf = app.workspace.activeLeaf;
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    let title = activeLeaf.getDisplayText();
+    let title_format = get_argument(args, "title_f", "YYYY-MM-DD");
+
+    if(!moment(title, title_format).isValid()){
+        throw new Error("Invalid title date format, try specifying one with the argument 'title_f'");
+    }
+    
+    let format = get_argument(args, "f", title_format);
+    return [title, format, title_format];
+}
+
+async function tp_title_tomorrow(app: App, args: {[key: string]: string}): Promise<String> {
+    let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    let title_tomorrow = get_date_string(format, 1, title, title_format);
+    return title_tomorrow;
+}
+
+async function tp_title_today(app: App, args: {[key: string]: string}): Promise<String> {
+    let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    let title_today = get_date_string(format, undefined, title, title_format);
+    return title_today;
+}
+
+async function tp_title_yesterday(app: App, args: {[key: string]: string}): Promise<String> {
+    let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    let title_today = get_date_string(format, -1, title, title_format);
+    return title_today;
+}
+
+async function tp_creation_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+    let format = get_argument(args, "f", "YYYY-MM-DD HH:mm");
+    let creation_date = get_date_string(format, undefined, active_view.file.stat.ctime);
+    return creation_date;
+}
+
+async function tp_last_modif_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+    let format = get_argument(args, "f", "YYYY-MM-DD HH:mm");
+    let modif_date = get_date_string(format, undefined, active_view.file.stat.mtime);
+    return modif_date;
+}
+
+///////////////////////////////////////////
+// Pictures Internal Templates
+///////////////////////////////////////////
 
 async function tp_random_picture(_app: App, args: {[key: string]: string}): Promise<String> {
     let response;
@@ -179,12 +262,23 @@ async function tp_title_picture(app: App, args: {[key: string]: string}): Promis
     return new_content;
 }
 
+///////////////////////////////////////////
+// Misc Internal Templates
+///////////////////////////////////////////
+
+async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promise<String> {
+    let response = await axios.get("https://quotes.rest/qod");
+    let author = response.data.contents.quotes[0].author;
+    let quote = response.data.contents.quotes[0].quote;
+    let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
+    return new_content;
+}
+
 async function tp_title(app: App, _args: {[key: string]: string}): Promise<String> {
     let activeLeaf = app.workspace.activeLeaf;
     if (activeLeaf == null) {
         throw new Error("app.activeLeaf is null");
     }
-    
     return activeLeaf.getDisplayText();
 }
 
@@ -206,90 +300,6 @@ async function tp_folder(app: App, args: {[key: string]: string}): Promise<Strin
     return folder;
 }
 
-async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
-    let today;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        today = moment().format(format);
-    }
-    else {
-        today = moment().format("YYYY-MM-DD");
-    }
-    return today;
-}
-
-async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<String> {
-    let tomorrow;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        tomorrow = moment().add(1,'days').format(format);
-    }
-    else {
-        tomorrow = moment().add(1,'days').format("YYYY-MM-DD");
-    }
-    return tomorrow;
-}
-
-async function tp_yesterday(_app: App, args: {[key: string]: string}): Promise<String> {
-    let yesterday;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        yesterday = moment().add(-1,'days').format(format);
-    }
-    else {
-        yesterday = moment().add(-1,'days').format("YYYY-MM-DD");
-    }
-    return yesterday;
-}
-
-async function tp_time(_app: App, args: {[key: string]: string}): Promise<String> {
-    let time;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        time = moment().format(format);
-    }
-    else {
-        time = moment().format("HH:mm");
-    }
-    return time;
-}
-
-async function tp_creation_date(app: App, args: {[key: string]: string}): Promise<String> {
-    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
-    if (active_view == null) {
-        throw new Error("Active view is null");
-    }
-    
-    let creation_date;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        creation_date = moment(active_view.file.stat.ctime).format(format);
-    }
-    else {
-        creation_date = moment(active_view.file.stat.ctime).format("YYYY-MM-DD HH:mm");
-    }
-
-    return creation_date;
-}
-
-async function tp_last_modif_date(app: App, args: {[key: string]: string}): Promise<String> {
-    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
-    if (active_view == null) {
-        throw new Error("Active view is null");
-    }
-
-    let modif_date;
-    if (existing_argument(args, "f")) {
-        let format = args["f"];
-        modif_date = moment(active_view.file.stat.mtime).format(format);
-    }
-    else {
-        modif_date = moment(active_view.file.stat.mtime).format("YYYY-MM-DD HH:mm");
-    }
-
-    return modif_date;
-}
-
 async function tp_include(app: App, args: {[key: string]: string}): Promise<String> {
     if (!existing_argument(args, "f")) {
         throw new Error("No file argument passed to tp_include");
@@ -307,58 +317,4 @@ async function tp_include(app: App, args: {[key: string]: string}): Promise<Stri
     let content = await app.vault.read(file);
 
     return content;
-}
-
-async function tp_nextday(app: App, args: {[key: string]: string}): Promise<String> {
-    let nextday;
-    let activeLeaf = app.workspace.activeLeaf;
-    let title;
-    //check for title and store value
-    if (activeLeaf == null) {
-        throw new Error("app.activeLeaf is null");
-    }
-    title = activeLeaf.getDisplayText();
-    //check to make sure the title is a vald ISO8601 format
-    if(moment(title, moment.ISO_8601).isValid()){
-        //check for format flags
-        if (existing_argument(args, "f")) {
-            let format = args["f"];
-            nextday = moment(title).add(1,'days').format(format);
-        }
-        else {
-            let m = moment(title).add(1,'days');
-            nextday = m.format(m.creationData().format); //create the next day with the original formatting
-        }
-    }
-    else{ //non-ISO8601 format, failing over to default format
-        nextday = moment(title).add(1, 'days').format("YYYY-MM-DD");
-    }
-    return nextday;
-}
-
-async function tp_prevday(app: App, args: {[key: string]: string}): Promise<String> {
-    let prevday;
-    let activeLeaf = app.workspace.activeLeaf;
-    let title;
-    //check for title and store value
-    if (activeLeaf == null) {
-        throw new Error("app.activeLeaf is null");
-    }
-    title = activeLeaf.getDisplayText();
-    //check to make sure the title is a vald ISO8601 format
-    if(moment(title, moment.ISO_8601).isValid()){
-        //check for format flags
-        if (existing_argument(args, "f")) {
-            let format = args["f"];
-            prevday = moment(title).add(-1,'days').format(format);
-        }
-        else {
-            let m = moment(title).add(-1,'days');
-            prevday = m.format(m.creationData().format); //create the next day with the original formatting
-        }
-    }
-    else{ //non-ISO8601 format, failing over to default format
-        prevday = moment(title).add(-1, 'days').format("YYYY-MM-DD");
-    }
-    return prevday;
 }
