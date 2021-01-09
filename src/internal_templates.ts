@@ -18,6 +18,8 @@ export const internal_templates_map: {[id: string]: Function} = {
     "title_picture": tp_title_picture,
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
+    "nextday": tp_nextday,
+    "prevday": tp_prevday
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -305,4 +307,58 @@ async function tp_include(app: App, args: {[key: string]: string}): Promise<Stri
     let content = await app.vault.read(file);
 
     return content;
+}
+
+async function tp_nextday(app: App, args: {[key: string]: string}): Promise<String> {
+    let nextday;
+    let activeLeaf = app.workspace.activeLeaf;
+    let title;
+    //check for title and store value
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    title = activeLeaf.getDisplayText();
+    //check to make sure the title is a vald ISO8601 format
+    if(moment(title, moment.ISO_8601).isValid()){
+        //check for format flags
+        if (existing_argument(args, "f")) {
+            let format = args["f"];
+            nextday = moment(title).add(1,'days').format(format);
+        }
+        else {
+            let m = moment(title).add(1,'days');
+            nextday = m.format(m.creationData().format); //create the next day with the original formatting
+        }
+    }
+    else{ //non-ISO8601 format, failing over to default format
+        nextday = moment(title).add(1, 'days').format("YYYY-MM-DD");
+    }
+    return nextday;
+}
+
+async function tp_prevday(app: App, args: {[key: string]: string}): Promise<String> {
+    let prevday;
+    let activeLeaf = app.workspace.activeLeaf;
+    let title;
+    //check for title and store value
+    if (activeLeaf == null) {
+        throw new Error("app.activeLeaf is null");
+    }
+    title = activeLeaf.getDisplayText();
+    //check to make sure the title is a vald ISO8601 format
+    if(moment(title, moment.ISO_8601).isValid()){
+        //check for format flags
+        if (existing_argument(args, "f")) {
+            let format = args["f"];
+            prevday = moment(title).add(-1,'days').format(format);
+        }
+        else {
+            let m = moment(title).add(-1,'days');
+            prevday = m.format(m.creationData().format); //create the next day with the original formatting
+        }
+    }
+    else{ //non-ISO8601 format, failing over to default format
+        prevday = moment(title).add(-1, 'days').format("YYYY-MM-DD");
+    }
+    return prevday;
 }
