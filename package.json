@@ -1,6 +1,6 @@
 {
   "name": "templater-obsidian",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "Create and use templates",
   "main": "main.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
     "@types/node": "^14.14.20",
-    "countries-list": "^2.5.6",
+    "countries-list": "^2.6.0",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "obsidian-sample-plugin": "https://github.com/obsidianmd/obsidian-api/tarball/master",
     "rollup": "^2.36.1",
