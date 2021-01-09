@@ -309,7 +309,7 @@ async function tp_include(app: App, args: {[key: string]: string}): Promise<Stri
     return content;
 }
 
-async function tp_nextday(_app: App, args: {[key: string]: string}): Promise<String> {
+async function tp_nextday(app: App, args: {[key: string]: string}): Promise<String> {
     let nextday;
     let activeLeaf = app.workspace.activeLeaf;
     let title;
@@ -336,7 +336,7 @@ async function tp_nextday(_app: App, args: {[key: string]: string}): Promise<Str
     return nextday;
 }
 
-async function tp_prevday(_app: App, args: {[key: string]: string}): Promise<String> {
+async function tp_prevday(app: App, args: {[key: string]: string}): Promise<String> {
     let prevday;
     let activeLeaf = app.workspace.activeLeaf;
     let title;
