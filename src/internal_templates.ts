@@ -11,8 +11,9 @@ export const internal_templates_map: {[id: string]: Function} = {
     "include": tp_include,
     "title": tp_title,
     "folder": tp_folder,
+    "date": tp_date,
     "tomorrow": tp_tomorrow,
-    "today": tp_today,
+    "today": tp_today, // DEPRECATED
     "yesterday": tp_yesterday,
     "time": tp_time,
     "daily_quote": tp_daily_quote,
@@ -20,8 +21,9 @@ export const internal_templates_map: {[id: string]: Function} = {
     "title_picture": tp_title_picture,
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
+    "title_date": tp_title_date,
     "title_tomorrow": tp_title_tomorrow,
-    "title_today": tp_title_today,
+    "title_today": tp_title_today, // DEPRECATED
     "title_yesterday": tp_title_yesterday,
 };
 
@@ -134,6 +136,16 @@ function get_argument(args: {[key: string]: string}, arg_name: string, default_v
 // Date Internal Templates
 ///////////////////////////////////////////
 
+async function tp_date(_app: App, args: {[key: string]: string}): Promise<String> {
+    let format = get_argument(args, "f", "YYYY-MM-DD");
+    let day_offset = Number(get_argument(args, "offset", "0"));
+    if (isNaN(day_offset)) {
+        throw new Error("Invalid value for day offset argument");
+    }
+    let date = get_date_string(format, day_offset);
+    return date;
+}
+
 async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<String> {
     let format = get_argument(args, "f", "YYYY-MM-DD");
     let tomorrow = get_date_string(format, 1);
@@ -141,6 +153,7 @@ async function tp_tomorrow(_app: App, args: {[key: string]: string}): Promise<St
 }
 
 async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
+    new Notice("tp_today is deprecated, use tp_date instead. tp_today will removed in a future release.");
     let format = get_argument(args, "f", "YYYY-MM-DD");
     let today = get_date_string(format);
     return today;
@@ -174,6 +187,16 @@ function parse_tp_title_date_args(app: App, args: {[key: string]: string}) {
     return [title, format, title_format];
 }
 
+async function tp_title_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    let day_offset = Number(get_argument(args, "offset", "0"));
+    if (isNaN(day_offset)) {
+        throw new Error("Invalid value for day offset argument");
+    }
+    let title_date = get_date_string(format, day_offset, title, title_format);
+    return title_date;
+}
+
 async function tp_title_tomorrow(app: App, args: {[key: string]: string}): Promise<String> {
     let [title, format, title_format] = parse_tp_title_date_args(app, args);
     let title_tomorrow = get_date_string(format, 1, title, title_format);
@@ -181,6 +204,7 @@ async function tp_title_tomorrow(app: App, args: {[key: string]: string}): Promi
 }
 
 async function tp_title_today(app: App, args: {[key: string]: string}): Promise<String> {
+    new Notice("tp_title_today is deprecated, use tp_title_date instead. tp_title_today will removed in a future release.");
     let [title, format, title_format] = parse_tp_title_date_args(app, args);
     let title_today = get_date_string(format, undefined, title, title_format);
     return title_today;
