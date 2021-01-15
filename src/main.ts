@@ -37,6 +37,20 @@ export default class TemplaterPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+            id: "replace-in-file-templater",
+            name: "Replace templates in the active file",
+            hotkeys: [
+                {
+                    modifiers: ["Alt"],
+                    key: 'r',
+                },
+            ],
+            callback: () => {
+                this.fuzzy_suggester.replace();
+            },
+        });
+
 		this.app.workspace.on("layout-ready", () => {
 			// TODO: Find a way to not trigger this on files copy
 			this.app.vault.on("create", async (file: TAbstractFile) => {
