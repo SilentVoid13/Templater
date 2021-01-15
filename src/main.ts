@@ -39,7 +39,7 @@ export default class TemplaterPlugin extends Plugin {
 
 		this.addCommand({
             id: "replace-in-file-templater",
-            name: "Replace Templates in Open File",
+            name: "Replace templates in the active file",
             hotkeys: [
                 {
                     modifiers: ["Alt"],

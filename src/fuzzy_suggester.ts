@@ -75,9 +75,11 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
 
     replace(): void {
         try {
-            var activeLeaf = this.app.workspace.activeLeaf;
-            var file = activeLeaf.view.file;
-            this.replace_templates_and_overwrite_in_file(file);
+            let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (active_view == null) {
+                throw new Error("Active view is null");
+            }
+            this.replace_templates_and_overwrite_in_file(active_view.file);
         }
         catch(error) {
             new Notice(error);
