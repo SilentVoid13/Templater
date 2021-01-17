@@ -8,7 +8,7 @@ import { format } from 'path';
 // Check https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md to see how to develop your own internal template
 
 export const internal_templates_map: {[id: string]: Function} = {
-    "include": tp_include,
+    "include": tp_include, // Should be first
     "title": tp_title,
     "folder": tp_folder,
     "date": tp_date,
@@ -25,6 +25,7 @@ export const internal_templates_map: {[id: string]: Function} = {
     "title_tomorrow": tp_title_tomorrow,
     "title_today": tp_title_today, // DEPRECATED
     "title_yesterday": tp_title_yesterday,
+    "selection": tp_selection,
 };
 
 export async function replace_internal_templates(app: App, content: string) {
@@ -341,4 +342,14 @@ async function tp_include(app: App, args: {[key: string]: string}): Promise<Stri
     let content = await app.vault.read(file);
 
     return content;
+}
+
+async function tp_selection(app: App, _args: {[key: string]: string}): Promise<String> {
+    let active_view = app.workspace.getActiveViewOfType(MarkdownView);
+    if (active_view == null) {
+        throw new Error("Active view is null");
+    }
+
+    let editor = active_view.sourceMode.cmEditor;
+    return editor.getSelection();
 }
