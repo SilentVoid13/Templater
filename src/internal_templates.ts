@@ -244,15 +244,18 @@ async function tp_last_modif_date(app: App, args: {[key: string]: string}): Prom
  * @param args:
  *      offset: As in tp_date ->
  *          Offset for the day, for example you can set this to -7 to get the date minus 7 days (default: 0)
+ *      weekday_f: 'short' or 'long' ->
+ *          'short' will output e.g. "Tue", 'long' will output "Tuesday" default: 'long'
  */
 async function tp_date_weekday(app: App, args: {[key: string]: string}): Promise<String> {
     let format = "YYYY-MM-DD";
     let day_offset = Number(get_argument(args, "offset", "0"));
+    let weekday_format = get_argument(args, "weekday_f", "long");
     if (isNaN(day_offset)) {
         throw new Error("Invalid value for day offset argument");
     }
     let date = get_date_string(format, day_offset);
-    let weekday = new Date(date).toLocaleString("default", { weekday: "long" });
+    let weekday = new Date(date).toLocaleString("default", { weekday: weekday_format });
     return weekday;
 }
 
@@ -264,9 +267,12 @@ async function tp_date_weekday(app: App, args: {[key: string]: string}): Promise
  *          Date format of the title, refer to format reference (default: YYYY-MM-DD). You want this argument to be the same as the daily note core plugin format setting.
  *      offset: As in 'tp_title-date' ->
  *          Offset for the day, for example you can set this to -7 to get the date minus 7 days (default: 0)
+ *      weekday_f: 'short' or 'long' ->
+ *          'short' will output e.g. "Tue", 'long' will output "Tuesday" default: 'long'
  */
 async function tp_title_date_weekday(app: App, args: {[key: string]: string}): Promise<String> {
     let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    let weekday_format = get_argument(args, "weekday_f", "long");
     let day_offset = Number(get_argument(args, "offset", "0"));
     if (isNaN(day_offset)) {
         throw new Error("Invalid value for day offset argument");
@@ -275,7 +281,7 @@ async function tp_title_date_weekday(app: App, args: {[key: string]: string}): P
 
     let title_date = get_date_string(format, day_offset, title, title_format);
     console.log("titledate for weekday:" + title_date +  " title format " + title_format + " format: " + format);
-    let weekday = new Date(title_date).toLocaleString("default", { weekday: "long" });
+    let weekday = new Date(title_date).toLocaleString("default", { weekday: weekday_format });
     return weekday;
 }
 
