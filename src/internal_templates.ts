@@ -18,6 +18,7 @@ export const internal_templates_map: {[id: string]: Function} = {
     "time": tp_time,
     "daily_quote": tp_daily_quote,
     "random_picture": tp_random_picture,
+    "random_joke": tp_random_joke,
     "title_picture": tp_title_picture,
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
@@ -295,6 +296,14 @@ async function tp_daily_quote(_app: App, _args: {[key: string]: string}): Promis
     let author = response.data.contents.quotes[0].author;
     let quote = response.data.contents.quotes[0].quote;
     let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
+    return new_content;
+}
+
+async function tp_random_joke(_app: App, _args: {[key: string]: string}): Promise<String> {
+
+    let response = await axios.get("https://icanhazdadjoke.com/",{headers: {'Accept' : 'application/json'}});
+    let joke = response.data.joke;
+    let new_content = `> ${joke}`;
     return new_content;
 }
 
