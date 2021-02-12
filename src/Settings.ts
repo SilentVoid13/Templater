@@ -2,9 +2,8 @@ import { Notice, PluginSettingTab, Setting } from "obsidian";
 import moment from 'moment';
 import 'moment/min/locales';
 
-import { internal_templates_map } from './internal_templates';
 import TemplaterPlugin from './main';
-import { languageName } from './i18n'
+import { languageName } from './DateTime'
 
 export const default_settings: TemplaterSettings = {
 	command_timeout: 5,
@@ -117,11 +116,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						.onChange((new_value) => {
 							let index = plugin.settings.templates_pairs.indexOf(template_pair);
 							if (index > -1) {
-								let internal_templates = Object.keys(internal_templates_map).map((el: string) => `{{tp_${el}}}`);
-								if (internal_templates.contains(new_value)) {
-									new Notice("This template pattern is used as an internal template.");
-									return;
-								}
 								plugin.settings.templates_pairs[index][0] = new_value;
 								plugin.saveData(plugin.settings);
 							}

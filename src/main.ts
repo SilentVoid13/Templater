@@ -1,26 +1,30 @@
-import { Plugin, TAbstractFile, TFile } from 'obsidian';
+import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import moment from 'moment';
 
-import { default_settings, TemplaterSettings, TemplaterSettingTab } from './settings';
-import { TemplaterFuzzySuggestModal } from './fuzzy_suggester';
+import { default_settings, TemplaterSettings, TemplaterSettingTab } from './Settings';
+import { TemplaterFuzzySuggestModal } from './TemplaterFuzzySuggest';
+import { TemplateParser } from './TemplateParser';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 export default class TemplaterPlugin extends Plugin {
-	public fuzzy_suggester: TemplaterFuzzySuggestModal;
+	public fuzzySuggest: TemplaterFuzzySuggestModal;
 	public settings: TemplaterSettings; 
+	public parser: TemplateParser
 
 	async onload() {		
 		this.settings = Object.assign(default_settings, await this.loadData());
 
-		this.fuzzy_suggester = new TemplaterFuzzySuggestModal(this.app, this);
+		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 
 		this.change_locale(this.settings.locale);
 
+		this.parser = new TemplateParser(this.app, this);
+
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
-			this.fuzzy_suggester.start();
+			this.fuzzySuggest.start();
 		});
 
 		this.addCommand({
@@ -33,7 +37,7 @@ export default class TemplaterPlugin extends Plugin {
 				},
 			],
 			callback: () => {
-				this.fuzzy_suggester.start();
+				this.fuzzySuggest.start();
 			},
 		});
 
@@ -47,7 +51,16 @@ export default class TemplaterPlugin extends Plugin {
                 },
             ],
             callback: () => {
-                this.fuzzy_suggester.replace();
+                try {
+					let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+					if (active_view == null) {
+						throw new Error("Active view is null");
+					}
+					this.parser.replace_templates_and_overwrite_in_file(active_view.file);
+				}
+				catch(error) {
+					new Notice(error);
+				}
             },
         });
 
@@ -62,7 +75,7 @@ export default class TemplaterPlugin extends Plugin {
 				if (!(file instanceof TFile) || file.extension !== "md") {
 					return;
 				}
-				this.fuzzy_suggester.replace_templates_and_overwrite_in_file(file);
+				this.parser.replace_templates_and_overwrite_in_file(file);
 			});
 		});
 
