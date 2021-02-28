@@ -1,6 +1,7 @@
 {
   "name": "templater-obsidian",
   "version": "0.5.7",
+  "type": "module",
   "description": "Create and use templates",
   "main": "main.js",
   "scripts": {
@@ -20,19 +21,21 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
-    "@types/node": "^14.14.20",
-    "countries-list": "^2.6.0",
+    "@types/node": "^14.14.28",
+    "countries-list": "^2.6.1",
     "obsidian": "https://github.com/obsidianmd/obsidian-api/tarball/master",
-    "obsidian-sample-plugin": "https://github.com/obsidianmd/obsidian-api/tarball/master",
-    "rollup": "^2.36.1",
+    "rollup": "^2.39.0",
     "tslib": "^2.1.0",
-    "typescript": "^4.1.3"
+    "typescript": "^4.1.5"
   },
   "dependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/moment": "^2.13.0",
     "axios": "^0.21.1",
     "child_process": "^1.0.2",
     "debug": "^4.2.0",
-    "moment": "^2.29.1",
-    "supports-color": "^7.2.0"
+    "glob": "^7.1.6",
+    "supports-color": "^7.2.0",
+    "ts-node": "^9.1.1"
   }
 }

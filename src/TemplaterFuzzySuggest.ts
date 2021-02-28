@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TFile, TFolder, normalizePath } from "obsidian";
+import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
 import TemplaterPlugin from './main';
 
 export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
@@ -19,17 +19,21 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             template_files = files;
         }
         else {
-            let settings_folder = normalizePath(this.plugin.settings.template_folder);
+            let template_folder_str = normalizePath(this.plugin.settings.template_folder);
 
-            let abstract_files = this.app.vault.getAbstractFileByPath(settings_folder);
-            if (!abstract_files) {
-                throw new Error(settings_folder + " folder doesn't exist");
+            let template_folder = this.app.vault.getAbstractFileByPath(template_folder_str);
+            if (!template_folder) {
+                throw new Error(template_folder_str + " folder doesn't exist");
             }
-            if (! (abstract_files instanceof TFolder)) {
-                throw new Error(settings_folder + " is a file, not a folder");
+            if (! (template_folder instanceof TFolder)) {
+                throw new Error(template_folder_str + " is a file, not a folder");
             }
-            // TODO: Use obsidian API for this
-            template_files = this.get_all_files_from(abstract_files);
+
+            Vault.recurseChildren(template_folder, (file: TAbstractFile) => {
+                if (file instanceof TFile) {
+                    template_files.push(file);
+                }
+            });
         }
 
         return template_files;
@@ -57,23 +61,5 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         catch(error) {
             new Notice(error);
         }
-    }
-
-    get_all_files_from(file: TFolder) {
-        let files: Array<TFile> = [];
-        for (let f of file.children) {
-            if (f instanceof TFile) {
-                files.push(f);
-            }
-            else {
-                if (f instanceof TFolder) {
-                    files = files.concat(this.get_all_files_from(f));
-                }
-                else {
-                    throw new Error("Unknown TAbstractFile type");
-                }
-            }
-        }
-        return files;
     }
 }

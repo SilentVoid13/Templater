@@ -1,0 +1,26 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Plugin release
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: npm build
+        run: |
+          npm install
+          npm run build --if-present
+      - name: Create Release
+        # https://github.com/ncipollo/release-action
+        uses: ncipollo/release-action@v1.7.3
+        with:
+          artifacts: "main.js,manifest.json,styles.css"
+          token: ${{ secrets.GITHUB_TOKEN }}

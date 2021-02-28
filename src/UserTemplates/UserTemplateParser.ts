@@ -26,6 +26,8 @@ export class UserTemplateParser extends AbstractTemplateParser {
     }
 
     async parseTemplates(content: string) {
+        //this.executeLocalUserTemplate();
+
         for (let i = 0; i < this.plugin.settings.templates_pairs.length; i++) {
             let template_pair = this.plugin.settings.templates_pairs[i];
             let template = template_pair[0];
@@ -57,4 +59,26 @@ export class UserTemplateParser extends AbstractTemplateParser {
 
         return content;
     }
+
+    /*
+    async executeLocalUserTemplate() {
+        let path = "/home/silentvoid/Downloads/tests/*.ts";
+
+        glob(path, async (err, files) => {
+            if (err) {
+                throw new Error("Error searching local user templates: " + err);
+            }
+
+            for (let file of files) {
+                let filename = file.split(".").slice(0, -1).join(".");
+                let testy = await import("/home/silentvoid/Downloads/tests/UserTemplateExample");
+                console.log(testy);
+                console.log("filename: ", filename);
+                let user_template_lib = await import(filename);
+                let user_template = new user_template_lib.UserTemplate(this.app);
+                console.log("RENDER:", user_template.render());
+            }
+        });
+    }
+    */
 }

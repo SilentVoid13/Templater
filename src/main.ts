@@ -1,5 +1,4 @@
 import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
-import moment from 'moment';
 
 import { default_settings, TemplaterSettings, TemplaterSettingTab } from './Settings';
 import { TemplaterFuzzySuggestModal } from './TemplaterFuzzySuggest';
@@ -16,11 +15,7 @@ export default class TemplaterPlugin extends Plugin {
 
 	async onload() {		
 		this.settings = Object.assign(default_settings, await this.loadData());
-
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
-
-		this.change_locale(this.settings.locale);
-
 		this.parser = new TemplateParser(this.app, this);
 
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
@@ -51,16 +46,7 @@ export default class TemplaterPlugin extends Plugin {
                 },
             ],
             callback: () => {
-                try {
-					let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-					if (active_view == null) {
-						throw new Error("Active view is null");
-					}
-					this.parser.replace_templates_and_overwrite_in_file(active_view.file);
-				}
-				catch(error) {
-					new Notice(error);
-				}
+				this.replace_in_active_file();
             },
         });
 
@@ -86,7 +72,16 @@ export default class TemplaterPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	change_locale(locale: string) {
-		moment.locale(locale);
+	replace_in_active_file(): void {
+		try {
+			let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+			if (active_view === null) {
+				throw new Error("Active view is null");
+			}
+			this.parser.replace_templates_and_overwrite_in_file(active_view.file);
+		}
+		catch(error) {
+			new Notice(error);
+		}
 	}
 }

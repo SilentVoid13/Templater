@@ -1,9 +1,6 @@
 import { Notice, PluginSettingTab, Setting } from "obsidian";
-import moment from 'moment';
-import 'moment/min/locales';
 
 import TemplaterPlugin from './main';
-import { languageName } from './DateTime'
 
 export const default_settings: TemplaterSettings = {
 	command_timeout: 5,
@@ -24,6 +21,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		const plugin: TemplaterPlugin = (this as any).plugin;
 		let {containerEl} = this;
 		containerEl.empty();
+
+		let fragment = document.createDocumentFragment();
+		let link = document.createElement("a");
+		link.href = "https://github.com/SilentVoid13/Templater#internal-templates";
+		link.text = "here";
+		fragment.textContent = `Click ${link} to get a list of all the available internal templates`;
 
 		new Setting(containerEl)
 			.setName("Template folder location")
@@ -53,34 +56,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						plugin.saveData(plugin.settings);
 					})
 			});
-
-		new Setting(containerEl)
-			.setName("Locale")
-			.setDesc("The language and country used to format dates in internal templates.")
-			.addDropdown(dropdown => {
-				moment.locales()
-					.map(locale => [locale, languageName(locale)])
-					.sort((a,b) => a[1] > b[1] ? 1: -1)
-					.forEach(item => dropdown.addOption(item[0], item[1]));
-
-				dropdown
-					.setValue(plugin.settings.locale)
-					.onChange(locale => {
-						plugin.settings.locale = locale;
-						plugin.saveData(plugin.settings);
-
-						plugin.change_locale(locale);
-					})
-			});
-
-		let fragment = document.createDocumentFragment();
-		let link = document.createElement("a");
-		link.href = "https://github.com/SilentVoid13/Templater#internal-templates";
-		link.text = "here";
-
-		fragment.append("Click ");
-		fragment.append(link);
-		fragment.append(" to get a list of all the available internal templates.");
 
 		new Setting(containerEl)
 			.setName("Internal templates")
