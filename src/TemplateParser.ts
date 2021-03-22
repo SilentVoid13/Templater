@@ -14,23 +14,23 @@ export class TemplateParser {
         this.userTemplateParser = new UserTemplateParser(this.app, plugin, this.internalTemplateParser);
     }
 
-    async replace_templates(content: string) {
-        content = await this.internalTemplateParser.parseTemplates(content);
-        content = await this.userTemplateParser.parseTemplates(content);        
+    async replace_templates(content: string, file: TFile) {
+        content = await this.internalTemplateParser.parseTemplates(content, file);
+        content = await this.userTemplateParser.parseTemplates(content, file);        
         return content;
     }
 
     async replace_templates_and_append(template_file: TFile) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view == null) {
-            return;
+            throw new Error("Templater: no active view, can't append templates.");
         }
 
         let editor = active_view.sourceMode.cmEditor;
         let doc = editor.getDoc();
 
         let content = await this.app.vault.read(template_file);
-        content = await this.replace_templates(content);
+        content = await this.replace_templates(content, active_view.file);
         
         let rel_pos = await this.get_cursor_location(content);
         if (rel_pos.length !== 0) {
@@ -53,7 +53,7 @@ export class TemplateParser {
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
 
-        let new_content = await this.replace_templates(content);
+        let new_content = await this.replace_templates(content, file);
         if (new_content !== content) {
             let pos = await this.get_cursor_location(new_content);
             if (pos.length !== 0) {

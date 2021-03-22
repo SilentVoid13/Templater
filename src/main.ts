@@ -1,6 +1,6 @@
 import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 
-import { default_settings, TemplaterSettings, TemplaterSettingTab } from './Settings';
+import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from './Settings';
 import { TemplaterFuzzySuggestModal } from './TemplaterFuzzySuggest';
 import { TemplateParser } from './TemplateParser';
 
@@ -14,7 +14,8 @@ export default class TemplaterPlugin extends Plugin {
 	public parser: TemplateParser
 
 	async onload() {		
-		this.settings = Object.assign(default_settings, await this.loadData());
+		await this.loadSettings();
+
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 		this.parser = new TemplateParser(this.app, this);
 
@@ -68,8 +69,12 @@ export default class TemplaterPlugin extends Plugin {
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
 	}
 
-	async onunload() {
+	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	replace_in_active_file(): void {

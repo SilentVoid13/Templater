@@ -1,24 +1,25 @@
-import { Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, Notice, PluginSettingTab, Setting } from "obsidian";
 
 import TemplaterPlugin from './main';
 
-export const default_settings: TemplaterSettings = {
+export const DEFAULT_SETTINGS: TemplaterSettings = {
 	command_timeout: 5,
 	template_folder: "",
 	templates_pairs: [["", ""]],
-	locale: 'en',
 };
 
 export interface TemplaterSettings {
 	command_timeout: number;
 	template_folder: string;
 	templates_pairs: Array<[string, string]>;
-	locale: string;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
+	constructor(public app: App, private plugin: TemplaterPlugin) {
+		super(app, plugin);
+	}
+
 	display(): void {
-		const plugin: TemplaterPlugin = (this as any).plugin;
 		let {containerEl} = this;
 		containerEl.empty();
 
@@ -33,10 +34,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc("Files in this folder will be available as templates.")
 			.addText(text => {
 				text.setPlaceholder("Example: folder 1/folder 2")
-					.setValue(plugin.settings.template_folder)
+					.setValue(this.plugin.settings.template_folder)
 					.onChange((new_folder) => {
-						plugin.settings.template_folder = new_folder;
-						plugin.saveData(plugin.settings);
+						this.plugin.settings.template_folder = new_folder;
+						this.plugin.saveSettings();
 					})
 			});
 
@@ -45,15 +46,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc("Maximum timeout in seconds for a command.")
 			.addText(text => {
 				text.setPlaceholder("Timeout")
-					.setValue(plugin.settings.command_timeout.toString())
+					.setValue(this.plugin.settings.command_timeout.toString())
 					.onChange((new_value) => {
 						let new_timeout = Number(new_value);
 						if (isNaN(new_timeout)) {
 							new Notice("Timeout must be a number");
 							return;
 						}
-						plugin.settings.command_timeout = new_timeout;
-						plugin.saveData(plugin.settings);
+						this.plugin.settings.command_timeout = new_timeout;
+						this.plugin.saveSettings();
 					})
 			});
 
@@ -62,7 +63,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc(fragment);
 
 		let i = 1;
-		plugin.settings.templates_pairs.forEach((template_pair) => {
+		this.plugin.settings.templates_pairs.forEach((template_pair) => {
 			let div = containerEl.createEl('div');
 			div.addClass("templater_div");
 
@@ -76,10 +77,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					extra.setIcon("cross")
 						.setTooltip("Delete")
 						.onClick(() => {
-							let index = plugin.settings.templates_pairs.indexOf(template_pair);
-
+							let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 							if (index > -1) {
-								plugin.settings.templates_pairs.splice(index, 1);
+								this.plugin.settings.templates_pairs.splice(index, 1);
 								// Force refresh
 								this.display();
 							}
@@ -89,10 +89,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						let t = text.setPlaceholder('Template Pattern')
 						.setValue(template_pair[0])
 						.onChange((new_value) => {
-							let index = plugin.settings.templates_pairs.indexOf(template_pair);
+							let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 							if (index > -1) {
-								plugin.settings.templates_pairs[index][0] = new_value;
-								plugin.saveData(plugin.settings);
+								this.plugin.settings.templates_pairs[index][0] = new_value;
+								this.plugin.saveSettings();
 							}
 						});
 						t.inputEl.addClass("templater_template");
@@ -104,10 +104,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					let t = text.setPlaceholder('System Command')
 					.setValue(template_pair[1])
 					.onChange((new_cmd) => {
-						let index = plugin.settings.templates_pairs.indexOf(template_pair);
+						let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 						if (index > -1) {
-							plugin.settings.templates_pairs[index][1] = new_cmd;
-							plugin.saveData(plugin.settings);
+							this.plugin.settings.templates_pairs[index][1] = new_cmd;
+							this.plugin.saveSettings();
 						}
 					});
 
@@ -131,11 +131,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		let setting = new Setting(containerEl)
 			.addButton(button => {
 				let b = button.setButtonText("Add Template").onClick(() => {
-					plugin.settings.templates_pairs.push(["", ""]);
+					this.plugin.settings.templates_pairs.push(["", ""]);
 					// Force refresh
 					this.display();
 				});
-
 				b.buttonEl.addClass("templater_button");
 
 				return b;

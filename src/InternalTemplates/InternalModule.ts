@@ -1,23 +1,15 @@
-import { App } from "obsidian";
-import { InternalTemplateConstructor } from "./InternalTemplate";
+import { App, TFile } from "obsidian";
 
 export abstract class InternalModule {
-    templates: Map<string, InternalTemplateConstructor>;
+    templates: Map<string, any>;
 
-    constructor(public app: App) {
+    constructor(public app: App, public file: TFile) {
         this.templates = new Map();
-        this.registerTemplates();
     }
 
-    abstract registerTemplates(): void;
+    abstract registerTemplates(): Promise<void>;
 
-    async triggerTemplate(attribute: string, args: {[key: string]: string}) {
-        let template_item = this.templates.get(attribute);
-        if (template_item === undefined) {
-            throw new Error(`${attribute} doesn't exist`);
-        }
-        let template = new template_item(this.app, args);
-
-        return await template.render();
+    generateContext() {
+        return Object.fromEntries(this.templates);
     }
 }

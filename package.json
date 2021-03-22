@@ -29,12 +29,17 @@
     "typescript": "^4.1.5"
   },
   "dependencies": {
-    "@types/glob": "^7.1.3",
     "@types/moment": "^2.13.0",
+    "@types/nunjucks": "^3.1.4",
     "axios": "^0.21.1",
     "child_process": "^1.0.2",
     "debug": "^4.2.0",
-    "glob": "^7.1.6",
+    "ejs": "^3.1.6",
+    "express-es6-template-engine": "^2.2.3",
+    "install": "^0.13.0",
+    "npm": "^7.6.3",
+    "nunjucks": "^3.2.3",
+    "squirrelly": "^8.0.8",
     "supports-color": "^7.2.0",
     "ts-node": "^9.1.1"
   }

@@ -1,10 +1,10 @@
 import { AbstractTemplateParser } from "src/AbstractTemplateParser";
+import { InternalTemplateParser } from "src/InternalTemplates/InternalTemplateParser"
 import TemplaterPlugin from "src/main";
-import { InternalTemplateParser } from "src/InternalTemplates/InternalTemplateParser";
 
 import { exec } from 'child_process';
 import { promisify } from "util";
-import { App, FileSystemAdapter, Notice } from "obsidian";
+import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
 
 const exec_promise = promisify(exec);
 
@@ -25,7 +25,8 @@ export class UserTemplateParser extends AbstractTemplateParser {
         }
     }
 
-    async parseTemplates(content: string) {
+    async parseTemplates(content: string, file: TFile) {
+        // TODO
         //this.executeLocalUserTemplate();
 
         for (let i = 0; i < this.plugin.settings.templates_pairs.length; i++) {
@@ -36,7 +37,7 @@ export class UserTemplateParser extends AbstractTemplateParser {
                 continue;
             }
             
-            cmd = await this.internalTemplateParser.parseTemplates(cmd);
+            cmd = await this.internalTemplateParser.parseTemplates(cmd, file);
 
             if (content.contains(template)) {
                 try {

@@ -1,88 +1,90 @@
-import { App, Notice } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
+import * as nunjucks from "nunjucks";
+import * as Sqrl from "squirrelly";
+import * as ejs from "ejs";
 
 import { AbstractTemplateParser } from "src/AbstractTemplateParser";
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
-import { InternalModule } from "./InternalModule";
-import { InternalModuleTitle } from "./title/InternalModuleTitle";
 import { InternalModuleWeb } from "./web/InternalModuleWeb";
-
-const INCLUSION_LIMIT = 10;
+import axios from "axios";
+import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 
 export class InternalTemplateParser extends AbstractTemplateParser {
-    modules: Map<string, InternalModule>;
+    env: nunjucks.Environment;
+    modules: Map<String, any>;
 
     constructor(app: App) {
         super(app);
+        this.env = new nunjucks.Environment();
         this.modules = new Map();
-        this.registerModules();
     }
 
-    registerModules() {
-        this.modules.set("date", new InternalModuleDate(this.app));
-        this.modules.set("title", new InternalModuleTitle(this.app));
-        this.modules.set("file", new InternalModuleFile(this.app));
-        this.modules.set("web", new InternalModuleWeb(this.app));
+    async registerModules(f: TFile) {
+        let date = new InternalModuleDate(this.app, f);
+        await date.registerTemplates();
+
+        let file = new InternalModuleFile(this.app, f);
+        await file.registerTemplates();
+
+        let web = new InternalModuleWeb(this.app, f);
+        await web.registerTemplates();
+
+        let frontmatter = new InternalModuleFrontmatter(this.app, f);
+        await frontmatter.registerTemplates();
+
+        this.modules.set("date", date.generateContext());
+        this.modules.set("file", file.generateContext());
+        this.modules.set("web", web.generateContext());
+        this.modules.set("frontmatter", frontmatter.generateContext());
     }
 
-    async parseTemplates(content: string) {
-        let nested_count = 0;
-        let children: Array<number> = Array();
+    async generateContext(f: TFile) {
+        return Object.fromEntries(this.modules);
+    }
 
-        for (let module_key of Array.from(this.modules.keys())) {
-            let pattern = `{{[ \\t]*tp.${module_key}.([a-z_]+)[ \\t]*(?::(.*?))?}}`;
-            let regex = new RegExp(pattern);
-            let global_regex = new RegExp(pattern, "g");
-            let match;
-    
-            while((match = regex.exec(content)) !== null) {
-                let attribute_name = match[1];
-    
-                let args = {};
-                if (match[2] !== null) {
-                    args = this.parseArguments(match[2]);
-                }
-    
-                try {
-                    if (nested_count < INCLUSION_LIMIT) {
-                        let new_content = await this.modules.get(module_key).triggerTemplate(attribute_name, args);
-                        content = content.replace(
-                            match[0], 
-                            new_content
-                        );
-    
-                        if (module_key === "include") {
-                            let n_child = (new_content.match(global_regex) || []).length;
-    
-                            if (n_child > 0) {
-                                nested_count += 1;
-                                children.push(n_child);
-                            }
-                            else {
-                                let i = children.length-1;
-                                while (children[i--] === 1) {
-                                    children.pop();
-                                    nested_count -= 1;
-                                }
-                                children[children.length-1] -= 1;
-                            }
-                        }
-                    }
-                    else {
-                        throw new Error("Reached inclusion depth limit (max: 10), tp_include ignored");
-                    }
-                }
-                catch(error) {
-                    console.log(`Error with internal template tp.${module_key}.${attribute_name}: ${error}`);
-                    new Notice(`Error with internal template tp.${module_key}.${attribute_name}, check the console for more informations.`);
-    
-                    content = content.replace(
-                        match[0], 
-                        "Internal_Template_Error"
-                    );
-                }
-            }
+    async parseTemplates(content: string, file: TFile) {
+        await this.registerModules(file);
+
+        /*
+        let callback_test = (err, res) => {
+            console.log("err:", err);
+            console.log("res:", res);
         }
+
+        let loader = nunjucks.Loader.extend({
+            async: true,
+            getSource: function(name, callback) {
+                // load the template
+                // ...
+                callback(err, res);
+            }
+        });
+
+        let env = new nunjucks.Environment(loader);
+        */
+       let env = this.env;
+
+        console.log("content1:", content);
+        let context = await this.generateContext(file);
+
+        /*
+        let context = {
+            request: async () => {
+                let response = await axios.get("...");
+                return response.data.content;
+            }
+        };
+        */
+
+        console.log("CONTEXT:", context);
+        console.log("ENV:", env);
+        content = env.renderString(content, {tp: context});
+        //content = env.renderString(content, context);
+        //content = await Sqrl.render(content, context, {async: true, varName: "tp"});
+        //content = await ejs.render(content, {tp: context}, {async: true});
+        //content = es6Renderer(content, {template: true, local: {tp: context}});
+        console.log("content2:", content);
 
         return content;
     }
