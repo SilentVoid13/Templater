@@ -1,12 +1,7 @@
 import { AbstractTemplateParser } from "src/AbstractTemplateParser";
 import { InternalTemplateParser } from "src/InternalTemplates/InternalTemplateParser"
 import TemplaterPlugin from "src/main";
-
-import { exec } from 'child_process';
-import { promisify } from "util";
 import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
-
-const exec_promise = promisify(exec);
 
 export class UserTemplateParser extends AbstractTemplateParser {
     cwd: string;
@@ -14,6 +9,14 @@ export class UserTemplateParser extends AbstractTemplateParser {
     constructor(app: App, private plugin: TemplaterPlugin, private internalTemplateParser: InternalTemplateParser) {
         super(app);
         this.resolveCwd();        
+    }
+
+    static createUserTemplateParser(app: App, plugin: TemplaterPlugin, internalTemplateParser: InternalTemplateParser): UserTemplateParser {
+        // TODO: Maybe find a better way to check for this
+        if (require("child_process") === undefined) {
+            return undefined;
+        }
+        return new UserTemplateParser(app, plugin, internalTemplateParser);
     }
 
     resolveCwd() {
@@ -26,8 +29,15 @@ export class UserTemplateParser extends AbstractTemplateParser {
     }
 
     async parseTemplates(content: string, file: TFile) {
-        // TODO
-        //this.executeLocalUserTemplate();
+        let child_process = require("child_process");
+        if (child_process === undefined) {
+            throw new Error("nodejs child_process loading failure.");
+        }
+        const util = require("util");
+        if (util === undefined) {
+            throw new Error("nodejs util loading failure.");
+        }
+        const exec_promise = util.promisify(child_process.exec);
 
         for (let i = 0; i < this.plugin.settings.templates_pairs.length; i++) {
             let template_pair = this.plugin.settings.templates_pairs[i];
@@ -60,26 +70,4 @@ export class UserTemplateParser extends AbstractTemplateParser {
 
         return content;
     }
-
-    /*
-    async executeLocalUserTemplate() {
-        let path = "/home/silentvoid/Downloads/tests/*.ts";
-
-        glob(path, async (err, files) => {
-            if (err) {
-                throw new Error("Error searching local user templates: " + err);
-            }
-
-            for (let file of files) {
-                let filename = file.split(".").slice(0, -1).join(".");
-                let testy = await import("/home/silentvoid/Downloads/tests/UserTemplateExample");
-                console.log(testy);
-                console.log("filename: ", filename);
-                let user_template_lib = await import(filename);
-                let user_template = new user_template_lib.UserTemplate(this.app);
-                console.log("RENDER:", user_template.render());
-            }
-        });
-    }
-    */
 }

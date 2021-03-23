@@ -2,6 +2,8 @@ import { InternalModule } from "../InternalModule";
 import { get_date_string } from "../InternalUtils";
 
 export class InternalModuleDate extends InternalModule {
+    name = "date";
+
     async registerTemplates() {
         this.templates.set("now", this.generate_now());
         this.templates.set("tomorrow", this.generate_tomorrow());

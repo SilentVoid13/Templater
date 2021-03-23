@@ -11,12 +11,14 @@ export class TemplateParser {
     
     constructor(private app: App, plugin: TemplaterPlugin) {
         this.internalTemplateParser = new InternalTemplateParser(this.app);
-        this.userTemplateParser = new UserTemplateParser(this.app, plugin, this.internalTemplateParser);
+        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, plugin, this.internalTemplateParser);
     }
 
     async replace_templates(content: string, file: TFile) {
         content = await this.internalTemplateParser.parseTemplates(content, file);
-        content = await this.userTemplateParser.parseTemplates(content, file);        
+        if (this.userTemplateParser) {
+            content = await this.userTemplateParser.parseTemplates(content, file);        
+        }
         return content;
     }
 

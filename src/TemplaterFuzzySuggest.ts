@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, FuzzySuggestModal, MarkdownView, Notice, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
+import { App, FuzzySuggestModal, Notice, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
 import TemplaterPlugin from './main';
 
 export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {

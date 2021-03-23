@@ -1,17 +1,18 @@
-import { FileSystemAdapter, MarkdownView, normalizePath } from "obsidian";
+import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath } from "obsidian";
 import { InternalModule } from "../InternalModule";
 import { get_date_string } from "../InternalUtils";
 
 export class InternalModuleFile extends InternalModule {
-    async registerTemplates() {
-        //this.templates.set("include", FileInclude);
+    name = "file";
 
+    async registerTemplates() {
         this.templates.set("content", await this.generate_content());
         this.templates.set("creation_date", this.generate_creation_date());
         this.templates.set("folder", this.generate_folder());
         this.templates.set("last_modified_date", this.generate_last_modified_date());
         this.templates.set("path", this.generate_path());
         this.templates.set("selection", this.generate_selection());
+        this.templates.set("tags", this.generate_tags());
         this.templates.set("title", this.generate_title());
     }
 
@@ -49,6 +50,8 @@ export class InternalModuleFile extends InternalModule {
 
     generate_path() {
         return (relative: boolean = false) => {
+            // TODO: Mobile support
+            /*
             if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
                 throw new Error("app.vault is not a FileSystemAdapter instance");
             }
@@ -60,6 +63,9 @@ export class InternalModuleFile extends InternalModule {
             else {
                 return `${vault_path}/${this.file.path}`;
             }
+            */
+
+            return this.file.path;
         }
     }
 
@@ -77,6 +83,11 @@ export class InternalModuleFile extends InternalModule {
 
     generate_title() {
         return this.file.name;
+    }
+
+    generate_tags() {
+        let cache = this.app.metadataCache.getFileCache(this.file);
+        return getAllTags(cache);
     }
 
     /*

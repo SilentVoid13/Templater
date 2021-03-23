@@ -1,14 +1,14 @@
 import { App, Notice, TFile } from "obsidian";
 import * as nunjucks from "nunjucks";
-import * as Sqrl from "squirrelly";
-import * as ejs from "ejs";
+//import * as Sqrl from "squirrelly";
+//import * as ejs from "ejs";
 
 import { AbstractTemplateParser } from "src/AbstractTemplateParser";
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
 import { InternalModuleWeb } from "./web/InternalModuleWeb";
-import axios from "axios";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
+import { InternalModule } from "./InternalModule";
 
 export class InternalTemplateParser extends AbstractTemplateParser {
     env: nunjucks.Environment;
@@ -21,22 +21,17 @@ export class InternalTemplateParser extends AbstractTemplateParser {
     }
 
     async registerModules(f: TFile) {
-        let date = new InternalModuleDate(this.app, f);
-        await date.registerTemplates();
+        let modules: Array<InternalModule> = new Array();
+        modules.push(new InternalModuleDate(this.app, f));
+        modules.push(new InternalModuleFile(this.app, f));
+        modules.push(new InternalModuleWeb(this.app, f));
+        modules.push(new InternalModuleFrontmatter(this.app, f));
 
-        let file = new InternalModuleFile(this.app, f);
-        await file.registerTemplates();
+        for (let mod of modules) {
+            await mod.registerTemplates();
+            this.modules.set(mod.name, mod.generateContext());
+        }
 
-        let web = new InternalModuleWeb(this.app, f);
-        await web.registerTemplates();
-
-        let frontmatter = new InternalModuleFrontmatter(this.app, f);
-        await frontmatter.registerTemplates();
-
-        this.modules.set("date", date.generateContext());
-        this.modules.set("file", file.generateContext());
-        this.modules.set("web", web.generateContext());
-        this.modules.set("frontmatter", frontmatter.generateContext());
     }
 
     async generateContext(f: TFile) {
