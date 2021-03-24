@@ -76,7 +76,7 @@ export class InternalModuleFile extends InternalModule {
                 throw new Error("Active view is null");
             }
 
-            let editor = active_view.sourceMode.cmEditor;
+            let editor = active_view.editor;
             return editor.getSelection();
         }
     }

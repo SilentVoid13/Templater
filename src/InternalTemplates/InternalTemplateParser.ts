@@ -16,7 +16,9 @@ export class InternalTemplateParser extends AbstractTemplateParser {
 
     constructor(app: App) {
         super(app);
-        this.env = new nunjucks.Environment();
+        this.env = nunjucks.configure({
+            throwOnUndefined: false,
+        });
         this.modules = new Map();
     }
 
@@ -31,11 +33,18 @@ export class InternalTemplateParser extends AbstractTemplateParser {
             await mod.registerTemplates();
             this.modules.set(mod.name, mod.generateContext());
         }
-
     }
 
     async generateContext(f: TFile) {
-        return Object.fromEntries(this.modules);
+        return {
+            tp:
+                {
+                    ...Object.fromEntries(this.modules),
+                    // TODO: Ugly hack to be able to keep tp.cursor inside the string content
+                    // I need to find a better way
+                    cursor: "{{tp.cursor}}",
+                }
+        };
     }
 
     async parseTemplates(content: string, file: TFile) {
@@ -60,7 +69,6 @@ export class InternalTemplateParser extends AbstractTemplateParser {
         */
        let env = this.env;
 
-        console.log("content1:", content);
         let context = await this.generateContext(file);
 
         /*
@@ -73,13 +81,11 @@ export class InternalTemplateParser extends AbstractTemplateParser {
         */
 
         console.log("CONTEXT:", context);
-        console.log("ENV:", env);
-        content = env.renderString(content, {tp: context});
+        content = env.renderString(content, context);
         //content = env.renderString(content, context);
         //content = await Sqrl.render(content, context, {async: true, varName: "tp"});
         //content = await ejs.render(content, {tp: context}, {async: true});
         //content = es6Renderer(content, {template: true, local: {tp: context}});
-        console.log("content2:", content);
 
         return content;
     }

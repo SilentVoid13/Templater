@@ -19,7 +19,6 @@ export class InternalModuleWeb extends InternalModule {
         return async () => {
             // TODO: Mobile support
             let response = await this.getRequest("https://quotes.rest/qod");
-            console.log("RESPONSE:", response);
             let author = response.data.contents.quotes[0].author;
             let quote = response.data.contents.quotes[0].quote;
             let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
@@ -31,7 +30,6 @@ export class InternalModuleWeb extends InternalModule {
         return async (size?: number, query?: string) => {
             // TODO: Mobile support
             let response = await this.getRequest(`https://source.unsplash.com/random/${size}?${query}`);
-            console.log("RESPONSE:", response);
             let url = response.request.responseURL;
             return `![tp.web.random_picture](${url})`;   
         }

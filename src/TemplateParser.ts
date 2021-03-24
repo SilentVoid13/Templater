@@ -28,7 +28,7 @@ export class TemplateParser {
             throw new Error("Templater: no active view, can't append templates.");
         }
 
-        let editor = active_view.sourceMode.cmEditor;
+        let editor = active_view.editor
         let doc = editor.getDoc();
 
         let content = await this.app.vault.read(template_file);
@@ -97,9 +97,10 @@ export class TemplateParser {
         if (active_view == null) {
             return;
         }
-        let editor = active_view.sourceMode.cmEditor;
+        let editor = active_view.editor;
 
         editor.focus();
-        editor.setCursor({line: pos[0], ch: pos[1]});
+        // TODO: Replace with setCursor in next release
+        editor.setSelection({line: pos[0], ch: pos[1]});
     }
 }

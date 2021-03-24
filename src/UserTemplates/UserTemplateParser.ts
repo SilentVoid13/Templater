@@ -51,6 +51,10 @@ export class UserTemplateParser extends AbstractTemplateParser {
 
             if (content.contains(template)) {
                 try {
+                    let process_env = process.env;
+                    process_env["test"] = "test";
+                    console.log("PROCESS_ENV:", process_env);
+
                     let {stdout, stderr} = await exec_promise(cmd, {
                         timeout: this.plugin.settings.command_timeout*1000,
                         cwd: this.cwd
