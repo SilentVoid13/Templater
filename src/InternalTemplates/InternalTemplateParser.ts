@@ -6,7 +6,7 @@ import { App, TFile } from "obsidian";
 import { AbstractTemplateParser } from "AbstractTemplateParser";
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
-//import { InternalModuleWeb } from "./web/InternalModuleWeb";
+import { InternalModuleWeb } from "./web/InternalModuleWeb";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 import { InternalModule } from "./InternalModule";
 
@@ -26,7 +26,7 @@ export class InternalTemplateParser extends AbstractTemplateParser {
         let modules: Array<InternalModule> = new Array();
         modules.push(new InternalModuleDate(this.app, f));
         modules.push(new InternalModuleFile(this.app, f));
-        //modules.push(new InternalModuleWeb(this.app, f));
+        modules.push(new InternalModuleWeb(this.app, f));
         modules.push(new InternalModuleFrontmatter(this.app, f));
 
         for (let mod of modules) {

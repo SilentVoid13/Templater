@@ -25,7 +25,7 @@ export class TemplateParser {
     async replace_templates_and_append(template_file: TFile) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view == null) {
-            throw new Error("Templater: no active view, can't append templates.");
+            throw new Error("Templater: No active view, can't append templates.");
         }
 
         let editor = active_view.editor
@@ -34,21 +34,10 @@ export class TemplateParser {
         let content = await this.app.vault.read(template_file);
         content = await this.replace_templates(content, active_view.file);
         
-        let rel_pos = await this.get_cursor_location(content);
-        if (rel_pos) {
-            content = content.replace(new RegExp(TP_CURSOR, "g"), "");
-        }
-        let current_pos = doc.getCursor();
-
         doc.replaceSelection(content);
+        await active_view.save();
 
-        if (rel_pos) {
-            if (rel_pos.line == 0) {
-                rel_pos.ch += current_pos.ch;
-            }
-            rel_pos.line += current_pos.line;
-            await this.set_cursor_location(rel_pos);
-        }
+        this.jump_to_next_cursor_location();
         editor.focus();
     }
 
@@ -57,23 +46,34 @@ export class TemplateParser {
 
         let new_content = await this.replace_templates(content, file);
         if (new_content !== content) {
-            let pos = await this.get_cursor_location(new_content);
-            if (pos) {
-                new_content = new_content.replace(new RegExp(TP_CURSOR, "g"), "");
-            }
-
             await this.app.vault.modify(file, new_content);
             
-            if (pos) {
-                await this.set_cursor_location(pos);
+            if (this.app.workspace.getActiveFile() === file) {
+                await this.jump_to_next_cursor_location();
             }
         }
     }
 
-    async get_cursor_location(content: string) {
+    async jump_to_next_cursor_location() {
+        let active_file = this.app.workspace.getActiveFile();
+        if (!active_file) {
+            return;
+        }
+
+        let content = await this.app.vault.read(active_file);
+        let pos = this.get_cursor_position(content);
+        if (pos) {
+            content = content.replace(new RegExp(TP_CURSOR), "");
+            this.set_cursor_location(pos);
+            await this.app.vault.modify(active_file, content);
+        }
+    }
+
+    get_cursor_position(content: string): EditorPosition {
         let pos: EditorPosition = null;
-        let index = content.indexOf(TP_CURSOR)
-        if (index !== -1) {
+        let index = content.indexOf(TP_CURSOR);
+
+        if (index != -1) {
             let substr = content.substr(0, index);
 
             let l = 0;
@@ -83,13 +83,14 @@ export class TemplateParser {
             offset += 1;
 
             let ch = content.substr(offset, index-offset).length;
+
             pos = {line: l, ch: ch};
         }
         return pos;
     }
 
-    async set_cursor_location(pos: EditorPosition) {
-        if (Object.keys(pos).length === 0) {
+    set_cursor_location(pos: EditorPosition) {
+        if (!pos) {
             return;
         }
 

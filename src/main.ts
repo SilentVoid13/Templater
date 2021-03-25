@@ -13,7 +13,7 @@ export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
 	public parser: TemplateParser
 
-	async onload() {		
+	async onload() {
 		await this.loadSettings();
 
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
@@ -50,6 +50,20 @@ export default class TemplaterPlugin extends Plugin {
 				this.replace_in_active_file();
             },
         });
+
+		this.addCommand({
+			id: "jump-to-next-cursor-location",
+			name: "Jump to next cursor location",
+			hotkeys: [
+				{
+					modifiers: ["Alt"],
+					key: "Tab",
+				},
+			],
+			callback: () => {
+				this.parser.jump_to_next_cursor_location();
+			}
+		});
 
 		this.app.workspace.on("layout-ready", () => {
 			// TODO: Find a way to not trigger this on files copy
