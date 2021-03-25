@@ -15,32 +15,103 @@ Templater is automatically triggered on new files creation. This means Templater
 
 ### Internal Templates
 
-Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp.` and are placed between double braces like so `{{tp.<name>}}`. This is to recognize them and to avoid conflicts with user defined templates.
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp.` and are placed between double braces like so `{{}}`. This is to recognize them and to avoid conflicts with user defined templates.
 
-Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. 
+Internal templates are sorted by modules, and each modules have different templates. The existing modules are:
 
-If your argument value contains a special character (`,` or `=`) you can add quotes around your argument value like so: `<argument_name>="<argument_value>"`. If you want to use a quote inside quotes, you can escape it like so: `\"`.
+- Date module
+- File module
+- Frontmatter
+- Web module
+
+You can call an internal template using the following structure `tp.<module_name>.<template_name>`
+
+Internal templates accept user arguments, you pass argument to a template the same way you do with functions: `{{tp.<module_name>.<template_name>(arg1, arg2, arg3, ...)}}`. 
 
 I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_TEMPLATES.md) for more informations).
 
+### Internal Modules
+
+#### Date module
+
+This module contains every templates related to dates.
+
+| Internal Template                                            | Arguments                                                    | Description                | Example Output |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------- | -------------- |
+| `tp.date.now(format?: string, offset?: number, reference?: string, reference_format?: string)` | - `format` (optional): Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`)<br />- `offset` (optional): Offset for the day, e.g. set this to `-7` to get last week's date.<br />- `reference` (optional): The date referential, e.g: set this to the daily note's title<br />- `reference_format` (optional): The date reference format. | Retrieves the date.        | `2021-01-15`   |
+| `tp.date.tomorrow(format?: string)`                          | - `format` (optional): Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`) | Retrieves tomorrow's date  | `2020-11-07`   |
+| `tp.date.yesterday(format?: string)`                         | - `format` (optional): Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`) | Retrieves yesterday's date | `2020-11-07`   |
+
+##### Examples
+
+```javascript
+{{tp.date.now()}}
+{{tp.date.tomorrow()}}
+{{tp.date.yesterday()}}
+```
+
+#### File Module
+
+This module contains every templates related to obsidian files.
+
+| Internal Template                             | Arguments                                                    | Description                                                  | Example Output              |
+| --------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- |
+| `tp.file.content`                             | None                                                         | Retrieves the file's content                                 | `This is some content`      |
+| `tp.file.creation_date(format?: string)`      | - `format` (optional): Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`) | Retrieves the file's creation date.                          | `2021-01-06 20:27`          |
+| `tp.file.cursor`                              | None                                                         | Sets the cursor to this location after the template has been inserted. You can navigate between the different `tp.file.cursor` using the configured hotkey in obsidian settings. | None                        |
+| `tp.file.folder(relative: boolean)`           | - `relative` (optional): If `true`, appends the vault relative path to the folder name. | Retrieve's the file's folder name.                           | `Permanent Notes`           |
+| `tp.file.last_modified_date(format?: string)` | - `format` (optional): Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`) | Retrieves the file's last modification date.                 | `2021-01-06 20:27`          |
+| `tp.file.path(relative: boolean)`             | - `relative` (optional): If `true`, only retrieves the vault relative path. | Retrieves the file's absolute path on the system.            | `/path/to/file`             |
+| `tp.file.selection()`                         | None                                                         | Retrieve's the active file text selection.                   | `Some selected text`        |
+| `tp.file.tags`                                | None                                                         | Retrieve's the file's tags (comma separated)                 | `#note,#seedling,#obsidian` |
+| `tp.file.title`                               | None                                                         | Retrieve's the file's title.                                 | `MyFile`                    |
+
+##### Examples
+
+```
+
+```
+
+#### Frontmatter module
+
+This modules exposes all the frontmatter variables of a file.
+
+| Internal Template                | Arguments | Description                                      | Example Output |
+| -------------------------------- | --------- | ------------------------------------------------ | -------------- |
+| `tp.frontmatter.<variable_name>` | None      | Retrieves the file's frontmatter variable value. | `value`        |
+
+##### Examples
+
+Let's say you have the following file:
+
+````
+---
+alias: myfile
+---
+
+file content
+````
+
+Then you can use the following template:
+
+````
+{{tp.frontmatter.alias}}
+````
+
+#### Web module
+
+This modules contains every template related to the web (making web requests).
+
+| Internal Template                                      | Arguments                                                    | Description                                                  | Example Output                                               |
+| ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `tp.web.daily_quote`                                   | None                                                         | Retrieves and parses the daily quote from the API https://quotes.rest/ |                                                              |
+| `tp.web.random_picture(size?: number, query?: string)` | - `size`: Image size in the format `<width>x<height>`(default: `1600x900`).<br />- `query`: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`. | Gets a random image from https://unsplash.com/               | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+
+
+
 | Internal Template            | Arguments   | Description                                                  | Example Output                                               |
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `{{tp_title}}`        | None    | Retrieves the active file name.                              | `MyFile`                                                     |
-| `{{tp_folder}}` | - `vault_path`: Appends the vault relative path to the folder name. Takes `true` or `false` as a value (default: `false`). | Retrieves the folder name in which the active file is. | `Permanent Notes` |
 | `{{tp_include}}` | - `f`: The relative path from the vault root of the file to include. | Includes the file content. This file can be another template file, templates will be resolved recursively (Max inclusion depth: `10`) | `My header for all files` |
-| `{{tp_date}}` | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`).<br />- `offset`: Offset for the day, for example you can set this to `-7` to get last week's date (default: `0`). | Retrieves today's date + the date offset argument if given | `2021-01-15` |
-| `{{tp_yesterday}}`    | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves yesterday's date.      | `2020-11-05`                                                 |
-| `{{tp_tomorrow}}`     | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). | Retrieves tomorrow's date in the  format.        | `2020-11-07`                                                 |
-| `{{tp_time}}` | - `f`: Format for the time, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `HH:mm`). | Retrieves the current time. | `08:36` |
-| `{{tp_creation_date}}` | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Gets the creation date of the active file. | `2021-01-06 20:27` |
-| `{{tp_last_modif_date}}` | - `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Gets the last modification date of the active file. | `2020-11-08 12:31` |
-| `{{tp_title_date}}` | - `title_f`: Date format of the title, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). You want this argument to be the same as the daily note core plugin format setting.<br />- `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`).<br />- `offset`: Offset for the day, for example you can set this to `-7` to get the date minus 7 days (default: `0`). | Retrieves the date from the file's title date referential + the date offset argument if given. This template isn't compatible with all the plugins. | `2021-01-16` |
-| `{{tp_title_yesterday}}` | - `title_f`: Date format of the title, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). You want this argument to be the same as the daily note core plugin format setting.<br />- `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Retrieves yesterday's date from the file's title date referential. This template isn't compatible with all the plugins. | `2021-01-08` |
-| `{{tp_title_tomorrow}}` | - `title_f`: Date format of the title, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD`). You want this argument to be the same as the daily note core plugin format setting.<br />- `f`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) (default: `YYYY-MM-DD HH:mm`). | Retrieves tomorrow's date from the file's title date referential. This template isn't compatible with all the plugins. | `2021-01-10` |
-| `{{tp_daily_quote}}`  | None | Retrieves and parses the daily quote from the API https://quotes.rest/. | ![templater_daily_quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
-| `{{tp_random_picture}}` | - `size`: Image size in the format `<width>x<height>`(default: `1600x900`).<br />- `query`: Limit selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` (don't forget to add quotes around the whole argument value) (default: `None`). | Gets a random image from https://unsplash.com/. | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
-| `{{tp_title_picture}}` | - `size`: Image size in the format `<width>x<height> ` (default: `1600x900`). | Gets an image from https://unsplash.com/ based on the note title. | `![title_image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
-| `{{tp_cursor}}` | None | This will set the cursor to this location after the template has been inserted. | None |
 
 ### User templates
 
@@ -88,6 +159,11 @@ You can set a timeout for your custom commands with the `Timeout` option. A comm
 After disabling Safe Mode, you can find third-party plugins in Settings > Third-party plugin > Community plugins > Browse > Search for "Templater".
 
 After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect. You can also uninstall them there.
+
+## Alternatives
+
+- https://github.com/garyng/obsidian-temple
+- https://github.com/avirut/obsidian-metatemplates
 
 ## Contributing
 
