@@ -1,6 +1,6 @@
-import { AbstractTemplateParser } from "src/AbstractTemplateParser";
-import { InternalTemplateParser } from "src/InternalTemplates/InternalTemplateParser"
-import TemplaterPlugin from "src/main";
+import { AbstractTemplateParser } from "AbstractTemplateParser";
+import { InternalTemplateParser } from "InternalTemplates/InternalTemplateParser"
+import TemplaterPlugin from "main";
 import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
 
 export class UserTemplateParser extends AbstractTemplateParser {

@@ -1,4 +1,4 @@
-import { App, MarkdownView, TFile } from "obsidian";
+import { App, EditorPosition, MarkdownView, TFile } from "obsidian";
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
@@ -35,18 +35,18 @@ export class TemplateParser {
         content = await this.replace_templates(content, active_view.file);
         
         let rel_pos = await this.get_cursor_location(content);
-        if (rel_pos.length !== 0) {
+        if (rel_pos) {
             content = content.replace(new RegExp(TP_CURSOR, "g"), "");
         }
         let current_pos = doc.getCursor();
 
         doc.replaceSelection(content);
 
-        if (rel_pos.length !== 0) {
-            if (rel_pos[0] == 0) {
-                rel_pos[1] += current_pos["ch"];
+        if (rel_pos) {
+            if (rel_pos.line == 0) {
+                rel_pos.ch += current_pos.ch;
             }
-            rel_pos[0] += current_pos["line"];
+            rel_pos.line += current_pos.line;
             await this.set_cursor_location(rel_pos);
         }
         editor.focus();
@@ -58,20 +58,20 @@ export class TemplateParser {
         let new_content = await this.replace_templates(content, file);
         if (new_content !== content) {
             let pos = await this.get_cursor_location(new_content);
-            if (pos.length !== 0) {
+            if (pos) {
                 new_content = new_content.replace(new RegExp(TP_CURSOR, "g"), "");
             }
 
             await this.app.vault.modify(file, new_content);
             
-            if (pos.length !== 0) {
+            if (pos) {
                 await this.set_cursor_location(pos);
             }
         }
     }
 
     async get_cursor_location(content: string) {
-        let pos = Array();
+        let pos: EditorPosition = null;
         let index = content.indexOf(TP_CURSOR)
         if (index !== -1) {
             let substr = content.substr(0, index);
@@ -83,12 +83,12 @@ export class TemplateParser {
             offset += 1;
 
             let ch = content.substr(offset, index-offset).length;
-            pos = [l, ch];
+            pos = {line: l, ch: ch};
         }
         return pos;
     }
 
-    async set_cursor_location(pos: Array<number>) {
+    async set_cursor_location(pos: EditorPosition) {
         if (Object.keys(pos).length === 0) {
             return;
         }
@@ -101,6 +101,6 @@ export class TemplateParser {
 
         editor.focus();
         // TODO: Replace with setCursor in next release
-        editor.setSelection({line: pos[0], ch: pos[1]});
+        editor.setSelection(pos);
     }
 }

@@ -1,6 +1,7 @@
-import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath } from "obsidian";
 import { InternalModule } from "../InternalModule";
 import { get_date_string } from "../InternalUtils";
+
+import { getAllTags, MarkdownView } from "obsidian";
 
 export class InternalModuleFile extends InternalModule {
     name = "file";
@@ -71,6 +72,8 @@ export class InternalModuleFile extends InternalModule {
 
     generate_selection() {
         return () => {
+            let t = new MarkdownView(null);
+            /*
             let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
                 throw new Error("Active view is null");
@@ -78,6 +81,7 @@ export class InternalModuleFile extends InternalModule {
 
             let editor = active_view.editor;
             return editor.getSelection();
+            */
         }
     }
 
@@ -86,8 +90,10 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_tags() {
+        /*
         let cache = this.app.metadataCache.getFileCache(this.file);
         return getAllTags(cache);
+        */
     }
 
     /*

@@ -1,8 +1,8 @@
 import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 
-import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from './Settings';
-import { TemplaterFuzzySuggestModal } from './TemplaterFuzzySuggest';
-import { TemplateParser } from './TemplateParser';
+import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
+import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
+import { TemplateParser } from 'TemplateParser';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
