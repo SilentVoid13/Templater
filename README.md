@@ -2,10 +2,10 @@
 
 This plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
 
-- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template keyword and a pre-defined replacement output. For example `{{tp_title}}` will be replaced with the name of the active file. A complete list of all the internal templates is given below.
-- [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output
+- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template keyword and a pre-defined replacement output. For example `{{tp.file.title}}` will be replaced with the name of the file. A complete list of all the internal templates is given below.
+- [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output.
 
-Templater will automatically be triggered on new file creation. This means Templater will work well with the core Daily Note or the [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin.
+Templater is automatically triggered on new files creation. This means Templater works well with the core Daily Note or the [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin.
 
 ## Demonstration
 
@@ -15,13 +15,13 @@ Templater will automatically be triggered on new file creation. This means Templ
 
 ### Internal Templates
 
-Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp_` and are placed between double braces like so `{{tp_<name>}}`. This is to recognize them and to avoid conflicts with user defined templates.
+Here is the list of all of the internal templates that are built within this plugin. All internal template patterns are prefixed with the keyword `tp.` and are placed between double braces like so `{{tp.<name>}}`. This is to recognize them and to avoid conflicts with user defined templates.
 
 Internal templates accept user arguments, they should be passed like so: `{{<template_name>:<argument_name1>=<argument_value1>,<argument_name2>=<argument_value2>}}`. 
 
 If your argument value contains a special character (`,` or `=`) you can add quotes around your argument value like so: `<argument_name>="<argument_value>"`. If you want to use a quote inside quotes, you can escape it like so: `\"`.
 
-I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for more informations).
+I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_TEMPLATES.md) for more informations).
 
 | Internal Template            | Arguments   | Description                                                  | Example Output                                               |
 | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -52,18 +52,11 @@ The left input field defines the template pattern. I strongly suggest placing th
 
 The right input field defines the system command that will be run. The output of the command will replace the template pattern in your template files. The command will be run as if it was in a shell, so you can chain commands, pipe them, etc. The current working directory for the shell is the vault root. You can define multiple commands for the same template pattern, you just have to separate the commands with a newline.
 
-##### Internal Command Templates
+##### Internal Templates in User Templates
 
-You can also use some Internal command templates inside your commands. The command template will be replaced before your command gets executed.
+You can also use some Internal templates inside your commands. The internal template will be replaced before your command gets executed.
 
-I invite everyone to contribute to this plugin development by adding new internal command templates. (Check [INTERNAL_COMMAND_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_COMMAND_TEMPLATES.md) for more informations).
-
-Here is the complete list of all the available internal command templates:
-
-| Internal Command Template | Description                        | Example Output            |
-| ------------------------- | ---------------------------------- | ------------------------- |
-| `{{note_title}}`          | Retrieves the active file name.    | `MyFile`                  |
-| `{{note_content}}`        | Retrieves the active file content. | `This is my note content` |
+For example, the command `cat tp.file.path` will be replaced with `cat /path/to/file`.
 
 ##### 2. Create template files
 
@@ -86,9 +79,9 @@ You can now choose your template file created in **step 2**. It will then automa
 
 ## Settings
 
-You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
+You can set a `Template folder location` to tell Templater to only check this folder for templates.
 
-You set your locale in the settings, so the dates used in internal templates are formatted according to your language (e.g. `Montag` instead of `Monday` in german).
+You can set a timeout for your custom commands with the `Timeout` option. A command that takes longer than what you defined will be canceled and considered as a command failure.
 
 ## Installation
 
@@ -96,15 +89,11 @@ After disabling Safe Mode, you can find third-party plugins in Settings > Third-
 
 After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect. You can also uninstall them there.
 
-#### Updates
-
-You can follow the same procedure as installation to update the plugin once installed.
-
 ## Contributing
 
 Feel free to contribute.
 
-Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/INTERNAL_TEMPLATES.md) for informations on how to develop a new internal template.
+Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_TEMPLATES.md) for informations on how to develop a new internal template.
 
 You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to report a bug, suggest an improvement for this plugin, etc.
 
