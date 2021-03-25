@@ -1,7 +1,9 @@
+import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
+import * as nunjucks from "nunjucks";
+
 import { AbstractTemplateParser } from "AbstractTemplateParser";
 import { InternalTemplateParser } from "InternalTemplates/InternalTemplateParser"
 import TemplaterPlugin from "main";
-import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
 
 export class UserTemplateParser extends AbstractTemplateParser {
     cwd: string;
@@ -28,7 +30,38 @@ export class UserTemplateParser extends AbstractTemplateParser {
         }
     }
 
+    async registerUserTemplates(file: TFile) {
+        let user_templates = new Map();
+        const child_process = await import("child_process");
+        const util = await import("util");
+        const exec_promise = util.promisify(child_process.exec);
+
+        for (let [template, cmd] of this.plugin.settings.templates_pairs) {
+            // TODO
+            //cmd = await this.internalTemplateParser.parseTemplates(cmd, file);
+
+            user_templates.set(template, async (): Promise<string> => {
+                let {stdout, stderr} = await exec_promise(cmd);
+                return stdout;
+            })
+        }
+
+        return user_templates;
+    }
+
+    async generateContext(file: TFile) {
+        /*
+        return {
+            tp: {
+                user: Object.fromEntries(await this.registerUserTemplates(file))
+            }
+        };
+        */
+       return Object.fromEntries(await this.registerUserTemplates(file));
+    }
+
     async parseTemplates(content: string, file: TFile) {
+        /*
         let child_process = require("child_process");
         if (child_process === undefined) {
             throw new Error("nodejs child_process loading failure.");
@@ -46,7 +79,7 @@ export class UserTemplateParser extends AbstractTemplateParser {
             if (template === "" || cmd === "") {
                 continue;
             }
-            
+
             cmd = await this.internalTemplateParser.parseTemplates(cmd, file);
 
             if (content.contains(template)) {
@@ -71,6 +104,11 @@ export class UserTemplateParser extends AbstractTemplateParser {
                 }
             }
         }
+        */
+
+        let context = await this.generateContext(file);
+        console.log("USER_CONTEXT:", context);
+        content = nunjucks.renderString(content, context);
 
         return content;
     }

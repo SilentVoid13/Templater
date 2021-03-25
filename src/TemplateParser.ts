@@ -1,4 +1,6 @@
 import { App, EditorPosition, MarkdownView, TFile } from "obsidian";
+import * as nunjucks from "nunjucks";
+
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
@@ -8,23 +10,54 @@ const TP_CURSOR = "{{tp.cursor}}";
 export class TemplateParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
+    env: nunjucks.Environment;
     
     constructor(private app: App, plugin: TemplaterPlugin) {
         this.internalTemplateParser = new InternalTemplateParser(this.app);
         this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, plugin, this.internalTemplateParser);
+
+        this.env = nunjucks.configure({
+            web: {
+                async: true,
+            }
+        })
+    }
+
+    async generateContext(file: TFile) {
+        let internal_context = await this.internalTemplateParser.generateContext(file);
+        let user_context = {};
+        if (this.userTemplateParser) {
+            user_context = await this.userTemplateParser.generateContext(file);
+        }
+
+        return {
+            tp: {
+                ...internal_context,
+                user: {
+                    ...user_context
+                }
+            }
+        }
     }
 
     async replace_templates(content: string, file: TFile) {
+        let context = await this.generateContext(file);
+
+        console.log("GLOBAL_CONTEXT:", context);
+        content = await this.env.renderString(content, context);
+
+        /*
         content = await this.internalTemplateParser.parseTemplates(content, file);
         if (this.userTemplateParser) {
             content = await this.userTemplateParser.parseTemplates(content, file);        
         }
+        */
         return content;
     }
 
     async replace_templates_and_append(template_file: TFile) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view == null) {
+        if (active_view === null) {
             throw new Error("Templater: No active view, can't append templates.");
         }
 
@@ -73,7 +106,7 @@ export class TemplateParser {
         let pos: EditorPosition = null;
         let index = content.indexOf(TP_CURSOR);
 
-        if (index != -1) {
+        if (index !== -1) {
             let substr = content.substr(0, index);
 
             let l = 0;
@@ -95,7 +128,7 @@ export class TemplateParser {
         }
 
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view == null) {
+        if (active_view === null) {
             return;
         }
         let editor = active_view.editor;

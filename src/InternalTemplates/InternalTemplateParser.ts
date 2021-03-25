@@ -36,6 +36,7 @@ export class InternalTemplateParser extends AbstractTemplateParser {
     }
 
     async generateContext(f: TFile) {
+        /*
         return {
             tp:
                 {
@@ -45,11 +46,13 @@ export class InternalTemplateParser extends AbstractTemplateParser {
                     cursor: "{{tp.cursor}}",
                 }
         };
+        */
+
+       await this.registerModules(f);
+       return Object.fromEntries(this.modules);
     }
 
     async parseTemplates(content: string, file: TFile) {
-        await this.registerModules(file);
-
         /*
         let callback_test = (err, res) => {
             console.log("err:", err);
