@@ -2,7 +2,7 @@ import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
-import { TemplateParser } from 'TemplateParser';
+import { ContextMode, TemplateParser } from 'TemplateParser';
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -18,6 +18,8 @@ export default class TemplaterPlugin extends Plugin {
 
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 		this.parser = new TemplateParser(this.app, this);
+
+		this.registerMarkdownPostProcessor((el, ctx) => this.dynamic_templates_processor(el, ctx));
 
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
 			this.fuzzySuggest.start();
@@ -111,6 +113,18 @@ export default class TemplaterPlugin extends Plugin {
 		}
 		else {
 			new Notice(`Templater Error: ${msg}`);
+		}
+	}
+
+	async dynamic_templates_processor(el: HTMLElement, ctx: any) {
+		if (el.textContent.contains("tp.dynamic")) {
+			let new_html = await this.parser.parseTemplates(
+				el.innerHTML, 
+				this.app.workspace.getActiveFile(), 
+				ContextMode.DYNAMIC
+			);
+
+			el.innerHTML = new_html;
 		}
 	}
 }

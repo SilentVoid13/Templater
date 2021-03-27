@@ -4,15 +4,18 @@ import * as nunjucks from "nunjucks";
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
+import { TParser } from "TParser";
 
 const TP_CURSOR = "{{tp.cursor}}";
 
-export abstract class Parser {
-    constructor(public app: App) {}
-    abstract generateContext(file: TFile): Promise<any>;
-}
+export enum ContextMode {
+    USER,
+    INTERNAL,
+    USER_INTERNAL,
+    DYNAMIC,
+};
 
-export class TemplateParser extends Parser {
+export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
     env: nunjucks.Environment;
@@ -29,27 +32,56 @@ export class TemplateParser extends Parser {
         })
     }
 
-    async generateContext(file: TFile) {
+    async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
+        let context = {};
         let internal_context = await this.internalTemplateParser.generateContext(file);
-        let user_context = {};
-        if (this.userTemplateParser) {
-            user_context = await this.userTemplateParser.generateContext(file);
+        let user_context = {}
+
+        switch (context_mode) {
+            case ContextMode.USER:
+                if (this.userTemplateParser) {
+                    user_context = await this.userTemplateParser.generateContext(file);
+                }
+                context = {
+                    user: {
+                        ...user_context
+                    }
+                };
+                break;
+            case ContextMode.INTERNAL:
+                context = internal_context;
+                break;
+            case ContextMode.DYNAMIC:
+                context = {
+                    dynamic: {
+                        ...internal_context
+                    }
+                };
+                break;
+            case ContextMode.USER_INTERNAL:
+                if (this.userTemplateParser) {
+                    user_context = await this.userTemplateParser.generateContext(file);
+                }
+                context = {
+                    ...internal_context,
+                    user: {
+                        ...user_context
+                    }
+                };
+                break;
         }
 
         return {
             tp: {
-                ...internal_context,
-                user: {
-                    ...user_context
-                }
+                ...context
             }
-        }
+        };
     }
 
-    async parseTemplates(content: string, file: TFile) {
-        let context = await this.generateContext(file);
-
+    async parseTemplates(content: string, file: TFile, context_mode: ContextMode) {
+        let context = await this.generateContext(file, context_mode);
         console.log("GLOBAL_CONTEXT:", context);
+
         content = await this.env.renderString(content, context);
 
         return content;
@@ -58,14 +90,14 @@ export class TemplateParser extends Parser {
     async replace_templates_and_append(template_file: TFile) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
-            throw new Error("Templater: No active view, can't append templates.");
+            throw new Error("No active view, can't append templates.");
         }
 
-        let editor = active_view.editor
+        let editor = active_view.editor;
         let doc = editor.getDoc();
 
         let content = await this.app.vault.read(template_file);
-        content = await this.parseTemplates(content, active_view.file);
+        content = await this.parseTemplates(content, active_view.file, ContextMode.USER_INTERNAL);
         
         doc.replaceSelection(content);
         await active_view.save();
@@ -77,7 +109,7 @@ export class TemplateParser extends Parser {
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
 
-        let new_content = await this.parseTemplates(content, file);
+        let new_content = await this.parseTemplates(content, file, ContextMode.USER_INTERNAL);
         if (new_content !== content) {
             await this.app.vault.modify(file, new_content);
             

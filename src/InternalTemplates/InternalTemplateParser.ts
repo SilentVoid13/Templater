@@ -1,16 +1,14 @@
 import * as nunjucks from "nunjucks";
 import { App, TFile } from "obsidian";
-//import * as Sqrl from "squirrelly";
-//import * as ejs from "ejs";
 
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
 import { InternalModuleWeb } from "./web/InternalModuleWeb";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 import { InternalModule } from "./InternalModule";
-import { Parser } from "TemplateParser";
+import { TParser } from "TParser";
 
-export class InternalTemplateParser extends Parser {
+export class InternalTemplateParser extends TParser {
     env: nunjucks.Environment;
 
     constructor(app: App) {
