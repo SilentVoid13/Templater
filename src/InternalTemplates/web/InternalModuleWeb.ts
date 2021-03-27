@@ -5,8 +5,8 @@ export class InternalModuleWeb extends InternalModule {
     name = "web";
 
     async generateTemplates() {
-        this.templates.set("random_picture", this.generate_random_picture());
         this.templates.set("daily_quote", this.generate_daily_quote());
+        this.templates.set("random_picture", this.generate_random_picture());
         this.templates.set("request", this.generate_request());
     }
 

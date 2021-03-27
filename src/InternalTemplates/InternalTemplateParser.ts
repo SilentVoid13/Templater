@@ -36,6 +36,11 @@ export class InternalTemplateParser extends TParser {
 
     async generateContext(f: TFile) {
        let modules = await this.generateModules(f);
-       return Object.fromEntries(modules);
+
+       return {
+           // Ugly hack to prevent nunjucks to output empty string
+           cursor: "{{tp.cursor}}",
+           ...Object.fromEntries(modules),
+       };
     }
 }

@@ -17,6 +17,16 @@ export class InternalModuleFile extends InternalModule {
         this.templates.set("title", this.generate_title());
     }
 
+    async generate_content() {
+        return await this.app.vault.read(this.file);
+    }
+
+    generate_creation_date() {
+        return (format?: string) => {
+            return get_date_string(format, undefined, this.file.stat.ctime);
+        }
+    }
+
     generate_folder() {
         return (relative: boolean = false) => {
             let parent = this.file.parent;
@@ -33,19 +43,9 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    async generate_content() {
-        return await this.app.vault.read(this.file);
-    }
-
     generate_last_modified_date() {
         return (format?: string): string => {
                 return get_date_string(format, undefined, this.file.stat.mtime);
-        }
-    }
-
-    generate_creation_date() {
-        return (format?: string) => {
-            return get_date_string(format, undefined, this.file.stat.ctime);
         }
     }
 
@@ -82,13 +82,13 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_title() {
-        return this.file.name;
-    }
-
     generate_tags() {
         let cache = this.app.metadataCache.getFileCache(this.file);
         return getAllTags(cache);
+    }
+
+    generate_title() {
+        return this.file.name;
     }
 
     /*

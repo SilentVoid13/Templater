@@ -63,7 +63,12 @@ export default class TemplaterPlugin extends Plugin {
 				},
 			],
 			callback: () => {
-				this.parser.jump_to_next_cursor_location();
+				try {
+					this.parser.jump_to_next_cursor_location();
+				}
+				catch(error) {
+					this.log_error(error);
+				}
 			}
 		});
 
