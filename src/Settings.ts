@@ -27,7 +27,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		let link = document.createElement("a");
 		link.href = "https://github.com/SilentVoid13/Templater#internal-templates";
 		link.text = "here";
-		fragment.textContent = `Click ${link} to get a list of all the available internal templates`;
+		fragment.append("Click ");
+		fragment.append(link);
+		fragment.append(" to get a list of all the available internal templates.");
 
 		new Setting(containerEl)
 			.setName("Template folder location")
