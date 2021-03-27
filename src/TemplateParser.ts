@@ -103,7 +103,7 @@ export class TemplateParser extends TParser {
         doc.replaceSelection(content);
         await active_view.save();
 
-        this.jump_to_next_cursor_location();
+        await this.jump_to_next_cursor_location();
         editor.focus();
     }
 
@@ -121,17 +121,20 @@ export class TemplateParser extends TParser {
     }
 
     async jump_to_next_cursor_location() {
-        let active_file = this.app.workspace.getActiveFile();
-        if (!active_file) {
-            return;
+        let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (active_view === null) {
+            throw new Error("No active view, can't append templates.");
         }
+        let active_file = active_view.file;
+        await active_view.save();
 
         let content = await this.app.vault.read(active_file);
+
         let pos = this.get_cursor_position(content);
         if (pos) {
             content = content.replace(new RegExp(TP_CURSOR), "");
-            this.set_cursor_location(pos);
             await this.app.vault.modify(active_file, content);
+            this.set_cursor_location(pos);
         }
     }
 
