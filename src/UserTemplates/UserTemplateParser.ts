@@ -1,24 +1,26 @@
 import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
 import * as nunjucks from "nunjucks";
+import { exec } from "child_process";
+import { promisify } from "util";
 
-import { AbstractTemplateParser } from "AbstractTemplateParser";
-import { InternalTemplateParser } from "InternalTemplates/InternalTemplateParser"
 import TemplaterPlugin from "main";
+import { Parser, TemplateParser } from "TemplateParser";
 
-export class UserTemplateParser extends AbstractTemplateParser {
+export class UserTemplateParser extends Parser {
     cwd: string;
+    cmd_options: any;
 
-    constructor(app: App, private plugin: TemplaterPlugin, private internalTemplateParser: InternalTemplateParser) {
+    constructor(app: App, private plugin: TemplaterPlugin, private template_parser: TemplateParser) {
         super(app);
         this.resolveCwd();        
     }
 
-    static createUserTemplateParser(app: App, plugin: TemplaterPlugin, internalTemplateParser: InternalTemplateParser): UserTemplateParser {
+    static createUserTemplateParser(app: App, plugin: TemplaterPlugin, template_parser: TemplateParser): UserTemplateParser {
         // TODO: Maybe find a better way to check for this
         if (require("child_process") === undefined) {
             return undefined;
         }
-        return new UserTemplateParser(app, plugin, internalTemplateParser);
+        return new UserTemplateParser(app, plugin, template_parser);
     }
 
     resolveCwd() {
@@ -30,19 +32,30 @@ export class UserTemplateParser extends AbstractTemplateParser {
         }
     }
 
-    async registerUserTemplates(file: TFile) {
+    async generateUserTemplates(file: TFile) {
         let user_templates = new Map();
-        const child_process = await import("child_process");
-        const util = await import("util");
-        const exec_promise = util.promisify(child_process.exec);
+        const exec_promise = promisify(exec);
+
+        let cmd_options = {
+            timeout: this.plugin.settings.command_timeout,
+            cwd: this.cwd,
+        }
 
         for (let [template, cmd] of this.plugin.settings.templates_pairs) {
-            // TODO
-            //cmd = await this.internalTemplateParser.parseTemplates(cmd, file);
+            if (template === "" || cmd === "") {
+                continue;
+            }
+
+            cmd = await this.template_parser.parseTemplates(cmd, file);
 
             user_templates.set(template, async (): Promise<string> => {
-                let {stdout, stderr} = await exec_promise(cmd);
-                return stdout;
+                try {
+                    let {stdout, stderr} = await exec_promise(cmd, cmd_options);
+                    return stdout;
+                }
+                catch(error) {
+                    this.plugin.log_error(`Error with User Template ${template}`, error);
+                }
             })
         }
 
@@ -50,14 +63,8 @@ export class UserTemplateParser extends AbstractTemplateParser {
     }
 
     async generateContext(file: TFile) {
-        /*
-        return {
-            tp: {
-                user: Object.fromEntries(await this.registerUserTemplates(file))
-            }
-        };
-        */
-       return Object.fromEntries(await this.registerUserTemplates(file));
+        let user_templates = await this.generateUserTemplates(file);
+        return Object.fromEntries(user_templates);
     }
 
     async parseTemplates(content: string, file: TFile) {

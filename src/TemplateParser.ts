@@ -7,14 +7,20 @@ import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
 
 const TP_CURSOR = "{{tp.cursor}}";
 
-export class TemplateParser {
+export abstract class Parser {
+    constructor(public app: App) {}
+    abstract generateContext(file: TFile): Promise<any>;
+}
+
+export class TemplateParser extends Parser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
     env: nunjucks.Environment;
     
-    constructor(private app: App, plugin: TemplaterPlugin) {
+    constructor(app: App, plugin: TemplaterPlugin) {
+        super(app);
         this.internalTemplateParser = new InternalTemplateParser(this.app);
-        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, plugin, this.internalTemplateParser);
+        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, plugin, this);
 
         this.env = nunjucks.configure({
             web: {
@@ -40,18 +46,12 @@ export class TemplateParser {
         }
     }
 
-    async replace_templates(content: string, file: TFile) {
+    async parseTemplates(content: string, file: TFile) {
         let context = await this.generateContext(file);
 
         console.log("GLOBAL_CONTEXT:", context);
         content = await this.env.renderString(content, context);
 
-        /*
-        content = await this.internalTemplateParser.parseTemplates(content, file);
-        if (this.userTemplateParser) {
-            content = await this.userTemplateParser.parseTemplates(content, file);        
-        }
-        */
         return content;
     }
 
@@ -65,7 +65,7 @@ export class TemplateParser {
         let doc = editor.getDoc();
 
         let content = await this.app.vault.read(template_file);
-        content = await this.replace_templates(content, active_view.file);
+        content = await this.parseTemplates(content, active_view.file);
         
         doc.replaceSelection(content);
         await active_view.save();
@@ -77,7 +77,7 @@ export class TemplateParser {
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
 
-        let new_content = await this.replace_templates(content, file);
+        let new_content = await this.parseTemplates(content, file);
         if (new_content !== content) {
             await this.app.vault.modify(file, new_content);
             

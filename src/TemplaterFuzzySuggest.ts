@@ -23,10 +23,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
 
             let template_folder = this.app.vault.getAbstractFileByPath(template_folder_str);
             if (!template_folder) {
-                throw new Error(template_folder_str + " folder doesn't exist");
+                throw new Error(`${template_folder_str} folder doesn't exist`);
             }
             if (! (template_folder instanceof TFolder)) {
-                throw new Error(template_folder_str + " is a file, not a folder");
+                throw new Error(`${template_folder_str} is a file, not a folder`);
             }
 
             Vault.recurseChildren(template_folder, (file: TAbstractFile) => {
@@ -59,7 +59,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             }
         }
         catch(error) {
-            new Notice(error);
+            this.plugin.log_error(error);
         }
     }
 }

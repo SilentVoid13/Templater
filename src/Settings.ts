@@ -52,7 +52,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.onChange((new_value) => {
 						let new_timeout = Number(new_value);
 						if (isNaN(new_timeout)) {
-							new Notice("Timeout must be a number");
+							this.plugin.log_error("Timeout must be a number");
 							return;
 						}
 						this.plugin.settings.command_timeout = new_timeout;

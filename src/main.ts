@@ -100,7 +100,17 @@ export default class TemplaterPlugin extends Plugin {
 			this.parser.replace_templates_and_overwrite_in_file(active_view.file);
 		}
 		catch(error) {
-			new Notice(error);
+			this.log_error(error);
+		}
+	}
+
+	log_error(msg: string, error?: string) {
+		if (error) {
+			console.log(msg, error);
+			new Notice(`Templater Error: ${msg}\nCheck console for more informations`);
+		}
+		else {
+			new Notice(`Templater Error: ${msg}`);
 		}
 	}
 }
