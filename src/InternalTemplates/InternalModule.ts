@@ -8,7 +8,7 @@ export abstract class InternalModule {
         this.templates = new Map();
     }
 
-    abstract registerTemplates(): Promise<void>;
+    abstract generateTemplates(): Promise<void>;
 
     generateContext() {
         return Object.fromEntries(this.templates);

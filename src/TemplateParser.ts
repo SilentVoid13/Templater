@@ -20,16 +20,12 @@ export class TemplateParser extends TParser {
 	public userTemplateParser: UserTemplateParser;
     env: nunjucks.Environment;
     
-    constructor(app: App, plugin: TemplaterPlugin) {
+    constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
         this.internalTemplateParser = new InternalTemplateParser(this.app);
-        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, plugin, this);
+        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, this.plugin, this);
 
-        this.env = nunjucks.configure({
-            web: {
-                async: true,
-            }
-        })
+        this.env = nunjucks.configure({});
     }
 
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
@@ -82,7 +78,12 @@ export class TemplateParser extends TParser {
         let context = await this.generateContext(file, context_mode);
         console.log("GLOBAL_CONTEXT:", context);
 
-        content = await this.env.renderString(content, context);
+        try {
+            content = this.env.renderString(content, context);
+        }
+        catch(error) {
+            this.plugin.log_error("Template parsing error, aborting.", error);
+        }
 
         return content;
     }

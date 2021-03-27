@@ -6,7 +6,7 @@ import { getAllTags, MarkdownView } from "obsidian";
 export class InternalModuleFile extends InternalModule {
     name = "file";
 
-    async registerTemplates() {
+    async generateTemplates() {
         this.templates.set("content", await this.generate_content());
         this.templates.set("creation_date", this.generate_creation_date());
         this.templates.set("folder", this.generate_folder());

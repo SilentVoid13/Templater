@@ -108,7 +108,7 @@ export default class TemplaterPlugin extends Plugin {
 
 	log_error(msg: string, error?: string) {
 		if (error) {
-			console.log(msg, error);
+			console.error(msg, error);
 			new Notice(`Templater Error: ${msg}\nCheck console for more informations`);
 		}
 		else {
@@ -118,9 +118,13 @@ export default class TemplaterPlugin extends Plugin {
 
 	async dynamic_templates_processor(el: HTMLElement, ctx: any) {
 		if (el.textContent.contains("tp.dynamic")) {
+			// TODO: This will not always be the active file, 
+			// I need to use getFirstLinkpathDest and ctx to find the actual file
+			let file = this.app.workspace.getActiveFile();
+
 			let new_html = await this.parser.parseTemplates(
 				el.innerHTML, 
-				this.app.workspace.getActiveFile(), 
+				file, 
 				ContextMode.DYNAMIC
 			);
 

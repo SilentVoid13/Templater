@@ -19,6 +19,7 @@ export class UserTemplateParser extends TParser {
     static createUserTemplateParser(app: App, plugin: TemplaterPlugin, template_parser: TemplateParser): UserTemplateParser {
         // TODO: Maybe find a better way to check for this
         if (require("child_process") === undefined) {
+            plugin.log_error("User Templates are not supported on mobile.");
             return undefined;
         }
         return new UserTemplateParser(app, plugin, template_parser);
@@ -63,7 +64,7 @@ export class UserTemplateParser extends TParser {
                 catch(error) {
                     this.plugin.log_error(`Error with User Template ${template}`, error);
                 }
-            })
+            });
         }
 
         return user_templates;

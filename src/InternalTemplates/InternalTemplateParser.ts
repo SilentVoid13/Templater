@@ -27,7 +27,7 @@ export class InternalTemplateParser extends TParser {
         modules_array.push(new InternalModuleFrontmatter(this.app, f));
 
         for (let mod of modules_array) {
-            await mod.registerTemplates();
+            await mod.generateTemplates();
             modules_map.set(mod.name, mod.generateContext());
         }
 
