@@ -22,6 +22,7 @@ export const internal_templates_map: {[id: string]: Function} = {
     "creation_date": tp_creation_date,
     "last_modif_date": tp_last_modif_date,
     "title_date": tp_title_date,
+    "title_no_date": tp_title_no_date,
     "title_tomorrow": tp_title_tomorrow,
     "title_today": tp_title_today, // DEPRECATED
     "title_yesterday": tp_title_yesterday,
@@ -195,6 +196,14 @@ async function tp_title_date(app: App, args: {[key: string]: string}): Promise<S
     }
     let title_date = get_date_string(format, day_offset, title, title_format);
     return title_date;
+}
+
+async function tp_title_no_date(app: App, args: {[key: string]: string}): Promise<String> {
+    let [title, format, title_format] = parse_tp_title_date_args(app, args);
+    format = title_format
+    let title_date = get_date_string(format, null, title, title_format);
+    let title_no_date = title.replace(title_date, "").trim();
+    return title_no_date;
 }
 
 async function tp_title_tomorrow(app: App, args: {[key: string]: string}): Promise<String> {
