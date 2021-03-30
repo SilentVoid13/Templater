@@ -3,25 +3,25 @@ import { exec } from "child_process";
 import { promisify } from "util";
 
 import TemplaterPlugin from "main";
-import { ContextMode, TemplateParser } from "TemplateParser";
+import { ContextMode } from "TemplateParser";
 import { TParser } from "TParser";
 
 export class UserTemplateParser extends TParser {
     cwd: string;
     cmd_options: any;
 
-    constructor(app: App, private plugin: TemplaterPlugin, private template_parser: TemplateParser) {
+    constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
         this.resolveCwd();        
     }
 
-    static createUserTemplateParser(app: App, plugin: TemplaterPlugin, template_parser: TemplateParser): UserTemplateParser {
+    static createUserTemplateParser(app: App, plugin: TemplaterPlugin): UserTemplateParser {
         // TODO: Maybe find a better way to check for this
         if (require("child_process") === undefined) {
             plugin.log_error("User Templates are not supported on mobile.");
             return undefined;
         }
-        return new UserTemplateParser(app, plugin, template_parser);
+        return new UserTemplateParser(app, plugin);
     }
 
     resolveCwd() {
@@ -42,14 +42,16 @@ export class UserTemplateParser extends TParser {
                 continue;
             }
 
-            cmd = await this.template_parser.parseTemplates(cmd, file, ContextMode.INTERNAL);
+            cmd = await this.plugin.parser.parseTemplates(cmd, file, ContextMode.INTERNAL);
 
-            user_templates.set(template, async (kwargs: any): Promise<string> => {
+            user_templates.set(template, async (user_args: any): Promise<string> => {
                 try {
+                    console.log("user_args:", user_args);
                     let process_env = {
                         ...process.env,
-                        ...kwargs
+                        ...user_args,
                     };
+                    console.log("PROCESS_ENV:", process_env);
 
                     let cmd_options = {
                         timeout: this.plugin.settings.command_timeout * 1000,
