@@ -1,5 +1,4 @@
 import { InternalModule } from "../InternalModule";
-import { fetch } from "popsicle";
 
 export class InternalModuleWeb extends InternalModule {
     name = "web";
@@ -10,18 +9,25 @@ export class InternalModuleWeb extends InternalModule {
         this.templates.set("request", this.generate_request());
     }
 
-    async getRequest(url: string) {
+    async getRequest(url: string): Promise<Response> {
         // TODO: Mobile support
-        return await (await fetch(url)).text();
+        let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Error performing GET request");
+        }
+        return response;
     }
 
     generate_daily_quote() {
         return async () => {
             // TODO: Mobile support
             let response = await this.getRequest("https://quotes.rest/qod");
-            let author = response.data.contents.quotes[0].author;
-            let quote = response.data.contents.quotes[0].quote;
+            let json = await response.json();
+
+            let author = json.contents.quotes[0].author;
+            let quote = json.contents.quotes[0].quote;
             let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
+
             return new_content;
         }
     }
@@ -30,7 +36,7 @@ export class InternalModuleWeb extends InternalModule {
         return async (size?: number, query?: string) => {
             // TODO: Mobile support
             let response = await this.getRequest(`https://source.unsplash.com/random/${size}?${query}`);
-            let url = response.request.responseURL;
+            let url = response.url;
             return `![tp.web.random_picture](${url})`;   
         }
     }
@@ -39,7 +45,9 @@ export class InternalModuleWeb extends InternalModule {
         return async (url: string) => {
             // TODO: Mobile support
             let response = await this.getRequest(url);
-            return JSON.stringify(response);
+            let json = await response.json();
+            console.log("JSON:", json);
+            return JSON.stringify(json, null, "\t");
         }
     }
 }
