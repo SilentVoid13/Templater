@@ -22,7 +22,7 @@ export class TemplateParser extends TParser {
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
         this.internalTemplateParser = new InternalTemplateParser(this.app);
-        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, this.plugin, this);
+        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, this.plugin);
     }
 
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {

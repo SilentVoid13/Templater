@@ -46,7 +46,6 @@ export class InternalModuleWeb extends InternalModule {
             // TODO: Mobile support
             let response = await this.getRequest(url);
             let json = await response.json();
-            console.log("JSON:", json);
             return JSON.stringify(json, null, "\t");
         }
     }
