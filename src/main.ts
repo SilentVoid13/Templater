@@ -3,10 +3,7 @@ import { MarkdownView, Notice, Plugin, TAbstractFile, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
 import { ContextMode, TemplateParser } from 'TemplateParser';
-
-function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-}
+import { delay } from 'TParser';
 
 export default class TemplaterPlugin extends Plugin {
 	public fuzzySuggest: TemplaterFuzzySuggestModal;
@@ -136,4 +133,4 @@ export default class TemplaterPlugin extends Plugin {
 			el.innerHTML = new_html;
 		}
 	}
-}
+};

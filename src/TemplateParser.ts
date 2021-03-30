@@ -1,10 +1,10 @@
 import { App, EditorPosition, MarkdownView, TFile } from "obsidian";
-import * as nunjucks from "nunjucks";
+import * as Eta from "eta";
 
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
-import { TParser } from "TParser";
+import { delay, TParser } from "TParser";
 
 const TP_CURSOR = "{{tp.cursor}}";
 
@@ -18,14 +18,11 @@ export enum ContextMode {
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
-    env: nunjucks.Environment;
     
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
         this.internalTemplateParser = new InternalTemplateParser(this.app);
         this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, this.plugin, this);
-
-        this.env = nunjucks.configure({});
     }
 
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
@@ -48,9 +45,15 @@ export class TemplateParser extends TParser {
                 context = internal_context;
                 break;
             case ContextMode.DYNAMIC:
+                if (this.userTemplateParser) {
+                    user_context = await this.userTemplateParser.generateContext(file);
+                }
                 context = {
                     dynamic: {
-                        ...internal_context
+                        ...internal_context,
+                        user: {
+                            ...user_context
+                        }
                     }
                 };
                 break;
@@ -68,9 +71,7 @@ export class TemplateParser extends TParser {
         }
 
         return {
-            tp: {
-                ...context
-            }
+            ...context
         };
     }
 
@@ -79,7 +80,22 @@ export class TemplateParser extends TParser {
         console.log("GLOBAL_CONTEXT:", context);
 
         try {
-            content = this.env.renderString(content, context);
+            //content = content.replace(new RegExp("tp\\.", "g"), "await tp.");
+            //console.log("ASYNC_CONTENT:", async_content);
+
+            content = await Eta.renderAsync(content, context, {
+                varName: "tp",
+                tags: ["{{", "}}"],
+                parse: {
+                    exec: "*",
+                    interpolate: "",
+                    raw: "~",
+                },
+                autoTrim: false,
+                alwaysAwait: true,
+            }) as string;
+
+            console.log("CONTENT:", content);
         }
         catch(error) {
             this.plugin.log_error("Template parsing error, aborting.", error);
@@ -101,7 +117,6 @@ export class TemplateParser extends TParser {
         content = await this.parseTemplates(content, active_view.file, ContextMode.USER_INTERNAL);
         
         doc.replaceSelection(content);
-        await active_view.save();
 
         await this.jump_to_next_cursor_location();
         editor.focus();

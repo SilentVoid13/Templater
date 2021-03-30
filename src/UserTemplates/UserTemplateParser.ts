@@ -1,5 +1,4 @@
 import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
-import * as nunjucks from "nunjucks";
 import { exec } from "child_process";
 import { promisify } from "util";
 

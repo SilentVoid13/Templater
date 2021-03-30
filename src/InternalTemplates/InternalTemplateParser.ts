@@ -1,4 +1,3 @@
-import * as nunjucks from "nunjucks";
 import { App, TFile } from "obsidian";
 
 import { InternalModuleDate } from "./date/InternalModuleDate";
@@ -9,13 +8,8 @@ import { InternalModule } from "./InternalModule";
 import { TParser } from "TParser";
 
 export class InternalTemplateParser extends TParser {
-    env: nunjucks.Environment;
-
     constructor(app: App) {
         super(app);
-        this.env = nunjucks.configure({
-            throwOnUndefined: false,
-        });
     }
 
     async generateModules(f: TFile) {
