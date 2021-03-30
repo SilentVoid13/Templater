@@ -1,7 +1,7 @@
 import { InternalModule } from "../InternalModule";
 import { get_date_string } from "../InternalUtils";
 
-import { getAllTags, MarkdownView } from "obsidian";
+import { getAllTags, MarkdownView, normalizePath, TFile } from "obsidian";
 
 export class InternalModuleFile extends InternalModule {
     name = "file";
@@ -10,8 +10,10 @@ export class InternalModuleFile extends InternalModule {
         this.templates.set("content", await this.generate_content());
         this.templates.set("creation_date", this.generate_creation_date());
         this.templates.set("folder", this.generate_folder());
+        //this.templates.set("include", this.generate_include());
         this.templates.set("last_modified_date", this.generate_last_modified_date());
         this.templates.set("path", this.generate_path());
+        this.templates.set("rename", this.generate_rename());
         this.templates.set("selection", this.generate_selection());
         this.templates.set("tags", this.generate_tags());
         this.templates.set("title", this.generate_title());
@@ -43,6 +45,24 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
+    /*
+    generate_include() {
+        return async (inc_file_str: string) => {
+            let inc_file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(inc_file_str), "");
+            if (!inc_file) {
+                throw new Error(`File ${this.file} include doesn't exist`);
+            }
+            if (!(inc_file instanceof TFile)) {
+                throw new Error(`${this.file} is a folder, not a file`);
+            }
+
+            let content = await this.app.vault.read(inc_file);
+        
+            return content;
+        }
+    }
+    */
+
     generate_last_modified_date() {
         return (format?: string): string => {
                 return get_date_string(format, undefined, this.file.stat.mtime);
@@ -70,6 +90,14 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
+    generate_rename() {
+        return async (new_title: string) => {
+            let new_path = normalizePath(`${this.file.parent.path}/${new_title}.${this.file.extension}`);
+            await this.app.fileManager.renameFile(this.file, new_path);
+            return "";
+        }
+    }
+
     generate_selection() {
         return () => {
             let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -88,24 +116,6 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_title() {
-        return this.file.name;
+        return this.file.basename;
     }
-
-    /*
-    generate_include() {
-        return async (inc_file_str: string) => {
-            let inc_file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(inc_file_str), "");
-            if (!inc_file) {
-                throw new Error(`File ${this.file} passed to tp_include doesn't exist`);
-            }
-            if (!(inc_file instanceof TFile)) {
-                throw new Error(`tp_include: ${this.file} is a folder, not a file`);
-            }
-
-            let content = await this.app.vault.read(inc_file);
-        
-            return content;
-        }
-    }
-    */
 }
