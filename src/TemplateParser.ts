@@ -85,8 +85,8 @@ export class TemplateParser extends TParser {
                 varName: "tp",
                 parse: {
                     exec: "*",
-                    interpolate: "",
-                    raw: "~",
+                    interpolate: "~",
+                    raw: "",
                 },
                 autoTrim: false,
                 globalAwait: true,
@@ -97,6 +97,32 @@ export class TemplateParser extends TParser {
         }
 
         return content;
+    }
+
+    replace_in_active_file(): void {
+		try {
+			let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+			if (active_view === null) {
+				throw new Error("Active view is null");
+			}
+			this.replace_templates_and_overwrite_in_file(active_view.file);
+		}
+		catch(error) {
+			this.plugin.log_error(error);
+		}
+	}
+
+    async create_new_note_from_template(template_file: TFile) {
+        let template_content = await this.app.vault.read(template_file);
+        let created_note = await this.app.vault.create("Untitled.md", "");
+        let content = await this.plugin.parser.parseTemplates(template_content, created_note, ContextMode.USER_INTERNAL);
+        await this.app.vault.modify(created_note, content);
+
+        let active_leaf = this.app.workspace.activeLeaf;
+        if (!active_leaf) {
+            throw new Error("No active leaf");
+        }
+        await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
     }
 
     async replace_templates_and_append(template_file: TFile) {
@@ -119,8 +145,8 @@ export class TemplateParser extends TParser {
 
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
-
         let new_content = await this.parseTemplates(content, file, ContextMode.USER_INTERNAL);
+
         if (new_content !== content) {
             await this.app.vault.modify(file, new_content);
             

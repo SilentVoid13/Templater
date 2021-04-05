@@ -28,7 +28,7 @@ You can also find this message in the settings of Templater. This message will s
 		this.registerMarkdownPostProcessor((el, ctx) => this.dynamic_templates_processor(el, ctx));
 
 		this.addRibbonIcon('three-horizontal-bars', 'Templater', async () => {
-			this.fuzzySuggest.start();
+			this.fuzzySuggest.insert_template();
 		});
 
 		this.addCommand({
@@ -41,7 +41,7 @@ You can also find this message in the settings of Templater. This message will s
 				},
 			],
 			callback: () => {
-				this.fuzzySuggest.start();
+				this.fuzzySuggest.insert_template();
 			},
 		});
 
@@ -55,7 +55,7 @@ You can also find this message in the settings of Templater. This message will s
                 },
             ],
             callback: () => {
-				this.replace_in_active_file();
+				this.parser.replace_in_active_file();
             },
         });
 
@@ -75,6 +75,20 @@ You can also find this message in the settings of Templater. This message will s
 				catch(error) {
 					this.log_error(error);
 				}
+			}
+		});
+
+		this.addCommand({
+			id: "create-new-note-from-template",
+			name: "Create new note from template",
+			hotkeys: [
+				{
+					modifiers: ["Alt"],
+					key: "n",
+				},
+			],
+			callback: () => {
+				this.fuzzySuggest.create_new_note_from_template();
 			}
 		});
 
@@ -102,20 +116,7 @@ You can also find this message in the settings of Templater. This message will s
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	replace_in_active_file(): void {
-		try {
-			let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (active_view === null) {
-				throw new Error("Active view is null");
-			}
-			this.parser.replace_templates_and_overwrite_in_file(active_view.file);
-		}
-		catch(error) {
-			this.log_error(error);
-		}
-	}
+	}	
 
 	log_error(msg: string, error?: string) {
 		if (error) {

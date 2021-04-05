@@ -1,9 +1,15 @@
-import { App, FuzzySuggestModal, Notice, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
+import { App, FuzzySuggestModal, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
 import TemplaterPlugin from './main';
+
+export enum OpenMode {
+    InsertTemplate,
+    CreateNoteTemplate,
+};
 
 export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     app: App;
     plugin: TemplaterPlugin;
+    open_mode: OpenMode;
 
     constructor(app: App, plugin: TemplaterPlugin) {
         super(app);
@@ -44,10 +50,19 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     }
 
     onChooseItem(item: TFile, _evt: MouseEvent | KeyboardEvent): void {
-       this.plugin.parser.replace_templates_and_append(item);
+        switch(this.open_mode) {
+            case OpenMode.InsertTemplate:
+                this.plugin.parser.replace_templates_and_append(item);
+                break;
+            case OpenMode.CreateNoteTemplate:
+                this.plugin.parser.create_new_note_from_template(item);
+                break;
+        }
     }
 
-    start(): void {
+    insert_template(): void {
+        this.open_mode = OpenMode.InsertTemplate;
+
         // If there is only one file in the templates directory, we don't open the modal
         try {
             let files = this.getItems();
@@ -57,6 +72,17 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
             else {
                 this.open();
             }
+        }
+        catch(error) {
+            this.plugin.log_error(error);
+        }
+    }
+
+    create_new_note_from_template() {
+        this.open_mode = OpenMode.CreateNoteTemplate;
+
+        try {
+            this.open();
         }
         catch(error) {
             this.plugin.log_error(error);
