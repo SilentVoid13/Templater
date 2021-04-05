@@ -1,7 +1,6 @@
 import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
 import { exec } from "child_process";
 import { promisify } from "util";
-const exec_promise = promisify(exec);
 
 import TemplaterPlugin from "main";
 import { ContextMode } from "TemplateParser";
@@ -28,6 +27,7 @@ export class UserTemplateParser extends TParser {
 
     async generateUserTemplates(file: TFile) {
         let user_templates = new Map();
+        const exec_promise = promisify(exec);
 
         for (let [template, cmd] of this.plugin.settings.templates_pairs) {
             if (template === "" || cmd === "") {
