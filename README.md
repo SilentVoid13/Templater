@@ -168,7 +168,7 @@ File's metadata alias: <% tp.frontmatter.alias %>
 
 This modules contains every template related to the web (using web requests).
 
-[Templater](https://github.com/SilentVoid13/Templater) escapes characters by default for security reasons. Because most of the time, web responses are containing escapable characters, you sometimes have to disable character escaping for web module's templates using the `<%~` opening tag. Go [here](https://github.com/SilentVoid13/Templater#eta-features) for more informations.
+[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape template response characters using the `<%~` opening tag. Go [here](https://github.com/SilentVoid13/Templater#eta-features) for more informations.
 
 | Internal Template                                            | Arguments                                                    | Description                                                  | Example Output                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -223,11 +223,11 @@ For example, if you configure the system command `cat tp.file.path`, it will be 
 
 ### Eta features
 
-The [Eta](https://eta.js.org/) templating engine allows us to define 3 types of tags:
+Using the [Eta](https://eta.js.org/) templating engine, [Templater](https://github.com/SilentVoid13/Templater) defines 3 types of tags:
 
-- `<%`: Displays values tag (interpolation)
+- `<%`:  Raw display tag.
 - `<%*`: Executes JavaScript code tag. This will never output anything.
-- `<%~`: Raw display tag (disables characters escaping, useful for web requests)
+- `<%~`: Interpolation tag, adds some character escaping.
 
 This means that using the execution opening tag, we can pretty much do everything that JavaScript allows us to do.
 
