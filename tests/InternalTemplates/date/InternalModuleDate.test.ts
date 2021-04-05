@@ -1,6 +1,7 @@
 import { InternalModuleDate } from "InternalTemplates/date/InternalModuleDate";
 import { TFile } from "obsidian";
 
+/*
 const mock_file: TFile = {
     vault: null,
     path: "/mock/path",
@@ -25,4 +26,5 @@ test("tp.date.tomorrow", () => {
     let tomorrow_date = null;
 
     expect(tomorrow()).toBe(tomorrow_date);
-})
+});
+*/

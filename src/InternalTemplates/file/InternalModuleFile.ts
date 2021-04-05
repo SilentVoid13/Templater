@@ -1,16 +1,24 @@
 import { InternalModule } from "../InternalModule";
-import { get_date_string } from "../InternalUtils";
+import { get_date_string, UNSUPPORTED_MOBILE_TEMPLATE } from "../InternalUtils";
 
-import { getAllTags, MarkdownView, normalizePath, TFile } from "obsidian";
+import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, TFile } from "obsidian";
+import { ContextMode } from "TemplateParser";
+
+export const TP_FILE_CURSOR = "<% tp.file.cursor %>";
+
+export const DEPTH_LIMIT = 10;
 
 export class InternalModuleFile extends InternalModule {
     name = "file";
+    private static depth: number = 0;
 
     async generateTemplates() {
         this.templates.set("content", await this.generate_content());
         this.templates.set("creation_date", this.generate_creation_date());
+        // Hack to prevent empty output
+        this.templates.set("cursor", TP_FILE_CURSOR);
         this.templates.set("folder", this.generate_folder());
-        //this.templates.set("include", this.generate_include());
+        this.templates.set("include", this.generate_include());
         this.templates.set("last_modified_date", this.generate_last_modified_date());
         this.templates.set("path", this.generate_path());
         this.templates.set("rename", this.generate_rename());
@@ -24,7 +32,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_creation_date() {
-        return (format?: string) => {
+        return (format: string = "YYYY-MM-DD HH:mm") => {
             return get_date_string(format, undefined, this.file.stat.ctime);
         }
     }
@@ -45,10 +53,9 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    /*
     generate_include() {
-        return async (inc_file_str: string) => {
-            let inc_file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(inc_file_str), "");
+        return async (include_filename: string) => {
+            let inc_file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(include_filename), "");
             if (!inc_file) {
                 throw new Error(`File ${this.file} include doesn't exist`);
             }
@@ -56,23 +63,34 @@ export class InternalModuleFile extends InternalModule {
                 throw new Error(`${this.file} is a folder, not a file`);
             }
 
-            let content = await this.app.vault.read(inc_file);
+            // TODO: Add mutex for this, this may currently lead to a race condition. 
+            // While not very impactful, that could still be annoying.
+            InternalModuleFile.depth += 1;
+            if (InternalModuleFile.depth > DEPTH_LIMIT) {
+                throw new Error("Reached inclusion depth limit (max = 10)");
+            }
+
+            let inc_file_content = await this.app.vault.read(inc_file);
+            let parsed_content = await this.plugin.parser.parseTemplates(inc_file_content, this.file, ContextMode.USER_INTERNAL);
+            
+            InternalModuleFile.depth -= 1;
         
-            return content;
+            return parsed_content;
         }
     }
-    */
 
     generate_last_modified_date() {
-        return (format?: string): string => {
+        return (format: string = "YYYY-MM-DD HH:mm"): string => {
                 return get_date_string(format, undefined, this.file.stat.mtime);
         }
     }
 
     generate_path() {
         return (relative: boolean = false) => {
-            // TODO: Mobile support
-            /*
+            // TODO: fix that
+            if (this.app.isMobile) {
+                return UNSUPPORTED_MOBILE_TEMPLATE;
+            }
             if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
                 throw new Error("app.vault is not a FileSystemAdapter instance");
             }
@@ -84,9 +102,6 @@ export class InternalModuleFile extends InternalModule {
             else {
                 return `${vault_path}/${this.file.path}`;
             }
-            */
-
-            return this.file.path;
         }
     }
 

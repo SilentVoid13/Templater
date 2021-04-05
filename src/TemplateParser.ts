@@ -4,9 +4,8 @@ import * as Eta from "eta";
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
-import { delay, TParser } from "TParser";
-
-const TP_CURSOR = "{{tp.cursor}}";
+import { TParser } from "TParser";
+import { TP_FILE_CURSOR } from "InternalTemplates/file/InternalModuleFile";
 
 export enum ContextMode {
     USER,
@@ -17,12 +16,15 @@ export enum ContextMode {
 
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
-	public userTemplateParser: UserTemplateParser;
+	public userTemplateParser: UserTemplateParser = null;
     
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
-        this.internalTemplateParser = new InternalTemplateParser(this.app);
-        this.userTemplateParser = UserTemplateParser.createUserTemplateParser(this.app, this.plugin);
+        this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
+        // TODO: fix that
+        if (!this.app.isMobile) {
+            this.userTemplateParser = new UserTemplateParser(this.app, this.plugin);
+        }
     }
 
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
@@ -77,25 +79,18 @@ export class TemplateParser extends TParser {
 
     async parseTemplates(content: string, file: TFile, context_mode: ContextMode) {
         let context = await this.generateContext(file, context_mode);
-        console.log("GLOBAL_CONTEXT:", context);
 
         try {
-            //content = content.replace(new RegExp("tp\\.", "g"), "await tp.");
-            //console.log("ASYNC_CONTENT:", async_content);
-
             content = await Eta.renderAsync(content, context, {
                 varName: "tp",
-                tags: ["{{", "}}"],
                 parse: {
                     exec: "*",
                     interpolate: "",
                     raw: "~",
                 },
                 autoTrim: false,
-                alwaysAwait: true,
+                globalAwait: true,
             }) as string;
-
-            console.log("CONTENT:", content);
         }
         catch(error) {
             this.plugin.log_error("Template parsing error, aborting.", error);
@@ -147,7 +142,7 @@ export class TemplateParser extends TParser {
 
         let pos = this.get_cursor_position(content);
         if (pos) {
-            content = content.replace(new RegExp(TP_CURSOR), "");
+            content = content.replace(new RegExp(TP_FILE_CURSOR), "");
             await this.app.vault.modify(active_file, content);
             this.set_cursor_location(pos);
         }
@@ -155,7 +150,7 @@ export class TemplateParser extends TParser {
 
     get_cursor_position(content: string): EditorPosition {
         let pos: EditorPosition = null;
-        let index = content.indexOf(TP_CURSOR);
+        let index = content.indexOf(TP_FILE_CURSOR);
 
         if (index !== -1) {
             let substr = content.substr(0, index);
@@ -186,6 +181,6 @@ export class TemplateParser extends TParser {
 
         editor.focus();
         // TODO: Replace with setCursor in next release
-        editor.setSelection(pos);
+        editor.setCursor(pos);
     }
 }

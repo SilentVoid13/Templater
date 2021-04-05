@@ -11,7 +11,7 @@ export class InternalModuleDate extends InternalModule {
     }
 
     generate_now() {
-        return (format?: string, offset?: number, reference?: string, reference_format?: string) => {
+        return (format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string) => {
             if (reference && !window.moment(reference, reference_format).isValid()) {
                 throw new Error("Invalid title date format, try specifying one with the argument 'reference'");
             }
@@ -20,13 +20,13 @@ export class InternalModuleDate extends InternalModule {
     }
 
     generate_tomorrow() {
-        return (format?: string) => {
+        return (format: string = "YYYY-MM-DD") => {
             return get_date_string(format, 1);
         }
     }
 
     generate_yesterday() {
-        return (format?: string) => {
+        return (format: string = "YYYY-MM-DD") => {
             return get_date_string(format, -1);
         }
     }

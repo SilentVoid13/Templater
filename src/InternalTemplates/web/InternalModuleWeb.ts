@@ -6,7 +6,7 @@ export class InternalModuleWeb extends InternalModule {
     async generateTemplates() {
         this.templates.set("daily_quote", this.generate_daily_quote());
         this.templates.set("random_picture", this.generate_random_picture());
-        this.templates.set("request", this.generate_request());
+        this.templates.set("get_request", this.generate_get_request());
     }
 
     async getRequest(url: string): Promise<Response> {
@@ -33,7 +33,7 @@ export class InternalModuleWeb extends InternalModule {
     }
 
     generate_random_picture() {
-        return async (size?: number, query?: string) => {
+        return async (size: string = "1600x900", query?: string) => {
             // TODO: Mobile support
             let response = await this.getRequest(`https://source.unsplash.com/random/${size}?${query}`);
             let url = response.url;
@@ -41,12 +41,12 @@ export class InternalModuleWeb extends InternalModule {
         }
     }
 
-    generate_request() {
+    generate_get_request() {
         return async (url: string) => {
             // TODO: Mobile support
             let response = await this.getRequest(url);
             let json = await response.json();
-            return JSON.stringify(json, null, "\t");
+            return json;
         }
     }
 }
