@@ -2,50 +2,87 @@
 
 Thanks for considering contributing to [Templater](https://github.com/SilentVoid13/Templater) !
 
-Developing a new internal template is really easy, let's see how.
+Developing a new internal template is really easy.
 
-All internal templates are located in the file https://github.com/SilentVoid13/Templater/blob/master/src/internal_templates.ts.
+Keep in mind that only pertinent Internal Templates will be accepted, don't submit a very specific internal template that you'll be the only one using.
 
-Let's take the `{{tp_today}}` internal template as an example:
+## Layout
+
+Internal templates are sorted by modules. Each module has a dedicated folder under [src/InternalTemplates](https://github.com/SilentVoid13/Templater/tree/master/src/InternalTemplates). 
+
+Let's take the [date module](https://github.com/SilentVoid13/Templater/tree/master/src/InternalTemplates/date) as an example.
+
+It contains an [InternalModuleDate](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/date/InternalModuleDate.ts) file where all our internal date templates are defined and registered:
 
 ```typescript
-async function tp_today(_app: App, args: {[key: string]: string}): Promise<String> {
-    let today;
-    if (Object.keys(args).length === 0) {
-        today = moment().format("YYYY-MM-DD");
+export class InternalModuleDate extends InternalModule {
+    name = "date";
+
+    async generateTemplates() {
+        this.templates.set("now", this.generate_now());
+        this.templates.set("tomorrow", this.generate_tomorrow());
+        this.templates.set("yesterday", this.generate_yesterday());
     }
-    else {
-        let format = args["f"];
-        today = moment().format(format);
+
+    generate_now() {
+        return (format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string) => {
+            if (reference && !window.moment(reference, reference_format).isValid()) {
+                throw new Error("Invalid title date format, try specifying one with the argument 'reference'");
+            }
+            return get_date_string(format, offset, reference, reference_format);
+        }
     }
-    return today;
+
+    generate_tomorrow() {
+        return (format: string = "YYYY-MM-DD") => {
+            return get_date_string(format, 1);
+        }
+    }
+
+    generate_yesterday() {
+        return (format: string = "YYYY-MM-DD") => {
+            return get_date_string(format, -1);
+        }
+    }
 }
 ```
 
-**1st step:** First you need to develop your internal template function. As you can see, an internal template function is an asynchronous function: 
+Every module extends the [InternalModule](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/InternalModule.ts) abstract class, which means they contain the following attributes and methods:
 
-- This function takes as parameters the `App` object `app` and the internal template arguments `args` passed by the user. `args`  is a dictionary containing the argument name as a key and the argument value as a value. For example `{{tp_today:f=YYYY}}` will give `{"f": "YYYY"}`.
-- This function returns a string. This string will replace the template pattern (here `{{tp_today:<args>}}`) in the file.
+- `this.app` attribute: the obsidian API `App` object.
+- `this.templates` attribute: A map that maps a string representing the name of the template with a function or a variable that will be the template output.
+- `this.file` attribute: The destination file on which the template will be applied.
+- `this.plugin` attribute: The Templater plugin object.
+- `this.generateTemplates()` method: Registers every template in the `templates` map.
 
-**2nd step:** When you finished your function, just add it to the `internal_templates_map` hashmap located at the top of the [internal_templates](https://github.com/SilentVoid13/Templater/blob/master/src/internal_templates.ts) file. Your desired template pattern is the key, and your internal template function is the value.
+You can use these attributes in your templates if you need them.
+
+## Registering a new template
+
+Here are the different steps you need to follow to register a new template in a module.
+
+**1st step:** Create a method inside the module called `generate_<template_name>()` that will generate your template and return either a lambda function or directly the value.
+
+All generation methods are ordered by alphabetical order based on the template name.
+
+Try to give a good, self-explanatory name for your template.
+
+If the template is a lambda function, you can accept some arguments, make some arguments optional, etc.
+
+**2nd step:** Register your internal template in the `templates` map within the `generateTemplates()` method.
+
+To register your template, use your `this.generate_<template_name>()` method you defined earlier:
 
 ```typescript
-export const internal_templates_map: {[id: string]: Function} = {
-    "title": tp_title,
-    "today": tp_today,
-    "tomorrow": tp_tomorrow,
-    "yesterday": tp_yesterday,
-    "daily_quote": tp_daily_quote,
-    "random_picture": tp_random_picture,
-    "title_picture": tp_title_picture,
-};
+this.templates.set(<template_name>, this.generate_<template_name>());
 ```
 
-And you're done ! The function `replace_internal_templates` will loop through each function of the `internal_templates_map` and replace what needs to be replaced. Doubles braces and the prefix `tp_` will be added around your template keyword. So for example the keyword `title` will match the template pattern `{{tp_title}}`.
+Templates registrations are also ordered by alphabetical order based on the template name.
 
-Here are some basic rules in order to keep the code clean:
+**3rd step:** Add your template documentation in the [README](https://github.com/SilentVoid13/Templater/blob/master/README.md).
 
-- Your internal template function name should be prefixed with the keyword `tp_` and have the same name as your template keyword (e.g. `tp_title` function name for the `title` keyword).
 
-Just submit a [pull request](https://github.com/SilentVoid13/Templater/pulls) when you're finished, I'll try to be as reactive as possible.
 
+And you are done ! Thanks for the contribution.
+
+Now, just submit a [pull request](https://github.com/SilentVoid13/Templater/pulls), I'll try to be as reactive as possible.

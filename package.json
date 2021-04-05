@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "eta": "file:../../../CONTRIBUTIONS/eta",
+    "eta": "github:SilentVoid13/eta#custom-eta",
     "popsicle": "^12.1.0"
   },
   "config": {
