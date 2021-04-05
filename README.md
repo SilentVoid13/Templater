@@ -9,7 +9,7 @@ This template plugin for [Obsidian](https://obsidian.md/) offers 2 types of temp
 
 ## Demonstration
 
-![templater_demo](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_demo.mp4)
+![templater_demo](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_demo.gif)
 
 ## Usage
 
