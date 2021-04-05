@@ -13,6 +13,15 @@ export default class TemplaterPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		// TODO: Remove this
+		let notice = new Notice("", 15000);
+		notice.noticeEl.innerHTML = `What? Templater is <b>evolving</b>!<br/>
+The template syntax changed in this release, check out the new documentation for it on <a href="https://github.com/SilentVoid13/Templater#templater-obsidian-plugin">Templater's Github</a> or in the community plugins page.<br/>
+Enjoy new features for Templater: new internal templates, user templates arguments, conditional statements and more.<br/>
+Every already existing feature still exists of course, you just need to update the syntax in your templates files.<br/>
+Thanks for using Templater! SilentVoid.<br/>
+This message will self-destruct in the next update.`;
+
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 		this.parser = new TemplateParser(this.app, this);
 

@@ -1,4 +1,4 @@
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 
 import TemplaterPlugin from './main';
 
@@ -22,6 +22,19 @@ export class TemplaterSettingTab extends PluginSettingTab {
 	display(): void {
 		let {containerEl} = this;
 		containerEl.empty();
+
+		// TODO: Remove this
+		let notice_fragment = document.createDocumentFragment();
+		let notice_div = notice_fragment.createEl("div");
+		notice_div.innerHTML = `What? Templater is <b>evolving</b>!<br/>
+The template syntax changed in this release, check out the new documentation for it on <a href="https://github.com/SilentVoid13/Templater#templater-obsidian-plugin">Templater's Github</a> or in the community plugins page.<br/>
+Enjoy new features for Templater: new internal templates, user templates arguments, conditional statements and more.<br/>
+Every already existing feature still exists of course, you just need to update the syntax in your templates files.<br/>
+Thanks for using Templater! SilentVoid.<br/>
+This message will self-destruct in the next update.`;
+		new Setting(containerEl)
+			.setName("Templater Update")
+			.setDesc(notice_fragment);
 
 		let fragment = document.createDocumentFragment();
 		let link = document.createElement("a");
