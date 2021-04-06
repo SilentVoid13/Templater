@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/SilentVoid13/Templater/compare/1.0.0...1.1.0) (2021-04-06)
+
+
+### Features
+
+* adding new hotkey to create new from template ([f27d59e](https://github.com/SilentVoid13/Templater/commit/f27d59eb7f8551fd9890eee1cbef45ddd1054ec7)), closes [#73](https://github.com/SilentVoid13/Templater/issues/73)
+
 ## [1.0.0](https://github.com/SilentVoid13/Templater/compare/0.5.6...1.0.0) (2021-04-05)
 
 
