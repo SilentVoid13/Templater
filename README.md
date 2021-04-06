@@ -217,9 +217,9 @@ In our previous example, this would give the following call: `<% tp.user.echo({a
 
 #### Internal Templates in User Templates
 
-You can also use some Internal templates inside your commands. The internal templates will get replaced before your command gets executed.
+You can also use some Internal templates inside your commands. The internal templates will get replaced before your command gets executed. Internal templates still needs to be placed between opening and closing tags.
 
-For example, if you configure the system command `cat tp.file.path`, it will be replaced with `cat /path/to/file` before the command gets executed.
+For example, if you configure the system command `cat <% tp.file.path() %>`, it will be replaced with `cat /path/to/file` before the command gets executed.
 
 ### Eta features
 
