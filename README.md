@@ -281,6 +281,10 @@ After installing, you can then find the installed plugins under Settings > Third
 
 The first installation of [Templater](https://github.com/SilentVoid13/Templater) may require to restart the obsidian app if things are not working properly.
 
+## Utilities
+
+- If you want to bind a specific template to a specific hotkey, you can use the **[obsidian-hotkeys-for-templates](https://github.com/Vinzent03/obsidian-hotkeys-for-templates)** plugin.
+
 ## Alternatives
 
 - https://github.com/garyng/obsidian-temple
