@@ -40,6 +40,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                     template_files.push(file);
                 }
             });
+
+            template_files.sort((a, b) => {
+                return a.basename.localeCompare(b.basename);
+            });
         }
 
         return template_files;
