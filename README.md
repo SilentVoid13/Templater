@@ -146,6 +146,10 @@ This modules exposes all the frontmatter variables of a file.
 | -------------------------------- | --------- | ------------------------------------------------ | -------------- |
 | `tp.frontmatter.<variable_name>` | None      | Retrieves the file's frontmatter variable value. | `value`        |
 
+##### Notes
+
+- If your frontmatter variable name contains spaces, you can reference it using the bracket notation like so: `<% tp.frontmatter["variable name with spaces"] %>`
+
 ##### Examples
 
 Let's say you have the following file:
