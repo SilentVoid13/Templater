@@ -118,10 +118,11 @@ File's title date - 1 day (yesterday): <% tp.date.now("YYYY-MM-DD", 1, tp.file.t
 
 #### File Module
 
-This module contains every internal variable / function related to obsidian files.
+This module contains every internal variable / function related to files.
 
 | Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- |
+| `tp.file.clipboard()`                                        | None                                                         | Retrieves the clipboard's content                            | `This is my copied text`    |
 | `tp.file.content`                                            | None                                                         | Retrieves the file's content                                 | `This is some content`      |
 | `tp.file.creation_date(format: string = "YYYY-MM-DD HH:mm")` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) | Retrieves the file's creation date.                          | `2021-01-06 20:27`          |
 | `tp.file.cursor`                                             | None                                                         | Sets the cursor to this location after the template has been inserted. You can navigate between the different `tp.file.cursor` using the configured hotkey in obsidian settings. | None                        |
