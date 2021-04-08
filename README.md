@@ -10,20 +10,20 @@
 
 To understand how [Templater](https://github.com/SilentVoid13/Templater) works, let's define a few terms:
 
-- A text snippet that starts with an opening tag `<%`, ends with a closing tag `%>` and that is using a variable or a function is what we will call a **command**. 
+- A text snippet that starts with an opening tag `<%`, ends with a closing tag `%>` and that is using an expression (variable, function, ...) is what we will call a **command**. 
 
 - A **template** is a file that contains different commands.
 
 There are two different types of commands you can use:
 
-- [Internal commands](https://github.com/SilentVoid13/Templater#internal-commands). This is a command that's using predefined variables and functions that are built within the plugin. We will call such variables and functions **internal** variables and functions. As an example, `<% tp.file.title %>` is an internal variable that will return the name of the file. A complete list of the internal variables / functions is given below.
+- [Internal commands](https://github.com/SilentVoid13/Templater#internal-commands). This is a command that's using predefined variables / functions that are built within the plugin. We will call such variables and functions **internal** variables and functions. As an example, `<% tp.file.title %>` is an internal variable that will return the name of the file. A complete list of the internal variables / functions is given below.
 - [User defined commands](https://github.com/SilentVoid13/Templater#user-commands). This is a command that's using a user's defined function. Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. A user function that returns the system command's output will then be created.
 
 ## Usage
 
 [Templater](https://github.com/SilentVoid13/Templater) uses the template engine [Eta](https://eta.js.org/). This engine allows us to expose JavaScript objects to users. 
 
-In [Templater](https://github.com/SilentVoid13/Templater), all of our variables and functions are available under the `tp` object. This means that a variable / function declaration will always start with `tp.<something>`
+In [Templater](https://github.com/SilentVoid13/Templater), all of our variables and functions are available under the `tp` object. This means that an variable / function invocation will always start with `tp.<something>`
 
 All of Templater's variables and functions are JavaScript objects. 
 
@@ -31,13 +31,13 @@ For example, `tp.file.content` is an internal variable, while `tp.date.now` is a
 
 To call a function, we need to use a syntax specific to functions calls: appending an opening and a closing parenthesis after the function name. As an example, we would use `tp.date.now()` to call this internal function.
 
-A function can have arguments and optional arguments. They are declared between the opening and the closing parenthesis. 
+A function can have arguments and optional arguments. They are placed between the opening and the closing parenthesis. 
 
 All informations about the different arguments taken by internal variables / functions are listed below.
 
-A command **must** be declared using an opening tag `<%` and a closing tag `%>`. 
+A command **must** have both an opening tag `<%` and a closing tag `%>`. 
 
-The complete declaration of a command using the `tp.date.now` internal function would be: `<% tp.date.now() %>`
+A complete command using the `tp.date.now` internal function would be: `<% tp.date.now() %>`
 
 ### Internal Commands
 
@@ -50,11 +50,11 @@ The different internal variables and functions offered by [Templater](https://gi
 - Frontmatter module
 - Web module
 
-You can declare an internal command using the following structure ` <% tp.<module_name>.<internal_variable_or_function_name> %>`
+You can use an internal command using the following structure: ` <% tp.<module_name>.<internal_variable_or_function_name> %>`
 
 As I said before, some internal functions are requiring arguments. Arguments must be passed between the opening and the closing parenthesis like so: `tp.<module_name>.<internal_variable_or_function_name>(arg1, arg2, arg3, ...)`. 
 
-I invite everyone to contribute to this plugin development by adding new internal functions / variables. (Check [INTERNAL_COMMANDS](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMANDS.md) for more informations).
+I invite everyone to contribute to this plugin development by adding new internal functions / variables. Check [INTERNAL_COMMANDS](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMANDS.md) for more informations
 
 ### Internal Modules
 
@@ -239,7 +239,7 @@ Just like internal functions, user functions are available under the `tp` JavaSc
 
 You can call a user function using the usual function calling syntax: `tp.user.<user_function_name>()`, where `<user_function_name>` is the name you defined in the settings. 
 
-For example, if you defined a user function named `echo` like in the above screenshot, a complete user command declaration would be: `<% tp.user.echo() %>`
+For example, if you defined a user function named `echo` like in the above screenshot, a complete user command invocation would look like: `<% tp.user.echo() %>`
 
 #### User Functions Arguments
 
@@ -253,7 +253,7 @@ If our system command was calling a bash script, we would be able to access vari
 
 #### Internal commands in system commands
 
-You can declare internal commands inside your system command. The internal commands will be replaced with their results before your system command gets executed.
+You can use internal commands inside your system command. The internal commands will be replaced with their results before your system command gets executed.
 
 For example, if you configured the system command `cat <% tp.file.path() %>`, it would be replaced with `cat /path/to/file` before the system command gets executed.
 
@@ -261,7 +261,7 @@ For example, if you configured the system command `cat <% tp.file.path() %>`, it
 
 Using the [Eta](https://eta.js.org/) templating engine, [Templater](https://github.com/SilentVoid13/Templater) defines 3 types of opening tags for commands:
 
-- `<%`:  Raw display tag. It will just output the variable / function that's inside.
+- `<%`:  Raw display tag. It will just output the expression that's inside.
 - `<%*`: JavaScript execution tag. It will execute the JavaScript code that's inside. It does not output anything by default.
 - `<%~`: Interpolation tag. Same as the raw display tag, but adds some character escaping.
 
@@ -345,7 +345,7 @@ The first installation of [Templater](https://github.com/SilentVoid13/Templater)
 
 Feel free to contribute.
 
-Check [INTERNAL_COMMAND](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMAND.md) for informations on how to develop a new internal variable / function.
+Check [INTERNAL_COMMANDS](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMANDS.md) for informations on how to develop a new internal variable / function.
 
 You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to report a bug, suggest an improvement for this plugin, etc.
 
