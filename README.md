@@ -1,48 +1,70 @@
 # Templater Obsidian Plugin
 
-This template plugin for [Obsidian](https://obsidian.md/) offers 2 types of templates:
-
-- [Internal templates](https://github.com/SilentVoid13/Templater#internal-templates). These templates are built within the plugin, with a unique template keyword and a pre-defined replacement output. For example `<% tp.file.title %>` will be replaced with the name of the file. A complete list of the internal templates is given below.
-- [Users defined templates](https://github.com/SilentVoid13/Templater#user-templates). Users can define their own templates in the plugin settings, associating a template pattern with a system command. The template pattern will be replaced in template files with the system command output.
-
-[Templater](https://github.com/SilentVoid13/Templater) is automatically triggered on new files creation. This means [Templater](https://github.com/SilentVoid13/Templater) works well with the core Daily Note plugin, the [Calendar](https://github.com/liamcain/obsidian-calendar-plugin) plugin, etc.
+[Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your notes. It will also let you execute JavaScript code manipulating those variables and functions.
 
 ## Demonstration
 
 ![templater_demo](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_demo.gif)
 
+## Terminology
+
+To understand how [Templater](https://github.com/SilentVoid13/Templater) works, let's define a few terms:
+
+- A text snippet that starts with an opening tag `<%`, ends with a closing tag `%>` and that is using a variable or a function is what we will call a **command**. 
+
+- A **template** is a file that contains different commands.
+
+There are two different types of commands you can use:
+
+- [Internal commands](https://github.com/SilentVoid13/Templater#internal-commands). This is a command that's using predefined variables and functions that are built within the plugin. We will call such variables and functions **internal** variables and functions. As an example, `<% tp.file.title %>` is an internal variable that will return the name of the file. A complete list of the internal variables / functions is given below.
+- [User defined commands](https://github.com/SilentVoid13/Templater#user-commands). This is a command that's using a user's defined function. Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. A user function that returns the system command's output will then be created.
+
 ## Usage
 
-[Templater](https://github.com/SilentVoid13/Templater) uses the template engine [Eta](https://eta.js.org/). This engine allows us to expose JavaScript objects to users. In our case, all templates are available under the `tp` object. This means that a template declaration will always start with `tp.<something>`
+[Templater](https://github.com/SilentVoid13/Templater) uses the template engine [Eta](https://eta.js.org/). This engine allows us to expose JavaScript objects to users. 
 
-Because templates are JavaScript objects, a template can be a variable or a function. For example the `tp.file.content` internal template is a variable, so we must call it as a variable. On the other hand, an internal template like `tp.date.now` is a function, so we must call it like a function: `tp.date.now()`. A function can have arguments and optional arguments. All informations about the different templates are listed below.
+In [Templater](https://github.com/SilentVoid13/Templater), all of our variables and functions are available under the `tp` object. This means that a variable / function declaration will always start with `tp.<something>`
 
-A template **must** be declared using an opening tag `<%` and a closing tag `%>`. The complete declaration of the previous template example would be `<% tp.date.now() %>`
+All of Templater's variables and functions are JavaScript objects. 
 
-### Internal Templates
+For example, `tp.file.content` is an internal variable, while `tp.date.now` is an internal function. 
 
-Internal templates are built within [Templater](https://github.com/SilentVoid13/Templater).
+To call a function, we need to use a syntax specific to functions calls: appending an opening and a closing parenthesis after the function name. As an example, we would use `tp.date.now()` to call this internal function.
 
-Internal templates are sorted by modules. The existing modules are:
+A function can have arguments and optional arguments. They are declared between the opening and the closing parenthesis. 
+
+All informations about the different arguments taken by internal variables / functions are listed below.
+
+A command **must** be declared using an opening tag `<%` and a closing tag `%>`. 
+
+The complete declaration of a command using the `tp.date.now` internal function would be: `<% tp.date.now() %>`
+
+### Internal Commands
+
+Internal commands are commands using internal variables and functions built within [Templater](https://github.com/SilentVoid13/Templater).
+
+The different internal variables and functions offered by [Templater](https://github.com/SilentVoid13/Templater) are sorted by modules. The existing internal modules are:
 
 - Date module
 - File module
 - Frontmatter module
 - Web module
 
-You can call an internal template using the following structure `tp.<module_name>.<template_name>`
+You can declare an internal command using the following structure ` <% tp.<module_name>.<internal_variable_or_function_name> %>`
 
-As said before, some internal templates are functions requiring or accepting user arguments. You can call them like using the following syntax: `<% tp.<module_name>.<template_name>(arg1, arg2, arg3, ...) %>`. 
+As I said before, some internal functions are requiring arguments. Arguments must be passed between the opening and the closing parenthesis like so: `tp.<module_name>.<internal_variable_or_function_name>(arg1, arg2, arg3, ...)`. 
 
-I invite everyone to contribute to this plugin development by adding new internal templates. (Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_TEMPLATES.md) for more informations).
+I invite everyone to contribute to this plugin development by adding new internal functions / variables. (Check [INTERNAL_COMMANDS](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMANDS.md) for more informations).
 
 ### Internal Modules
 
 Below is the documentation of every internal module of [Templater](https://github.com/SilentVoid13/Templater).
 
-When an internal template is a function, the documentation for its arguments will be in the following form:  `tp.<module_name>.<template_name>(arg1: type, arg2: type, ...)`. 
+The documentation for an internal function will be in the following form:  `tp.<module_name>.<internal_variable_or_function_name>(arg1_name: type, arg2_name: type, ...)`. 
 
-The type is the expected type for the argument. This type must be respected when calling the internal template, or it will throw an error.
+**Warning**: Please note that this syntax is for documentation purposes only, to be able to understand what the function expects. You won't need to specify the name nor the type of the argument that you pass to a function, only the value of that argument is required.
+
+The type is the expected type for the argument. This type must be respected when calling the internal function, or it will throw an error.
 
 - A `string` type means the value must be placed within simple or double quotes (`"value"` or `'value'`)
 - A `number` type means the value must be an integer (`15`, `-5`, ...)
@@ -50,26 +72,26 @@ The type is the expected type for the argument. This type must be respected when
 
 All arguments must be passed in the correct order.
 
-If an argument is optional, it will be appended with a question mark `?`, e.g. `arg1?: type`
+If an argument is optional, it will be appended with a question mark `?` in the documentation, e.g. `arg1?: type`
 
-If an argument has a default value, it will be specified using an equal `=` sign, e.g. `arg1: string = 'default value'`. When an argument has a default value, it is therefore optional.
+If an argument has a default value, it will be specified using an equal `=` sign in the documentation, e.g. `arg1: string = 'default value'`.
 
-Let's take the internal template `tp.date.now(format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string)` documentation as an example. 
+Let's take the `tp.date.now` internal function documentation as an example: `tp.date.now(format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string)`
 
-It's a function template, and it has 4 optional arguments: 
+When reading this, we understand that `tp.date.now` is an internal function, and not an internal variable, because of the opening / closing parenthesis. This internal function has 4 optional arguments: 
 
 - a format of type `string`, with a default value of `"YYYY-MM-DD"`.
 - an offset of type `number` .
 - a reference of type `string` .
 - a reference_format of type `string` .
 
-That means that a valid call for this template could be `<% tp.date.now() %>` because all of its arguments are optional, but `<% tp.date.now("YYYY-MM-DD", 7) %>` is also valid.
+That means that a valid internal command for this internal function could be `<% tp.date.now() %>` because all of its arguments are optional, but `<% tp.date.now("YYYY-MM-DD", 7) %>` is also valid.
 
 #### Date module
 
-This module contains every templates related to dates.
+This module contains every internal variable / function related to dates.
 
-| Internal Template                                            | Arguments                                                    | Description                | Example Output |
+| Internal Variable / Function                                 | Arguments                                                    | Description                | Example Output |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------- | -------------- |
 | `tp.date.now(format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string)` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)<br />- `offset`: Offset for the day, e.g. set this to `-7` to get last week's date.<br />- `reference`: The date referential, e.g: set this to the note's title<br />- `reference_format`: The date reference format. | Retrieves the date.        | `2021-01-15`   |
 | `tp.date.tomorrow(format: string = "YYYY-MM-DD")`            | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) | Retrieves tomorrow's date  | `2020-11-07`   |
@@ -89,14 +111,16 @@ Date tomorrow with format: <% tp.date.tomorrow("Do MMMM YYYY") %>
 
 Date yesterday with format: <% tp.date.yesterday("Do MMMM YYYY") %>
 
-File's title + 1 day: <% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>
+File's title date + 1 day (tomorrow): <% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>
+
+File's title date - 1 day (yesterday): <% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>
 ```
 
 #### File Module
 
-This module contains every templates related to obsidian files.
+This module contains every internal variable / function related to obsidian files.
 
-| Internal Template                                            | Arguments                                                    | Description                                                  | Example Output              |
+| Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- |
 | `tp.file.content`                                            | None                                                         | Retrieves the file's content                                 | `This is some content`      |
 | `tp.file.creation_date(format: string = "YYYY-MM-DD HH:mm")` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) | Retrieves the file's creation date.                          | `2021-01-06 20:27`          |
@@ -140,11 +164,11 @@ File title: <% tp.file.title %>
 
 #### Frontmatter module
 
-This modules exposes all the frontmatter variables of a file.
+This modules exposes all the frontmatter variables of a file as internal variables.
 
-| Internal Template                | Arguments | Description                                      | Example Output |
-| -------------------------------- | --------- | ------------------------------------------------ | -------------- |
-| `tp.frontmatter.<variable_name>` | None      | Retrieves the file's frontmatter variable value. | `value`        |
+| Internal Variable / Function                 | Arguments | Description                                      | Example Output |
+| -------------------------------------------- | --------- | ------------------------------------------------ | -------------- |
+| `tp.frontmatter.<frontmatter_variable_name>` | None      | Retrieves the file's frontmatter variable value. | `value`        |
 
 ##### Notes
 
@@ -157,6 +181,7 @@ Let's say you have the following file:
 ````
 ---
 alias: myfile
+note type: seedling
 ---
 
 file content
@@ -166,15 +191,16 @@ Then you can use the following template:
 
 ````
 File's metadata alias: <% tp.frontmatter.alias %>
+Note's type: <% tp.frontmatter["note type"] %>
 ````
 
 #### Web module
 
-This modules contains every template related to the web (using web requests).
+This modules contains every internal variable / function related to the web (using web requests).
 
-[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape template response characters using the `<%~` opening tag. Go [here](https://github.com/SilentVoid13/Templater#eta-features) for more informations.
+[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape a command's response characters using the `<%~` opening tag. Go [here](https://github.com/SilentVoid13/Templater#eta-features) for more informations.
 
-| Internal Template                                            | Arguments                                                    | Description                                                  | Example Output                                               |
+| Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output                                               |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `tp.web.daily_quote()`                                       | None                                                         | Retrieves and parses the daily quote from the API https://quotes.rest/ | ![quote](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_daily_quote.png) |
 | `tp.web.random_picture(size: string = "1600x900", query?: string)` | - `size`: Image size in the format `<width>x<height>`.<br />- `query`: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` | Gets a random image from https://unsplash.com/               | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
@@ -195,47 +221,73 @@ Web random picture with size + query:
 <% tp.web.random_picture("200x200", "landscape,water") %>
 ```
 
-### User templates
+### User Commands
 
-#### New user template
+#### New user command
 
-To define a new user template, you need to define a template name, associated with a system command. To do that, go to the plugin's settings and click `Add Template`.
+To define a new user command, you need to define a **function name**, associated with a **system command**. 
+
+To do that, go to the plugin's settings and click `Add User Command`.
+
+Once this is done, [Templater](https://github.com/SilentVoid13/Templater) will create a user function named after what you defined, that will execute your system command and return its output.
+
+Just like internal functions, user functions are available under the `tp` JavaScript object, and more specifically under the `tp.user` object.
 
 ![user_templates](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_user_templates.png)
 
-#### Calling User Templates
+#### Using User Commands
 
-Just like internal templates, user templates are available under the `tp` JavaScript object, and more specifically under the `tp.user` object. You can call a user template using the following syntax: `tp.user.<template_name>()`, where `<template_name>` is the name you defined. 
+You can call a user function using the usual function calling syntax: `tp.user.<user_function_name>()`, where `<user_function_name>` is the name you defined in the settings. 
 
-User templates are functions, so you must call them like functions.
+For example, if you defined a user function named `echo` like in the above screenshot, a complete user command declaration would be: `<% tp.user.echo() %>`
 
-For example, if you defined a user template named `echo` like in the above screenshot, you can call it like so: `<% tp.user.echo() %>`
+#### User Functions Arguments
 
-#### User Templates Arguments
-
-You can pass optional arguments to user templates. They must be passed as a single JavaScript object containing properties and their corresponding values: `{arg1: value1, arg2: value2, ...}`.
+You can pass optional arguments to user functions. They must be passed as a single JavaScript object containing properties and their corresponding values: `{arg1: value1, arg2: value2, ...}`.
 
 These arguments will be made available for your programs / scripts in the form of [environment variables](https://en.wikipedia.org/wiki/Environment_variable).
 
-In our previous example, this would give the following call: `<% tp.user.echo({a: "value 1", b: "value 2"})`. If our user template was calling a bash script, we would be able to access variables `a` and `b` using `$a` and `$b`.
+In our previous example, this would give the following user command declaration: `<% tp.user.echo({a: "value 1", b: "value 2"})`. 
 
-#### Internal Templates in User Templates
+If our system command was calling a bash script, we would be able to access variables `a` and `b` using `$a` and `$b`.
 
-You can also use some Internal templates inside your commands. The internal templates will get replaced before your command gets executed. Internal templates still needs to be placed between opening and closing tags.
+#### Internal commands in system commands
 
-For example, if you configure the system command `cat <% tp.file.path() %>`, it will be replaced with `cat /path/to/file` before the command gets executed.
+You can declare internal commands inside your system command. The internal commands will be replaced with their results before your system command gets executed.
+
+For example, if you configured the system command `cat <% tp.file.path() %>`, it would be replaced with `cat /path/to/file` before the system command gets executed.
 
 ### Eta features
 
-Using the [Eta](https://eta.js.org/) templating engine, [Templater](https://github.com/SilentVoid13/Templater) defines 3 types of tags:
+Using the [Eta](https://eta.js.org/) templating engine, [Templater](https://github.com/SilentVoid13/Templater) defines 3 types of opening tags for commands:
 
-- `<%`:  Raw display tag.
-- `<%*`: Executes JavaScript code tag. This will never output anything.
-- `<%~`: Interpolation tag, adds some character escaping.
+- `<%`:  Raw display tag. It will just output the variable / function that's inside.
+- `<%*`: JavaScript execution tag. It will execute the JavaScript code that's inside. It does not output anything by default.
+- `<%~`: Interpolation tag. Same as the raw display tag, but adds some character escaping.
 
-This means that using the execution opening tag, we can pretty much do everything that JavaScript allows us to do.
+The closing tag for a command always stays the same: `%>`
 
-Here are some examples:
+#### JavaScript Execution Tag
+
+With this type of tag, we can pretty much do everything that JavaScript allows us to do.
+
+**Warning:** Some internal functions are asynchronous. When calling such functions inside a JavaScript execution tag don't forget to use the `await` keyword if necessary.
+
+##### Output a value from a JavaScript Execution Tag
+
+Sometimes, you may want to output something when using a JS execution tag. This is possible.
+
+The [Eta](https://eta.js.org/) templating engine generates a replacement string using all of our commands results, that is stored in the `tR` variable. This string contains the processed file content result if you want. You are allowed to access that variable from a JS execution tag.
+
+This means that, to output something from a JS execution tag, you just need to append what you want to output to that string.
+
+For example, the following command: `<%* tR += "test" %>` will output `test`.
+
+You usually don't want to override the `tR` variable (`tR = "test"`), because that means overriding the replacement string.
+
+##### Examples
+
+Here are some examples of things you can do using JavaScript Execution Tags:
 
 ```javascript
 <%* if (tp.file.title.startsWith("Hello")) { %>
@@ -243,32 +295,27 @@ This is a hello file !
 <%* } else { %>
 This is a normal file !
 <%* } %>
-```
-
-```javascript
+    
 <%* if (tp.frontmatter.type === "seedling") { %>
 This is a seedling file !
 <%* } else { %>
 This is a normal file !
 <%* } %>
-```
-
-```javascript
+    
 <%* if (tp.file.tags.contains("#todo")) { %>
 This is a todo file !
 <%* } else { %>
 This is a finished file !
 <%* } %>
-```
-
-```javascript
+    
 <%*
 function log(msg) {
 	console.log(msg);
 }
 %>
-
 <%* log("Title: " + tp.file.title) %>
+    
+<%* tR += tp.file.content.replace(/stuff/, "things"); %>
 ```
 
 ## Settings
@@ -298,7 +345,7 @@ The first installation of [Templater](https://github.com/SilentVoid13/Templater)
 
 Feel free to contribute.
 
-Check [INTERNAL_TEMPLATES](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_TEMPLATES.md) for informations on how to develop a new internal template.
+Check [INTERNAL_COMMAND](https://github.com/SilentVoid13/Templater/blob/master/docs/INTERNAL_COMMAND.md) for informations on how to develop a new internal variable / function.
 
 You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to report a bug, suggest an improvement for this plugin, etc.
 
