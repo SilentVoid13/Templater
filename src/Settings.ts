@@ -38,11 +38,11 @@ This message will self-destruct in the next update.`;
 
 		let fragment = document.createDocumentFragment();
 		let link = document.createElement("a");
-		link.href = "https://github.com/SilentVoid13/Templater#internal-templates";
+		link.href = "https://github.com/SilentVoid13/Templater#internal-commands";
 		link.text = "here";
 		fragment.append("Click ");
 		fragment.append(link);
-		fragment.append(" to get a list of all the available internal templates.");
+		fragment.append(" to get a list of all the available internal variables / functions.");
 
 		new Setting(containerEl)
 			.setName("Template folder location")
@@ -74,7 +74,7 @@ This message will self-destruct in the next update.`;
 			});
 
 		new Setting(containerEl)
-			.setName("Internal templates")
+			.setName("Internal Variables and Functions")
 			.setDesc(fragment);
 
 		let i = 1;
@@ -83,7 +83,7 @@ This message will self-destruct in the next update.`;
 			div.addClass("templater_div");
 
 			let title = containerEl.createEl('h4', {
-				text: 'Template n°' + i,
+				text: 'User Function n°' + i,
 			});
 			title.addClass("templater_title");
 
@@ -101,7 +101,7 @@ This message will self-destruct in the next update.`;
 						})
 				})
 				.addText(text => {
-						let t = text.setPlaceholder('Template Pattern')
+						let t = text.setPlaceholder('Function name')
 						.setValue(template_pair[0])
 						.onChange((new_value) => {
 							let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
