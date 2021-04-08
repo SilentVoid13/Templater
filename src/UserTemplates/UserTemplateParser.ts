@@ -16,7 +16,7 @@ export class UserTemplateParser extends TParser {
     }
 
     resolveCwd() {
-        // TODO: fix that
+        // TODO: Add mobile support
         if (this.app.isMobile || !(this.app.vault.adapter instanceof FileSystemAdapter)) {
             this.cwd = "";
         }

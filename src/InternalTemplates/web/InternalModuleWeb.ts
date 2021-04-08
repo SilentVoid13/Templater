@@ -10,7 +10,6 @@ export class InternalModuleWeb extends InternalModule {
     }
 
     async getRequest(url: string): Promise<Response> {
-        // TODO: Mobile support
         let response = await fetch(url);
         if (!response.ok) {
             throw new Error("Error performing GET request");
@@ -20,7 +19,6 @@ export class InternalModuleWeb extends InternalModule {
 
     generate_daily_quote() {
         return async () => {
-            // TODO: Mobile support
             let response = await this.getRequest("https://quotes.rest/qod");
             let json = await response.json();
 
@@ -34,7 +32,6 @@ export class InternalModuleWeb extends InternalModule {
 
     generate_random_picture() {
         return async (size: string = "1600x900", query?: string) => {
-            // TODO: Mobile support
             let response = await this.getRequest(`https://source.unsplash.com/random/${size}?${query}`);
             let url = response.url;
             return `![tp.web.random_picture](${url})`;   
@@ -43,7 +40,6 @@ export class InternalModuleWeb extends InternalModule {
 
     generate_get_request() {
         return async (url: string) => {
-            // TODO: Mobile support
             let response = await this.getRequest(url);
             let json = await response.json();
             return json;

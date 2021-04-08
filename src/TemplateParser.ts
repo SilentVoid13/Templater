@@ -21,7 +21,7 @@ export class TemplateParser extends TParser {
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
         this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
-        // TODO: fix that
+        // TODO: Add mobile support
         if (!this.app.isMobile) {
             this.userTemplateParser = new UserTemplateParser(this.app, this.plugin);
         }
@@ -113,16 +113,23 @@ export class TemplateParser extends TParser {
 	}
 
     async create_new_note_from_template(template_file: TFile) {
-        let template_content = await this.app.vault.read(template_file);
-        let created_note = await this.app.vault.create("Untitled.md", "");
-        let content = await this.plugin.parser.parseTemplates(template_content, created_note, ContextMode.USER_INTERNAL);
-        await this.app.vault.modify(created_note, content);
+        try {
+            let template_content = await this.app.vault.read(template_file);
+            let created_note = await this.app.vault.create("Untitled.md", "");
+            let content = await this.plugin.parser.parseTemplates(template_content, created_note, ContextMode.USER_INTERNAL);
+            await this.app.vault.modify(created_note, content);
 
-        let active_leaf = this.app.workspace.activeLeaf;
-        if (!active_leaf) {
-            throw new Error("No active leaf");
+            let active_leaf = this.app.workspace.activeLeaf;
+            if (!active_leaf) {
+                throw new Error("No active leaf");
+            }
+            await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
+
+            await this.jump_to_next_cursor_location();
         }
-        await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
+		catch(error) {
+			this.plugin.log_error(error);
+		}
     }
 
     async replace_templates_and_append(template_file: TFile) {
@@ -206,7 +213,6 @@ export class TemplateParser extends TParser {
         let editor = active_view.editor;
 
         editor.focus();
-        // TODO: Replace with setCursor in next release
         editor.setCursor(pos);
     }
 }

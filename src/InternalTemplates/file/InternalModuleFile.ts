@@ -13,6 +13,7 @@ export class InternalModuleFile extends InternalModule {
     private static depth: number = 0;
 
     async generateTemplates() {
+        this.templates.set("clipboard", this.generate_clipboard());
         this.templates.set("content", await this.generate_content());
         this.templates.set("creation_date", this.generate_creation_date());
         // Hack to prevent empty output
@@ -25,6 +26,16 @@ export class InternalModuleFile extends InternalModule {
         this.templates.set("selection", this.generate_selection());
         this.templates.set("tags", this.generate_tags());
         this.templates.set("title", this.generate_title());
+    }
+
+    generate_clipboard() {
+        return async () => {
+            // TODO: Add mobile support
+            if (this.app.isMobile) {
+                return UNSUPPORTED_MOBILE_TEMPLATE;
+            }
+            return await navigator.clipboard.readText();
+        }
     }
 
     async generate_content() {
@@ -87,7 +98,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_path() {
         return (relative: boolean = false) => {
-            // TODO: fix that
+            // TODO: Add mobile support
             if (this.app.isMobile) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
