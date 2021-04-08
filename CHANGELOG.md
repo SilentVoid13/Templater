@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/SilentVoid13/Templater/compare/1.1.0...1.2.0) (2021-04-08)
+
+
+### Features
+
+* **internaltemplates:** adding tp.file.clipboard internal function ([65d0e08](https://github.com/SilentVoid13/Templater/commit/65d0e08dddcd2a1b349be7d62982be4c85b00d50)), closes [#86](https://github.com/SilentVoid13/Templater/issues/86)
+
+
+### Bug Fixes
+
+* **fuzzysuggest:** sorting files alphabetically in modal ([35e388c](https://github.com/SilentVoid13/Templater/commit/35e388c935aff749a7001c1bfd0899e00926aaca)), closes [#83](https://github.com/SilentVoid13/Templater/issues/83)
+
 ## [1.1.0](https://github.com/SilentVoid13/Templater/compare/1.0.0...1.1.0) (2021-04-06)
 
 
