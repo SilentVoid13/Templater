@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/SilentVoid13/Templater/compare/1.2.0...1.2.1) (2021-04-08)
+
+
+### Bug Fixes
+
+* **settings:** adding a toggle for the update notice ([0bf6cb0](https://github.com/SilentVoid13/Templater/commit/0bf6cb014b3b19054dfd4bcf98fda0c801e45853)), closes [#90](https://github.com/SilentVoid13/Templater/issues/90)
+
 ## [1.2.0](https://github.com/SilentVoid13/Templater/compare/1.1.0...1.2.0) (2021-04-08)
 
 
