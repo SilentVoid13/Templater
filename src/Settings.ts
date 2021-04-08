@@ -6,12 +6,14 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	command_timeout: 5,
 	template_folder: "",
 	templates_pairs: [["", ""]],
+	toggle_notice: false,
 };
 
 export interface TemplaterSettings {
 	command_timeout: number;
 	template_folder: string;
 	templates_pairs: Array<[string, string]>;
+	toggle_notice: boolean;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -43,6 +45,16 @@ This message will self-destruct in the next update.`;
 		fragment.append("Click ");
 		fragment.append(link);
 		fragment.append(" to get a list of all the available internal variables / functions.");
+
+		new Setting(containerEl)
+			.setName("Disables update Notice")
+			.addToggle(toggle => {
+				toggle.setValue(this.plugin.settings.toggle_notice)
+					.onChange(toggle_notice => {
+						this.plugin.settings.toggle_notice = toggle_notice;
+						this.plugin.saveSettings();
+					})
+			})
 
 		new Setting(containerEl)
 			.setName("Template folder location")
@@ -145,7 +157,7 @@ This message will self-destruct in the next update.`;
 
 		let setting = new Setting(containerEl)
 			.addButton(button => {
-				let b = button.setButtonText("Add Template").onClick(() => {
+				let b = button.setButtonText("Add New User Command").onClick(() => {
 					this.plugin.settings.templates_pairs.push(["", ""]);
 					// Force refresh
 					this.display();

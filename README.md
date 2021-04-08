@@ -138,6 +138,8 @@ This module contains every internal variable / function related to files.
 ##### Examples
 
 ```
+Clipboard content: <% tp.file.clipboard() %>
+
 File content: <% tp.file.content %>
 
 File creation date: <% tp.file.creation_date() %>
@@ -284,7 +286,7 @@ This means that, to output something from a JS execution tag, you just need to a
 
 For example, the following command: `<%* tR += "test" %>` will output `test`.
 
-You usually don't want to override the `tR` variable (`tR = "test"`), because that means overriding the replacement string.
+You usually don't want to override the `tR` variable (e.g. `tR = "test"`), because that means overriding the replacement string.
 
 ##### Examples
 
@@ -327,9 +329,7 @@ You can set a timeout for your custom commands with the `Timeout` option. A comm
 
 ## Installation
 
-After disabling Safe Mode, you can find third-party plugins in Settings > Third-party plugin > Community plugins > Browse > Search for "Templater".
-
-After installing, you can then find the installed plugins under Settings > Third-party plugin. They need to be enabled in order to take effect.
+You can install this plugin via the Community Plugins tab within Obsidian. Search for "Templater".
 
 The first installation of [Templater](https://github.com/SilentVoid13/Templater) may require to restart the obsidian app if things are not working properly.
 
