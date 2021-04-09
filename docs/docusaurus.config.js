@@ -2,8 +2,8 @@
 module.exports = {
   title: 'Templater',
   tagline: 'A template language that lets you insert variables and functions results into your obsidian notes',
-  url: 'https://silentvoid13.github.io/Templater',
-  baseUrl: '/',
+  url: 'https://silentvoid13.github.io',
+  baseUrl: '/Templater/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
@@ -61,7 +61,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/SilentVoid13/Templater-doc/edit/master/',
+            'https://github.com/SilentVoid13/Templater/docs/edit/master/',
         },
       },
     ],
