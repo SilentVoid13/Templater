@@ -4,7 +4,7 @@ module.exports = {
       type: 'category',
       label: 'Templater',
       items: [
-        'getting-started',
+        'introduction',
         'installation',
         'terminology',
         'syntax',
@@ -13,21 +13,27 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Internal Commands',
+      label: 'Internal Variables and Functions',
       items: [
-        'internal-commands/overview',
+        'internal-variables-functions/overview',
         {
           type: 'category',
           label: 'Internal Modules',
           items: [
-            'internal-commands/internal-modules/overview',
-            'internal-commands/internal-modules/date-module',
-            'internal-commands/internal-modules/file-module',
-            'internal-commands/internal-modules/frontmatter-module',
-            'internal-commands/internal-modules/web-module',
+            'internal-variables-functions/internal-modules/date-module',
+            'internal-variables-functions/internal-modules/file-module',
+            'internal-variables-functions/internal-modules/frontmatter-module',
+            'internal-variables-functions/internal-modules/web-module',
           ],
         },
-        'internal-commands/develop-internal-commands',
+        'internal-variables-functions/contribute',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'User Functions',
+      items: [
+        'user-functions/overview',
       ],
     },
     {
@@ -35,6 +41,7 @@ module.exports = {
       label: 'Eta features',
       items: [
         'eta-features/overview',
+        'eta-features/execution-command',
       ],
     },
   ],

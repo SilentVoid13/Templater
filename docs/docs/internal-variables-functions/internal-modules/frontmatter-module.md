@@ -4,15 +4,29 @@ title: Frontmatter Module
 
 This modules exposes all the frontmatter variables of a file as internal variables.
 
+## Documentation
+
+:::tip
+
+Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+
+:::
+
 | Internal Variable / Function                 | Arguments | Description                                      | Example Output |
 | -------------------------------------------- | --------- | ------------------------------------------------ | -------------- |
 | `tp.frontmatter.<frontmatter_variable_name>` | None      | Retrieves the file's frontmatter variable value. | `value`        |
 
-##### Notes
+:::note
 
-- If your frontmatter variable name contains spaces, you can reference it using the bracket notation like so: `<% tp.frontmatter["variable name with spaces"] %>`
+- If your frontmatter variable name contains spaces, you can reference it using the bracket notation like so: 
 
-##### Examples
+  ````
+  <% tp.frontmatter["variable name with spaces"] %>
+  ````
+
+:::
+
+## Examples
 
 Let's say you have the following file:
 

@@ -4,6 +4,14 @@ title: Date Module
 
 This module contains every internal variable / function related to dates.
 
+## Documentation
+
+:::tip
+
+Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+
+:::
+
 | Internal Variable / Function                                 | Arguments                                                    | Description                | Example Output |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------- | -------------- |
 | `tp.date.now(format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string)` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)<br />- `offset`: Offset for the day, e.g. set this to `-7` to get last week's date.<br />- `reference`: The date referential, e.g: set this to the note's title<br />- `reference_format`: The date reference format. | Retrieves the date.        | `2021-01-15`   |

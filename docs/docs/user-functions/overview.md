@@ -1,6 +1,9 @@
 ---
 title: Overview
+slug: /user-functions
 ---
+
+Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. [Templater](https://github.com/SilentVoid13/Templater) will then create the function that returns the system command's output when invoked.
 
 ## New user command
 
@@ -12,7 +15,7 @@ Once this is done, [Templater](https://github.com/SilentVoid13/Templater) will c
 
 Just like internal functions, user functions are available under the `tp` JavaScript object, and more specifically under the `tp.user` object.
 
-![user_templates](https://raw.githubusercontent.com/SilentVoid13/Templater/master/imgs/templater_user_templates.png)
+![user_templates](/img/templater_user_templates.png)
 
 ## Using User Commands
 

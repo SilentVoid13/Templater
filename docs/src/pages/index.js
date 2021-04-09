@@ -12,7 +12,7 @@ const features = [
     imageUrl: 'img/logo3.svg',
     description: (
       <>
-        Tired of having to input the same informations by hand for each of your files? Automate everything with Templater.
+        Tired of having to input the same informations manually for each of your files? Automate everything with Templater.
       </>
     ),
   },
@@ -21,7 +21,7 @@ const features = [
     imageUrl: 'img/terminal_logo.svg',
     description: (
       <>
-        Enjoy pre-existing internal commands built within Templater. Define your own user commands using system commands.
+        Enjoy pre-existing internal variables and functions built within Templater. Define your own user functions using system commands.
       </>
     ),
   },
@@ -30,7 +30,7 @@ const features = [
     imageUrl: 'img/eta_logo.svg',
     description: (
       <>
-        Templater uses the Eta templating engine. Enjoy every feature of Eta using Templater!
+        Templater uses the <a href="https://eta.js.org/">Eta</a> templating engine. Enjoy every feature of <a href="https://eta.js.org/">Eta</a> using Templater!
       </>
     ),
   },
@@ -56,7 +56,7 @@ export default function Home() {
   const {siteConfig = {}} = context;
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`Obsidian ${siteConfig.title} Plugin`}
       description="Description will go into a meta tag in <head />">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">

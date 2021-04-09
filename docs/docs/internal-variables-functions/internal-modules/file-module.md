@@ -4,6 +4,14 @@ title: File Module
 
 This module contains every internal variable / function related to files.
 
+## Documentation
+
+:::tip
+
+Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+
+:::
+
 | Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- |
 | `tp.file.clipboard()`                                        | None                                                         | Retrieves the clipboard's content                            | `This is my copied text`    |
@@ -32,7 +40,7 @@ File creation date with format: <% tp.file.creation_date("dddd Do MMMM YYYY HH:m
 File Folder: <% tp.file.folder() %>
 File Folder with relative path: <% tp.file.folder(true) %>
 
-File include: <% tp.file.include("Templates/Template1") %>
+File Include: <% tp.file.include("Templates/Template1") %>
 
 File Last Modif Date: <% tp.file.last_modified_date() %>
 File Last Modif Date with format: <% tp.file.last_modified_date("dddd Do MMMM YYYY HH:mm") %>
