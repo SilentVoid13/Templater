@@ -10,7 +10,7 @@
 
 To understand how [Templater](https://github.com/SilentVoid13/Templater) works, let's define a few terms:
 
-- A text snippet that starts with an opening tag `<%`, ends with a closing tag `%>` and that is using an expression (variable, function, ...) is what we will call a **command**. 
+- A text snippet that starts with an opening tag `<%`, ends with a closing tag `%>` and that contains an expression (variable, function, ...) is what we will call a **command**. 
 
 - A **template** is a file that contains different commands.
 
