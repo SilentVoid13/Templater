@@ -70,7 +70,7 @@ This message will self-destruct in the next update.`;
 
 		new Setting(containerEl)
 			.setName("Timeout")
-			.setDesc("Maximum timeout in seconds for a command.")
+			.setDesc("Maximum timeout in seconds for a system command.")
 			.addText(text => {
 				text.setPlaceholder("Timeout")
 					.setValue(this.plugin.settings.command_timeout.toString())
@@ -157,7 +157,7 @@ This message will self-destruct in the next update.`;
 
 		let setting = new Setting(containerEl)
 			.addButton(button => {
-				let b = button.setButtonText("Add New User Command").onClick(() => {
+				let b = button.setButtonText("Add New User Function").onClick(() => {
 					this.plugin.settings.templates_pairs.push(["", ""]);
 					// Force refresh
 					this.display();

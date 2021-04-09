@@ -10,7 +10,7 @@
 
 ## Documentation
 
-Checkout the complete [documentation](https://silentvoid13.github.io/Templater/) to start using [Templater](https://github.com/SilentVoid13/Templater).
+Check out the complete [documentation](https://silentvoid13.github.io/Templater/) to start using [Templater](https://github.com/SilentVoid13/Templater).
 
 ## Utilities
 

@@ -3,13 +3,11 @@ title: Overview
 slug: /user-functions
 ---
 
-Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. [Templater](https://github.com/SilentVoid13/Templater) will then create the function that returns the system command's output when invoked.
+## Define a User Function
 
-## New user command
+To define a new user function, you need to define a **function name**, associated with a **system command**.
 
-To define a new user command, you need to define a **function name**, associated with a **system command**. 
-
-To do that, go to the plugin's settings and click `Add User Command`.
+To do that, go to the plugin's settings and click `Add User Function`.
 
 Once this is done, [Templater](https://github.com/SilentVoid13/Templater) will create a user function named after what you defined, that will execute your system command and return its output.
 
@@ -17,11 +15,11 @@ Just like internal functions, user functions are available under the `tp` JavaSc
 
 ![user_templates](/img/templater_user_templates.png)
 
-## Using User Commands
+## Invoking User Functions
 
 You can call a user function using the usual function calling syntax: `tp.user.<user_function_name>()`, where `<user_function_name>` is the name you defined in the settings. 
 
-For example, if you defined a user function named `echo` like in the above screenshot, a complete user command invocation would look like: `<% tp.user.echo() %>`
+For example, if you defined a user function named `echo` like in the above screenshot, a complete command invocation would look like: `<% tp.user.echo() %>`
 
 ## User Functions Arguments
 
@@ -33,8 +31,10 @@ In our previous example, this would give the following user command declaration:
 
 If our system command was calling a bash script, we would be able to access variables `a` and `b` using `$a` and `$b`.
 
-## Internal commands in system commands
+## Internal variables / functions in system commands
 
-You can use internal commands inside your system command. The internal commands will be replaced with their results before your system command gets executed.
+You can use internal variables / functions inside your system command. The internal variables / functions will be replaced by their results before your system command gets executed.
+
+You still need to use commands to call internal variables / functions.
 
 For example, if you configured the system command `cat <% tp.file.path() %>`, it would be replaced with `cat /path/to/file` before the system command gets executed.

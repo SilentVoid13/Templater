@@ -10,8 +10,8 @@ To understand how [Templater](https://github.com/SilentVoid13/Templater) works, 
 
 There are two types of variables / functions you can use:
 
-- [Internal variables / functions](internal-variables-functions/overview). They are **predefined** variables / functions that are built within the plugin. As an example, `tp.file.title` is an internal variable that will return the name of the file. You can find a list of all the internal variables and functions [here](internal-variables-functions/overview).
-- [User defined functions](user-functions/overview). Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. [Templater](https://github.com/SilentVoid13/Templater) will then create the function that returns the system command's output when invoked.
+- [Internal variables / functions](internal-variables-functions). They are **predefined** variables / functions that are built within the plugin. As an example, `tp.file.title` is an internal variable that will return the name of the file. You can find a list of all the internal variables and functions [here](internal-variables-functions).
+- [User defined functions](user-functions). Users can define their own functions in the plugin settings, associating a **function name** with a **system command**. [Templater](https://github.com/SilentVoid13/Templater) will then create the function that returns the system command's output when invoked.
 
 To summarize things, we have the following idea: 
 

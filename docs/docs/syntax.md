@@ -26,7 +26,7 @@ The syntax between a variable and< a function invocation is different, so it's i
 
 For example, `tp.file.content` is an internal variable, while `tp.date.now` is an internal function.
 
-All informations about the different internal variables / functions and their nature is given [here](internal-variables-functions/overview).
+All informations about the different internal variables / functions and their nature is given [here](internal-variables-functions).
 
 #### Variable invocation
 
