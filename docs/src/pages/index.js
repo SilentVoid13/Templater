@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <Layout
       title={`Obsidian ${siteConfig.title} Plugin`}
-      description="Description will go into a meta tag in <head />">
+      description="A template language that lets you insert variables and functions results into your obsidian notes">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">{siteConfig.title}</h1>
