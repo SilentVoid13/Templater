@@ -27,7 +27,7 @@ You can pass optional arguments to user functions. They must be passed as a sing
 
 These arguments will be made available for your programs / scripts in the form of [environment variables](https://en.wikipedia.org/wiki/Environment_variable).
 
-In our previous example, this would give the following user command declaration: `<% tp.user.echo({a: "value 1", b: "value 2"})`. 
+In our previous example, this would give the following command declaration: `<% tp.user.echo({a: "value 1", b: "value 2"})`. 
 
 If our system command was calling a bash script, we would be able to access variables `a` and `b` using `$a` and `$b`.
 

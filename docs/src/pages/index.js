@@ -17,7 +17,7 @@ const features = [
     ),
   },
   {
-    title: 'Use internal and user commands',
+    title: 'Use User / Internal variables and functions',
     imageUrl: 'img/terminal_logo.svg',
     description: (
       <>
