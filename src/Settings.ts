@@ -108,6 +108,7 @@ This message will self-destruct in the next update.`;
 							if (index > -1) {
 								this.plugin.settings.templates_pairs.splice(index, 1);
 								// Force refresh
+								this.plugin.saveSettings();
 								this.display();
 							}
 						})

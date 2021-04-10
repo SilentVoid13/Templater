@@ -136,11 +136,8 @@ export default class TemplaterPlugin extends Plugin {
 			// I need to use getFirstLinkpathDest and ctx to find the actual file
 			let file = this.app.workspace.getActiveFile();
 
-			let new_html = await this.parser.parseTemplates(
-				el.innerHTML, 
-				file, 
-				ContextMode.DYNAMIC
-			);
+			await this.parser.setCurrentContext(file, ContextMode.DYNAMIC);
+			let new_html = await this.parser.parseTemplates(el.innerHTML);
 
 			el.innerHTML = new_html;
 		}

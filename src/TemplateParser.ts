@@ -17,6 +17,7 @@ export enum ContextMode {
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser = null;
+    private current_context: any;
     
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
@@ -27,10 +28,19 @@ export class TemplateParser extends TParser {
         }
     }
 
+    async setCurrentContext(file: TFile, context_mode: ContextMode) {
+        this.current_context = await this.generateContext(file, context_mode);
+    }
+
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
         let context = {};
         let internal_context = await this.internalTemplateParser.generateContext(file);
-        let user_context = {}
+        let user_context = {};
+
+        if (!this.current_context) {
+            // If a user system command is using tp.file.include, we need the context to be set.
+            this.current_context = internal_context;
+        }
 
         switch (context_mode) {
             case ContextMode.USER:
@@ -72,13 +82,13 @@ export class TemplateParser extends TParser {
                 break;
         }
 
-        return {
-            ...context
-        };
+        return context;
     }
 
-    async parseTemplates(content: string, file: TFile, context_mode: ContextMode) {
-        let context = await this.generateContext(file, context_mode);
+    async parseTemplates(content: string, context?: any) {
+        if (!context) {
+            context = this.current_context;
+        }
 
         try {
             content = await Eta.renderAsync(content, context, {
@@ -116,7 +126,10 @@ export class TemplateParser extends TParser {
         try {
             let template_content = await this.app.vault.read(template_file);
             let created_note = await this.app.vault.create("Untitled.md", "");
-            let content = await this.plugin.parser.parseTemplates(template_content, created_note, ContextMode.USER_INTERNAL);
+
+            await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);
+            let content = await this.plugin.parser.parseTemplates(template_content);
+
             await this.app.vault.modify(created_note, content);
 
             let active_leaf = this.app.workspace.activeLeaf;
@@ -142,7 +155,9 @@ export class TemplateParser extends TParser {
         let doc = editor.getDoc();
 
         let content = await this.app.vault.read(template_file);
-        content = await this.parseTemplates(content, active_view.file, ContextMode.USER_INTERNAL);
+
+        await this.setCurrentContext(active_view.file, ContextMode.USER_INTERNAL);
+        content = await this.parseTemplates(content);
         
         doc.replaceSelection(content);
 
@@ -152,7 +167,9 @@ export class TemplateParser extends TParser {
 
     async replace_templates_and_overwrite_in_file(file: TFile) {
         let content = await this.app.vault.read(file);
-        let new_content = await this.parseTemplates(content, file, ContextMode.USER_INTERNAL);
+
+        await this.setCurrentContext(file, ContextMode.USER_INTERNAL);
+        let new_content = await this.parseTemplates(content);
 
         if (new_content !== content) {
             await this.app.vault.modify(file, new_content);

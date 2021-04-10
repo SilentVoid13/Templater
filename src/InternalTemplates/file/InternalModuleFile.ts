@@ -10,22 +10,25 @@ export const DEPTH_LIMIT = 10;
 
 export class InternalModuleFile extends InternalModule {
     name = "file";
-    private static depth: number = 0;
+    private include_depth: number = 0;
 
-    async generateTemplates() {
-        this.templates.set("clipboard", this.generate_clipboard());
-        this.templates.set("content", await this.generate_content());
-        this.templates.set("creation_date", this.generate_creation_date());
-        // Hack to prevent empty output
-        this.templates.set("cursor", TP_FILE_CURSOR);
-        this.templates.set("folder", this.generate_folder());
-        this.templates.set("include", this.generate_include());
-        this.templates.set("last_modified_date", this.generate_last_modified_date());
-        this.templates.set("path", this.generate_path());
-        this.templates.set("rename", this.generate_rename());
-        this.templates.set("selection", this.generate_selection());
-        this.templates.set("tags", this.generate_tags());
-        this.templates.set("title", this.generate_title());
+    async createStaticTemplates() {
+        this.static_templates.set("clipboard", this.generate_clipboard());
+        this.static_templates.set("cursor", TP_FILE_CURSOR); // Hack to prevent empty output
+        this.static_templates.set("selection", this.generate_selection());
+    }
+
+    async updateTemplates() {
+        this.dynamic_templates.set("content", await this.generate_content());
+        this.dynamic_templates.set("creation_date", this.generate_creation_date());
+        this.dynamic_templates.set("folder", this.generate_folder());
+        this.dynamic_templates.set("include", this.generate_include());
+        this.dynamic_templates.set("last_modified_date", this.generate_last_modified_date());
+        this.dynamic_templates.set("path", this.generate_path());
+        this.dynamic_templates.set("rename", this.generate_rename());
+        this.dynamic_templates.set("tags", this.generate_tags());
+        this.dynamic_templates.set("title", this.generate_title());
+
     }
 
     generate_clipboard() {
@@ -68,23 +71,24 @@ export class InternalModuleFile extends InternalModule {
         return async (include_filename: string) => {
             let inc_file = this.app.metadataCache.getFirstLinkpathDest(normalizePath(include_filename), "");
             if (!inc_file) {
-                throw new Error(`File ${this.file} include doesn't exist`);
+                throw new Error(`File ${include_filename} doesn't exist`);
             }
             if (!(inc_file instanceof TFile)) {
-                throw new Error(`${this.file} is a folder, not a file`);
+                throw new Error(`${include_filename} is a folder, not a file`);
             }
 
             // TODO: Add mutex for this, this may currently lead to a race condition. 
             // While not very impactful, that could still be annoying.
-            InternalModuleFile.depth += 1;
-            if (InternalModuleFile.depth > DEPTH_LIMIT) {
+            this.include_depth += 1;
+            if (this.include_depth > DEPTH_LIMIT) {
+                this.include_depth = 0;
                 throw new Error("Reached inclusion depth limit (max = 10)");
             }
 
             let inc_file_content = await this.app.vault.read(inc_file);
-            let parsed_content = await this.plugin.parser.parseTemplates(inc_file_content, this.file, ContextMode.USER_INTERNAL);
+            let parsed_content = await this.plugin.parser.parseTemplates(inc_file_content);
             
-            InternalModuleFile.depth -= 1;
+            this.include_depth -= 1;
         
             return parsed_content;
         }
@@ -92,7 +96,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_last_modified_date() {
         return (format: string = "YYYY-MM-DD HH:mm"): string => {
-                return get_date_string(format, undefined, this.file.stat.mtime);
+            return get_date_string(format, undefined, this.file.stat.mtime);
         }
     }
 

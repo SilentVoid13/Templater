@@ -29,12 +29,14 @@ export class UserTemplateParser extends TParser {
         let user_templates = new Map();
         const exec_promise = promisify(exec);
 
+        let context = await this.plugin.parser.generateContext(file, ContextMode.INTERNAL);
+
         for (let [template, cmd] of this.plugin.settings.templates_pairs) {
             if (template === "" || cmd === "") {
                 continue;
             }
 
-            cmd = await this.plugin.parser.parseTemplates(cmd, file, ContextMode.INTERNAL);
+            cmd = await this.plugin.parser.parseTemplates(cmd, context);
 
             user_templates.set(template, async (user_args?: any): Promise<string> => {
                 try {

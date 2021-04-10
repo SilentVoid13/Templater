@@ -4,11 +4,13 @@ import { get_date_string } from "../InternalUtils";
 export class InternalModuleDate extends InternalModule {
     name = "date";
 
-    async generateTemplates() {
-        this.templates.set("now", this.generate_now());
-        this.templates.set("tomorrow", this.generate_tomorrow());
-        this.templates.set("yesterday", this.generate_yesterday());
+    async createStaticTemplates() {
+        this.static_templates.set("now", this.generate_now());
+        this.static_templates.set("tomorrow", this.generate_tomorrow());
+        this.static_templates.set("yesterday", this.generate_yesterday());
     }
+
+    async updateTemplates() {}
 
     generate_now() {
         return (format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string) => {

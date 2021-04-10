@@ -3,11 +3,13 @@ import { InternalModule } from "../InternalModule";
 export class InternalModuleWeb extends InternalModule {
     name = "web";
 
-    async generateTemplates() {
-        this.templates.set("daily_quote", this.generate_daily_quote());
-        this.templates.set("random_picture", this.generate_random_picture());
-        this.templates.set("get_request", this.generate_get_request());
+    async createStaticTemplates() {
+        this.static_templates.set("daily_quote", this.generate_daily_quote());
+        this.static_templates.set("random_picture", this.generate_random_picture());
+        this.static_templates.set("get_request", this.generate_get_request());
     }
+    
+    async updateTemplates() {}
 
     async getRequest(url: string): Promise<Response> {
         let response = await fetch(url);
