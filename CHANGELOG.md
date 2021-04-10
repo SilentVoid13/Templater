@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/SilentVoid13/Templater/compare/1.2.2...1.3.0) (2021-04-10)
+
+
+### Features
+
+* **internaltemplates:** new tp.file.cursor abilities: cursor jump order ([31abe49](https://github.com/SilentVoid13/Templater/commit/31abe4912ad2bfd0eb1be53689ad1d88d95b192a))
+
+
+### Bug Fixes
+
+* fixing create new note from template when file "Untitled" already exists ([169ca11](https://github.com/SilentVoid13/Templater/commit/169ca116d31a041c4f17a56abebef4664d3db6dc)), closes [#73](https://github.com/SilentVoid13/Templater/issues/73)
+
 ### [1.2.2](https://github.com/SilentVoid13/Templater/compare/1.2.1...1.2.2) (2021-04-10)
 
 
