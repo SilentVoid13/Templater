@@ -16,6 +16,7 @@ export default class TemplaterPlugin extends Plugin {
 		// TODO: Remove this
 		if (!this.settings.toggle_notice) {
 			let notice = new Notice("", 15000);
+			// @ts-ignore
 			notice.noticeEl.innerHTML = `What? Templater is <b>evolving</b>!<br/>
 	The template syntax changed in this release, check out the new documentation for it on <a href="https://github.com/SilentVoid13/Templater#templater-obsidian-plugin">Templater's Github</a> or in the community plugins page.<br/>
 	Enjoy new features for Templater: new internal templates, user templates arguments, conditional statements and more.<br/>
@@ -72,7 +73,7 @@ export default class TemplaterPlugin extends Plugin {
 			],
 			callback: () => {
 				try {
-					this.parser.jump_to_next_cursor_location();
+					this.parser.cursor_jumper.jump_to_next_cursor_location();
 				}
 				catch(error) {
 					this.log_error(error);
@@ -120,13 +121,23 @@ export default class TemplaterPlugin extends Plugin {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}	
 
+	log_update(msg: string) {
+		let notice = new Notice("", 15000);
+		// TODO: Find better way for this
+		// @ts-ignore
+		notice.noticeEl.innerHTML = `<b>Templater update</b>: ${msg}`;
+	}
+
 	log_error(msg: string, error?: string) {
+		let notice = new Notice("", 8000);
 		if (error) {
+			// TODO: Find a better way for this
+			// @ts-ignore
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>: ${msg}<br/>Check console for more informations`;
 			console.error(msg, error);
-			new Notice(`Templater Error: ${msg}\nCheck console for more informations`);
 		}
 		else {
-			new Notice(`Templater Error: ${msg}`);
+			notice.noticeEl.innerHTML = `Templater Error: ${msg}`;
 		}
 	}
 

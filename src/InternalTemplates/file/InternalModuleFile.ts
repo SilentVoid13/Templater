@@ -2,9 +2,6 @@ import { InternalModule } from "../InternalModule";
 import { get_date_string, UNSUPPORTED_MOBILE_TEMPLATE } from "../InternalUtils";
 
 import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, TFile } from "obsidian";
-import { ContextMode } from "TemplateParser";
-
-export const TP_FILE_CURSOR = "<% tp.file.cursor %>";
 
 export const DEPTH_LIMIT = 10;
 
@@ -14,7 +11,7 @@ export class InternalModuleFile extends InternalModule {
 
     async createStaticTemplates() {
         this.static_templates.set("clipboard", this.generate_clipboard());
-        this.static_templates.set("cursor", TP_FILE_CURSOR); // Hack to prevent empty output
+        this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("selection", this.generate_selection());
     }
 
@@ -38,6 +35,13 @@ export class InternalModuleFile extends InternalModule {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
             return await navigator.clipboard.readText();
+        }
+    }
+
+    generate_cursor() {
+        return (order?: number) => {
+            // Hack to prevent empty output
+            return `<% tp.file.cursor(${order ?? ''}) %>`;
         }
     }
 
