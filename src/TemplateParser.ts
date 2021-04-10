@@ -5,7 +5,7 @@ import { InternalTemplateParser } from "./InternalTemplates/InternalTemplatePars
 import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
 import { TParser } from "TParser";
-import { TP_FILE_CURSOR } from "InternalTemplates/file/InternalModuleFile";
+import { CursorJumper } from "CursorJumper";
 
 export enum ContextMode {
     USER,
@@ -14,13 +14,18 @@ export enum ContextMode {
     DYNAMIC,
 };
 
+// TODO: Remove that
+const tp_cursor = new RegExp("<%\\s*tp.file.cursor\\s*%>");
+
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser = null;
     private current_context: any;
+    public cursor_jumper: CursorJumper;
     
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
+        this.cursor_jumper = new CursorJumper(this.app);
         this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
         // TODO: Add mobile support
         if (!this.app.isMobile) {
@@ -90,6 +95,11 @@ export class TemplateParser extends TParser {
             context = this.current_context;
         }
 
+        if (content.match(tp_cursor)) {
+            this.plugin.log_update(`tp.file.cursor was updated! It's now an internal function, you should call it like so: tp.file.cursor() <br/>
+tp.file.cursor now supports cursor jump order! Specify the jump order as an argument (tp.file.cursor(1), tp.file.cursor(2), ...), if you wish to change the default top to bottom order.<br/>
+Check the <a href='https://silentvoid13.github.io/Templater/docs/internal-variables-functions/internal-modules/file-module'>documentation</a> for more informations.`);
+        }
         try {
             content = await Eta.renderAsync(content, context, {
                 varName: "tp",
@@ -125,7 +135,14 @@ export class TemplateParser extends TParser {
     async create_new_note_from_template(template_file: TFile) {
         try {
             let template_content = await this.app.vault.read(template_file);
-            let created_note = await this.app.vault.create("Untitled.md", "");
+
+            let preference_folder = this.app.fileManager.getNewFileParent("");
+            //let preference_folder = this.app.vault.getConfig("newFileFolderPath");
+
+            // TODO: Change that, not stable atm
+            // @ts-ignore
+            let created_note = await this.app.fileManager.createNewMarkdownFile(preference_folder, "Untitled");
+            //let created_note = await this.app.vault.create("Untitled.md", "");
 
             await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);
             let content = await this.plugin.parser.parseTemplates(template_content);
@@ -138,7 +155,7 @@ export class TemplateParser extends TParser {
             }
             await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
 
-            await this.jump_to_next_cursor_location();
+            await this.cursor_jumper.jump_to_next_cursor_location();
         }
 		catch(error) {
 			this.plugin.log_error(error);
@@ -161,7 +178,7 @@ export class TemplateParser extends TParser {
         
         doc.replaceSelection(content);
 
-        await this.jump_to_next_cursor_location();
+        await this.cursor_jumper.jump_to_next_cursor_location();
         editor.focus();
     }
 
@@ -175,61 +192,8 @@ export class TemplateParser extends TParser {
             await this.app.vault.modify(file, new_content);
             
             if (this.app.workspace.getActiveFile() === file) {
-                await this.jump_to_next_cursor_location();
+                await this.cursor_jumper.jump_to_next_cursor_location();
             }
         }
-    }
-
-    async jump_to_next_cursor_location() {
-        let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
-            throw new Error("No active view, can't append templates.");
-        }
-        let active_file = active_view.file;
-        await active_view.save();
-
-        let content = await this.app.vault.read(active_file);
-
-        let pos = this.get_cursor_position(content);
-        if (pos) {
-            content = content.replace(new RegExp(TP_FILE_CURSOR), "");
-            await this.app.vault.modify(active_file, content);
-            this.set_cursor_location(pos);
-        }
-    }
-
-    get_cursor_position(content: string): EditorPosition {
-        let pos: EditorPosition = null;
-        let index = content.indexOf(TP_FILE_CURSOR);
-
-        if (index !== -1) {
-            let substr = content.substr(0, index);
-
-            let l = 0;
-            let offset = -1;
-            let r = -1;
-            for (; (r = substr.indexOf("\n", r+1)) !== -1 ; l++, offset=r);
-            offset += 1;
-
-            let ch = content.substr(offset, index-offset).length;
-
-            pos = {line: l, ch: ch};
-        }
-        return pos;
-    }
-
-    set_cursor_location(pos: EditorPosition) {
-        if (!pos) {
-            return;
-        }
-
-        let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
-            return;
-        }
-        let editor = active_view.editor;
-
-        editor.focus();
-        editor.setCursor(pos);
     }
 }
