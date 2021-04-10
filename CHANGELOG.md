@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/SilentVoid13/Templater/compare/1.2.1...1.2.2) (2021-04-10)
+
+
+### Bug Fixes
+
+* fixed tp.file.include bug, added static and dynamic templates for modules ([559ffd9](https://github.com/SilentVoid13/Templater/commit/559ffd9671e86a7d9a62c2c5b41f5e0313b965bb)), closes [#91](https://github.com/SilentVoid13/Templater/issues/91)
+
 ### [1.2.1](https://github.com/SilentVoid13/Templater/compare/1.2.0...1.2.1) (2021-04-08)
 
 
