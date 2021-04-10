@@ -20,11 +20,13 @@ It contains an [InternalModuleDate](https://github.com/SilentVoid13/Templater/bl
 export class InternalModuleDate extends InternalModule {
     name = "date";
 
-    async generateTemplates() {
-        this.templates.set("now", this.generate_now());
-        this.templates.set("tomorrow", this.generate_tomorrow());
-        this.templates.set("yesterday", this.generate_yesterday());
+    async createStaticTemplates() {
+        this.static_templates.set("now", this.generate_now());
+        this.static_templates.set("tomorrow", this.generate_tomorrow());
+        this.static_templates.set("yesterday", this.generate_yesterday());
     }
+
+    async updateTemplates() {}
 
     generate_now() {
         return (format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string) => {
@@ -52,10 +54,12 @@ export class InternalModuleDate extends InternalModule {
 Every module extends the [InternalModule](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/InternalModule.ts) abstract class, which means they contain the following attributes and methods:
 
 - `this.app` attribute: the obsidian API `App` object.
-- `this.templates` attribute: A map that maps a string representing the name of the variable / function with the actual variable / function.
 - `this.file` attribute: The destination file where the template will be inserted.
 - `this.plugin` attribute: The Templater plugin object.
-- `this.generateTemplates()` method: Registers every internal variable / function in the `templates` map.
+- `this.static_templates` attribute: A map containing all (name; variable/function) that are static. A static variable / function means that it doesn't depend on the file when executed. These type of variables / functions won't be updated each time we insert a new template, to save some overhead.
+- `this.dynamic_templates` attribute: Same as `static_templates` except  that it contains variables / functions dependent on the file when executed.
+- `this.createStaticTemplates()` method: Registers all static internal variable / function for that module.
+- `this.updateTemplates()` method: Registers every dynamic internal variable / function for that module.
 
 You can use these attributes in your new internal variable / function if you need them.
 
@@ -69,17 +73,19 @@ All generation methods are ordered by alphabetical order based on the internal v
 
 Try to give a good, self-explanatory name for your variable / function.
 
-**2nd step:** Register your internal variable / function in the `templates` map within the `generateTemplates()` method.
+**2nd step:** Register your internal variable / function in the `static_templates` or `dynamic_templates` map depending on whether your internal variable / function on the file when executed. The registration happens either in `createStaticTemplates` or `updateTemplates`.
 
 To register your variable / function, use your `this.generate_<internal_variable_or_function_name>()` method you defined earlier:
 
 ```typescript
-this.templates.set(<internal_variable_or_function_name>, this.generate_<internal_variable_or_function_name>());
+this.static_templates.set(<internal_variable_or_function_name>, this.generate_<internal_variable_or_function_name>());
+OR
+this.dynamic_templates.set(<internal_variable_or_function_name>, this.generate_<internal_variable_or_function_name>());
 ```
 
 Internal variable / function registrations are also ordered by alphabetical order based on the variable / function name.
 
-**3rd step:** Add your internal variable / function documentation in the [README](https://github.com/SilentVoid13/Templater/blob/master/README.md).
+**3rd step:** Add your internal variable / function documentation to Templater's [documentation](https://github.com/SilentVoid13/Templater/tree/master/docs/docs/internal-variables-functions/internal-modules).
 
 And you are done ! Thanks for contributing to [Templater](https://github.com/SilentVoid13/Templater) !
 
