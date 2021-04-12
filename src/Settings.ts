@@ -6,14 +6,12 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	command_timeout: 5,
 	template_folder: "",
 	templates_pairs: [["", ""]],
-	toggle_notice: false,
 };
 
 export interface TemplaterSettings {
 	command_timeout: number;
 	template_folder: string;
 	templates_pairs: Array<[string, string]>;
-	toggle_notice: boolean;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -25,36 +23,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		let {containerEl} = this;
 		containerEl.empty();
 
-		// TODO: Remove this
-		let notice_fragment = document.createDocumentFragment();
-		let notice_div = notice_fragment.createEl("div");
-		notice_div.innerHTML = `What? Templater is <b>evolving</b>!<br/>
-The template syntax changed in this release, check out the new documentation for it on <a href="https://github.com/SilentVoid13/Templater#templater-obsidian-plugin">Templater's Github</a> or in the community plugins page.<br/>
-Enjoy new features for Templater: new internal templates, user templates arguments, conditional statements and more.<br/>
-Every already existing feature still exists of course, you just need to update the syntax in your templates files.<br/>
-Thanks for using Templater! SilentVoid.<br/>
-This message will self-destruct in the next update.`;
-		new Setting(containerEl)
-			.setName("Templater Update")
-			.setDesc(notice_fragment);
-
 		let fragment = document.createDocumentFragment();
 		let link = document.createElement("a");
-		link.href = "https://github.com/SilentVoid13/Templater#internal-commands";
-		link.text = "here";
-		fragment.append("Click ");
+		link.href = "https://silentvoid13.github.io/Templater/";
+		link.text = "documentation";
+		fragment.append("Check the ");
 		fragment.append(link);
 		fragment.append(" to get a list of all the available internal variables / functions.");
-
-		new Setting(containerEl)
-			.setName("Disables update Notice")
-			.addToggle(toggle => {
-				toggle.setValue(this.plugin.settings.toggle_notice)
-					.onChange(toggle_notice => {
-						this.plugin.settings.toggle_notice = toggle_notice;
-						this.plugin.saveSettings();
-					})
-			})
 
 		new Setting(containerEl)
 			.setName("Template folder location")
