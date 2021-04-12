@@ -7,8 +7,6 @@ export class InternalModuleFrontmatter extends InternalModule {
 
     async updateTemplates() {
         let cache = this.app.metadataCache.getFileCache(this.file)
-        if (cache.frontmatter) {
-            this.dynamic_templates = new Map(Object.entries(cache.frontmatter));
-        }
+        this.dynamic_templates = new Map(Object.entries(cache.frontmatter || {}));
     }
 }
