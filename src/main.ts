@@ -157,7 +157,6 @@ export default class TemplaterPlugin extends Plugin {
 
 			await this.parser.setCurrentContext(file, ContextMode.DYNAMIC);
 			let new_html = await this.parser.parseTemplates(el.innerHTML);
-
 			el.innerHTML = new_html;
 		}
 	}
