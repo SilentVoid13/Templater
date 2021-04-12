@@ -1,4 +1,4 @@
-import { App, EditorPosition, MarkdownView, TFile } from "obsidian";
+import { App, EditorPosition, MarkdownView, TFile, TFolder } from "obsidian";
 import * as Eta from "eta";
 
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
@@ -132,16 +132,18 @@ Check the <a href='https://silentvoid13.github.io/Templater/docs/internal-variab
 		}
 	}
 
-    async create_new_note_from_template(template_file: TFile) {
+    async create_new_note_from_template(template_file: TFile, folder?: TFolder) {
         try {
             let template_content = await this.app.vault.read(template_file);
 
-            let preference_folder = this.app.fileManager.getNewFileParent("");
-            //let preference_folder = this.app.vault.getConfig("newFileFolderPath");
+            if (!folder) {
+                folder = this.app.fileManager.getNewFileParent("");
+                //folder = this.app.vault.getConfig("newFileFolderPath");
+            }
 
             // TODO: Change that, not stable atm
             // @ts-ignore
-            let created_note = await this.app.fileManager.createNewMarkdownFile(preference_folder, "Untitled");
+            let created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
             //let created_note = await this.app.vault.create("Untitled.md", "");
 
             await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);

@@ -7,9 +7,10 @@ export enum OpenMode {
 };
 
 export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
-    app: App;
-    plugin: TemplaterPlugin;
-    open_mode: OpenMode;
+    public app: App;
+    private plugin: TemplaterPlugin;
+    private open_mode: OpenMode;
+    private creation_folder: TFolder;
 
     constructor(app: App, plugin: TemplaterPlugin) {
         super(app);
@@ -59,7 +60,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
                 this.plugin.parser.replace_templates_and_append(item);
                 break;
             case OpenMode.CreateNoteTemplate:
-                this.plugin.parser.create_new_note_from_template(item);
+                this.plugin.parser.create_new_note_from_template(item, this.creation_folder);
                 break;
         }
     }
@@ -82,13 +83,14 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         }
     }
 
-    create_new_note_from_template() {
+    create_new_note_from_template(folder?: TFolder) {
+        this.creation_folder = folder;
+
         this.open_mode = OpenMode.CreateNoteTemplate;
 
         try {
             this.open();
-        }
-        catch(error) {
+        } catch(error) {
             this.plugin.log_error(error);
         }
     }
