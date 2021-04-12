@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/SilentVoid13/Templater/compare/1.3.0...1.4.0) (2021-04-12)
+
+
+### Features
+
+* adding a "create new from template" to file menu. Adding a new icon ([4eafb3b](https://github.com/SilentVoid13/Templater/commit/4eafb3ba7682b2d5240a4f1d162f75f45d2d91e8)), closes [#73](https://github.com/SilentVoid13/Templater/issues/73)
+
+
+### Bug Fixes
+
+* **internaltemplates:** fixing bug using old frontmatter data when it doesn't exist ([1734347](https://github.com/SilentVoid13/Templater/commit/173434715cb2fbde7943627008c25fece5f9f9c0))
+
 ## [1.3.0](https://github.com/SilentVoid13/Templater/compare/1.2.2...1.3.0) (2021-04-10)
 
 
