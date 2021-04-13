@@ -1,6 +1,18 @@
 {
   "bumpFiles": [
     {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "package-lock.json",
+      "type": "json"
+    },
+    {
+      "filename": "manifest.json",
+      "type": "json"
+    },
+    {
       "filename": "versions.json",
       "updater": "versions-json-updater.cjs"
     }
