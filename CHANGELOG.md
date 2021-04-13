@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/SilentVoid13/Templater/compare/1.4.0...1.5.0) (2021-04-13)
+
+
+### Features
+
+* **internaltemplates:** adding ISO 8601 offset format support for tp.date.now ([7054cab](https://github.com/SilentVoid13/Templater/commit/7054cab8c1e1ee3c6edab4188fd1327f189b9b45)), closes [#100](https://github.com/SilentVoid13/Templater/issues/100)
+* **internaltemplates:** adding tp.date.weekday internal template ([337ad24](https://github.com/SilentVoid13/Templater/commit/337ad242b2ed0329326ec69b0f3d7232b5184ec4))
+
 ## [1.4.0](https://github.com/SilentVoid13/Templater/compare/1.3.0...1.4.0) (2021-04-12)
 
 
