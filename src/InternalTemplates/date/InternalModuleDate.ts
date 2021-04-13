@@ -13,11 +13,19 @@ export class InternalModuleDate extends InternalModule {
     async updateTemplates() {}
 
     generate_now() {
-        return (format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string) => {
+        return (format: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string) => {
             if (reference && !window.moment(reference, reference_format).isValid()) {
                 throw new Error("Invalid reference date format, try specifying one with the argument 'reference_format'");
             }
-            return window.moment(reference, reference_format).add(offset, 'days').format(format);
+            let duration;
+            if (typeof offset == "string") {
+                duration = window.moment.duration(offset);
+            }
+            else if (typeof offset == "number") {
+                duration = window.moment.duration(offset, "days");
+            }
+
+            return window.moment(reference, reference_format).add(duration).format(format);
         }
     }
 
