@@ -61,7 +61,7 @@ The type of an argument must be respected when calling a function, or it won't w
 The documentation for the internal functions of Templater are using the following syntax:
 
 ```javascript
-tp.<my_function>(arg1_name: type, arg2_name?: type, arg3_name: type = <default_value>,...)
+tp.<my_function>(arg1_name: type, arg2_name?: type, arg3_name: type = <default_value>, arg4_name: type1|type2, ...)
 ```
 
 Where:
@@ -72,6 +72,8 @@ Where:
 If an argument is optional, it will be appended with a question mark `?`, e.g. `arg2_name?: type`
 
 If an argument has a default value, it will be specified using an equal sign `=`, e.g. `arg3_name: type = <default_value>`.
+
+If an argument can have different types, it will be specified using a pipe `|`, e.g. `arg4_name: type1|type2`
 
 :::caution
 
@@ -84,13 +86,13 @@ Please note that this syntax is for documentation purposes only, to be able to u
 Let's take the `tp.date.now` internal function documentation as an example: 
 
 ```
-tp.date.now(format: string = "YYYY-MM-DD", offset?: number, reference?: string, reference_format?: string)
+tp.date.now(format: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string)
 ```
 
 This internal function has 4 optional arguments: 
 
 - a format of type `string`, with a default value of `"YYYY-MM-DD"`.
-- an offset of type `number` .
+- an offset of type `number` or of type `string`.
 - a reference of type `string` .
 - a reference_format of type `string` .
 
