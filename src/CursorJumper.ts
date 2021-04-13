@@ -1,4 +1,5 @@
 import { App, EditorPosition, MarkdownView } from "obsidian";
+import { escapeRegExp } from "Utils";
 
 export class CursorJumper {
     private cursor_regex = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>", "g");	
@@ -15,11 +16,11 @@ export class CursorJumper {
 
         let content = await this.app.vault.read(active_file);
 
-        const {match_string, pos} = this.get_cursor_position(content);
-        if (pos) {
-            content = content.replace(match_string, "");
+        const {match_string, positions} = this.get_cursor_position(content);
+        if (positions) {
+            content = content.replace(new RegExp(escapeRegExp(match_string), "g"), "");
             await this.app.vault.modify(active_file, content);
-            this.set_cursor_location(pos);
+            this.set_cursor_location(positions);
         }
     }
 
@@ -36,32 +37,43 @@ export class CursorJumper {
         cursor_matches.sort((m1, m2) => {
             return Number(m1.groups["order"]) - Number(m2.groups["order"]);
         });
-
         let match_str = cursor_matches[0][0];
-        let index = cursor_matches[0].index;
 
-        let substr = content.substr(0, index);
+        cursor_matches = cursor_matches.filter(m => {
+            return m[0] === match_str;
+        });
 
-        let l = 0;
-        let offset = -1;
-        let r = -1;
-        for (; (r = substr.indexOf("\n", r+1)) !== -1 ; l++, offset=r);
-        offset += 1;
+        let positions = [];
+        for (let match of cursor_matches) {
+            let index = match.index;
+            let substr = content.substr(0, index);
 
-        let ch = content.substr(offset, index-offset).length;
-        let pos = {line: l, ch: ch};
+            let l = 0;
+            let offset = -1;
+            let r = -1;
+            for (; (r = substr.indexOf("\n", r+1)) !== -1 ; l++, offset=r);
+            offset += 1;
 
-        return {match_string: match_str, pos: pos};
+            let ch = content.substr(offset, index-offset).length;
+            positions.push({line: l, ch: ch});
+        }
+
+        return {match_string: match_str, positions: positions};
     }
 
-    set_cursor_location(pos: EditorPosition) {
+    set_cursor_location(positions: Array<EditorPosition>) {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
             return;
         }
-        let editor = active_view.editor;
+        //let editor = active_view.editor;
+        let editor = active_view.sourceMode.cmEditor;
 
+        let selections = [];
+        for (let pos of positions) {
+            selections.push({anchor: pos, head: pos});
+        }
         editor.focus();
-        editor.setCursor(pos);
+        editor.setSelections(selections);
     }
 }

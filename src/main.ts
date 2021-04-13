@@ -3,8 +3,8 @@ import { addIcon, MarkdownView, Menu, MenuItem, Notice, Plugin, TAbstractFile, T
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
 import { ContextMode, TemplateParser } from 'TemplateParser';
-import { delay } from 'TParser';
 import { ICON_DATA } from 'Constants';
+import { delay } from 'Utils';
 
 export default class TemplaterPlugin extends Plugin {
 	public fuzzySuggest: TemplaterFuzzySuggestModal;
