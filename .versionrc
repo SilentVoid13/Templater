@@ -1,0 +1,8 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "versions.json",
+      "updater": "versions-json-updater.cjs"
+    }
+  ]
+}
