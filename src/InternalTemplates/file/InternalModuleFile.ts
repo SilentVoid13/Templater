@@ -1,7 +1,7 @@
 import { InternalModule } from "../InternalModule";
-import { get_date_string, UNSUPPORTED_MOBILE_TEMPLATE } from "../InternalUtils";
 
 import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, TFile } from "obsidian";
+import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 
 export const DEPTH_LIMIT = 10;
 
@@ -51,7 +51,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_creation_date() {
         return (format: string = "YYYY-MM-DD HH:mm") => {
-            return get_date_string(format, undefined, this.file.stat.ctime);
+            return window.moment(this.file.stat.ctime).format(format);
         }
     }
 
@@ -100,7 +100,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_last_modified_date() {
         return (format: string = "YYYY-MM-DD HH:mm"): string => {
-            return get_date_string(format, undefined, this.file.stat.mtime);
+            return window.moment(this.file.stat.mtime).format(format);
         }
     }
 
