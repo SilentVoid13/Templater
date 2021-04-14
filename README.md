@@ -14,9 +14,15 @@ Check out the complete [documentation](https://silentvoid13.github.io/Templater/
 
 ## Utilities
 
-Here is a list of useful tools to use along [Templater](https://github.com/SilentVoid13/Templater): 
+A list of useful tools to use along [Templater](https://github.com/SilentVoid13/Templater): 
 
 - If you want to bind a specific template to a specific hotkey, you can use the **[obsidian-hotkeys-for-templates](https://github.com/Vinzent03/obsidian-hotkeys-for-templates)** plugin.
+
+## Resources
+
+A list of useful resources about [Templater](https://github.com/SilentVoid13/Templater):
+
+- @tallguyjenks video: https://youtu.be/2234DXKbNgM
 
 ## Alternatives
 
