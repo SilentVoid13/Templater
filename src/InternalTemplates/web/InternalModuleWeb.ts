@@ -33,8 +33,8 @@ export class InternalModuleWeb extends InternalModule {
     }
 
     generate_random_picture() {
-        return async (size: string = "1600x900", query?: string) => {
-            let response = await this.getRequest(`https://source.unsplash.com/random/${size}?${query}`);
+        return async (size: string, query?: string) => {
+            let response = await this.getRequest(`https://source.unsplash.com/random/${size ?? ''}?${query ?? ''}`);
             let url = response.url;
             return `![tp.web.random_picture](${url})`;   
         }
