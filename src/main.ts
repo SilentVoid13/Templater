@@ -144,7 +144,7 @@ export default class TemplaterPlugin extends Plugin {
 		}
 		else {
 			// @ts-ignore
-			notice.noticeEl.innerHTML = `Templater Error: ${msg}`;
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>: ${msg}`;
 		}
 	}
 
