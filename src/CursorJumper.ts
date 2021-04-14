@@ -1,10 +1,24 @@
-import { App, EditorPosition, MarkdownView } from "obsidian";
+import { App, EditorPosition, EditorRangeOrCaret, EditorTransaction, MarkdownView } from "obsidian";
 import { escapeRegExp } from "Utils";
 
 export class CursorJumper {
     private cursor_regex = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>", "g");	
 
     constructor(private app: App) {}
+
+    get_editor_position_from_index(content: string, index: number): EditorPosition {
+        let substr = content.substr(0, index);
+
+        let l = 0;
+        let offset = -1;
+        let r = -1;
+        for (; (r = substr.indexOf("\n", r+1)) !== -1 ; l++, offset=r);
+        offset += 1;
+
+        let ch = content.substr(offset, index-offset).length;
+
+        return {line: l, ch: ch};
+    }
 
     async jump_to_next_cursor_location() {
         let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -16,15 +30,14 @@ export class CursorJumper {
 
         let content = await this.app.vault.read(active_file);
 
-        const {match_string, positions} = this.get_cursor_position(content);
+        const {new_content, positions} = this.replace_and_get_cursor_positions(content);
         if (positions) {
-            content = content.replace(new RegExp(escapeRegExp(match_string), "g"), "");
-            await this.app.vault.modify(active_file, content);
+            await this.app.vault.modify(active_file, new_content);
             this.set_cursor_location(positions);
         }
     }
 
-    get_cursor_position(content: string) {
+    replace_and_get_cursor_positions(content: string) {
         let cursor_matches = [];
         let match;
         while((match = this.cursor_regex.exec(content)) != null) {
@@ -44,21 +57,26 @@ export class CursorJumper {
         });
 
         let positions = [];
+        let index_offset = 0;
         for (let match of cursor_matches) {
-            let index = match.index;
-            let substr = content.substr(0, index);
+            let index = match.index - index_offset;
+            positions.push(this.get_editor_position_from_index(content, index));
 
-            let l = 0;
-            let offset = -1;
-            let r = -1;
-            for (; (r = substr.indexOf("\n", r+1)) !== -1 ; l++, offset=r);
-            offset += 1;
+            content = content.replace(new RegExp(escapeRegExp(match[0])), "");
+            index_offset += match[0].length;
 
-            let ch = content.substr(offset, index-offset).length;
-            positions.push({line: l, ch: ch});
+            // TODO: Remove this, breaking for now waiting for the new setSelections API
+            break;
+
+            /*
+            // For tp.file.cursor(), we only find one
+            if (match[1] === "") {
+                break;
+            }
+            */
         }
 
-        return {match_string: match_str, positions: positions};
+        return {new_content: content, positions: positions};
     }
 
     set_cursor_location(positions: Array<EditorPosition>) {
@@ -66,14 +84,35 @@ export class CursorJumper {
         if (active_view === null) {
             return;
         }
-        //let editor = active_view.editor;
-        let editor = active_view.sourceMode.cmEditor;
 
+        // TODO: Remove this
+        let editor = active_view.editor;
+        editor.focus();
+        editor.setCursor(positions[0]);
+
+        /*
         let selections = [];
         for (let pos of positions) {
             selections.push({anchor: pos, head: pos});
         }
         editor.focus();
         editor.setSelections(selections);
+        */
+
+        /*
+        // Check https://github.com/obsidianmd/obsidian-api/issues/14
+
+        let editor = active_view.editor;
+        editor.focus();
+
+        for (let pos of positions) {
+            let transaction: EditorTransaction = {
+                selection: {
+                    from: pos
+                }
+            };
+            editor.transaction(transaction);
+        }
+        */
     }
 }

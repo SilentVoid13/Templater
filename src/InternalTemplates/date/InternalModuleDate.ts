@@ -18,10 +18,10 @@ export class InternalModuleDate extends InternalModule {
                 throw new Error("Invalid reference date format, try specifying one with the argument 'reference_format'");
             }
             let duration;
-            if (typeof offset == "string") {
+            if (typeof offset === "string") {
                 duration = window.moment.duration(offset);
             }
-            else if (typeof offset == "number") {
+            else if (typeof offset === "number") {
                 duration = window.moment.duration(offset, "days");
             }
 
