@@ -14,10 +14,10 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 :::
 
-| Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output                                               |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `tp.web.daily_quote()`                                       | None                                                         | Retrieves and parses the daily quote from the API https://quotes.rest/ | ![quote](/img/templater_daily_quote.png)                     |
-| `tp.web.random_picture(size: string = "1600x900", query?: string)` | - `size`: Image size in the format `<width>x<height>`.<br />- `query`: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` | Gets a random image from https://unsplash.com/               | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+| Internal Variable / Function                           | Arguments                                                    | Description                                                  | Example Output                                               |
+| ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `tp.web.daily_quote()`                                 | None                                                         | Retrieves and parses the daily quote from the API https://quotes.rest/ | ![quote](/img/templater_daily_quote.png)                     |
+| `tp.web.random_picture(size?: string, query?: string)` | - `size`: Image size in the format `<width>x<height>`.<br />- `query`: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` | Gets a random image from https://unsplash.com/               | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
 
 ## Examples
 
