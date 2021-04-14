@@ -30,7 +30,7 @@ This means that, to output something from a JS execution command, you just need 
 
 For example, the following command: `<%* tR += "test" %>` will output `test`.
 
-### Examples
+## Examples
 
 Here are some examples of things you can do using JavaScript Execution Commands:
 

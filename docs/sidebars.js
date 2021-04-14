@@ -42,6 +42,7 @@ module.exports = {
       items: [
         'eta-features/overview',
         'eta-features/execution-command',
+        'eta-features/whitespace-control',
       ],
     },
   ],
