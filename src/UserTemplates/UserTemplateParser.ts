@@ -52,7 +52,7 @@ export class UserTemplateParser extends TParser {
                     };
 
                     let {stdout} = await exec_promise(cmd, cmd_options);
-                    return stdout;
+                    return stdout.trimRight();
                 }
                 catch(error) {
                     this.plugin.log_error(`Error with User Template ${template}`, error);
