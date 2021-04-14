@@ -101,6 +101,7 @@ That means that **valid invocations** for this internal function are:
 - `<% tp.date.now() %>`
 - `<% tp.date.now("YYYY-MM-DD", 7) %>`
 - `<% tp.date.now("YYYY-MM-DD", 7, "2021-04-09", "YYYY-MM-DD") %>`
+- `<% tp.date.now("dddd, MMMM Do YYYY", 0, tp.file.title, "YYYY-MM-DD") %>` *Assuming the file name is of the format: "YYYY-MM-DD"
 
 On the other hand, **invalid invocations** are:
 
