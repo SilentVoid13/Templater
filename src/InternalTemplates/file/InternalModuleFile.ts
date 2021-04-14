@@ -136,7 +136,7 @@ export class InternalModuleFile extends InternalModule {
         return () => {
             let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
-                throw new Error("Active view is null");
+                throw new Error("Active view is null, can't read selection.");
             }
 
             let editor = active_view.editor;

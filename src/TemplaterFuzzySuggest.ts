@@ -65,14 +65,12 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         }
     }
 
-    insert_template(): void {
-        this.open_mode = OpenMode.InsertTemplate;
-
-        // If there is only one file in the templates directory, we don't open the modal
+    start(): void {
         try {
             let files = this.getItems();
-            if (files.length == 1) {
-                this.plugin.parser.replace_templates_and_append(files[0]);
+            // If there is only one file in the templates directory, we don't open the modal
+            if (files.length === 1) {
+                this.onChooseItem(files[0], null);
             }
             else {
                 this.open();
@@ -83,15 +81,14 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         }
     }
 
+    insert_template(): void {
+        this.open_mode = OpenMode.InsertTemplate;
+        this.start();
+    }
+
     create_new_note_from_template(folder?: TFolder) {
         this.creation_folder = folder;
-
         this.open_mode = OpenMode.CreateNoteTemplate;
-
-        try {
-            this.open();
-        } catch(error) {
-            this.plugin.log_error(error);
-        }
+        this.start();
     }
 }
