@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/SilentVoid13/Templater/compare/1.5.0...1.5.1) (2021-04-14)
+
+
+### Features
+
+* **internaltemplates:** adding multi-cursor to tp.file.cursor ([81a5c1d](https://github.com/SilentVoid13/Templater/commit/81a5c1d2a67d5b7bd00698688e36815aa09aa168)), closes [#99](https://github.com/SilentVoid13/Templater/issues/99)
+
+
+### Bug Fixes
+
+* fixing frontmatter potential bug ([8be0d41](https://github.com/SilentVoid13/Templater/commit/8be0d41fc6fc107d0b53fb1d18871b369a5ba8df))
+* fixing modal opening on "create new from template" when only 1 file exists ([7cf6215](https://github.com/SilentVoid13/Templater/commit/7cf6215bb2a6195d10da1175557ca780f98cf24e)), closes [#73](https://github.com/SilentVoid13/Templater/issues/73)
+* **internaltemplates:** fixing tp.web.random_picture randomness issue ([5f69f92](https://github.com/SilentVoid13/Templater/commit/5f69f92a1624b66eb191d60ea321483b3d76dda2))
+* **user templates:** removing right trailing newlines from user commands ([387d274](https://github.com/SilentVoid13/Templater/commit/387d274f95f3ff2bd20c7a9e07b77b1ab6c4c29b)), closes [#108](https://github.com/SilentVoid13/Templater/issues/108) [#92](https://github.com/SilentVoid13/Templater/issues/92)
+* fixing documentation bug with pipe "|" in array ([0c2d55d](https://github.com/SilentVoid13/Templater/commit/0c2d55dd7785698e038dcb06a1883ef1a5965563))
+
 ## [1.5.0](https://github.com/SilentVoid13/Templater/compare/1.4.0...1.5.0) (2021-04-13)
 
 
