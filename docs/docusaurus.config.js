@@ -53,6 +53,10 @@ module.exports = {
         },
       ],
     },
+    algolia: {
+      apiKey: '78344c033242ee5c5fe681188a73b988',
+      indexName: 'templater',
+    },
   },
   presets: [
     [
