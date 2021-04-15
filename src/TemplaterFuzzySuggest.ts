@@ -1,4 +1,5 @@
 import { App, FuzzySuggestModal, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
+import { getTFilesFromFolder } from "Utils";
 import TemplaterPlugin from './main';
 
 export enum OpenMode {
@@ -22,31 +23,11 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
         let template_files: TFile[] = [];
 
         if (this.plugin.settings.template_folder === "") {
-            let files = this.app.vault.getFiles();
-            template_files = files;
+            template_files = this.app.vault.getMarkdownFiles();
         }
         else {
-            let template_folder_str = normalizePath(this.plugin.settings.template_folder);
-
-            let template_folder = this.app.vault.getAbstractFileByPath(template_folder_str);
-            if (!template_folder) {
-                throw new Error(`${template_folder_str} folder doesn't exist`);
-            }
-            if (! (template_folder instanceof TFolder)) {
-                throw new Error(`${template_folder_str} is a file, not a folder`);
-            }
-
-            Vault.recurseChildren(template_folder, (file: TAbstractFile) => {
-                if (file instanceof TFile) {
-                    template_files.push(file);
-                }
-            });
-
-            template_files.sort((a, b) => {
-                return a.basename.localeCompare(b.basename);
-            });
+            template_files = getTFilesFromFolder(this.app, this.plugin.settings.template_folder);
         }
-
         return template_files;
     }
 
