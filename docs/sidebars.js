@@ -23,6 +23,7 @@ module.exports = {
             'internal-variables-functions/internal-modules/date-module',
             'internal-variables-functions/internal-modules/file-module',
             'internal-variables-functions/internal-modules/frontmatter-module',
+            'internal-variables-functions/internal-modules/system-module',
             'internal-variables-functions/internal-modules/web-module',
           ],
         },
