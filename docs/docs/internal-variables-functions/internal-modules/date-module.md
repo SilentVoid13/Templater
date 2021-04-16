@@ -33,7 +33,7 @@ Last month: <% tp.date.now("YYYY-MM-DD", "P-1M") %>
 Next year: <% tp.date.now("YYYY-MM-DD", "P1Y") %>
 
 File's title date + 1 day (tomorrow): <% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>
-File's title date - 1 day (yesterday): <% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>
+File's title date - 1 day (yesterday): <% tp.date.now("YYYY-MM-DD", -1, tp.file.title, "YYYY-MM-DD") %>
 
 Date tomorrow with format: <% tp.date.tomorrow("Do MMMM YYYY") %>    
 
