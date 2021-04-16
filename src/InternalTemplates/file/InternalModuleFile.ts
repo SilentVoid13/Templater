@@ -10,6 +10,7 @@ export class InternalModuleFile extends InternalModule {
     private include_depth: number = 0;
 
     async createStaticTemplates() {
+        // TODO: Remove this
         this.static_templates.set("clipboard", this.generate_clipboard());
         this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("selection", this.generate_selection());
@@ -29,12 +30,10 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_clipboard() {
-        return async () => {
-            // TODO: Add mobile support
-            if (this.app.isMobile) {
-                return UNSUPPORTED_MOBILE_TEMPLATE;
-            }
-            return await navigator.clipboard.readText();
+        return () => {
+            // TODO: Remove this
+            this.plugin.log_update("tp.file.clipboard was moved to a new module: System Module!<br/> You must now use tp.system.clipboard()");
+            return "";
         }
     }
 
