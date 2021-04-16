@@ -29,7 +29,7 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 ## Examples
 
-```
+```javascript
 Clipboard content: <% tp.file.clipboard() %>
 
 File content: <% tp.file.content %>

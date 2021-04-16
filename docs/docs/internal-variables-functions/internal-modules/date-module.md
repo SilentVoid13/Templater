@@ -21,7 +21,7 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 ## Examples
 
-```
+```javascript
 Date now: <% tp.date.now() %>
 Date now with format: <% tp.date.now("Do MMMM YYYY") %>
 

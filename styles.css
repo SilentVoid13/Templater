@@ -46,3 +46,16 @@
 .templater_button:hover {
     background-color: #00496A !important;
 }
+
+.templater-prompt-div {
+    display: flex;
+}
+
+.templater-prompt-form {
+    display: flex;
+    flex-grow: 1;
+}
+
+.templater-prompt-input {
+    flex-grow: 1;
+}
