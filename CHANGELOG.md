@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/SilentVoid13/Templater/compare/1.5.1...1.5.2) (2021-04-16)
+
+
+### Features
+
+* **internaltemplates:** adding new tp.system module with the tp.system.prompt internal function ([e3ea6ae](https://github.com/SilentVoid13/Templater/commit/e3ea6ae00d00bdfe22f6ddf433521ab47ce347bb)), closes [#111](https://github.com/SilentVoid13/Templater/issues/111)
+
+
+### Bug Fixes
+
+* fixing tp.date documentation error ([8a8559f](https://github.com/SilentVoid13/Templater/commit/8a8559f6d5dbf788211bc089c8243119c0f8adf2)), closes [#113](https://github.com/SilentVoid13/Templater/issues/113)
+
 ### [1.5.1](https://github.com/SilentVoid13/Templater/compare/1.5.0...1.5.1) (2021-04-14)
 
 
