@@ -14,7 +14,6 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 | Internal Variable / Function                                 | Arguments                                                    | Description                                                  | Example Output              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- |
-| `tp.file.clipboard()`                                        | None                                                         | Retrieves the clipboard's content                            | `This is my copied text`    |
 | `tp.file.content`                                            | None                                                         | Retrieves the file's content                                 | `This is some content`      |
 | `tp.file.creation_date(format: string = "YYYY-MM-DD HH:mm")` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) | Retrieves the file's creation date.                          | `2021-01-06 20:27`          |
 | `tp.file.cursor(order?: number)`                             | - `order`: The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on. | Sets the cursor to this location after the template has been inserted. You can navigate between the different `tp.file.cursor` using the configured hotkey in obsidian settings. | None                        |
@@ -30,8 +29,6 @@ Function documentation is using a specific syntax. More informations [here](../.
 ## Examples
 
 ```javascript
-Clipboard content: <% tp.file.clipboard() %>
-
 File content: <% tp.file.content %>
 
 File creation date: <% tp.file.creation_date() %>
