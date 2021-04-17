@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.4](https://github.com/SilentVoid13/Templater/compare/1.5.3...1.5.4) (2021-04-17)
+
+
+### Features
+
+* **settings:** adding toggles for security relevant Templater features ([5f1432b](https://github.com/SilentVoid13/Templater/commit/5f1432b757afe76e96e5bffc9e8a6379a1351c7c))
+
 ### [1.5.3](https://github.com/SilentVoid13/Templater/compare/1.5.2...1.5.3) (2021-04-17)
 
 
