@@ -27,10 +27,7 @@ export class TemplateParser extends TParser {
         super(app);
         this.cursor_jumper = new CursorJumper(this.app);
         this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
-        // TODO: Add mobile support
-        if (!this.app.isMobile) {
-            this.userTemplateParser = new UserTemplateParser(this.app, this.plugin);
-        }
+        this.userTemplateParser = new UserTemplateParser(this.app, this.plugin);
     }
 
     async setCurrentContext(file: TFile, context_mode: ContextMode) {
@@ -49,9 +46,7 @@ export class TemplateParser extends TParser {
 
         switch (context_mode) {
             case ContextMode.USER:
-                if (this.userTemplateParser) {
-                    user_context = await this.userTemplateParser.generateContext(file);
-                }
+                user_context = await this.userTemplateParser.generateContext(file);
                 context = {
                     user: {
                         ...user_context
@@ -62,9 +57,7 @@ export class TemplateParser extends TParser {
                 context = internal_context;
                 break;
             case ContextMode.DYNAMIC:
-                if (this.userTemplateParser) {
-                    user_context = await this.userTemplateParser.generateContext(file);
-                }
+                user_context = await this.userTemplateParser.generateContext(file);
                 context = {
                     dynamic: {
                         ...internal_context,
@@ -75,9 +68,7 @@ export class TemplateParser extends TParser {
                 };
                 break;
             case ContextMode.USER_INTERNAL:
-                if (this.userTemplateParser) {
-                    user_context = await this.userTemplateParser.generateContext(file);
-                }
+                user_context = await this.userTemplateParser.generateContext(file);
                 context = {
                     ...internal_context,
                     user: {

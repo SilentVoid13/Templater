@@ -3,6 +3,8 @@ title: Overview
 slug: /user-functions
 ---
 
+User functions need to be enabled in Templater's settings.
+
 ## Define a User Function
 
 To define a new user function, you need to define a **function name**, associated with a **system command**.

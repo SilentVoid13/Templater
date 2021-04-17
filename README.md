@@ -2,7 +2,7 @@
 
 ![templater_logo](docs/static/img/templater_logo.svg)
 
-[Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your notes. It will also let you execute JavaScript code manipulating those variables and functions.
+[Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your [Obsidian](https://obsidian.md/) notes. It will also let you execute JavaScript code manipulating those variables and functions.
 
 ## Demonstration
 
@@ -11,6 +11,14 @@
 ## Documentation
 
 Check out the complete [documentation](https://silentvoid13.github.io/Templater/) to start using [Templater](https://github.com/SilentVoid13/Templater).
+
+## Warning
+
+[Templater](https://github.com/SilentVoid13/Templater) allows you to execute arbitrary JavaScript code and system commands.
+
+It can be dangerous to execute arbitrary JavaScript code or system commands from untrusted sources. Only run code / commands that you understand, from trusted sources.
+
+Because [Obsidian](https://obsidian.md/) is an offline application, it can be dangerous **only if** you copy-paste and blindly use a code snippet / command / template from an untrusted source.
 
 ## Utilities
 

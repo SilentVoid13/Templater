@@ -1,4 +1,4 @@
-import { addIcon, MarkdownView, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { addIcon, EventRef, MarkdownView, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
@@ -10,6 +10,7 @@ export default class TemplaterPlugin extends Plugin {
 	public fuzzySuggest: TemplaterFuzzySuggestModal;
 	public settings: TemplaterSettings; 
 	public parser: TemplateParser
+	private trigger_on_file_creation_event: EventRef;
 
 	async onload() {
 		await this.loadSettings();
@@ -86,20 +87,7 @@ export default class TemplaterPlugin extends Plugin {
 		});
 
 		this.app.workspace.onLayoutReady(() => {
-			this.registerEvent(
-				// TODO: Find a way to not trigger this on files copy
-				this.app.vault.on("create", async (file: TAbstractFile) => {
-					// TODO: find a better way to do this
-					// Currently, I have to wait for the daily note plugin to add the file content before replacing
-					// Not a problem with Calendar however since it creates the file with the existing content
-					await delay(300);
-					// ! This could corrupt binary files
-					if (!(file instanceof TFile) || file.extension !== "md") {
-						return;
-					}
-					this.parser.replace_templates_and_overwrite_in_file(file);
-				})
-			);
+			this.update_trigger_file_on_creation();	
 		});
 
 		this.registerEvent(
@@ -126,6 +114,32 @@ export default class TemplaterPlugin extends Plugin {
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}	
+
+	update_trigger_file_on_creation() {
+		if (this.settings.trigger_on_file_creation) {
+			this.trigger_on_file_creation_event = this.app.vault.on("create", async (file: TAbstractFile) => {
+				// TODO: Find a way to not trigger this on files copy
+				// TODO: find a better way to do this
+				// Currently, I have to wait for the daily note plugin to add the file content before replacing
+				// Not a problem with Calendar however since it creates the file with the existing content
+				await delay(300);
+				// ! This could corrupt binary files
+				if (!(file instanceof TFile) || file.extension !== "md") {
+					return;
+				}
+				this.parser.replace_templates_and_overwrite_in_file(file);
+			});
+			this.registerEvent(
+				this.trigger_on_file_creation_event
+			);
+		}
+		else {
+			if (this.trigger_on_file_creation_event) {
+				this.app.vault.offref(this.trigger_on_file_creation_event);
+				this.trigger_on_file_creation_event = undefined;
+			}
+		}
+	}
 
 	log_update(msg: string) {
 		let notice = new Notice("", 15000);

@@ -5,6 +5,7 @@ import { promisify } from "util";
 import TemplaterPlugin from "main";
 import { ContextMode } from "TemplateParser";
 import { TParser } from "TParser";
+import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 
 export class UserTemplateParser extends TParser {
     cwd: string;
@@ -36,35 +37,45 @@ export class UserTemplateParser extends TParser {
                 continue;
             }
 
-            cmd = await this.plugin.parser.parseTemplates(cmd, context);
+            if (this.app.isMobile) {
+                user_templates.set(template, (user_args?: any): string => {
+                    return UNSUPPORTED_MOBILE_TEMPLATE;
+                })
+            }
+            else {
+                cmd = await this.plugin.parser.parseTemplates(cmd, context);
 
-            user_templates.set(template, async (user_args?: any): Promise<string> => {
-                try {
-                    let process_env = {
-                        ...process.env,
-                        ...user_args,
-                    };
+                user_templates.set(template, async (user_args?: any): Promise<string> => {
+                    try {
+                        let process_env = {
+                            ...process.env,
+                            ...user_args,
+                        };
 
-                    let cmd_options = {
-                        timeout: this.plugin.settings.command_timeout * 1000,
-                        cwd: this.cwd,
-                        env: process_env,
-                    };
+                        let cmd_options = {
+                            timeout: this.plugin.settings.command_timeout * 1000,
+                            cwd: this.cwd,
+                            env: process_env,
+                        };
 
-                    let {stdout} = await exec_promise(cmd, cmd_options);
-                    return stdout.trimRight();
-                }
-                catch(error) {
-                    this.plugin.log_error(`Error with User Template ${template}`, error);
-                }
-            });
+                        let {stdout} = await exec_promise(cmd, cmd_options);
+                        return stdout.trimRight();
+                    }
+                    catch(error) {
+                        this.plugin.log_error(`Error with User Template ${template}`, error);
+                    }
+                });
+            }
         }
 
         return user_templates;
     }
 
     async generateContext(file: TFile) {
-        let user_templates = await this.generateUserTemplates(file);
-        return Object.fromEntries(user_templates);
+        let user_templates = this.plugin.settings.enable_system_commands ? await this.generateUserTemplates(file) : new Map();
+
+        return {
+            ...Object.fromEntries(user_templates),
+        };
     }
 }
