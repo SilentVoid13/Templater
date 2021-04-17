@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.3](https://github.com/SilentVoid13/Templater/compare/1.5.2...1.5.3) (2021-04-17)
+
+
+### Features
+
+* **internaltemplates:** upgrading tp.file.include to accept obsidian links ([77f167c](https://github.com/SilentVoid13/Templater/commit/77f167c84412c01d3d16b25b7ebb8d10f8293a19))
+
 ### [1.5.2](https://github.com/SilentVoid13/Templater/compare/1.5.1...1.5.2) (2021-04-16)
 
 
