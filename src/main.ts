@@ -131,7 +131,7 @@ export default class TemplaterPlugin extends Plugin {
 		let notice = new Notice("", 15000);
 		// TODO: Find better way for this
 		// @ts-ignore
-		notice.noticeEl.innerHTML = `<b>Templater update</b>: ${msg}`;
+		notice.noticeEl.innerHTML = `<b>Templater update</b>:<br/>${msg}`;
 	}
 
 	log_error(msg: string, error?: string) {
@@ -139,12 +139,12 @@ export default class TemplaterPlugin extends Plugin {
 		if (error) {
 			// TODO: Find a better way for this
 			// @ts-ignore
-			notice.noticeEl.innerHTML = `<b>Templater Error</b>: ${msg}<br/>Check console for more informations`;
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${msg}<br/>Check console for more informations`;
 			console.error(msg, error);
 		}
 		else {
 			// @ts-ignore
-			notice.noticeEl.innerHTML = `<b>Templater Error</b>: ${msg}`;
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${msg}`;
 		}
 	}
 
