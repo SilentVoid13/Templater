@@ -14,9 +14,6 @@ export enum ContextMode {
     DYNAMIC,
 };
 
-// TODO: Remove that
-const tp_cursor = new RegExp("<%\\s*tp.file.cursor\\s*%>");
-
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser = null;
@@ -86,11 +83,6 @@ export class TemplateParser extends TParser {
             context = this.current_context;
         }
 
-        if (content.match(tp_cursor)) {
-            this.plugin.log_update(`tp.file.cursor was updated! It's now an internal function, you should call it like so: tp.file.cursor() <br/>
-tp.file.cursor now supports cursor jump order! Specify the jump order as an argument (tp.file.cursor(1), tp.file.cursor(2), ...), if you wish to change the default top to bottom order.<br/>
-Check the <a href='https://silentvoid13.github.io/Templater/docs/internal-variables-functions/internal-modules/file-module'>documentation</a> for more informations.`);
-        }
         try {
             content = await Eta.renderAsync(content, context, {
                 varName: "tp",
@@ -138,7 +130,9 @@ Check the <a href='https://silentvoid13.github.io/Templater/docs/internal-variab
             //let created_note = await this.app.vault.create("Untitled.md", "");
 
             await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);
+            console.log("HERE HERE");
             let content = await this.plugin.parser.parseTemplates(template_content);
+            console.log("HERE HERE 2");
 
             await this.app.vault.modify(created_note, content);
 
