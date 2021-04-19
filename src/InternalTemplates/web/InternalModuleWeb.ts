@@ -6,7 +6,7 @@ export class InternalModuleWeb extends InternalModule {
     async createStaticTemplates() {
         this.static_templates.set("daily_quote", this.generate_daily_quote());
         this.static_templates.set("random_picture", this.generate_random_picture());
-        this.static_templates.set("get_request", this.generate_get_request());
+        //this.static_templates.set("get_request", this.generate_get_request());
     }
     
     async updateTemplates() {}
@@ -37,6 +37,13 @@ export class InternalModuleWeb extends InternalModule {
             let response = await this.getRequest(`https://source.unsplash.com/random/${size ?? ''}?${query ?? ''}`);
             let url = response.url;
             return `![tp.web.random_picture](${url})`;   
+        }
+    }
+
+    // TODO
+    generate_weather() {
+        return async (query?: string) => {
+
         }
     }
 

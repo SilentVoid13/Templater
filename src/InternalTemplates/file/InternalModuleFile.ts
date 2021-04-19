@@ -101,7 +101,9 @@ export class InternalModuleFile extends InternalModule {
                 let cache = this.app.metadataCache.getFileCache(inc_file);
                 if (cache) {
                     let result = resolveSubpath(cache, subpath);
-                    inc_file_content = inc_file_content.slice(result.start.offset, result.end.offset);
+                    if (result) {
+                        inc_file_content = inc_file_content.slice(result.start.offset, result.end?.offset);
+                    }
                 }
             }
 
