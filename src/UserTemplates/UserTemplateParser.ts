@@ -56,6 +56,7 @@ export class UserTemplateParser extends TParser {
                             timeout: this.plugin.settings.command_timeout * 1000,
                             cwd: this.cwd,
                             env: process_env,
+                            ...(this.plugin.settings.shell_path !== "" && {shell: this.plugin.settings.shell_path}),
                         };
 
                         let {stdout} = await exec_promise(cmd, cmd_options);

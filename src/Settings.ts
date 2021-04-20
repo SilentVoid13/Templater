@@ -8,6 +8,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	templates_pairs: [["", ""]],
 	trigger_on_file_creation: false,
 	enable_system_commands: false,
+	shell_path: "",
 };
 
 export interface TemplaterSettings {
@@ -16,6 +17,7 @@ export interface TemplaterSettings {
 	templates_pairs: Array<[string, string]>;
 	trigger_on_file_creation: boolean;
 	enable_system_commands: boolean;
+	shell_path: string,
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -123,6 +125,26 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			});
 
 		if (this.plugin.settings.enable_system_commands) {	
+			desc = document.createDocumentFragment();
+			desc.append(
+				"Full path to the shell binary to execute the command with.",
+				desc.createEl("br"),
+				"This setting is optional and will default to the system's default shell if not specified.",
+				desc.createEl("br"),
+				"You can use forward slashes ('/') as path separators on all platforms if in doubt."
+			);
+			new Setting(containerEl)
+				.setName("Shell binary location")
+				.setDesc(desc)
+				.addText(text => {
+					text.setPlaceholder("Example: /bin/bash, ...")
+						.setValue(this.plugin.settings.shell_path)
+						.onChange((shell_path) => {
+							this.plugin.settings.shell_path = shell_path;
+							this.plugin.saveSettings();
+						})
+				});
+
 			let i = 1;
 			this.plugin.settings.templates_pairs.forEach((template_pair) => {
 				let div = containerEl.createEl('div');
