@@ -1,4 +1,5 @@
-import { App, EditorPosition, MarkdownView, TFile, TFolder } from "obsidian";
+import * as obsidian from 'obsidian'; 
+import { App, MarkdownView, TFile, TFolder } from "obsidian";
 import * as Eta from "eta";
 
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
@@ -8,7 +9,6 @@ import { TParser } from "TParser";
 import { CursorJumper } from "CursorJumper";
 
 export enum ContextMode {
-    USER,
     INTERNAL,
     USER_INTERNAL,
     DYNAMIC,
@@ -31,8 +31,15 @@ export class TemplateParser extends TParser {
         this.current_context = await this.generateContext(file, context_mode);
     }
 
+    additionalContext() {
+        return {
+            obsidian: obsidian,
+        };
+    }
+
     async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL) {
         let context = {};
+        let additional_context = this.additionalContext();
         let internal_context = await this.internalTemplateParser.generateContext(file);
         let user_context = {};
 
@@ -41,37 +48,26 @@ export class TemplateParser extends TParser {
             this.current_context = internal_context;
         }
 
+        Object.assign(context, additional_context);
         switch (context_mode) {
-            case ContextMode.USER:
-                user_context = await this.userTemplateParser.generateContext(file);
-                context = {
-                    user: {
-                        ...user_context
-                    }
-                };
-                break;
             case ContextMode.INTERNAL:
-                context = internal_context;
+                Object.assign(context, internal_context);
                 break;
             case ContextMode.DYNAMIC:
                 user_context = await this.userTemplateParser.generateContext(file);
-                context = {
+                Object.assign(context, {
                     dynamic: {
                         ...internal_context,
-                        user: {
-                            ...user_context
-                        }
+                        user: user_context,
                     }
-                };
+                });
                 break;
             case ContextMode.USER_INTERNAL:
                 user_context = await this.userTemplateParser.generateContext(file);
-                context = {
+                Object.assign(context, {
                     ...internal_context,
-                    user: {
-                        ...user_context
-                    }
-                };
+                    user: user_context,
+                });
                 break;
         }
 
