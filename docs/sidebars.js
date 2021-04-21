@@ -9,6 +9,7 @@ module.exports = {
         'terminology',
         'syntax',
         'settings',
+        'faq',
       ],
     },
     {
