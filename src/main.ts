@@ -1,4 +1,4 @@
-import { addIcon, EventRef, MarkdownView, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { addIcon, EventRef, MarkdownPostProcessorContext, MarkdownView, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
@@ -162,14 +162,16 @@ export default class TemplaterPlugin extends Plugin {
 		}
 	}
 
-	async dynamic_templates_processor(el: HTMLElement, ctx: any) {
-		if (el.textContent.contains("tp.dynamic")) {
-			// TODO: This will not always be the active file, 
-			// I need to use getFirstLinkpathDest and ctx to find the actual file
-			let file = this.app.workspace.getActiveFile();
+	async dynamic_templates_processor(el: HTMLElement, ctx: MarkdownPostProcessorContext) {
+		let content = el.innerText.trim();
+		if (content.contains("tp.dynamic")) {
+			let file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
+			if (!file || !(file instanceof TFile)) {
+				return;
+			}
 			await this.parser.setCurrentContext(file, ContextMode.DYNAMIC);
-			let new_html = await this.parser.parseTemplates(el.innerHTML);
-			el.innerHTML = new_html;
+			let new_content = await this.parser.parseTemplates(content);
+			el.innerText = new_content;
 		}
 	}
 };
