@@ -74,7 +74,7 @@ export class TemplateParser extends TParser {
         return context;
     }
 
-    async parseTemplates(content: string, context?: any) {
+    async parseTemplates(content: string, context?: any, throw_on_error: boolean = false) {
         if (!context) {
             context = this.current_context;
         }
@@ -93,6 +93,9 @@ export class TemplateParser extends TParser {
         }
         catch(error) {
             this.plugin.log_error("Template parsing error, aborting.", error);
+            if (throw_on_error) {
+                throw error;
+            }
         }
 
         return content;
@@ -125,7 +128,14 @@ export class TemplateParser extends TParser {
             let created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
 
             await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);
-            let content = await this.plugin.parser.parseTemplates(template_content);
+
+            let content;
+            try {
+                content = await this.plugin.parser.parseTemplates(template_content, undefined, true);
+            } catch(error) {
+                await this.app.vault.delete(created_note);
+                return;
+            }
 
             await this.app.vault.modify(created_note, content);
 
