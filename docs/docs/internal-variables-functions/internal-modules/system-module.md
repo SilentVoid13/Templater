@@ -15,7 +15,7 @@ Function documentation is using a specific syntax. More informations [here](../.
 | Internal Variable / Function                                 | Arguments                                                    | Description                                         | Example Output           |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------------------- | ------------------------ |
 | `tp.file.clipboard()`                                        | None                                                         | Retrieves the clipboard's content                   | `This is my copied text` |
-| `tp.system.prompt(prompt_text?: string, default_value?: string)` | - `prompt_text`: Text placed above the input field<br />- `default_value`: A default value for the input filed | Spawns a prompt modal and returns the user's input. | `A value I entered`      |
+| `tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false)` | - `prompt_text`: Text placed above the input field<br />- `default_value`: A default value for the input filed<br />- `throw_on_cancel`: Throws an error if the prompt is canceled, instead of returning a `null` value. | Spawns a prompt modal and returns the user's input. | `A value I entered`      |
 
 ## Examples
 
