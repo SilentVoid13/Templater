@@ -20,6 +20,12 @@ It can be dangerous to execute arbitrary JavaScript code or system commands from
 
 Because [Obsidian](https://obsidian.md/) is an offline application, it can be dangerous **only if** you copy-paste and blindly use a code snippet / command / template from an untrusted source.
 
+## Template Showcase ? Questions ? Ideas ? Help ? 
+
+Go to the [discussion](https://github.com/SilentVoid13/Templater/discussions) tab to ask and find this kind of things.
+
+Don't be shy and share your templates created using [Templater](https://github.com/SilentVoid13/Templater) in the [Template Showcase](https://github.com/SilentVoid13/Templater/discussions/categories/templates-showcase) category. Use [gists](https://gist.github.com/) to share the template file. I'm curious of what the community has come up with, and I'm sure I'm not the only one.
+
 ## Utilities
 
 A list of useful tools to use along [Templater](https://github.com/SilentVoid13/Templater): 
