@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.5](https://github.com/SilentVoid13/Templater/compare/1.5.4...1.5.5) (2021-04-22)
+
+
+### Features
+
+* **internaltemplates:** adding new tp.system.suggester ([91cd04e](https://github.com/SilentVoid13/Templater/commit/91cd04ed22fb19c9f60a9d598520ea4c62bc5c72))
+* adding the tp.obsidian object to access obsidian functions if needed ([eab1178](https://github.com/SilentVoid13/Templater/commit/eab11785f5c411aaf8ac7ab8c5e1e8047b8d6ed0))
+* **settings:** adding a setting to specify a custom shell to run command with(powershell, zsh, ...) ([d7e6894](https://github.com/SilentVoid13/Templater/commit/d7e6894f0d00f672b326460a7554c976f10e51c9)), closes [#129](https://github.com/SilentVoid13/Templater/issues/129) [#128](https://github.com/SilentVoid13/Templater/issues/128)
+
+
+### Bug Fixes
+
+* fixing tp.dynamic ([7f16c94](https://github.com/SilentVoid13/Templater/commit/7f16c9412f92a955a63713f8f458a832e5e068b5))
+* fixing tp.file.include on block when the block is the last block of the file ([f886b1c](https://github.com/SilentVoid13/Templater/commit/f886b1c51c201f13feea53b09cd5885ac244628e)), closes [#124](https://github.com/SilentVoid13/Templater/issues/124)
+* fixing tp.system.prompt, now handles cancellation ([6afad93](https://github.com/SilentVoid13/Templater/commit/6afad93063bbe5868a407d2fb5c563972bcb8933)), closes [#125](https://github.com/SilentVoid13/Templater/issues/125)
+
 ### [1.5.4](https://github.com/SilentVoid13/Templater/compare/1.5.3...1.5.4) (2021-04-17)
 
 
