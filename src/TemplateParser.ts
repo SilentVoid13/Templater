@@ -123,12 +123,9 @@ export class TemplateParser extends TParser {
             // TODO: Change that, not stable atm
             // @ts-ignore
             let created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
-            //let created_note = await this.app.vault.create("Untitled.md", "");
 
             await this.setCurrentContext(created_note, ContextMode.USER_INTERNAL);
-            console.log("HERE HERE");
             let content = await this.plugin.parser.parseTemplates(template_content);
-            console.log("HERE HERE 2");
 
             await this.app.vault.modify(created_note, content);
 

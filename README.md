@@ -30,7 +30,7 @@ A list of useful tools to use along [Templater](https://github.com/SilentVoid13/
 
 A list of useful resources about [Templater](https://github.com/SilentVoid13/Templater):
 
-- @tallguyjenks video: https://youtu.be/2234DXKbNgM
+- @tallguyjenks video: https://youtu.be/2234DXKbNgM?t=1944
 
 ## Alternatives
 

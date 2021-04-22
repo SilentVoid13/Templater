@@ -2,7 +2,9 @@ import { App, Modal } from "obsidian";
 
 export class PromptModal extends Modal {
     private promptEl: HTMLInputElement;
-    private cb: (value: string) => void;
+    private resolve: (value: string) => void;
+    private reject: (reason?: any) => void;
+    private submitted_form: boolean = false;
 
     constructor(app: App, private prompt_text: string, private default_value: string) {
         super(app);
@@ -15,6 +17,9 @@ export class PromptModal extends Modal {
 
     onClose() {
         this.contentEl.empty();
+        if (!this.submitted_form) {
+            this.reject(new Error("Cancelled prompt"));
+        }
     }
 
     createForm() {
@@ -25,8 +30,9 @@ export class PromptModal extends Modal {
         form.addClass("templater-prompt-form");
         form.type = "submit";
         form.onsubmit = (e: Event) => {
+            this.submitted_form = true;
             e.preventDefault();
-            this.cb(this.promptEl.value);
+            this.resolve(this.promptEl.value);
             this.close();
         }
 
@@ -38,8 +44,9 @@ export class PromptModal extends Modal {
         this.promptEl.select();
     }
 
-    async openAndGetValue(cb: (value: string) => void) {
-        this.cb = cb;
+    async openAndGetValue(resolve: (value: string) => void, reject: (reason?: any) => void) {
+        this.resolve = resolve;
+        this.reject = reject;
         this.open();
     }
 }
