@@ -4,7 +4,7 @@ export class PromptModal extends Modal {
     private promptEl: HTMLInputElement;
     private resolve: (value: string) => void;
     private reject: (reason?: any) => void;
-    private submitted_form: boolean = false;
+    private submitted: boolean = false;
 
     constructor(app: App, private prompt_text: string, private default_value: string) {
         super(app);
@@ -17,7 +17,7 @@ export class PromptModal extends Modal {
 
     onClose() {
         this.contentEl.empty();
-        if (!this.submitted_form) {
+        if (!this.submitted) {
             this.reject(new Error("Cancelled prompt"));
         }
     }
@@ -30,7 +30,7 @@ export class PromptModal extends Modal {
         form.addClass("templater-prompt-form");
         form.type = "submit";
         form.onsubmit = (e: Event) => {
-            this.submitted_form = true;
+            this.submitted = true;
             e.preventDefault();
             this.resolve(this.promptEl.value);
             this.close();
