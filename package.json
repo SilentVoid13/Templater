@@ -1,13 +1,12 @@
 {
   "name": "templater-obsidian",
   "version": "1.5.5",
-  "type": "module",
   "description": "Create and use templates",
   "main": "main.js",
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
-    "test": "jest",
+    "test": "yarn run build && mkdir -p test/empty_vault/.obsidian/plugins/templater-obsidian && cp manifest.json styles.css main.js test/empty_vault/.obsidian/plugins/templater-obsidian && jest",
     "release": "standard-version -t ''"
   },
   "keywords": [
@@ -30,14 +29,16 @@
     "jest": "^26.6.3",
     "obsidian": "^0.11.13",
     "rollup": "^2.39.0",
+    "spectron": "13",
     "standard-version": "^9.1.1",
     "ts-jest": "^26.5.4",
+    "ts-node": "^9.1.1",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "eta": "github:SilentVoid13/eta#custom-eta"
+    "eta": "git+https://github.com/SilentVoid13/eta#custom-eta"
   },
   "config": {
     "commitizen": {

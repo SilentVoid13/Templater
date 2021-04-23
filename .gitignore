@@ -9,4 +9,7 @@ node_modules
 main.js
 *.js.map
 
+# test
+test/
+
 RESOURCES.md
