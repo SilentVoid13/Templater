@@ -11,8 +11,6 @@ export class InternalModuleFile extends InternalModule {
     private linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
 
     async createStaticTemplates() {
-        // TODO: Remove this
-        this.static_templates.set("clipboard", this.generate_clipboard());
         this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("selection", this.generate_selection());
     }
@@ -28,14 +26,6 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_templates.set("tags", this.generate_tags());
         this.dynamic_templates.set("title", this.generate_title());
 
-    }
-
-    generate_clipboard() {
-        return () => {
-            // TODO: Remove this
-            this.plugin.log_update("tp.file.clipboard was moved to a new module: System Module!<br/> You must now use tp.system.clipboard()");
-            return "";
-        }
     }
 
     generate_cursor() {
