@@ -73,8 +73,7 @@ export class InternalModuleFile extends InternalModule {
 
             let match;
             if ((match = this.linkpath_regex.exec(include_link)) === null) {
-                this.plugin.log_update("tp.file.include was updated! You must now provide the 'include_filename' parameter as an obsidian link in the form '[[MyFile]]'<br/><br/>This ensures that if you change a file name, tp.file.include isn't broken.<br/><br/>This also adds supports for sections and blocks inclusions!")
-                return "";
+                throw new Error("Invalid file format, provide an obsidian link between quotes.");
             }
             const {path, subpath} = parseLinktext(match[1]);
 
