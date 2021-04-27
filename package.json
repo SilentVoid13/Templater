@@ -16,7 +16,7 @@
     "obsidian-md-plugin"
   ],
   "author": "SilentVoid13",
-  "license": "GNU AGPLv3",
+  "license": "AGPL-3.0-only",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-json": "^4.1.0",
