@@ -17,7 +17,7 @@ export class InternalTemplateParser extends TParser {
         this.createModules();
     }
 
-    createModules() {
+    createModules(): void {
         this.modules_array.push(new InternalModuleDate(this.app, this.plugin));
         this.modules_array.push(new InternalModuleFile(this.app, this.plugin));
         this.modules_array.push(new InternalModuleWeb(this.app, this.plugin));
@@ -25,10 +25,10 @@ export class InternalTemplateParser extends TParser {
         this.modules_array.push(new InternalModuleSystem(this.app, this.plugin));
     }
 
-    async generateContext(f: TFile) {
-        let modules_context_map = new Map();
+    async generateContext(f: TFile): Promise<{}> {
+        const modules_context_map = new Map();
 
-        for (let mod of this.modules_array) {
+        for (const mod of this.modules_array) {
             modules_context_map.set(mod.getName(), await mod.generateContext(f));
         }
 

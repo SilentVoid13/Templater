@@ -1,12 +1,12 @@
 import { InternalModule } from "../InternalModule";
 
 export class InternalModuleFrontmatter extends InternalModule {
-    name = "frontmatter";
+    public name: string = "frontmatter";
 
-    async createStaticTemplates() {}
+    async createStaticTemplates(): Promise<void> {}
 
-    async updateTemplates() {
-        let cache = this.app.metadataCache.getFileCache(this.file)
+    async updateTemplates(): Promise<void> {
+        const cache = this.app.metadataCache.getFileCache(this.file)
         this.dynamic_templates = new Map(Object.entries(cache?.frontmatter || {}));
     }
 }

@@ -1,24 +1,24 @@
-import { addIcon, EventRef, MarkdownPostProcessorContext, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { addIcon, EventRef, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
-import { ContextMode, TemplateParser } from 'TemplateParser';
 import { ICON_DATA } from 'Constants';
 import { delay } from 'Utils';
+import { Templater } from 'Templater';
 
 export default class TemplaterPlugin extends Plugin {
-	public fuzzySuggest: TemplaterFuzzySuggestModal;
 	public settings: TemplaterSettings; 
-	public parser: TemplateParser
+	public templater: Templater;
+	private fuzzySuggest: TemplaterFuzzySuggestModal;
 	private trigger_on_file_creation_event: EventRef;
 
-	async onload() {
+	async onload(): Promise<void> {
 		await this.loadSettings();
 
+		this.templater = new Templater(this.app, this);
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
-		this.parser = new TemplateParser(this.app, this);
 
-		this.registerMarkdownPostProcessor((el, ctx) => this.dynamic_templates_processor(el, ctx));
+		this.registerMarkdownPostProcessor((el, ctx) => this.templater.process_dynamic_templates(el, ctx));
 
 		addIcon("templater-icon", ICON_DATA);
 		this.addRibbonIcon('templater-icon', 'Templater', async () => {
@@ -49,7 +49,7 @@ export default class TemplaterPlugin extends Plugin {
                 },
             ],
             callback: () => {
-				this.parser.replace_in_active_file();
+				this.templater.overwrite_active_file_templates();
             },
         });
 
@@ -64,7 +64,7 @@ export default class TemplaterPlugin extends Plugin {
 			],
 			callback: () => {
 				try {
-					this.parser.cursor_jumper.jump_to_next_cursor_location();
+					this.templater.cursor_jumper.jump_to_next_cursor_location();
 				}
 				catch(error) {
 					this.log_error(error);
@@ -107,27 +107,25 @@ export default class TemplaterPlugin extends Plugin {
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
 	}
 
-	async saveSettings() {
+	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 	}
 
-	async loadSettings() {
+	async loadSettings(): Promise<void> {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}	
 
-	update_trigger_file_on_creation() {
+	update_trigger_file_on_creation(): void {
 		if (this.settings.trigger_on_file_creation) {
 			this.trigger_on_file_creation_event = this.app.vault.on("create", async (file: TAbstractFile) => {
-				// TODO: Find a way to not trigger this on files copy
 				// TODO: find a better way to do this
 				// Currently, I have to wait for the daily note plugin to add the file content before replacing
 				// Not a problem with Calendar however since it creates the file with the existing content
 				await delay(300);
-				// ! This could corrupt binary files
 				if (!(file instanceof TFile) || file.extension !== "md") {
 					return;
 				}
-				this.parser.replace_templates_and_overwrite_in_file(file);
+				this.templater.overwrite_file_templates(file);
 			});
 			this.registerEvent(
 				this.trigger_on_file_creation_event
@@ -141,15 +139,15 @@ export default class TemplaterPlugin extends Plugin {
 		}
 	}
 
-	log_update(msg: string) {
-		let notice = new Notice("", 15000);
+	log_update(msg: string): void {
+		const notice = new Notice("", 15000);
 		// TODO: Find better way for this
 		// @ts-ignore
 		notice.noticeEl.innerHTML = `<b>Templater update</b>:<br/>${msg}`;
 	}
 
-	log_error(msg: string, error?: string) {
-		let notice = new Notice("", 8000);
+	log_error(msg: string, error?: string): void {
+		const notice = new Notice("", 8000);
 		if (error) {
 			// TODO: Find a better way for this
 			// @ts-ignore
@@ -160,18 +158,5 @@ export default class TemplaterPlugin extends Plugin {
 			// @ts-ignore
 			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${msg}`;
 		}
-	}
-
-	async dynamic_templates_processor(el: HTMLElement, ctx: MarkdownPostProcessorContext) {
-		let content = el.innerText.trim();
-		if (content.contains("tp.dynamic")) {
-			let file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
-			if (!file || !(file instanceof TFile)) {
-				return;
-			}
-			await this.parser.setCurrentContext(file, ContextMode.DYNAMIC);
-			let new_content = await this.parser.parseTemplates(content);
-			el.innerText = new_content;
-		}
-	}
+	}	
 };

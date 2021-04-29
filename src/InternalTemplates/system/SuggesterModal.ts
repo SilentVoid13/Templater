@@ -14,13 +14,13 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         return this.items;
     }
     
-    onClose() {
+    onClose(): void {
         if (!this.submitted) {
             this.reject(new Error("Cancelled prompt"));
         }
     }
 
-    selectSuggestion(value: FuzzyMatch<T>, evt: MouseEvent | KeyboardEvent) {
+    selectSuggestion(value: FuzzyMatch<T>, evt: MouseEvent | KeyboardEvent): void {
         this.submitted = true;
         this.close();
         this.onChooseSuggestion(value, evt);
@@ -37,7 +37,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         this.resolve(item);
     }
 
-    async openAndGetValue(resolve: (value: T) => void, reject: (reason?: any) => void) {
+    async openAndGetValue(resolve: (value: T) => void, reject: (reason?: any) => void): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;
         this.open();

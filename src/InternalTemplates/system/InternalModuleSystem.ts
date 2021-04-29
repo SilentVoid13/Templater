@@ -4,19 +4,20 @@ import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
 
 export class InternalModuleSystem extends InternalModule {
-    name = "system";
+    public name: string = "system";
 
-    async createStaticTemplates() {
+    async createStaticTemplates(): Promise<void> {
         this.static_templates.set("clipboard", this.generate_clipboard());
         this.static_templates.set("prompt", this.generate_prompt());
         this.static_templates.set("suggester", this.generate_suggester());
     }
 
-    async updateTemplates() {}
+    async updateTemplates(): Promise<void> {}
 
-    generate_clipboard() {
+    generate_clipboard(): Function {
         return async () => {
             // TODO: Add mobile support
+            // @ts-ignore
             if (this.app.isMobile) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
@@ -24,10 +25,10 @@ export class InternalModuleSystem extends InternalModule {
         }
     }
 
-    generate_prompt() {
+    generate_prompt(): Function {
         return async (prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false): Promise<string> => {
-            let prompt = new PromptModal(this.app, prompt_text, default_value);
-            let promise = new Promise((resolve: (value: string) => void, reject: (reason?: any) => void) => prompt.openAndGetValue(resolve, reject));
+            const prompt = new PromptModal(this.app, prompt_text, default_value);
+            const promise = new Promise((resolve: (value: string) => void, reject: (reason?: any) => void) => prompt.openAndGetValue(resolve, reject));
             try {
                 return await promise;
             } catch(error) {
@@ -39,10 +40,10 @@ export class InternalModuleSystem extends InternalModule {
         }
     }
 
-    generate_suggester() {
+    generate_suggester(): Function {
         return async <T>(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false): Promise<T> => {
-            let suggester = new SuggesterModal(this.app, text_items, items);
-            let promise = new Promise((resolve: (value: T) => void, reject: (reason?: any) => void) => suggester.openAndGetValue(resolve, reject));
+            const suggester = new SuggesterModal(this.app, text_items, items);
+            const promise = new Promise((resolve: (value: T) => void, reject: (reason?: any) => void) => suggester.openAndGetValue(resolve, reject));
             try {
                 return await promise
             } catch(error) {

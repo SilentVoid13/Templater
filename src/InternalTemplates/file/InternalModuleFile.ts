@@ -6,16 +6,16 @@ import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 export const DEPTH_LIMIT = 10;
 
 export class InternalModuleFile extends InternalModule {
-    name = "file";
+    public name: string = "file";
     private include_depth: number = 0;
-    private linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
+    private linkpath_regex: RegExp = new RegExp("^\\[\\[(.*)\\]\\]$");
 
-    async createStaticTemplates() {
+    async createStaticTemplates(): Promise<void> {
         this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("selection", this.generate_selection());
     }
 
-    async updateTemplates() {
+    async updateTemplates(): Promise<void> {
         this.dynamic_templates.set("content", await this.generate_content());
         this.dynamic_templates.set("creation_date", this.generate_creation_date());
         this.dynamic_templates.set("folder", this.generate_folder());
@@ -28,24 +28,24 @@ export class InternalModuleFile extends InternalModule {
 
     }
 
-    generate_cursor() {
+    generate_cursor(): Function {
         return (order?: number) => {
             // Hack to prevent empty output
             return `<% tp.file.cursor(${order ?? ''}) %>`;
         }
     }
 
-    async generate_content() {
+    async generate_content(): Promise<string> {
         return await this.app.vault.read(this.file);
     }
 
-    generate_creation_date() {
+    generate_creation_date(): Function {
         return (format: string = "YYYY-MM-DD HH:mm") => {
             return window.moment(this.file.stat.ctime).format(format);
         }
     }
 
-    generate_folder() {
+    generate_folder(): Function {
         return (relative: boolean = false) => {
             let parent = this.file.parent;
             let folder;
@@ -61,7 +61,7 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_include() {
+    generate_include(): Function {
         return async (include_link: string) => {
             // TODO: Add mutex for this, this may currently lead to a race condition. 
             // While not very impactful, that could still be annoying.
@@ -96,7 +96,7 @@ export class InternalModuleFile extends InternalModule {
                 }
             }
 
-            let parsed_content = await this.plugin.parser.parseTemplates(inc_file_content);
+            let parsed_content = await this.plugin.templater.parser.parseTemplates(inc_file_content);
             
             this.include_depth -= 1;
         
@@ -104,15 +104,16 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_last_modified_date() {
+    generate_last_modified_date(): Function {
         return (format: string = "YYYY-MM-DD HH:mm"): string => {
             return window.moment(this.file.stat.mtime).format(format);
         }
     }
 
-    generate_path() {
+    generate_path(): Function {
         return (relative: boolean = false) => {
             // TODO: Add mobile support
+            // @ts-ignore
             if (this.app.isMobile) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
@@ -130,7 +131,7 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_rename() {
+    generate_rename(): Function {
         return async (new_title: string) => {
             let new_path = normalizePath(`${this.file.parent.path}/${new_title}.${this.file.extension}`);
             await this.app.fileManager.renameFile(this.file, new_path);
@@ -138,7 +139,7 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_selection() {
+    generate_selection(): Function {
         return () => {
             let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
@@ -150,12 +151,12 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    generate_tags() {
+    generate_tags(): string[] {
         let cache = this.app.metadataCache.getFileCache(this.file);
         return getAllTags(cache);
     }
 
-    generate_title() {
+    generate_title(): string {
         return this.file.basename;
     }
 }

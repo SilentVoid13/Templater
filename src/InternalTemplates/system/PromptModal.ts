@@ -10,23 +10,23 @@ export class PromptModal extends Modal {
         super(app);
     }
 
-    onOpen() {
+    onOpen(): void {
         this.titleEl.setText(this.prompt_text);
         this.createForm();
     }
 
-    onClose() {
+    onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
             this.reject(new Error("Cancelled prompt"));
         }
     }
 
-    createForm() {
-        let div = this.contentEl.createDiv();
+    createForm(): void {
+        const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
 
-        let form = div.createEl("form");
+        const form = div.createEl("form");
         form.addClass("templater-prompt-form");
         form.type = "submit";
         form.onsubmit = (e: Event) => {
@@ -44,7 +44,7 @@ export class PromptModal extends Modal {
         this.promptEl.select();
     }
 
-    async openAndGetValue(resolve: (value: string) => void, reject: (reason?: any) => void) {
+    async openAndGetValue(resolve: (value: string) => void, reject: (reason?: any) => void): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;
         this.open();

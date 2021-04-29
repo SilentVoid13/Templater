@@ -26,7 +26,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		let {containerEl} = this;
+		const {containerEl} = this;
 		let desc: DocumentFragment;
 		containerEl.empty();
 
@@ -49,7 +49,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				text.setPlaceholder("Timeout")
 					.setValue(this.plugin.settings.command_timeout.toString())
 					.onChange((new_value) => {
-						let new_timeout = Number(new_value);
+						const new_timeout = Number(new_value);
 						if (isNaN(new_timeout)) {
 							this.plugin.log_error("Timeout must be a number");
 							return;
@@ -147,20 +147,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
 			let i = 1;
 			this.plugin.settings.templates_pairs.forEach((template_pair) => {
-				let div = containerEl.createEl('div');
+				const div = containerEl.createEl('div');
 				div.addClass("templater_div");
 
-				let title = containerEl.createEl('h4', {
+				const title = containerEl.createEl('h4', {
 					text: 'User Function n°' + i,
 				});
 				title.addClass("templater_title");
 
-				let setting = new Setting(containerEl)
+				const setting = new Setting(containerEl)
 					.addExtraButton(extra => {
 						extra.setIcon("cross")
 							.setTooltip("Delete")
 							.onClick(() => {
-								let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
+								const index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 								if (index > -1) {
 									this.plugin.settings.templates_pairs.splice(index, 1);
 									// Force refresh
@@ -170,10 +170,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							})
 					})
 					.addText(text => {
-							let t = text.setPlaceholder('Function name')
+							const t = text.setPlaceholder('Function name')
 							.setValue(template_pair[0])
 							.onChange((new_value) => {
-								let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
+								const index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 								if (index > -1) {
 									this.plugin.settings.templates_pairs[index][0] = new_value;
 									this.plugin.saveSettings();
@@ -185,10 +185,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						}
 					)
 					.addTextArea(text => {
-						let t = text.setPlaceholder('System Command')
+						const t = text.setPlaceholder('System Command')
 						.setValue(template_pair[1])
 						.onChange((new_cmd) => {
-							let index = this.plugin.settings.templates_pairs.indexOf(template_pair);
+							const index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 							if (index > -1) {
 								this.plugin.settings.templates_pairs[index][1] = new_cmd;
 								this.plugin.saveSettings();
@@ -209,12 +209,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				i+=1;
 			});
 
-			let div = containerEl.createEl('div');
+			const div = containerEl.createEl('div');
 			div.addClass("templater_div2");
 
-			let setting = new Setting(containerEl)
+			const setting = new Setting(containerEl)
 				.addButton(button => {
-					let b = button.setButtonText("Add New User Function").onClick(() => {
+					const b = button.setButtonText("Add New User Function").onClick(() => {
 						this.plugin.settings.templates_pairs.push(["", ""]);
 						// Force refresh
 						this.display();

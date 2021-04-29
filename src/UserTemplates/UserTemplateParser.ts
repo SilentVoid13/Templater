@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, Notice, TFile } from "obsidian";
+import { App, FileSystemAdapter, TFile } from "obsidian";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -8,8 +8,7 @@ import { TParser } from "TParser";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 
 export class UserTemplateParser extends TParser {
-    cwd: string;
-    cmd_options: any;
+    private cwd: string;
 
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
@@ -18,6 +17,7 @@ export class UserTemplateParser extends TParser {
 
     resolveCwd() {
         // TODO: Add mobile support
+        // @ts-ignore
         if (this.app.isMobile || !(this.app.vault.adapter instanceof FileSystemAdapter)) {
             this.cwd = "";
         }
@@ -26,40 +26,41 @@ export class UserTemplateParser extends TParser {
         }
     }
 
-    async generateUserTemplates(file: TFile) {
-        let user_templates = new Map();
+    async generateUserTemplates(file: TFile): Promise<Map<string, Function>> {
+        const user_templates = new Map();
         const exec_promise = promisify(exec);
 
-        let context = await this.plugin.parser.generateContext(file, ContextMode.INTERNAL);
+        const context = await this.plugin.templater.parser.generateContext(file, ContextMode.INTERNAL);
 
         for (let [template, cmd] of this.plugin.settings.templates_pairs) {
             if (template === "" || cmd === "") {
                 continue;
             }
 
+            // @ts-ignore
             if (this.app.isMobile) {
                 user_templates.set(template, (user_args?: any): string => {
                     return UNSUPPORTED_MOBILE_TEMPLATE;
                 })
             }
             else {
-                cmd = await this.plugin.parser.parseTemplates(cmd, context);
+                cmd = await this.plugin.templater.parser.parseTemplates(cmd, context);
 
                 user_templates.set(template, async (user_args?: any): Promise<string> => {
                     try {
-                        let process_env = {
+                        const process_env = {
                             ...process.env,
                             ...user_args,
                         };
 
-                        let cmd_options = {
+                        const cmd_options = {
                             timeout: this.plugin.settings.command_timeout * 1000,
                             cwd: this.cwd,
                             env: process_env,
                             ...(this.plugin.settings.shell_path !== "" && {shell: this.plugin.settings.shell_path}),
                         };
 
-                        let {stdout} = await exec_promise(cmd, cmd_options);
+                        const {stdout} = await exec_promise(cmd, cmd_options);
                         return stdout.trimRight();
                     }
                     catch(error) {
@@ -73,7 +74,7 @@ export class UserTemplateParser extends TParser {
     }
 
     async generateContext(file: TFile) {
-        let user_templates = this.plugin.settings.enable_system_commands ? await this.generateUserTemplates(file) : new Map();
+        const user_templates = this.plugin.settings.enable_system_commands ? await this.generateUserTemplates(file) : new Map();
 
         return {
             ...Object.fromEntries(user_templates),
