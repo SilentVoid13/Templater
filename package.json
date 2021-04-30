@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "rollup --config rollup.config.js -w",
     "build": "rollup --config rollup.config.js",
-    "test": "yarn run build && mkdir -p test/empty_vault/.obsidian/plugins/templater-obsidian && cp manifest.json styles.css main.js test/empty_vault/.obsidian/plugins/templater-obsidian && jest",
+    "test": "rollup --config rollup.config.js --testBuild",
+    "test-dev": "rollup --config rollup.config.js -w --testBuild",
     "release": "standard-version -t ''"
   },
   "keywords": [
@@ -22,19 +23,20 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-typescript": "^8.2.1",
-    "@types/jest": "^26.0.21",
     "@types/moment": "^2.13.0",
     "@types/node": "^14.14.37",
     "cz-conventional-changelog": "^3.3.0",
-    "jest": "^26.6.3",
     "obsidian": "^0.11.13",
     "rollup": "^2.39.0",
     "spectron": "13",
     "standard-version": "^9.1.1",
-    "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "@types/chai": "^4.2.17",
+    "@types/chai-as-promised": "^7.1.3",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1"
   },
   "dependencies": {
     "child_process": "^1.0.2",
