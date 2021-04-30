@@ -51,7 +51,7 @@ export class Templater {
         await this.cursor_jumper.jump_to_next_cursor_location();
     }
 
-    async append_templates(template_file: TFile): Promise<void> {
+    async append_template(template_file: TFile): Promise<void> {
         const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
             throw new Error("No active view, can't append templates.");

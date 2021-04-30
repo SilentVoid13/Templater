@@ -33,7 +33,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     onChooseItem(item: TFile, _evt: MouseEvent | KeyboardEvent): void {
         switch(this.open_mode) {
             case OpenMode.InsertTemplate:
-                this.plugin.templater.append_templates(item);
+                this.plugin.templater.append_template(item);
                 break;
             case OpenMode.CreateNoteTemplate:
                 this.plugin.templater.create_new_note_from_template(item, this.creation_folder);

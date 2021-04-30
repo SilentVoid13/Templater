@@ -16,7 +16,7 @@ export enum ContextMode {
 export class TemplateParser extends TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
-    private current_context: {};
+    public current_context: {};
     
     constructor(app: App, private plugin: TemplaterPlugin) {
         super(app);
@@ -76,6 +76,8 @@ export class TemplateParser extends TParser {
             context = this.current_context;
         }
 
+        // TODO
+        /*
         try {
             content = await Eta.renderAsync(content, context, {
                 varName: "tp",
@@ -94,6 +96,17 @@ export class TemplateParser extends TParser {
                 throw error;
             }
         }
+        */
+        content = await Eta.renderAsync(content, context, {
+            varName: "tp",
+            parse: {
+                exec: "*",
+                interpolate: "~",
+                raw: "",
+            },
+            autoTrim: false,
+            globalAwait: true,
+        }) as string;
 
         return content;
     }

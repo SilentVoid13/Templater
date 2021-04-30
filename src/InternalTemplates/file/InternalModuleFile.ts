@@ -25,7 +25,6 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_templates.set("rename", this.generate_rename());
         this.dynamic_templates.set("tags", this.generate_tags());
         this.dynamic_templates.set("title", this.generate_title());
-
     }
 
     generate_cursor(): Function {
