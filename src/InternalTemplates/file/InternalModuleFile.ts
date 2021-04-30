@@ -12,17 +12,17 @@ export class InternalModuleFile extends InternalModule {
 
     async createStaticTemplates(): Promise<void> {
         this.static_templates.set("cursor", this.generate_cursor());
+        this.static_templates.set("creation_date", this.generate_creation_date());
+        this.static_templates.set("folder", this.generate_folder());
+        this.static_templates.set("last_modified_date", this.generate_last_modified_date());
+        this.static_templates.set("path", this.generate_path());
+        this.static_templates.set("rename", this.generate_rename());
         this.static_templates.set("selection", this.generate_selection());
     }
 
     async updateTemplates(): Promise<void> {
         this.dynamic_templates.set("content", await this.generate_content());
-        this.dynamic_templates.set("creation_date", this.generate_creation_date());
-        this.dynamic_templates.set("folder", this.generate_folder());
         this.dynamic_templates.set("include", this.generate_include());
-        this.dynamic_templates.set("last_modified_date", this.generate_last_modified_date());
-        this.dynamic_templates.set("path", this.generate_path());
-        this.dynamic_templates.set("rename", this.generate_rename());
         this.dynamic_templates.set("tags", this.generate_tags());
         this.dynamic_templates.set("title", this.generate_title());
     }
@@ -35,18 +35,18 @@ export class InternalModuleFile extends InternalModule {
     }
 
     async generate_content(): Promise<string> {
-        return await this.app.vault.read(this.file);
+        return await this.app.vault.read(this.config.target_file);
     }
 
     generate_creation_date(): Function {
         return (format: string = "YYYY-MM-DD HH:mm") => {
-            return window.moment(this.file.stat.ctime).format(format);
+            return window.moment(this.config.target_file.stat.ctime).format(format);
         }
     }
 
     generate_folder(): Function {
         return (relative: boolean = false) => {
-            let parent = this.file.parent;
+            let parent = this.config.target_file.parent;
             let folder;
 
             if (relative) {
@@ -105,7 +105,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_last_modified_date(): Function {
         return (format: string = "YYYY-MM-DD HH:mm"): string => {
-            return window.moment(this.file.stat.mtime).format(format);
+            return window.moment(this.config.target_file.stat.mtime).format(format);
         }
     }
 
@@ -122,18 +122,18 @@ export class InternalModuleFile extends InternalModule {
             let vault_path = this.app.vault.adapter.getBasePath();
 
             if (relative) {
-                return this.file.path;
+                return this.config.target_file.path;
             }
             else {
-                return `${vault_path}/${this.file.path}`;
+                return `${vault_path}/${this.config.target_file.path}`;
             }
         }
     }
 
     generate_rename(): Function {
         return async (new_title: string) => {
-            let new_path = normalizePath(`${this.file.parent.path}/${new_title}.${this.file.extension}`);
-            await this.app.fileManager.renameFile(this.file, new_path);
+            let new_path = normalizePath(`${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`);
+            await this.app.fileManager.renameFile(this.config.target_file, new_path);
             return "";
         }
     }
@@ -150,12 +150,14 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
+    // TODO: Turn this into a function
     generate_tags(): string[] {
-        let cache = this.app.metadataCache.getFileCache(this.file);
+        let cache = this.app.metadataCache.getFileCache(this.config.target_file);
         return getAllTags(cache);
     }
 
+    // TODO: Turn this into a function
     generate_title(): string {
-        return this.file.basename;
+        return this.config.target_file.basename;
     }
 }

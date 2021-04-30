@@ -1,6 +1,6 @@
-import { App, TFile } from "obsidian";
+import { RunningConfig } from "Templater";
 
-export abstract class TParser {
-    constructor(public app: App) {}
-    abstract generateContext(file: TFile): Promise<any>;
+export interface TParser {
+    generateContext(config: RunningConfig): Promise<{}>;
+    init(): Promise<void>;
 }

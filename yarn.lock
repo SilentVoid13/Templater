@@ -1444,7 +1444,7 @@ estree-walker@^2.0.1:
 
 "eta@git+https://github.com/SilentVoid13/eta#custom-eta":
   version "1.12.1"
-  resolved "git+https://github.com/SilentVoid13/eta#c34e83651e503eee3b102a41af5ae219612f26b5"
+  resolved "git+https://github.com/SilentVoid13/eta#a8126dcd38108db4f5245a81cb61eb8fa9832324"
 
 exit-on-epipe@~1.0.1:
   version "1.0.1"

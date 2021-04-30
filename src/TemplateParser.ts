@@ -6,6 +6,7 @@ import TemplaterPlugin from "./main";
 import { UserTemplateParser } from "./UserTemplates/UserTemplateParser";
 import { TParser } from "TParser";
 import { obsidian_module } from "Utils";
+import { RunningConfig } from "Templater";
 
 export enum ContextMode {
     INTERNAL,
@@ -13,19 +14,23 @@ export enum ContextMode {
     DYNAMIC,
 };
 
-export class TemplateParser extends TParser {
+export class TemplateParser implements TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
     public current_context: {};
     
-    constructor(app: App, private plugin: TemplaterPlugin) {
-        super(app);
+    constructor(private app: App, private plugin: TemplaterPlugin) {
         this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
         this.userTemplateParser = new UserTemplateParser(this.app, this.plugin);
     }
 
-    async setCurrentContext(file: TFile, context_mode: ContextMode): Promise<void> {
-        this.current_context = await this.generateContext(file, context_mode);
+    async init(): Promise<void> {
+        await this.internalTemplateParser.init();
+        await this.userTemplateParser.init();
+    }
+
+    async setCurrentContext(config: RunningConfig, context_mode: ContextMode): Promise<void> {
+        this.current_context = await this.generateContext(config, context_mode);
     }
 
     additionalContext(): {} {
@@ -34,10 +39,10 @@ export class TemplateParser extends TParser {
         };
     }
 
-    async generateContext(file: TFile, context_mode: ContextMode = ContextMode.USER_INTERNAL): Promise<{}> {
+    async generateContext(config: RunningConfig, context_mode: ContextMode = ContextMode.USER_INTERNAL): Promise<{}> {
         const context = {};
         const additional_context = this.additionalContext();
-        const internal_context = await this.internalTemplateParser.generateContext(file);
+        const internal_context = await this.internalTemplateParser.generateContext(config);
         let user_context = {};
 
         if (!this.current_context) {
@@ -51,7 +56,7 @@ export class TemplateParser extends TParser {
                 Object.assign(context, internal_context);
                 break;
             case ContextMode.DYNAMIC:
-                user_context = await this.userTemplateParser.generateContext(file);
+                user_context = await this.userTemplateParser.generateContext(config);
                 Object.assign(context, {
                     dynamic: {
                         ...internal_context,
@@ -60,7 +65,7 @@ export class TemplateParser extends TParser {
                 });
                 break;
             case ContextMode.USER_INTERNAL:
-                user_context = await this.userTemplateParser.generateContext(file);
+                user_context = await this.userTemplateParser.generateContext(config);
                 Object.assign(context, {
                     ...internal_context,
                     user: user_context,
@@ -97,6 +102,7 @@ export class TemplateParser extends TParser {
             }
         }
         */
+
         content = await Eta.renderAsync(content, context, {
             varName: "tp",
             parse: {

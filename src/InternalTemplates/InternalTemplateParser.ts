@@ -8,16 +8,12 @@ import { InternalModuleFile } from "./file/InternalModuleFile";
 import { InternalModuleWeb } from "./web/InternalModuleWeb";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 import { InternalModuleSystem } from "./system/InternalModuleSystem";
+import { RunningConfig } from "Templater";
 
-export class InternalTemplateParser extends TParser {
+export class InternalTemplateParser implements TParser {
     private modules_array: Array<InternalModule> = new Array();
 
-    constructor(app: App, private plugin: TemplaterPlugin) {
-        super(app);
-        this.createModules();
-    }
-
-    createModules(): void {
+    constructor(protected app: App, protected plugin: TemplaterPlugin) {
         this.modules_array.push(new InternalModuleDate(this.app, this.plugin));
         this.modules_array.push(new InternalModuleFile(this.app, this.plugin));
         this.modules_array.push(new InternalModuleWeb(this.app, this.plugin));
@@ -25,13 +21,20 @@ export class InternalTemplateParser extends TParser {
         this.modules_array.push(new InternalModuleSystem(this.app, this.plugin));
     }
 
-    async generateContext(f: TFile): Promise<{}> {
-        const modules_context_map = new Map();
+    async init(): Promise<void> {
+        for (const mod of this.modules_array) {
+            await mod.init();
+        }
+    }
+
+    async generateContext(config: RunningConfig): Promise<{}> {
+        const modules_context: {[key: string]: any} = {};
 
         for (const mod of this.modules_array) {
-            modules_context_map.set(mod.getName(), await mod.generateContext(f));
+            modules_context[mod.getName()] = await mod.generateContext(config);
         }
+        console.log(modules_context);
 
-       return Object.fromEntries(modules_context_map);
+        return modules_context;
     }
 }

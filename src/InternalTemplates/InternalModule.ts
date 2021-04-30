@@ -1,35 +1,36 @@
 import TemplaterPlugin from "main";
-import { App, TFile } from "obsidian";
+import { App } from "obsidian";
+import { RunningConfig } from "Templater";
 import { TParser } from "TParser";
 
-export abstract class InternalModule extends TParser {
+export abstract class InternalModule implements TParser {
     protected abstract name: string;
     protected static_templates: Map<string, any> = new Map();
     protected dynamic_templates: Map<string, any> = new Map();
-    protected file: TFile;
+    protected config: RunningConfig;
+    private static_context: {[x: string]: any};
 
-    constructor(app: App, protected plugin: TemplaterPlugin) {
-        super(app);
-    }
+    constructor(protected app: App, protected plugin: TemplaterPlugin) {}
 
-    getName(): String {
+    getName(): string {
         return this.name
     }
 
     abstract createStaticTemplates(): Promise<void>;
     abstract updateTemplates(): Promise<void>;
 
-    async generateContext(file: TFile) {
-        this.file = file;
+    async init(): Promise<void> {
+        await this.createStaticTemplates();
+        this.static_context = Object.fromEntries(this.static_templates);
+    }
 
-        if (this.static_templates.size === 0) {
-            await this.createStaticTemplates();
-        }
+    async generateContext(config: RunningConfig): Promise<{[x: string]: any}> {
+        this.config = config;
         await this.updateTemplates();
 
         return {
-            ...Object.fromEntries(this.static_templates),
+            ...this.static_context,
             ...Object.fromEntries(this.dynamic_templates),
-        }
+        };
     }
 }

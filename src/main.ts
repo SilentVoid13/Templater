@@ -16,6 +16,8 @@ export default class TemplaterPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.templater = new Templater(this.app, this);
+		await this.templater.setup();
+
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 
 		this.registerMarkdownPostProcessor((el, ctx) => this.templater.process_dynamic_templates(el, ctx));

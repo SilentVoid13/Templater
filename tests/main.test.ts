@@ -8,6 +8,7 @@ import { InternalModuleFileTests } from "./InternalTemplates/file/InternalModule
 import { InternalModuleDateTests } from "./InternalTemplates/date/InternalModuleDate.test";
 import { InternalModuleFrontmatterTests } from "./InternalTemplates/frontmatter/InternalModuleFrontmatter.test";
 import { InternalModuleSystemTests } from "./InternalTemplates/system/InternalModuleSystem.test";
+import { RunMode, RunningConfig } from "Templater";
 
 chai.use(chaiAsPromised);
 
@@ -39,6 +40,7 @@ export default class TestTemplaterPlugin extends Plugin {
 
     async setup() {
         this.tests = new Array();
+        // @ts-ignore
         this.plugin = this.app.plugins.getPlugin(PLUGIN_NAME);
         this.plugin.settings.trigger_on_file_creation = false;
         this.plugin.update_trigger_file_on_creation();
@@ -82,10 +84,13 @@ export default class TestTemplaterPlugin extends Plugin {
         if (waitCache) {
             await cache_update(this);
         }
-        const content = await this.plugin.templater.read_and_parse_template(
-            this.template_file, 
-            this.target_file
-        );
+
+        const running_config: RunningConfig = {
+            template_file: this.template_file,
+            target_file: this.target_file,
+            run_mode: RunMode.OverwriteFile,
+        };
+        const content = await this.plugin.templater.read_and_parse_template(running_config);
         return content;
     }
 }

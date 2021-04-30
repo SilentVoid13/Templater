@@ -6,7 +6,7 @@ export class InternalModuleFrontmatter extends InternalModule {
     async createStaticTemplates(): Promise<void> {}
 
     async updateTemplates(): Promise<void> {
-        const cache = this.app.metadataCache.getFileCache(this.file)
+        const cache = this.app.metadataCache.getFileCache(this.config.target_file)
         this.dynamic_templates = new Map(Object.entries(cache?.frontmatter || {}));
     }
 }

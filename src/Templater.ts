@@ -4,6 +4,20 @@ import { CursorJumper } from "CursorJumper";
 import TemplaterPlugin from "main";
 import { ContextMode, TemplateParser } from "TemplateParser";
 
+export enum RunMode {
+    CreateNewFromTemplate,
+    AppendActiveFile,
+    OverwriteFile,
+    OverwriteActiveFile,
+    DynamicProcessor,
+};
+
+export interface RunningConfig {
+    template_file: TFile,
+    target_file: TFile,
+    run_mode: RunMode,
+};
+
 // TODO: Add proper error handling
 export class Templater {
     public parser: TemplateParser;
@@ -14,9 +28,21 @@ export class Templater {
 		this.parser = new TemplateParser(this.app, this.plugin);
     }
 
-    async read_and_parse_template(template_file: TFile, target_file: TFile): Promise<string> {
-        const template_content = await this.app.vault.read(template_file);
-        await this.parser.setCurrentContext(target_file, ContextMode.USER_INTERNAL);
+    async setup() {
+        await this.parser.init();
+    }
+
+    create_running_config(template_file: TFile, target_file: TFile, run_mode: RunMode) {
+        return {
+            template_file: template_file,
+            target_file: target_file,
+            run_mode: RunMode.CreateNewFromTemplate,
+        }
+    }
+
+    async read_and_parse_template(config: RunningConfig): Promise<string> {
+        const template_content = await this.app.vault.read(config.template_file);
+        await this.parser.setCurrentContext(config, ContextMode.USER_INTERNAL);
         const content = await this.parser.parseTemplates(template_content);
         return content;
     }
@@ -29,8 +55,9 @@ export class Templater {
         // @ts-ignore
         const created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
 
+        const running_config = this.create_running_config(template_file, created_note, RunMode.CreateNewFromTemplate);
         // TODO TODO: Handle error
-        const output_content = await this.read_and_parse_template(template_file, created_note);
+        const output_content = await this.read_and_parse_template(running_config);
         /* 
         let content;
         try {
@@ -56,7 +83,8 @@ export class Templater {
         if (active_view === null) {
             throw new Error("No active view, can't append templates.");
         }
-        const output_content = await this.read_and_parse_template(template_file, active_view.file);
+        const running_config = this.create_running_config(template_file, active_view.file, RunMode.AppendActiveFile);
+        const output_content = await this.read_and_parse_template(running_config);
 
         const editor = active_view.editor;
         const doc = editor.getDoc();
@@ -71,15 +99,16 @@ export class Templater {
 			if (active_view === null) {
 				throw new Error("Active view is null");
 			}
-			this.overwrite_file_templates(active_view.file);
+			this.overwrite_file_templates(active_view.file, true);
 		}
 		catch(error) {
 			this.plugin.log_error(error);
 		}
 	}
 
-    async overwrite_file_templates(file: TFile): Promise<void> {
-        const output_content = await this.read_and_parse_template(file, file);
+    async overwrite_file_templates(file: TFile, active_file: boolean = false): Promise<void> {
+        const running_config = this.create_running_config(file, file, active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile);
+        const output_content = await this.read_and_parse_template(running_config);
         await this.app.vault.modify(file, output_content);
         if (this.app.workspace.getActiveFile() === file) {
             await this.cursor_jumper.jump_to_next_cursor_location();
@@ -93,7 +122,8 @@ export class Templater {
 			if (!file || !(file instanceof TFile)) {
 				return;
 			}
-			await this.parser.setCurrentContext(file, ContextMode.DYNAMIC);
+            const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
+			await this.parser.setCurrentContext(running_config, ContextMode.DYNAMIC);
 			const new_content = await this.parser.parseTemplates(content);
 			el.innerText = new_content;
 		}
