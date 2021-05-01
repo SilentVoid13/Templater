@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	trigger_on_file_creation: false,
 	enable_system_commands: false,
 	shell_path: "",
+	script_folder: undefined,
 };
 
 export interface TemplaterSettings {
@@ -18,7 +19,8 @@ export interface TemplaterSettings {
 	trigger_on_file_creation: boolean;
 	enable_system_commands: boolean;
 	shell_path: string,
-}
+	script_folder: string,
+};
 
 export class TemplaterSettingTab extends PluginSettingTab {
 	constructor(public app: App, private plugin: TemplaterPlugin) {
@@ -110,6 +112,32 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
 		);
 
+		desc = document.createDocumentFragment();
+		desc.append(
+			"All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.", 
+			desc.createEl("br"),
+			"The folder needs to be accessible from the vault.",
+			desc.createEl("br"),
+			"Check the ",
+			desc.createEl("a", {
+				href: "https://silentvoid13.github.io/Templater/",
+				text: "documentation",
+			}),
+			" for more informations.",
+		);
+
+		new Setting(containerEl)
+			.setName("Script files folder location")
+			.setDesc(desc)
+			.addText(text => {
+				text.setPlaceholder("Example: folder 1/folder 2")
+					.setValue(this.plugin.settings.script_folder)
+					.onChange((new_folder) => {
+						this.plugin.settings.script_folder = new_folder;
+						this.plugin.saveSettings();
+					})
+			});
+
 		new Setting(containerEl)
 			.setName("Enable System Commands")
 			.setDesc(desc)
@@ -124,7 +152,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					});
 			});
 
-		if (this.plugin.settings.enable_system_commands) {	
+		if (this.plugin.settings.enable_system_commands) {
 			desc = document.createDocumentFragment();
 			desc.append(
 				"Full path to the shell binary to execute the command with.",
