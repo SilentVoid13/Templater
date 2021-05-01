@@ -2,13 +2,14 @@ import { Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
+import { RunMode, RunningConfig } from "Templater";
 import TemplaterPlugin from "../src/main";
 import { cache_update, delay, PLUGIN_NAME, TARGET_FILE_NAME, TEMPLATE_FILE_NAME } from "./Util.test";
 import { InternalModuleFileTests } from "./InternalTemplates/file/InternalModuleFile.test";
 import { InternalModuleDateTests } from "./InternalTemplates/date/InternalModuleDate.test";
 import { InternalModuleFrontmatterTests } from "./InternalTemplates/frontmatter/InternalModuleFrontmatter.test";
 import { InternalModuleSystemTests } from "./InternalTemplates/system/InternalModuleSystem.test";
-import { RunMode, RunningConfig } from "Templater";
+import { InternalModuleConfigTests } from "./InternalTemplates/config/InternalModuleConfig.test";
 
 chai.use(chaiAsPromised);
 
@@ -90,6 +91,7 @@ export default class TestTemplaterPlugin extends Plugin {
         InternalModuleDateTests(this);
         InternalModuleFrontmatterTests(this);
         InternalModuleSystemTests(this);
+        InternalModuleConfigTests(this);
     }
 
     test(name: string, fn: () => Promise<void>) {
