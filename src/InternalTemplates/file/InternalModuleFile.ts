@@ -14,7 +14,7 @@ export class InternalModuleFile extends InternalModule {
         this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("creation_date", this.generate_creation_date());
         this.static_templates.set("folder", this.generate_folder());
-        this.dynamic_templates.set("include", this.generate_include());
+        this.static_templates.set("include", this.generate_include());
         this.static_templates.set("last_modified_date", this.generate_last_modified_date());
         this.static_templates.set("move", this.generate_move());
         this.static_templates.set("path", this.generate_path());
