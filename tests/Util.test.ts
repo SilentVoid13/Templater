@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian";
+import { TFile, TFolder } from "obsidian";
 import TestTemplaterPlugin from "./main.test";
 
 export const PLUGIN_NAME = "templater-obsidian";
@@ -21,4 +21,4 @@ export function cache_update(t: TestTemplaterPlugin): Promise<void> {
         };
         t.app.metadataCache.on("changed", resolve_promise);
     });
-}
+} 

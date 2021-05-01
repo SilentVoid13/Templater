@@ -1,5 +1,5 @@
 import TestTemplaterPlugin from "../../main.test";
-import { cache_update, TARGET_FILE_NAME, TEMPLATE_FILE_NAME } from "../../Util.test";
+import { TARGET_FILE_NAME } from "../../Util.test";
 import { expect } from "chai";
 
 export function InternalModuleFileTests(t: TestTemplaterPlugin) {
@@ -9,18 +9,20 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
     });
 
     t.test("tp.file.creation_date", async() => {
-        // TODO
-        /*
-        console.log("ctime:", t.target_file.stat.ctime);
-        // 2021-04-29 10:00:00 EDT
-        await t.app.vault.modify(t.target_file, "", {ctime: 1619704800});
-        console.log("ctime:", t.target_file.stat.ctime);
+        const saved_ctime = t.target_file.stat.ctime;
+        // 2021-05-01 00:00:00
+        t.target_file.stat.ctime = 1619820000000;
 
-        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date() %>\n\n`, ""))
-            .to.equal("Creation date: 2021-04-29 10:00\n\n");
-        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date("dddd Do MMMM YYYY, ddd") %>\n\n`, ""))
-            .to.equal("Creation date: Thursday 29th April 2021, Thu");
-        */
+        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date() %>\n\n`, "", false, true))
+            .to.equal("Creation date: 2021-05-01 00:00\n\n");
+        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date("dddd Do MMMM YYYY, ddd") %>\n\n`, "", false, true))
+            .to.equal("Creation date: Saturday 1st May 2021, Sat\n\n");
+
+        t.target_file.stat.ctime = saved_ctime;
+    });
+
+    t.test("tp.file.cursor", async() => {
+        await expect(t.run_and_get_output(`Cursor: <%\t\ntp.file.cursor(10)\t\r\n%>\n\n`, "")).to.eventually.equal(`Cursor: <% tp.file.cursor(10) %>\n\n`);
     });
 
     t.test("tp.file.folder", async () => {
@@ -29,36 +31,68 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
     });
 
     t.test("tp.file.include", async () => {
-        const inc_file1 = await t.app.vault.create(`Inc1.md`, `Inc1 content\n<% tp.file.include('[[Inc2]]') %>\n\n`);
-        const inc_file2 = await t.app.vault.create(`Inc2.md`, `Inc2 content\n\n`);
-        const inc_file3 = await t.app.vault.create(`Inc3.md`, `Inc3 content\n<% tp.file.include('[[Inc3]]') %>\n\n`);
+        await t.createFile(`Inc1.md`, `Inc1 content\n<% tp.file.include('[[Inc2]]') %>\n\n`);
+        await t.createFile(`Inc2.md`, `Inc2 content\n\n`);
+        await t.createFile(`Inc3.md`, `Inc3 content\n<% tp.file.include('[[Inc3]]') %>\n\n`);
 
         await expect(t.run_and_get_output(`Included: <% tp.file.include('[[Inc1]]') %>\n\n`)).to.eventually.equal(`Included: Inc1 content\nInc2 content\n\n\n\n\n\n`);
         await expect(t.run_and_get_output(`Included: <% tp.file.include('[[Inc2]]') %>\n\n`)).to.eventually.equal(`Included: Inc2 content\n\n\n\n`);
 
         await expect(t.run_and_get_output(`Included: <% tp.file.include('[[Inc3]]') %>\n\n`)).to.eventually.be.rejectedWith(Error, "Reached inclusion depth limit (max = 10)");
         await expect(t.run_and_get_output(`Included: <% tp.file.include('Inc3') %>\n\n`)).to.eventually.be.rejectedWith(Error, "Invalid file format, provide an obsidian link between quotes.");
-
-        await t.app.vault.delete(inc_file1);
-        await t.app.vault.delete(inc_file2);
-        await t.app.vault.delete(inc_file3);
+        await expect(t.run_and_get_output(`Included: <% tp.file.include('[[NonExistingFile]]') %>\n\n`)).to.eventually.be.rejectedWith(Error, "File [[NonExistingFile]] doesn't exist");
     });
 
     t.test("tp.file.last_modified_date", async () => {
-        // TODO
-        /*
-        expect(await t.run_and_get_output("Last modif date: <%tp.file.last_modified_date() %>\n\n")).to.equal("Last modif date: ");
-        */
+        const saved_mtime = t.target_file.stat.mtime;
+        // 2021-05-01 00:00:00
+        t.target_file.stat.mtime = 1619820000000;
+
+        expect(await t.run_and_get_output(`Last modif date: <% tp.file.last_modified_date() %>\n\n`, "", false, true))
+            .to.equal("Last modif date: 2021-05-01 00:00\n\n");
+        expect(await t.run_and_get_output(`Last modif date: <% tp.file.last_modified_date("dddd Do MMMM YYYY, ddd") %>\n\n`, "", false, true))
+            .to.equal("Last modif date: Saturday 1st May 2021, Sat\n\n");
+
+        t.target_file.stat.ctime = saved_mtime;
+    });
+
+    t.test("tp.file.move", async () => {
+        const saved_target_file = t.target_file;
+        const folder_name = `TestFolder`;
+        const folder = await t.createFolder(folder_name);
+        const file1 = await t.createFile(`File1.md`);
+        t.target_file = file1;
+
+        await expect(t.run_and_get_output(`Move <% tp.file.move("${folder_name}/File2") %>\n\n`)).to.eventually.equal(`Move \n\n`);
+        expect(file1.path).to.equal(`${folder_name}/File2.md`);
+
+        t.target_file = saved_target_file;
+        await t.app.vault.delete(folder, true);
     });
 
     t.test("tp.file.path", async () => {
         // TODO
+
         //expect(await t.run_and_get_output("Path: <% tp.file.path(true) %>\n\n")).to.equal(`Path: ${TEMPLATE_FILE_NAME}\n\n`);
         await expect(t.run_and_get_output(`Path: <% tp.file.path(true) %>\n\n`)).to.eventually.equal(`Path: ${TARGET_FILE_NAME}.md\n\n`);
     });
 
+    t.test("tp.file.rename", async () => {
+        const saved_target_file = t.target_file;
+        const file1 = await t.createFile(`File1.md`);
+        t.target_file = file1;
+
+        await expect(t.run_and_get_output(`Rename <% tp.file.rename("File2") %>\n\n`)).to.eventually.equal(`Rename \n\n`);
+        expect(file1.basename).to.equal("File2");
+        await expect(t.run_and_get_output(`Rename <% tp.file.rename("Fail/File2.md") %>\n\n`)).to.eventually.be.rejectedWith(Error, "File name cannot contain any of these characters: \\ / :");
+
+        t.target_file = saved_target_file;
+        await t.app.vault.delete(file1);
+    });
+
     t.test("tp.file.selection", async () => {
         // TODO
+
     });
 
     t.test("tp.file.tags", async () => {

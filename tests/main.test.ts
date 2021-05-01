@@ -1,4 +1,4 @@
-import { Plugin, TFile } from "obsidian";
+import { Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
@@ -12,12 +12,20 @@ import { RunMode, RunningConfig } from "Templater";
 
 chai.use(chaiAsPromised);
 
+export interface TestRunConfig {
+    template_content: string,
+    target_content: string,
+    wait_cache: boolean,
+    skip_template_modify: boolean,
+    skip_target_modify: boolean,
+}
+
 export default class TestTemplaterPlugin extends Plugin {
     tests: Array<{name: string, fn: (() => Promise<void>)}>;
     plugin: TemplaterPlugin;
     template_file: TFile;
     target_file: TFile;
-    test_file: TFile;
+    active_files: Array<TAbstractFile> = new Array();
 
     async onload() {
         this.addCommand({
@@ -39,6 +47,7 @@ export default class TestTemplaterPlugin extends Plugin {
     }
 
     async setup() {
+        await delay(300);
         this.tests = new Array();
         // @ts-ignore
         this.plugin = this.app.plugins.getPlugin(PLUGIN_NAME);
@@ -46,13 +55,34 @@ export default class TestTemplaterPlugin extends Plugin {
         this.plugin.update_trigger_file_on_creation();
         this.target_file = await this.app.vault.create(`${TARGET_FILE_NAME}.md`, "");
         this.template_file = await this.app.vault.create(`${TEMPLATE_FILE_NAME}.md`, "");
+
+        //await this.disable_external_plugins();
     }
 
     async teardown() {
         this.plugin.settings.trigger_on_file_creation = true;
         this.plugin.update_trigger_file_on_creation();
+        await this.cleanupFiles();
         await this.app.vault.delete(this.target_file, true);
         await this.app.vault.delete(this.template_file, true);
+
+        //await this.enable_external_plugins();
+    }
+
+    async disable_external_plugins() {
+        for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
+            if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
+                this.app.plugins.plugins[plugin_name].unload();
+            }
+        }
+    }
+
+    async enable_external_plugins() {
+        for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
+            if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
+                this.app.plugins.plugins[plugin_name].load();
+            } 
+        }
     }
 
     async load_tests() {
@@ -78,9 +108,56 @@ export default class TestTemplaterPlugin extends Plugin {
         }
     }
 
-    async run_and_get_output(template_content: string, target_content: string = "", waitCache: boolean = false): Promise<string> {
+    async cleanupFiles() {
+        let file;
+        while((file = this.active_files.pop()) !== undefined) {
+            try {
+                await this.app.vault.delete(file, true);
+            } catch(e) {
+                ;
+            }
+        }
+    }
+
+    retrieveActiveFile(file_name: string): TAbstractFile {
+        for (const file of this.active_files) {
+            if (file.name === file_name) {
+                return file;
+            }
+        }
+        return null;
+    }
+
+    async createFolder(folder_name: string): Promise<TFolder> {
+        let folder = this.retrieveActiveFile(folder_name);
+        if (folder && folder instanceof TFolder) {
+            return folder;
+        }
+        await this.app.vault.createFolder(folder_name);
+        folder = this.app.vault.getAbstractFileByPath(folder_name);
+        if (!(folder instanceof TFolder)) {
+            return null;
+        }
+        this.active_files.push(folder);
+        return folder;
+    }
+
+    async createFile(file_name: string, file_content: string = ""): Promise<TFile> {
+        const f = this.retrieveActiveFile(file_name);
+        if (f && f instanceof TFile) {
+            await this.app.vault.modify(f, file_content);
+            return f;
+        }
+        const file = await this.app.vault.create(file_name, file_content);
+        this.active_files.push(file);
+        return file;
+    }
+
+    async run_and_get_output(template_content: string, target_content: string = "", waitCache: boolean = false, skip_modify: boolean = false): Promise<string> {
         await this.app.vault.modify(this.template_file, template_content);
-        await this.app.vault.modify(this.target_file, target_content);
+        if (!skip_modify) {
+            await this.app.vault.modify(this.target_file, target_content);
+        }
         if (waitCache) {
             await cache_update(this);
         }
