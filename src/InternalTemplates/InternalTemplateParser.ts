@@ -33,7 +33,6 @@ export class InternalTemplateParser implements TParser {
         for (const mod of this.modules_array) {
             modules_context[mod.getName()] = await mod.generateContext(config);
         }
-        console.log(modules_context);
 
         return modules_context;
     }

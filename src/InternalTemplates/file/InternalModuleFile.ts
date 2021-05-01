@@ -14,7 +14,9 @@ export class InternalModuleFile extends InternalModule {
         this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("creation_date", this.generate_creation_date());
         this.static_templates.set("folder", this.generate_folder());
+        this.dynamic_templates.set("include", this.generate_include());
         this.static_templates.set("last_modified_date", this.generate_last_modified_date());
+        this.static_templates.set("move", this.generate_move());
         this.static_templates.set("path", this.generate_path());
         this.static_templates.set("rename", this.generate_rename());
         this.static_templates.set("selection", this.generate_selection());
@@ -22,7 +24,6 @@ export class InternalModuleFile extends InternalModule {
 
     async updateTemplates(): Promise<void> {
         this.dynamic_templates.set("content", await this.generate_content());
-        this.dynamic_templates.set("include", this.generate_include());
         this.dynamic_templates.set("tags", this.generate_tags());
         this.dynamic_templates.set("title", this.generate_title());
     }
@@ -80,9 +81,6 @@ export class InternalModuleFile extends InternalModule {
             if (!inc_file) {
                 throw new Error(`File ${include_link} doesn't exist`);
             }
-            if (!(inc_file instanceof TFile)) {
-                throw new Error(`${include_link} is a folder, not a file`);
-            }
 
             let inc_file_content = await this.app.vault.read(inc_file);
             if (subpath) {
@@ -109,6 +107,14 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
+    generate_move(): Function {
+        return async (path: string) => {
+            const new_path = normalizePath(`${path}.${this.config.target_file.extension}`);
+            await this.app.fileManager.renameFile(this.config.target_file, new_path);
+            return "";
+        }
+    }
+
     generate_path(): Function {
         return (relative: boolean = false) => {
             // TODO: Add mobile support
@@ -132,7 +138,10 @@ export class InternalModuleFile extends InternalModule {
 
     generate_rename(): Function {
         return async (new_title: string) => {
-            let new_path = normalizePath(`${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`);
+            if (new_title.match(/[\\\/:]+/g)) {
+                throw new Error("File name cannot contain any of these characters: \\ / :");
+            }
+            const new_path = normalizePath(`${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`);
             await this.app.fileManager.renameFile(this.config.target_file, new_path);
             return "";
         }
