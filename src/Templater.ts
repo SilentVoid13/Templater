@@ -36,7 +36,7 @@ export class Templater {
         return {
             template_file: template_file,
             target_file: target_file,
-            run_mode: RunMode.CreateNewFromTemplate,
+            run_mode: run_mode,
         }
     }
 

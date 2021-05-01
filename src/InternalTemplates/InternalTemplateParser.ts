@@ -9,6 +9,7 @@ import { InternalModuleWeb } from "./web/InternalModuleWeb";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 import { InternalModuleSystem } from "./system/InternalModuleSystem";
 import { RunningConfig } from "Templater";
+import { InternalModuleConfig } from "./config/InternalModuleConfig";
 
 export class InternalTemplateParser implements TParser {
     private modules_array: Array<InternalModule> = new Array();
@@ -19,6 +20,7 @@ export class InternalTemplateParser implements TParser {
         this.modules_array.push(new InternalModuleWeb(this.app, this.plugin));
         this.modules_array.push(new InternalModuleFrontmatter(this.app, this.plugin));
         this.modules_array.push(new InternalModuleSystem(this.app, this.plugin));
+        this.modules_array.push(new InternalModuleConfig(this.app, this.plugin));
     }
 
     async init(): Promise<void> {
