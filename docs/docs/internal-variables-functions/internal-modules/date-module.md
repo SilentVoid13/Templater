@@ -21,9 +21,9 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 :::tip
 
-Templater gives you access to the `moment` object, and all of its functionalities.
+Templater gives you access to the `moment` object, with all of its functionalities.
 
-More informations [here](https://momentjs.com/docs/#/displaying/)
+More informations on moment.js [here](https://momentjs.com/docs/#/displaying/)
 
 :::
 

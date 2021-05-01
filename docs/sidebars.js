@@ -36,6 +36,8 @@ module.exports = {
       label: 'User Functions',
       items: [
         'user-functions/overview',
+        'user-functions/script-user-functions',
+        'user-functions/system-user-functions',
       ],
     },
     {
