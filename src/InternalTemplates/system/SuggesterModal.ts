@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
 
@@ -16,7 +17,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     
     onClose(): void {
         if (!this.submitted) {
-            this.reject(new Error("Cancelled prompt"));
+            this.reject(new TemplaterError("Cancelled prompt"));
         }
     }
 

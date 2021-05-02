@@ -8,8 +8,8 @@ export class CursorJumper {
 
     async jump_to_next_cursor_location(): Promise<void> {
         const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
-            throw new Error("No active view, can't append templates.");
+        if (!active_view) {
+            return;
         }
         const active_file = active_view.file;
         await active_view.save();
@@ -81,7 +81,7 @@ export class CursorJumper {
 
     set_cursor_location(positions: EditorPosition[]): void {
         const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
+        if (!active_view) {
             return;
         }
 

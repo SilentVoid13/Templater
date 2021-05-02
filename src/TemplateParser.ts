@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian";
+import { App } from "obsidian";
 import * as Eta from "eta";
 
 import { InternalTemplateParser } from "./InternalTemplates/InternalTemplateParser";
@@ -80,28 +80,6 @@ export class TemplateParser implements TParser {
         if (!context) {
             context = this.current_context;
         }
-
-        // TODO
-        /*
-        try {
-            content = await Eta.renderAsync(content, context, {
-                varName: "tp",
-                parse: {
-                    exec: "*",
-                    interpolate: "~",
-                    raw: "",
-                },
-                autoTrim: false,
-                globalAwait: true,
-            }) as string;
-        }
-        catch(error) {
-            this.plugin.log_error("Template parsing error, aborting.", error);
-            if (throw_on_error) {
-                throw error;
-            }
-        }
-        */
 
         content = await Eta.renderAsync(content, context, {
             varName: "tp",

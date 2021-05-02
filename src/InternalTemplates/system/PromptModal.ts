@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { App, Modal } from "obsidian";
 
 export class PromptModal extends Modal {
@@ -18,7 +19,7 @@ export class PromptModal extends Modal {
     onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
-            this.reject(new Error("Cancelled prompt"));
+            this.reject(new TemplaterError("Cancelled prompt"));
         }
     }
 

@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { InternalModule } from "../InternalModule";
 
 export class InternalModuleDate extends InternalModule {
@@ -15,7 +16,7 @@ export class InternalModuleDate extends InternalModule {
     generate_now(): Function {
         return (format: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string) => {
             if (reference && !window.moment(reference, reference_format).isValid()) {
-                throw new Error("Invalid reference date format, try specifying one with the argument 'reference_format'");
+                throw new TemplaterError("Invalid reference date format, try specifying one with the argument 'reference_format'");
             }
             let duration;
             if (typeof offset === "string") {
@@ -38,7 +39,7 @@ export class InternalModuleDate extends InternalModule {
     generate_weekday(): Function {
         return (format: string = "YYYY-MM-DD", weekday: number, reference?: string, reference_format?: string) => {
             if (reference && !window.moment(reference, reference_format).isValid()) {
-                throw new Error("Invalid reference date format, try specifying one with the argument 'reference_format'");
+                throw new TemplaterError("Invalid reference date format, try specifying one with the argument 'reference_format'");
             }
             return window.moment(reference, reference_format).weekday(weekday).format(format);
         }

@@ -3,6 +3,7 @@ import { App, MarkdownPostProcessorContext, MarkdownView, TFile, TFolder } from 
 import { CursorJumper } from "CursorJumper";
 import TemplaterPlugin from "main";
 import { ContextMode, TemplateParser } from "TemplateParser";
+import { TemplaterError } from "Error";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -18,7 +19,6 @@ export interface RunningConfig {
     run_mode: RunMode,
 };
 
-// TODO: Add proper error handling
 export class Templater {
     public parser: TemplateParser;
     public cursor_jumper: CursorJumper;
@@ -30,6 +30,19 @@ export class Templater {
 
     async setup() {
         await this.parser.init();
+    }
+
+    async errorWrapper(fn: Function): Promise<any> {
+        try {
+            return await fn();
+        } catch(e) {
+            if (!(e instanceof TemplaterError)) {
+                this.plugin.log_error(new TemplaterError(`Template parsing error, aborting.`, e.message));
+            } else {
+                this.plugin.log_error(e);
+            }
+            return null;
+        }
     }
 
     create_running_config(template_file: TFile, target_file: TFile, run_mode: RunMode) {
@@ -56,22 +69,18 @@ export class Templater {
         const created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
 
         const running_config = this.create_running_config(template_file, created_note, RunMode.CreateNewFromTemplate);
-        // TODO TODO: Handle error
-        const output_content = await this.read_and_parse_template(running_config);
-        /* 
-        let content;
-        try {
-            content = await this.plugin.parser.parseTemplates(template_content, undefined, true);
-        } catch(error) {
+
+        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        if (!output_content) {
             await this.app.vault.delete(created_note);
             return;
         }
-        */
         await this.app.vault.modify(created_note, output_content);
 
         const active_leaf = this.app.workspace.activeLeaf;
         if (!active_leaf) {
-            throw new Error("No active leaf");
+            this.plugin.log_error(new TemplaterError("No active leaf"));
+            return;
         }
         await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
 
@@ -81,10 +90,14 @@ export class Templater {
     async append_template(template_file: TFile): Promise<void> {
         const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
-            throw new Error("No active view, can't append templates.");
+            this.plugin.log_error(new TemplaterError("No active view, can't append templates."));
+            return;
         }
         const running_config = this.create_running_config(template_file, active_view.file, RunMode.AppendActiveFile);
-        const output_content = await this.read_and_parse_template(running_config);
+        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        if (!output_content) {
+            return;
+        }
 
         const editor = active_view.editor;
         const doc = editor.getDoc();
@@ -94,21 +107,20 @@ export class Templater {
     }
 
     overwrite_active_file_templates(): void {
-		try {
-			const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
-			if (active_view === null) {
-				throw new Error("Active view is null");
-			}
-			this.overwrite_file_templates(active_view.file, true);
-		}
-		catch(error) {
-			this.plugin.log_error(error);
-		}
+        const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (active_view === null) {
+			this.plugin.log_error(new TemplaterError("Active view is null, can't overwrite content"));
+            return;
+        }
+        this.overwrite_file_templates(active_view.file, true);
 	}
 
     async overwrite_file_templates(file: TFile, active_file: boolean = false): Promise<void> {
         const running_config = this.create_running_config(file, file, active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile);
-        const output_content = await this.read_and_parse_template(running_config);
+        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        if (!output_content) {
+            return;
+        }
         await this.app.vault.modify(file, output_content);
         if (this.app.workspace.getActiveFile() === file) {
             await this.cursor_jumper.jump_to_next_cursor_location();
@@ -123,8 +135,10 @@ export class Templater {
 				return;
 			}
             const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
-			await this.parser.setCurrentContext(running_config, ContextMode.DYNAMIC);
-			const new_content = await this.parser.parseTemplates(content);
+            const new_content = await this.errorWrapper(async () => {
+                await this.parser.setCurrentContext(running_config, ContextMode.DYNAMIC);
+                return await this.parser.parseTemplates(content);
+            });
 			el.innerText = new_content;
 		}
 	}

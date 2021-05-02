@@ -5,6 +5,7 @@ import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
 import { ICON_DATA } from 'Constants';
 import { delay } from 'Utils';
 import { Templater } from 'Templater';
+import { TemplaterError } from 'Error';
 
 export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
@@ -65,12 +66,7 @@ export default class TemplaterPlugin extends Plugin {
 				},
 			],
 			callback: () => {
-				try {
-					this.templater.cursor_jumper.jump_to_next_cursor_location();
-				}
-				catch(error) {
-					this.log_error(error);
-				}
+				this.templater.cursor_jumper.jump_to_next_cursor_location();
 			}
 		});
 
@@ -151,17 +147,17 @@ export default class TemplaterPlugin extends Plugin {
 		notice.noticeEl.innerHTML = `<b>Templater update</b>:<br/>${msg}`;
 	}
 
-	log_error(msg: string, error?: string): void {
+	log_error(e: Error | TemplaterError): void {
 		const notice = new Notice("", 8000);
-		if (error) {
+		if (e instanceof TemplaterError && e.console_msg) {
 			// TODO: Find a better way for this
 			// @ts-ignore
-			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${msg}<br/>Check console for more informations`;
-			console.error(msg, error);
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more informations`;
+			console.error(e.message, e.console_msg);
 		}
 		else {
 			// @ts-ignore
-			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${msg}`;
+			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}`;
 		}
 	}	
 

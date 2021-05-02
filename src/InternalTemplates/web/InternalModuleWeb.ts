@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { InternalModule } from "../InternalModule";
 
 export class InternalModuleWeb extends InternalModule {
@@ -14,7 +15,7 @@ export class InternalModuleWeb extends InternalModule {
     async getRequest(url: string): Promise<Response> {
         let response = await fetch(url);
         if (!response.ok) {
-            throw new Error("Error performing GET request");
+            throw new TemplaterError("Error performing GET request");
         }
         return response;
     }
@@ -37,13 +38,6 @@ export class InternalModuleWeb extends InternalModule {
             let response = await this.getRequest(`https://source.unsplash.com/random/${size ?? ''}?${query ?? ''}`);
             let url = response.url;
             return `![tp.web.random_picture](${url})`;   
-        }
-    }
-
-    // TODO
-    generate_weather() {
-        return async (query?: string) => {
-
         }
     }
 

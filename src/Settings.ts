@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { App, PluginSettingTab, Setting } from "obsidian";
 
 import TemplaterPlugin from './main';
@@ -53,7 +54,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.onChange((new_value) => {
 						const new_timeout = Number(new_value);
 						if (isNaN(new_timeout)) {
-							this.plugin.log_error("Timeout must be a number");
+							this.plugin.log_error(new TemplaterError("Timeout must be a number"));
 							return;
 						}
 						this.plugin.settings.command_timeout = new_timeout;

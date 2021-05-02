@@ -2,6 +2,7 @@ import { InternalModule } from "../InternalModule";
 
 import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, resolveSubpath, TFile } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
+import { TemplaterError } from "Error";
 
 export const DEPTH_LIMIT = 10;
 
@@ -50,7 +51,7 @@ export class InternalModuleFile extends InternalModule {
         return (file_link: string) => {
             let match;
             if ((match = this.linkpath_regex.exec(file_link)) === null) {
-                throw new Error("Invalid file format, provide an obsidian link between quotes.");
+                throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
             }
             const file = this.app.metadataCache.getFirstLinkpathDest(match[1], "");
             return file != null;
@@ -80,18 +81,18 @@ export class InternalModuleFile extends InternalModule {
             this.include_depth += 1;
             if (this.include_depth > DEPTH_LIMIT) {
                 this.include_depth = 0;
-                throw new Error("Reached inclusion depth limit (max = 10)");
+                throw new TemplaterError("Reached inclusion depth limit (max = 10)");
             }
 
             let match;
             if ((match = this.linkpath_regex.exec(include_link)) === null) {
-                throw new Error("Invalid file format, provide an obsidian link between quotes.");
+                throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
             }
             const {path, subpath} = parseLinktext(match[1]);
 
             const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
             if (!inc_file) {
-                throw new Error(`File ${include_link} doesn't exist`);
+                throw new TemplaterError(`File ${include_link} doesn't exist`);
             }
 
             let inc_file_content = await this.app.vault.read(inc_file);
@@ -135,7 +136,7 @@ export class InternalModuleFile extends InternalModule {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
             if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
-                throw new Error("app.vault is not a FileSystemAdapter instance");
+                throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
             }
             const vault_path = this.app.vault.adapter.getBasePath();
 
@@ -151,7 +152,7 @@ export class InternalModuleFile extends InternalModule {
     generate_rename(): Function {
         return async (new_title: string) => {
             if (new_title.match(/[\\\/:]+/g)) {
-                throw new Error("File name cannot contain any of these characters: \\ / :");
+                throw new TemplaterError("File name cannot contain any of these characters: \\ / :");
             }
             const new_path = normalizePath(`${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`);
             await this.app.fileManager.renameFile(this.config.target_file, new_path);
@@ -163,7 +164,7 @@ export class InternalModuleFile extends InternalModule {
         return () => {
             const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
-                throw new Error("Active view is null, can't read selection.");
+                throw new TemplaterError("Active view is null, can't read selection.");
             }
 
             const editor = active_view.editor;

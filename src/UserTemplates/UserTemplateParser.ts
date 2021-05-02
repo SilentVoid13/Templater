@@ -8,6 +8,7 @@ import { TParser } from "TParser";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { RunningConfig } from "Templater";
 import { getTFilesFromFolder } from "Utils";
+import { TemplaterError } from "Error";
 
 export class UserTemplateParser implements TParser {
     private cwd: string;
@@ -20,7 +21,6 @@ export class UserTemplateParser implements TParser {
     }
 
     setup(): void {
-        // TODO: Add mobile support
         // @ts-ignore
         if (this.app.isMobile || !(this.app.vault.adapter instanceof FileSystemAdapter)) {
             this.cwd = "";
@@ -45,7 +45,7 @@ export class UserTemplateParser implements TParser {
 
     async load_user_script_function(config: RunningConfig, file: TFile): Promise<void> {
         if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
-            throw new Error("app.vault is not a FileSystemAdapter instance");
+            throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
         }
         let vault_path = this.app.vault.adapter.getBasePath();
         let file_path = `${vault_path}/${file.path}`;
@@ -58,14 +58,15 @@ export class UserTemplateParser implements TParser {
 
         const user_function = await import(file_path);
         if (!user_function.default) {
-            throw new Error(`Failed to load user script ${file_path}. No exports detected.`);
+            throw new TemplaterError(`Failed to load user script ${file_path}. No exports detected.`);
         }
         if (!(user_function.default instanceof Function)) {
-            throw new Error(`Failed to load user script ${file_path}. Default export is not a function.`);
+            throw new TemplaterError(`Failed to load user script ${file_path}. Default export is not a function.`);
         }
         this.user_script_functions.set(`${file.basename}`, user_function.default);
     }
 
+    // TODO: Add mobile support
     async generate_system_command_user_functions(config: RunningConfig): Promise<void> {
         const context = await this.plugin.templater.parser.generateContext(config, ContextMode.INTERNAL);
 
@@ -101,7 +102,7 @@ export class UserTemplateParser implements TParser {
                         return stdout.trimRight();
                     }
                     catch(error) {
-                        this.plugin.log_error(`Error with User Template ${template}`, error);
+                        throw new TemplaterError(`Error with User Template ${template}`, error);
                     }
                 });
             }

@@ -1,3 +1,4 @@
+import { TemplaterError } from "Error";
 import { App, normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 
 export const obsidian_module = require("obsidian");
@@ -15,10 +16,10 @@ export function getTFilesFromFolder(app: App, folder_str: string): Array<TFile> 
 
     let folder = app.vault.getAbstractFileByPath(folder_str);
     if (!folder) {
-        throw new Error(`${folder_str} folder doesn't exist`);
+        throw new TemplaterError(`${folder_str} folder doesn't exist`);
     }
     if (!(folder instanceof TFolder)) {
-        throw new Error(`${folder_str} is a file, not a folder`);
+        throw new TemplaterError(`${folder_str} is a file, not a folder`);
     }
 
     let files: Array<TFile> = [];
