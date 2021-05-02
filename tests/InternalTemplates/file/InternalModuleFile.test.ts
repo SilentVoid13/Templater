@@ -21,8 +21,15 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
         t.target_file.stat.ctime = saved_ctime;
     });
 
-    t.test("tp.file.cursor", async() => {
+    t.test("tp.file.cursor", async () => {
         await expect(t.run_and_get_output(`Cursor: <%\t\ntp.file.cursor(10)\t\r\n%>\n\n`, "")).to.eventually.equal(`Cursor: <% tp.file.cursor(10) %>\n\n`);
+    });
+
+    t.test("tp.file.exists", async () => {
+        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[${t.target_file.basename}]]") %>\n\n`)).to.eventually.equal(`File Exists: true\n\n`);
+        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[NonExistingFile]]") %>\n\n`)).to.eventually.equal(`File Exists: false\n\n`);
+
+        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("TestFile") %>\n\n`)).to.eventually.be.rejectedWith(Error, "Invalid file format, provide an obsidian link between quotes.");
     });
 
     t.test("tp.file.folder", async () => {
