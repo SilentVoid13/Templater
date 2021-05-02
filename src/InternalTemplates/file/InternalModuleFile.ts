@@ -11,8 +11,9 @@ export class InternalModuleFile extends InternalModule {
     private linkpath_regex: RegExp = new RegExp("^\\[\\[(.*)\\]\\]$");
 
     async createStaticTemplates(): Promise<void> {
-        this.static_templates.set("cursor", this.generate_cursor());
         this.static_templates.set("creation_date", this.generate_creation_date());
+        this.static_templates.set("cursor", this.generate_cursor());
+        this.static_templates.set("exists", this.generate_exists());
         this.static_templates.set("folder", this.generate_folder());
         this.static_templates.set("include", this.generate_include());
         this.static_templates.set("last_modified_date", this.generate_last_modified_date());
@@ -42,6 +43,17 @@ export class InternalModuleFile extends InternalModule {
     generate_creation_date(): Function {
         return (format: string = "YYYY-MM-DD HH:mm") => {
             return window.moment(this.config.target_file.stat.ctime).format(format);
+        }
+    }
+
+    generate_exists(): Function {
+        return (file_link: string) => {
+            let match;
+            if ((match = this.linkpath_regex.exec(file_link)) === null) {
+                throw new Error("Invalid file format, provide an obsidian link between quotes.");
+            }
+            const file = this.app.metadataCache.getFirstLinkpathDest(match[1], "");
+            return file != null;
         }
     }
 
@@ -77,23 +89,23 @@ export class InternalModuleFile extends InternalModule {
             }
             const {path, subpath} = parseLinktext(match[1]);
 
-            let inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
+            const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
             if (!inc_file) {
                 throw new Error(`File ${include_link} doesn't exist`);
             }
 
             let inc_file_content = await this.app.vault.read(inc_file);
             if (subpath) {
-                let cache = this.app.metadataCache.getFileCache(inc_file);
+                const cache = this.app.metadataCache.getFileCache(inc_file);
                 if (cache) {
-                    let result = resolveSubpath(cache, subpath);
+                    const result = resolveSubpath(cache, subpath);
                     if (result) {
                         inc_file_content = inc_file_content.slice(result.start.offset, result.end?.offset);
                     }
                 }
             }
 
-            let parsed_content = await this.plugin.templater.parser.parseTemplates(inc_file_content);
+            const parsed_content = await this.plugin.templater.parser.parseTemplates(inc_file_content);
             
             this.include_depth -= 1;
         
@@ -125,7 +137,7 @@ export class InternalModuleFile extends InternalModule {
             if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
                 throw new Error("app.vault is not a FileSystemAdapter instance");
             }
-            let vault_path = this.app.vault.adapter.getBasePath();
+            const vault_path = this.app.vault.adapter.getBasePath();
 
             if (relative) {
                 return this.config.target_file.path;
@@ -149,19 +161,19 @@ export class InternalModuleFile extends InternalModule {
 
     generate_selection(): Function {
         return () => {
-            let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+            const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
                 throw new Error("Active view is null, can't read selection.");
             }
 
-            let editor = active_view.editor;
+            const editor = active_view.editor;
             return editor.getSelection();
         }
     }
 
     // TODO: Turn this into a function
     generate_tags(): string[] {
-        let cache = this.app.metadataCache.getFileCache(this.config.target_file);
+        const cache = this.app.metadataCache.getFileCache(this.config.target_file);
         return getAllTags(cache);
     }
 
