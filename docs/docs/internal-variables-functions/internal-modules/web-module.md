@@ -4,7 +4,7 @@ title: Web module
 
 This modules contains every internal variable / function related to the web (using web requests).
 
-[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape a command's response characters using the `<%~` opening tag. More informations [here](commands).
+[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape a command's response characters using the `<%~` opening tag. More informations [here](../../commands).
 
 ## Documentation
 
