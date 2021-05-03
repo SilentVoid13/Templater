@@ -44,11 +44,12 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Eta features',
+      label: 'Commands',
       items: [
-        'eta-features/overview',
-        'eta-features/execution-command',
-        'eta-features/whitespace-control',
+        'commands/overview',
+        'commands/execution-command',
+        'commands/dynamic-command',
+        'commands/whitespace-control',
       ],
     },
   ],

@@ -116,7 +116,9 @@ export class UserTemplateParser implements TParser {
         if (this.plugin.settings.enable_system_commands) {
             await this.generate_system_command_user_functions(config);
         }
-        if (this.plugin.settings.script_folder) {
+        // TODO: Add mobile support
+        // @ts-ignore
+        if (!this.app.isMobile && this.plugin.settings.script_folder) {
             await this.generate_user_script_functions(config);
         }
 

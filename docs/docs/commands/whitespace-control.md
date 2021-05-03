@@ -4,9 +4,9 @@ title: Whitespace Control
 
 By default, **commands** in Templater are not removing any newlines. Commands are replaced with their values and that's it.
 
-It can sometimes be useful to have some whitespace control after commands are inserted, mostly when doing some control flow and using **conditional** statements.
+It can sometimes be useful to have some whitespace control after commands are inserted, which is exactly what this command utility offers.
 
-For example the following template:
+Let's have an example. The following template:
 
 ```
 <%* if (tp.file.title == "MyFile" ) { %>
