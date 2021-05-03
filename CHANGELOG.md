@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/SilentVoid13/Templater/compare/1.5.5...1.6.0) (2021-05-03)
+
+
+### Features
+
+* adding better error handling, more user-friendly too ([51e9411](https://github.com/SilentVoid13/Templater/commit/51e94119001911d7817504fdbdc236919d58a173))
+* adding dynamic templates, rendering in preview mode ([0e2442c](https://github.com/SilentVoid13/Templater/commit/0e2442cacdcee517a3313951a177cdc77eaf2dcb)), closes [#181](https://github.com/SilentVoid13/Templater/issues/181) [#131](https://github.com/SilentVoid13/Templater/issues/131) [#63](https://github.com/SilentVoid13/Templater/issues/63)
+* adding new tp.config module ([39c224a](https://github.com/SilentVoid13/Templater/commit/39c224ad7ecbcfb4c972f863f24c36e2f33ccf1d))
+* adding new tp.file.move to move a file across the vault ([3877dde](https://github.com/SilentVoid13/Templater/commit/3877dde6654507881d64c26e8eb59574992f23f3)), closes [#103](https://github.com/SilentVoid13/Templater/issues/103)
+* adding script user functions ([4a3404c](https://github.com/SilentVoid13/Templater/commit/4a3404c834ab22e9d44ba87b1fc2d63f975eefcc)), closes [#123](https://github.com/SilentVoid13/Templater/issues/123) [#85](https://github.com/SilentVoid13/Templater/issues/85)
+* adding tp.file.exists function ([e4273b7](https://github.com/SilentVoid13/Templater/commit/e4273b706465df012648b8a0163018f4925b5808)), closes [#150](https://github.com/SilentVoid13/Templater/issues/150)
+
+
+### Bug Fixes
+
+* fixing typo in tp.system ([efd8711](https://github.com/SilentVoid13/Templater/commit/efd8711a4f23a2326cd8d156f1545881a9e1c738)), closes [#144](https://github.com/SilentVoid13/Templater/issues/144)
+
 ### [1.5.5](https://github.com/SilentVoid13/Templater/compare/1.5.4...1.5.5) (2021-04-22)
 
 
