@@ -11,7 +11,6 @@ import { RunningConfig } from "Templater";
 export enum ContextMode {
     INTERNAL,
     USER_INTERNAL,
-    DYNAMIC,
 };
 
 export class TemplateParser implements TParser {
@@ -55,15 +54,6 @@ export class TemplateParser implements TParser {
             case ContextMode.INTERNAL:
                 Object.assign(context, internal_context);
                 break;
-            case ContextMode.DYNAMIC:
-                user_context = await this.userTemplateParser.generateContext(config);
-                Object.assign(context, {
-                    dynamic: {
-                        ...internal_context,
-                        user: user_context,
-                    }
-                });
-                break;
             case ContextMode.USER_INTERNAL:
                 user_context = await this.userTemplateParser.generateContext(config);
                 Object.assign(context, {
@@ -76,7 +66,7 @@ export class TemplateParser implements TParser {
         return context;
     }
 
-    async parseTemplates(content: string, context?: any, throw_on_error: boolean = false): Promise<string> {
+    async parseTemplates(content: string, context?: any): Promise<string> {
         if (!context) {
             context = this.current_context;
         }

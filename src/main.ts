@@ -162,43 +162,62 @@ export default class TemplaterPlugin extends Plugin {
 	}	
 
 	/*
-	async registerCodeMirrorMode() {
+	// TODO
+	registerCodeMirrorMode() {
 		// https://codemirror.net/doc/manual.html#modeapi
 		// cm-editor-syntax-highlight-obsidian plugin
 		// https://codemirror.net/mode/diff/diff.js
 		// https://marijnhaverbeke.nl/blog/codemirror-mode-system.html
 
-		await delay(1500);
-		window.CodeMirror.defineMode("templater", function() {
-			return {
-			  startState: function() {return {inString: false};},
-			  token: function(stream, state) {
-				// If a string starts here
-				if (!state.inString && stream.peek() == '"') {
-				  stream.next();            // Skip quote
-				  state.inString = true;    // Update state
+		const hypermd_mode = window.CodeMirror.getMode({}, "hypermd");
+		const javascript_mode = window.CodeMirror.getMode({}, "javascript");
+
+		window.CodeMirror.extendMode("hypermd", {
+			startState: function() {
+				const hypermd_state = window.CodeMirror.startState(hypermd_mode);
+				const js_state = javascript_mode ? window.CodeMirror.startState(javascript_mode): {};
+				return {
+					...hypermd_state,
+					...js_state,
+					inCommand: false
+				};
+			},
+			copyState: function(state) {
+				const hypermd_state: {} = hypermd_mode.copyState(state);
+				const js_state = javascript_mode ? window.CodeMirror.startState(javascript_mode): {};
+				const new_state = {
+					...hypermd_state,
+					...js_state,
+					inCommand: state.inCommand
+				};
+				return new_state;
+			},
+			// TODO: Fix conflicts with links
+			token: function(stream, state) {
+				if (stream.match(/<%[*~]{0,1}[-_]{0,1}/)) {
+					state.inCommand = true;
+					return "formatting formatting-code inline-code";
 				}
-		  
-				if (state.inString) {
-				  if (stream.skipTo('"')) { // Quote found on this line
-					stream.next();          // Skip quote
-					state.inString = false; // Clear flag
-				  } else {
-					 stream.skipToEnd();    // Rest of line is string
-				  }
-				  return "string";          // Token style
-				} else {
-				  stream.skipTo('"') || stream.skipToEnd();
-				  return null;              // Unstyled token
-				}
-			  },
-			};
-		});
-		//window.CodeMirror.defineMIME("text/x-templater", "templater");
-			  
-		this.app.workspace.iterateCodeMirrors(cm => {
-			cm.setOption("mode", "templater")
-			console.log(cm.getOption("mode"));
+
+				if (state.inCommand) {
+					if (stream.match(/[-_]{0,1}%>/m, true)) {
+						state.inCommand = false;
+						return "formatting formatting-code inline-code";
+					}
+
+					let keywords = "hmd-codeblock line-testtest";
+					if (javascript_mode) {
+						const js_result = javascript_mode.token(stream, state);
+						if (js_result) {
+							keywords +=  " " + js_result;
+						}
+					}
+					return keywords;
+				} 
+
+				const result = hypermd_mode.token(stream, state);
+				return result;
+			},
 		});
 	}
 	*/
