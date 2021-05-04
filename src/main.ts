@@ -118,7 +118,6 @@ export default class TemplaterPlugin extends Plugin {
 	update_trigger_file_on_creation(): void {
 		if (this.settings.trigger_on_file_creation) {
 			this.trigger_on_file_creation_event = this.app.vault.on("create", async (file: TAbstractFile) => {
-				console.log("TRIGGERED TRIGGERED");
 				// TODO: find a better way to do this
 				// Currently, I have to wait for the daily note plugin to add the file content before replacing
 				// Not a problem with Calendar however since it creates the file with the existing content

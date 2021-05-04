@@ -71,7 +71,7 @@ export class Templater {
         const running_config = this.create_running_config(template_file, created_note, RunMode.CreateNewFromTemplate);
 
         const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
-        if (!output_content) {
+        if (output_content == null) {
             await this.app.vault.delete(created_note);
             return;
         }
@@ -95,7 +95,7 @@ export class Templater {
         }
         const running_config = this.create_running_config(template_file, active_view.file, RunMode.AppendActiveFile);
         const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
-        if (!output_content) {
+        if (output_content == null) {
             return;
         }
 
@@ -118,7 +118,7 @@ export class Templater {
     async overwrite_file_templates(file: TFile, active_file: boolean = false): Promise<void> {
         const running_config = this.create_running_config(file, file, active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile);
         const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
-        if (!output_content) {
+        if (output_content == null) {
             return;
         }
         await this.app.vault.modify(file, output_content);
@@ -146,7 +146,7 @@ export class Templater {
                 const command_output: string = await this.errorWrapper(async () => {
                     return await this.parser.parseTemplates(complete_command);
                 });
-                if (!command_output) {
+                if (command_output == null) {
                     return;
                 }
                 let start = dynamic_command_regex.lastIndex - match[0].length;
