@@ -36,6 +36,7 @@ A list of useful tools to use along [Templater](https://github.com/SilentVoid13/
 
 A list of useful resources about [Templater](https://github.com/SilentVoid13/Templater):
 
+- @GitMurf quick demo `How to setup and run your first Templater JS script`: https://github.com/SilentVoid13/Templater/discussions/187
 - @tallguyjenks video: https://youtu.be/2234DXKbNgM?t=1944
 
 ## Alternatives
