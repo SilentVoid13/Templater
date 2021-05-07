@@ -102,8 +102,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.settings.trigger_on_file_creation = trigger_on_file_creation;
 						this.plugin.saveSettings();
 						this.plugin.update_trigger_file_on_creation();
+						// Force refresh
+						this.display();
 					});
 			});
+
+		if (this.plugin.settings.trigger_on_file_creation) {
 			desc = document.createDocumentFragment();
 			desc.append(
 				"Templater will automatically apply this template file to new empty files as they are created.",
@@ -125,6 +129,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							this.plugin.update_trigger_file_on_creation();
 					});
 			});
+		}
 
 		desc = document.createDocumentFragment();
 		desc.append(
