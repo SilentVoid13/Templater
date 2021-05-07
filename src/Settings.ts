@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	enable_system_commands: false,
 	shell_path: "",
 	script_folder: undefined,
+	default_file_template: undefined,
 };
 
 export interface TemplaterSettings {
@@ -21,6 +22,7 @@ export interface TemplaterSettings {
 	enable_system_commands: boolean;
 	shell_path: string,
 	script_folder: string,
+	default_file_template: string,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
