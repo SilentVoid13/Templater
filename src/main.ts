@@ -125,6 +125,12 @@ export default class TemplaterPlugin extends Plugin {
 				if (!(file instanceof TFile) || file.extension !== "md") {
 					return;
 				}
+				// Check that file is empty in order to to avoid clobbering file content set by other plugins, 
+				// such as Calendar, Daily Notes, etc.
+				if (file.stat.size == 0 && this.settings.default_file_template) {
+					const content = `<% tp.file.include("[[${this.settings.default_file_template}]]") %>`;
+					await this.app.vault.modify(file, content);
+				}
 				this.templater.overwrite_file_templates(file);
 			});
 			this.registerEvent(
