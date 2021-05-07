@@ -104,6 +104,27 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.update_trigger_file_on_creation();
 					});
 			});
+			desc = document.createDocumentFragment();
+			desc.append(
+				"Templater will automatically apply this template file to new empty files as they are created.",
+				desc.createEl("br"),
+				"Requires 'Trigger Templater on new file creation' to be enabled, and file to be accessible from the vault.",
+				desc.createEl("br"),
+				"Templater will only apply the template to empty files, in order to maintain compatibility with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...",
+			);
+			
+			new Setting(containerEl)
+				.setName("Default template file")
+				.setDesc(desc)
+				.addText(text => {
+					text.setPlaceholder("folder 1/default_file")
+						.setValue(this.plugin.settings.default_file_template)
+						.onChange((new_default_file_template) => {
+							this.plugin.settings.default_file_template = new_default_file_template;
+							this.plugin.saveSettings();
+							this.plugin.update_trigger_file_on_creation();
+					});
+			});
 
 		desc = document.createDocumentFragment();
 		desc.append(
