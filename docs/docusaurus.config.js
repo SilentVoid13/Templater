@@ -5,7 +5,7 @@ module.exports = {
   url: 'https://silentvoid13.github.io',
   baseUrl: '/Templater/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.ico',
   organizationName: 'SilentVoid13',
   projectName: 'Templater',

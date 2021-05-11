@@ -47,4 +47,4 @@ However, you can't access Eta scoped variables like `tp` or `tR`. If you want to
 
 You can pass as much arguments as you want to your function, depending on how you defined it.
 
-You can for example pass the `tp` object to your function, to be able to use all of the [internal variables / functions](../internal-variables-functions) of Templater: `<% tp.user.<user_function_name>(tp) %>`
+You can for example pass the `tp` object to your function, to be able to use all of the [internal variables / functions](../internal-variables-functions/overview.md) of Templater: `<% tp.user.<user_function_name>(tp) %>`
