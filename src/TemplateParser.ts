@@ -17,6 +17,7 @@ export class TemplateParser implements TParser {
     public internalTemplateParser: InternalTemplateParser;
 	public userTemplateParser: UserTemplateParser;
     public current_context: {};
+    private dynamicPlaceholder = "TP_DYNAMIC_PLACEHOLDER";
     
     constructor(private app: App, private plugin: TemplaterPlugin) {
         this.internalTemplateParser = new InternalTemplateParser(this.app, this.plugin);
@@ -71,6 +72,7 @@ export class TemplateParser implements TParser {
             context = this.current_context;
         }
 
+        content = content.replace(/<%\+/g, this.dynamicPlaceholder);
         content = await Eta.renderAsync(content, context, {
             varName: "tp",
             parse: {
@@ -81,6 +83,7 @@ export class TemplateParser implements TParser {
             autoTrim: false,
             globalAwait: true,
         }) as string;
+        content = content.replace(new RegExp(this.dynamicPlaceholder, "g"), "<%+");
 
         return content;
     }
