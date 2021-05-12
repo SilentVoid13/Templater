@@ -8,7 +8,7 @@ This modules exposes all the frontmatter variables of a file as internal variabl
 
 :::tip
 
-Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+Function documentation is using a specific syntax. More informations [here](../../syntax.md#function-documentation-syntax)
 
 :::
 

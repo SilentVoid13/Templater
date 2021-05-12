@@ -16,7 +16,7 @@ This can be dangerous if you create new files with unknown / unsafe content on c
 
 :::
 
-You can enable system commands. This allows you to create [user functions](user-functions/) linked to system commands.
+You can enable system commands. This allows you to create [user functions](./user-functions/overview.md) linked to system commands.
 
 :::caution
 

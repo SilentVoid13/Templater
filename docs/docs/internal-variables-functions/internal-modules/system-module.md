@@ -8,7 +8,7 @@ This module contains system related variables and functions.
 
 :::tip
 
-Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+Function documentation is using a specific syntax. More informations [here](../../syntax.md#function-documentation-syntax)
 
 :::
 

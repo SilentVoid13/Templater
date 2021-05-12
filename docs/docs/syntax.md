@@ -26,7 +26,7 @@ The syntax between a variable and< a function invocation is different, so it's i
 
 For example, `tp.file.content` is an internal variable, while `tp.date.now` is an internal function.
 
-All informations about the different internal variables / functions and their nature is given [here](internal-variables-functions).
+All informations about the different internal variables / functions and their nature is given [here](./internal-variables-functions/overview.md).
 
 #### Variable invocation
 
@@ -77,7 +77,7 @@ If an argument can have different types, it will be specified using a pipe `|`, 
 
 :::caution
 
-Please note that this syntax is for documentation purposes only, to be able to understand what arguments the function expects. You mustn't specify the name nor the type nor the default value of an argument when calling a function. Only the value of the arguments are required, as explained [here](syntax#function-invocation)
+Please note that this syntax is for documentation purposes only, to be able to understand what arguments the function expects. You mustn't specify the name nor the type nor the default value of an argument when calling a function. Only the value of the arguments are required, as explained [here](./syntax.md#function-invocation)
 
 :::
 

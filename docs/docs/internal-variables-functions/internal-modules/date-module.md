@@ -8,7 +8,7 @@ This module contains every internal variable / function related to dates.
 
 :::tip
 
-Function documentation is using a specific syntax. More informations [here](../../syntax#function-documentation-syntax)
+Function documentation is using a specific syntax. More informations [here](../../syntax.md#function-documentation-syntax)
 
 :::
 

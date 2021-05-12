@@ -7,8 +7,8 @@ You can define your own functions in Templater.
 
 There are two types of user functions you can use:
 
-- [Script User Functions](user-functions/script-user-functions)
-- [System Command User Functions](user-functions/system-user-functions)
+- [Script User Functions](./script-user-functions.md)
+- [System Command User Functions](./system-user-functions.md)
 
 ## Invoking User Functions
 
