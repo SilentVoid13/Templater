@@ -128,35 +128,23 @@ export class Templater {
     }
 
     async process_dynamic_templates(el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
-        const dynamic_command_regex: RegExp = /(<%[*~]{0,1})\+(.*%>)/g;
+        const dynamic_open_regex: RegExp = /(<|&lt;)%([*~]{0,1})\+/g; // match both escapted and unescaped opens, so we can remove +
+        const dynamic_close_regex: RegExp = /%&gt;/g;
 
-		let content = el.innerText;
-        let match;
-        if ((match = dynamic_command_regex.exec(content)) != null) {
-			const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
-			if (!file || !(file instanceof TFile)) {
-				return;
-			}
-            const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
-            await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
+        // using innerHTML here, instead of innerText, so we don't lose formatting(<h1>, <strong>, etc.)
+		let content = el.innerHTML
+            .replace(dynamic_open_regex, "<%$2")
+            .replace(dynamic_close_regex, "%>");
 
-            while (match != null) {
-                // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
-                const complete_command = match[1] + match[2];
-                const command_output: string = await this.errorWrapper(async () => {
-                    return await this.parser.parseTemplates(complete_command);
-                });
-                if (command_output == null) {
-                    return;
-                }
-                let start = dynamic_command_regex.lastIndex - match[0].length;
-                let end = dynamic_command_regex.lastIndex;
-                content = content.substring(0, start) + command_output + content.substring(end);
+        const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
+        if (!file || !(file instanceof TFile)) {
+            return;
+        }
+        const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
+        await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
 
-                dynamic_command_regex.lastIndex += (command_output.length - match[0].length);
-                match = dynamic_command_regex.exec(content);
-            }
-			el.innerText = content;
-		}
+        el.innerHTML = await this.errorWrapper(async () => {
+            return await this.parser.parseTemplates(content);
+        });
 	}
 }
