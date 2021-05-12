@@ -1587,7 +1587,7 @@ find-node-modules@2.0.0:
   integrity sha512-8MWIBRgJi/WpjjfVXumjPKCtmQ10B+fjx6zmSA+770GMJirLhWIzg8l763rhjl9xaeaHbnxPNRQKq2mgMhr+aw==
   dependencies:
     findup-sync "^3.0.0"
-    merge "^1.2.1"
+    merge "^2.1.1"
 
 find-root@1.1.0:
   version "1.1.0"
