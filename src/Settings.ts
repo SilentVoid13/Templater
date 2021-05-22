@@ -11,7 +11,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	enable_system_commands: false,
 	shell_path: "",
 	script_folder: undefined,
-	default_file_template: undefined,
+	empty_file_template: undefined,
 };
 
 export interface TemplaterSettings {
@@ -22,7 +22,7 @@ export interface TemplaterSettings {
 	enable_system_commands: boolean;
 	shell_path: string,
 	script_folder: string,
-	default_file_template: string,
+	empty_file_template: string,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -110,36 +110,23 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		if (this.plugin.settings.trigger_on_file_creation) {
 			desc = document.createDocumentFragment();
 			desc.append(
-				"Templater will automatically apply this template file to new empty files as they are created.",
+				"Templater will automatically apply this template to new empty files when they are created.",
 				desc.createEl("br"),
-				"Requires 'Trigger Templater on new file creation' to be enabled, and file to be accessible from the vault.",
-				desc.createEl("br"),
-				"Templater will only apply the template to empty files, in order to maintain compatibility with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...",
+				"The .md extension for the file shouldn't be specified."
 			);
 			
 			new Setting(containerEl)
-				.setName("Default template file")
+				.setName("Empty file template")
 				.setDesc(desc)
 				.addText(text => {
-					text.setPlaceholder("folder 1/default_file")
-						.setValue(this.plugin.settings.default_file_template)
-						.onChange((new_default_file_template) => {
-							this.plugin.settings.default_file_template = new_default_file_template;
+					text.setPlaceholder("folder 1/template_file")
+						.setValue(this.plugin.settings.empty_file_template)
+						.onChange((empty_file_template) => {
+							this.plugin.settings.empty_file_template = empty_file_template;
 							this.plugin.saveSettings();
-							this.plugin.update_trigger_file_on_creation();
-					});
-			});
+						});
+				});
 		}
-
-		desc = document.createDocumentFragment();
-		desc.append(
-			"Allows you to create user functions linked to system commands.",
-			desc.createEl("br"),
-			desc.createEl("b", {
-				text: "Warning: "
-			}),
-			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
-		);
 
 		desc = document.createDocumentFragment();
 		desc.append(
@@ -166,6 +153,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.saveSettings();
 					})
 			});
+
+		desc = document.createDocumentFragment();
+		desc.append(
+			"Allows you to create user functions linked to system commands.",
+			desc.createEl("br"),
+			desc.createEl("b", {
+				text: "Warning: "
+			}),
+			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
+		);
 
 		new Setting(containerEl)
 			.setName("Enable System Commands")
