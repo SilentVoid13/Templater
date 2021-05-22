@@ -115,10 +115,11 @@ export class Templater {
     }
 
     async process_dynamic_templates(el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
-        const dynamic_command_regex: RegExp = /(<%[*~]{0,1})\+(.*%>)/g;
+        const dynamic_command_regex: RegExp = /(<%(?:-|_)?\s*[*~]{0,1})\+(.*%>)/g;
 
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;
+        let pass = false;
         while ((node = walker.nextNode())) {
             let content = node.nodeValue;
             let match;
@@ -127,8 +128,11 @@ export class Templater {
                 if (!file || !(file instanceof TFile)) {
                     return;
                 }
-                const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
-                await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
+                if (!pass) {
+                    pass = true;
+                    const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
+                    await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
+                }
 
                 while (match != null) {
                     // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
