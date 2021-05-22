@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/SilentVoid13/Templater/compare/1.6.0...1.7.0) (2021-05-22)
+
+
+### Features
+
+* adding multiple cursor at the same with tp.file.cursor ([9a54e90](https://github.com/SilentVoid13/Templater/commit/9a54e90b1faaa8efc72dcbccb6fa6c6823b1972d)), closes [#99](https://github.com/SilentVoid13/Templater/issues/99)
+* Allow users to provide a default template for empty new files ([#203](https://github.com/SilentVoid13/Templater/issues/203)) ([4903f15](https://github.com/SilentVoid13/Templater/commit/4903f15389bba62b2859644ee2fb463af8abfe85)), closes [#200](https://github.com/SilentVoid13/Templater/issues/200)
+
+
+### Bug Fixes
+
+* fixing documentation broken links ([3213bfa](https://github.com/SilentVoid13/Templater/commit/3213bfac79859f7f10c061449a8f2715d9672797)), closes [#194](https://github.com/SilentVoid13/Templater/issues/194)
+* fixing dynamic commands format break ([7e06048](https://github.com/SilentVoid13/Templater/commit/7e06048a3afd44bac4b2f41d215a99ad7a92e10b)), closes [#190](https://github.com/SilentVoid13/Templater/issues/190) [#204](https://github.com/SilentVoid13/Templater/issues/204)
+* fixing dynamic commands match when inserting template ([dcefbc7](https://github.com/SilentVoid13/Templater/commit/dcefbc73ab706f257c788cb2ff07a45695fb5fdf)), closes [#188](https://github.com/SilentVoid13/Templater/issues/188)
+* fixing invalid null comparison getting triggered on empty strings ([1df50cf](https://github.com/SilentVoid13/Templater/commit/1df50cfff6fc48162f324c0f14b63d80197eeea7))
+
 ## [1.6.0](https://github.com/SilentVoid13/Templater/compare/1.5.5...1.6.0) (2021-05-03)
 
 
