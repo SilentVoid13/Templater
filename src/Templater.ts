@@ -117,33 +117,37 @@ export class Templater {
     async process_dynamic_templates(el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
         const dynamic_command_regex: RegExp = /(<%[*~]{0,1})\+(.*%>)/g;
 
-		let content = el.innerText;
-        let match;
-        if ((match = dynamic_command_regex.exec(content)) != null) {
-			const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
-			if (!file || !(file instanceof TFile)) {
-				return;
-			}
-            const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
-            await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
-
-            while (match != null) {
-                // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
-                const complete_command = match[1] + match[2];
-                const command_output: string = await this.plugin.errorWrapper(async () => {
-                    return await this.parser.parseTemplates(complete_command);
-                });
-                if (command_output == null) {
+        const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+            let content = node.nodeValue;
+            let match;
+            if ((match = dynamic_command_regex.exec(node.nodeValue)) != null) {
+                const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
+                if (!file || !(file instanceof TFile)) {
                     return;
                 }
-                let start = dynamic_command_regex.lastIndex - match[0].length;
-                let end = dynamic_command_regex.lastIndex;
-                content = content.substring(0, start) + command_output + content.substring(end);
+                const running_config = this.create_running_config(file, file, RunMode.DynamicProcessor);
+                await this.parser.setCurrentContext(running_config, ContextMode.USER_INTERNAL);
 
-                dynamic_command_regex.lastIndex += (command_output.length - match[0].length);
-                match = dynamic_command_regex.exec(content);
+                while (match != null) {
+                    // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
+                    const complete_command = match[1] + match[2];
+                    const command_output: string = await this.plugin.errorWrapper(async () => {
+                        return await this.parser.parseTemplates(complete_command);
+                    });
+                    if (command_output == null) {
+                        return;
+                    }
+                    let start = dynamic_command_regex.lastIndex - match[0].length;
+                    let end = dynamic_command_regex.lastIndex;
+                    content = content.substring(0, start) + command_output + content.substring(end);
+
+                    dynamic_command_regex.lastIndex += (command_output.length - match[0].length);
+                    match = dynamic_command_regex.exec(content);
+                }
+                node.nodeValue = content;
             }
-			el.innerText = content;
-		}
+        }
 	}
 }
