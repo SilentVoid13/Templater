@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	enable_system_commands: false,
 	shell_path: "",
 	script_folder: undefined,
+	empty_file_template: undefined,
 };
 
 export interface TemplaterSettings {
@@ -21,6 +22,7 @@ export interface TemplaterSettings {
 	enable_system_commands: boolean;
 	shell_path: string,
 	script_folder: string,
+	empty_file_template: string,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -100,18 +102,31 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.settings.trigger_on_file_creation = trigger_on_file_creation;
 						this.plugin.saveSettings();
 						this.plugin.update_trigger_file_on_creation();
+						// Force refresh
+						this.display();
 					});
 			});
 
-		desc = document.createDocumentFragment();
-		desc.append(
-			"Allows you to create user functions linked to system commands.",
-			desc.createEl("br"),
-			desc.createEl("b", {
-				text: "Warning: "
-			}),
-			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
-		);
+		if (this.plugin.settings.trigger_on_file_creation) {
+			desc = document.createDocumentFragment();
+			desc.append(
+				"Templater will automatically apply this template to new empty files when they are created.",
+				desc.createEl("br"),
+				"The .md extension for the file shouldn't be specified."
+			);
+			
+			new Setting(containerEl)
+				.setName("Empty file template")
+				.setDesc(desc)
+				.addText(text => {
+					text.setPlaceholder("folder 1/template_file")
+						.setValue(this.plugin.settings.empty_file_template)
+						.onChange((empty_file_template) => {
+							this.plugin.settings.empty_file_template = empty_file_template;
+							this.plugin.saveSettings();
+						});
+				});
+		}
 
 		desc = document.createDocumentFragment();
 		desc.append(
@@ -138,6 +153,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.saveSettings();
 					})
 			});
+
+		desc = document.createDocumentFragment();
+		desc.append(
+			"Allows you to create user functions linked to system commands.",
+			desc.createEl("br"),
+			desc.createEl("b", {
+				text: "Warning: "
+			}),
+			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
+		);
 
 		new Setting(containerEl)
 			.setName("Enable System Commands")

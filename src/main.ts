@@ -3,7 +3,7 @@ import { addIcon, EventRef, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
 import { ICON_DATA } from 'Constants';
-import { delay } from 'Utils';
+import { delay, resolveTFile } from 'Utils';
 import { Templater } from 'Templater';
 import { TemplaterError } from 'Error';
 
@@ -118,12 +118,24 @@ export default class TemplaterPlugin extends Plugin {
 	update_trigger_file_on_creation(): void {
 		if (this.settings.trigger_on_file_creation) {
 			this.trigger_on_file_creation_event = this.app.vault.on("create", async (file: TAbstractFile) => {
+				if (!(file instanceof TFile) || file.extension !== "md") {
+					return;
+				}
+
 				// TODO: find a better way to do this
 				// Currently, I have to wait for the daily note plugin to add the file content before replacing
 				// Not a problem with Calendar however since it creates the file with the existing content
 				await delay(300);
-				if (!(file instanceof TFile) || file.extension !== "md") {
-					return;
+
+				if (file.stat.size == 0 && this.settings.empty_file_template) {
+					const template_file = await this.errorWrapper(async (): Promise<TFile> => {
+						return resolveTFile(this.app, this.settings.empty_file_template + ".md");
+					});
+					if (!template_file) {
+						return;
+					}
+					const content = await this.app.vault.read(template_file);
+					await this.app.vault.modify(file, content);
 				}
 				this.templater.overwrite_file_templates(file);
 			});
@@ -136,6 +148,19 @@ export default class TemplaterPlugin extends Plugin {
 				this.app.vault.offref(this.trigger_on_file_creation_event);
 				this.trigger_on_file_creation_event = undefined;
 			}
+		}
+	}
+
+	async errorWrapper(fn: Function): Promise<any> {
+		try {
+			return await fn();
+		} catch(e) {
+			if (!(e instanceof TemplaterError)) {
+				this.log_error(new TemplaterError(`Template parsing error, aborting.`, e.message));
+			} else {
+				this.log_error(e);
+			}
+			return null;
 		}
 	}
 

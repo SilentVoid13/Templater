@@ -32,19 +32,6 @@ export class Templater {
         await this.parser.init();
     }
 
-    async errorWrapper(fn: Function): Promise<any> {
-        try {
-            return await fn();
-        } catch(e) {
-            if (!(e instanceof TemplaterError)) {
-                this.plugin.log_error(new TemplaterError(`Template parsing error, aborting.`, e.message));
-            } else {
-                this.plugin.log_error(e);
-            }
-            return null;
-        }
-    }
-
     create_running_config(template_file: TFile, target_file: TFile, run_mode: RunMode) {
         return {
             template_file: template_file,
@@ -70,7 +57,7 @@ export class Templater {
 
         const running_config = this.create_running_config(template_file, created_note, RunMode.CreateNewFromTemplate);
 
-        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        const output_content = await this.plugin.errorWrapper(async () => this.read_and_parse_template(running_config));
         if (output_content == null) {
             await this.app.vault.delete(created_note);
             return;
@@ -94,7 +81,7 @@ export class Templater {
             return;
         }
         const running_config = this.create_running_config(template_file, active_view.file, RunMode.AppendActiveFile);
-        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        const output_content = await this.plugin.errorWrapper(async () => this.read_and_parse_template(running_config));
         if (output_content == null) {
             return;
         }
@@ -117,7 +104,7 @@ export class Templater {
 
     async overwrite_file_templates(file: TFile, active_file: boolean = false): Promise<void> {
         const running_config = this.create_running_config(file, file, active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile);
-        const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));
+        const output_content = await this.plugin.errorWrapper(async () => this.read_and_parse_template(running_config));
         if (output_content == null) {
             return;
         }
@@ -143,7 +130,7 @@ export class Templater {
             while (match != null) {
                 // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
                 const complete_command = match[1] + match[2];
-                const command_output: string = await this.errorWrapper(async () => {
+                const command_output: string = await this.plugin.errorWrapper(async () => {
                     return await this.parser.parseTemplates(complete_command);
                 });
                 if (command_output == null) {
