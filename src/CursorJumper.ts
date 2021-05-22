@@ -65,15 +65,10 @@ export class CursorJumper {
             content = content.replace(new RegExp(escapeRegExp(match[0])), "");
             index_offset += match[0].length;
 
-            // TODO: Remove this, breaking for now waiting for the new setSelections API
-            break;
-
-            /*
-            // For tp.file.cursor(), we only find one
+            // For tp.file.cursor(), we keep the default top to bottom
             if (match[1] === "") {
                 break;
             }
-            */
         }
 
         return {new_content: content, positions: positions};
@@ -85,34 +80,17 @@ export class CursorJumper {
             return;
         }
 
-        // TODO: Remove this
         const editor = active_view.editor;
         editor.focus();
-        editor.setCursor(positions[0]);
 
-        /*
-        let selections = [];
+        let selections: Array<EditorRangeOrCaret> = [];
         for (let pos of positions) {
-            selections.push({anchor: pos, head: pos});
+            selections.push({from: pos});
         }
-        editor.focus();
-        editor.setSelections(selections);
-        */
 
-        /*
-        // Check https://github.com/obsidianmd/obsidian-api/issues/14
-
-        let editor = active_view.editor;
-        editor.focus();
-
-        for (let pos of positions) {
-            let transaction: EditorTransaction = {
-                selection: {
-                    from: pos
-                }
-            };
-            editor.transaction(transaction);
-        }
-        */
+        let transaction: EditorTransaction = {
+            selections: selections
+        };
+        editor.transaction(transaction);
     }
 }

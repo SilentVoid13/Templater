@@ -115,7 +115,7 @@ export class Templater {
     }
 
     async process_dynamic_templates(el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
-        const dynamic_command_regex: RegExp = /(<%(?:-|_)?\s*[*~]{0,1})\+(.*%>)/g;
+        const dynamic_command_regex: RegExp = /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*%>)/g;
 
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;
