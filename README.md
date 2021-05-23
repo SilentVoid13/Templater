@@ -38,6 +38,7 @@ A list of useful resources about [Templater](https://github.com/SilentVoid13/Tem
 
 - @GitMurf quick demo `How to setup and run your first Templater JS script`: https://github.com/SilentVoid13/Templater/discussions/187
 - @shabegom `How To Use Templater JS Scripts`: https://publish.obsidian.md/shabegom/Publish/How+To+Use+Templater++JS+Scripts
+- @chhoumann Templates showcase: https://github.com/chhoumann/Templater_Templates
 - @tallguyjenks video: https://youtu.be/2234DXKbNgM?t=1944
 
 ## Alternatives
