@@ -115,7 +115,7 @@ export class Templater {
     }
 
     async process_dynamic_templates(el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
-        const dynamic_command_regex: RegExp = /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*%>)/g;
+        const dynamic_command_regex: RegExp = /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*?%>)/g;
 
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;
@@ -123,7 +123,7 @@ export class Templater {
         while ((node = walker.nextNode())) {
             let content = node.nodeValue;
             let match;
-            if ((match = dynamic_command_regex.exec(node.nodeValue)) != null) {
+            if ((match = dynamic_command_regex.exec(content)) != null) {
                 const file = this.app.metadataCache.getFirstLinkpathDest("", ctx.sourcePath);
                 if (!file || !(file instanceof TFile)) {
                     return;
