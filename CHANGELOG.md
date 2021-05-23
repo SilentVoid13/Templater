@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/SilentVoid13/Templater/compare/1.7.0...1.7.1) (2021-05-23)
+
+
+### Bug Fixes
+
+* fixing broken command with comments ([c407fc7](https://github.com/SilentVoid13/Templater/commit/c407fc7fdfc348bec63c0716c251021642c16f4d)), closes [#235](https://github.com/SilentVoid13/Templater/issues/235)
+* fixing multiple dynamic commands bug ([d6e2d86](https://github.com/SilentVoid13/Templater/commit/d6e2d8650be72d7d402692d2c49215234ecf7d2a)), closes [#195](https://github.com/SilentVoid13/Templater/issues/195)
+
 ## [1.7.0](https://github.com/SilentVoid13/Templater/compare/1.6.0...1.7.0) (2021-05-22)
 
 
