@@ -1,4 +1,4 @@
-import { addIcon, EventRef, Menu, MenuItem, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { addIcon, EventRef, Menu, MenuItem, normalizePath, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
@@ -120,6 +120,18 @@ export default class TemplaterPlugin extends Plugin {
 			this.trigger_on_file_creation_event = this.app.vault.on("create", async (file: TAbstractFile) => {
 				if (!(file instanceof TFile) || file.extension !== "md") {
 					return;
+				}
+
+				/* Avoids template replacement when syncing files */
+				const template_folder = normalizePath(this.settings.template_folder);
+				if (template_folder !== "/") {
+					let parent = file.parent;
+					while (parent != null) {
+						if (parent.path === template_folder) {
+							return;
+						}
+						parent = parent.parent;
+					}
 				}
 
 				// TODO: find a better way to do this
