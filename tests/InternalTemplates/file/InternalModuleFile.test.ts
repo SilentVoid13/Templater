@@ -8,15 +8,19 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
         await expect(t.run_and_get_output(`<% tp.file.content %>`, target_file_content)).to.eventually.equal(target_file_content);
     });
 
+    t.test("tp.file.create_new", async () => {
+        // TODO
+    });
+
     t.test("tp.file.creation_date", async() => {
         const saved_ctime = t.target_file.stat.ctime;
         // 2021-05-01 00:00:00
         t.target_file.stat.ctime = 1619820000000;
 
-        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date() %>\n\n`, "", false, true))
-            .to.equal("Creation date: 2021-05-01 00:00\n\n");
-        expect(await t.run_and_get_output(`Creation date: <% tp.file.creation_date("dddd Do MMMM YYYY, ddd") %>\n\n`, "", false, true))
-            .to.equal("Creation date: Saturday 1st May 2021, Sat\n\n");
+        await expect(t.run_and_get_output(`Creation date: <% tp.file.creation_date() %>\n\n`, "", false, true))
+            .to.eventually.equal("Creation date: 2021-05-01 00:00\n\n");
+        await expect(t.run_and_get_output(`Creation date: <% tp.file.creation_date("dddd Do MMMM YYYY, ddd") %>\n\n`, "", false, true))
+            .to.eventually.equal("Creation date: Saturday 1st May 2021, Sat\n\n");
 
         t.target_file.stat.ctime = saved_ctime;
     });
@@ -25,11 +29,20 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
         await expect(t.run_and_get_output(`Cursor: <%\t\ntp.file.cursor(10)\t\r\n%>\n\n`, "")).to.eventually.equal(`Cursor: <% tp.file.cursor(10) %>\n\n`);
     });
 
+    t.test("tp.file.cursor_append", async () => {
+        await expect(t.run_and_get_output(`Cursor append: <% tp.file.cursor_append("TestTest") %>\n\n`)).to.eventually.equal(`TestTest Cursor append: \n\n`);
+    });
+
     t.test("tp.file.exists", async () => {
         await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[${t.target_file.basename}]]") %>\n\n`)).to.eventually.equal(`File Exists: true\n\n`);
         await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[NonExistingFile]]") %>\n\n`)).to.eventually.equal(`File Exists: false\n\n`);
 
         await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("TestFile") %>\n\n`)).to.eventually.be.rejectedWith(Error, "Invalid file format, provide an obsidian link between quotes.");
+    });
+
+    t.test("tp.file.find_tfile", async () => {
+        await expect((await t.run_and_get_output(`File: <% tp.file.find_tfile("${t.target_file.basename}").path %>\n\n`))).to.eventually.equal(`File: ${t.target_file.path}\n\n`);
+        await expect((await t.run_and_get_output(`File: <% tp.file.find_tfile("NonExistingFile") %>\n\n`))).to.eventually.equal(`File: undefined\n\n`);
     });
 
     t.test("tp.file.folder", async () => {
