@@ -1,6 +1,6 @@
 import { InternalModule } from "../InternalModule";
 
-import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, resolveSubpath, TFile } from "obsidian";
+import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, resolveSubpath, TFile, TFolder } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
 
@@ -9,12 +9,16 @@ export const DEPTH_LIMIT = 10;
 export class InternalModuleFile extends InternalModule {
     public name: string = "file";
     private include_depth: number = 0;
+    private create_new_depth: number = 0;
     private linkpath_regex: RegExp = new RegExp("^\\[\\[(.*)\\]\\]$");
 
     async createStaticTemplates(): Promise<void> {
         this.static_templates.set("creation_date", this.generate_creation_date());
+        this.static_templates.set("create_new", this.generate_create_new());
         this.static_templates.set("cursor", this.generate_cursor());
+        this.static_templates.set("cursor_append", this.generate_cursor_append());
         this.static_templates.set("exists", this.generate_exists());
+        this.static_templates.set("find_tfile", this.generate_find_tfile());
         this.static_templates.set("folder", this.generate_folder());
         this.static_templates.set("include", this.generate_include());
         this.static_templates.set("last_modified_date", this.generate_last_modified_date());
@@ -28,6 +32,32 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_templates.set("content", await this.generate_content());
         this.dynamic_templates.set("tags", this.generate_tags());
         this.dynamic_templates.set("title", this.generate_title());
+    } 
+
+    async generate_content(): Promise<string> {
+        return await this.app.vault.read(this.config.target_file);
+    }
+
+    generate_create_new(): Function {
+        return async (template: TFile | string, filename?: string, open_new: boolean = true, folder?: TFolder) => {
+            this.create_new_depth += 1;
+            if (this.create_new_depth > DEPTH_LIMIT) {
+                this.create_new_depth = 0;
+                throw new TemplaterError("Reached create_new depth limit (max = 10)");
+            }
+
+            const new_file = await this.plugin.templater.create_new_note_from_template(template, folder, filename, open_new)
+
+            this.create_new_depth -= 1;
+
+            return new_file;
+        }
+    }
+
+    generate_creation_date(): Function {
+        return (format: string = "YYYY-MM-DD HH:mm") => {
+            return window.moment(this.config.target_file.stat.ctime).format(format);
+        }
     }
 
     generate_cursor(): Function {
@@ -37,13 +67,18 @@ export class InternalModuleFile extends InternalModule {
         }
     }
 
-    async generate_content(): Promise<string> {
-        return await this.app.vault.read(this.config.target_file);
-    }
+    generate_cursor_append(): Function {
+        return (content: string): string => {
+            const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
+            if (active_view === null) {
+                this.plugin.log_error(new TemplaterError("No active view, can't append to cursor."));
+                return;
+            }
 
-    generate_creation_date(): Function {
-        return (format: string = "YYYY-MM-DD HH:mm") => {
-            return window.moment(this.config.target_file.stat.ctime).format(format);
+            const editor = active_view.editor;
+            const doc = editor.getDoc();
+            doc.replaceSelection(content);
+            return "";
         }
     }
 
@@ -55,6 +90,13 @@ export class InternalModuleFile extends InternalModule {
             }
             const file = this.app.metadataCache.getFirstLinkpathDest(match[1], "");
             return file != null;
+        }
+    }
+
+    generate_find_tfile(): Function {
+        return (filename: string) => {
+            const path = normalizePath(filename);
+            return this.app.metadataCache.getFirstLinkpathDest(path, "");
         }
     }
 

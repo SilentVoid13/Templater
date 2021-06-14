@@ -42,36 +42,51 @@ export class Templater {
 
     async read_and_parse_template(config: RunningConfig): Promise<string> {
         const template_content = await this.app.vault.read(config.template_file);
+        return this.parse_template(config, template_content);
+    }
+
+    async parse_template(config: RunningConfig, template_content: string): Promise <string> {
         await this.parser.setCurrentContext(config, ContextMode.USER_INTERNAL);
         const content = await this.parser.parseTemplates(template_content);
         return content;
     }
 
-    async create_new_note_from_template(template_file: TFile, folder?: TFolder): Promise<void> {
+    async create_new_note_from_template(template: TFile | string, folder?: TFolder, filename?: string, open_new_note: boolean = true): Promise<TFile> {
         if (!folder) {
             folder = this.app.fileManager.getNewFileParent("");
         }
         // TODO: Change that, not stable atm
         // @ts-ignore
-        const created_note = await this.app.fileManager.createNewMarkdownFile(folder, "Untitled");
+        const created_note = await this.app.fileManager.createNewMarkdownFile(folder, filename ?? "Untitled");
 
-        const running_config = this.create_running_config(template_file, created_note, RunMode.CreateNewFromTemplate);
+        let running_config: RunningConfig;
+        let output_content: string;
+        if (template instanceof TFile) {
+            running_config = this.create_running_config(template, created_note, RunMode.CreateNewFromTemplate);
+            output_content = await this.plugin.errorWrapper(async () => this.read_and_parse_template(running_config));
+        } else {
+            running_config = this.create_running_config(undefined, created_note, RunMode.CreateNewFromTemplate);
+            output_content = await this.plugin.errorWrapper(async () => this.parse_template(running_config, template));
+        }
 
-        const output_content = await this.plugin.errorWrapper(async () => this.read_and_parse_template(running_config));
         if (output_content == null) {
             await this.app.vault.delete(created_note);
             return;
         }
+
         await this.app.vault.modify(created_note, output_content);
 
-        const active_leaf = this.app.workspace.activeLeaf;
-        if (!active_leaf) {
-            this.plugin.log_error(new TemplaterError("No active leaf"));
-            return;
+        if (open_new_note) {
+            const active_leaf = this.app.workspace.activeLeaf;
+            if (!active_leaf) {
+                this.plugin.log_error(new TemplaterError("No active leaf"));
+                return;
+            }
+            await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
+            await this.cursor_jumper.jump_to_next_cursor_location();
         }
-        await active_leaf.openFile(created_note, {state: {mode: 'source'}, eState: {rename: 'all'}});
 
-        await this.cursor_jumper.jump_to_next_cursor_location();
+        return created_note;
     }
 
     async append_template(template_file: TFile): Promise<void> {
