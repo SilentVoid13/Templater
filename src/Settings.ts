@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: TemplaterSettings = {
 	shell_path: "",
 	script_folder: undefined,
 	empty_file_template: undefined,
+	syntax_highlighting: true,
 };
 
 export interface TemplaterSettings {
@@ -23,6 +24,7 @@ export interface TemplaterSettings {
 	shell_path: string,
 	script_folder: string,
 	empty_file_template: string,
+	syntax_highlighting: boolean,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -79,6 +81,24 @@ export class TemplaterSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName("Internal Variables and Functions")
 			.setDesc(desc);
+
+		desc = document.createDocumentFragment();
+		desc.append(
+			"Adds syntax highlighting for Templater commands in edit mode.",
+		);	
+
+		new Setting(containerEl)
+			.setName("Syntax Highlighting")
+			.setDesc(desc)
+			.addToggle(toggle => {
+				toggle
+					.setValue(this.plugin.settings.syntax_highlighting)
+					.onChange(syntax_highlighting => {
+						this.plugin.settings.syntax_highlighting = syntax_highlighting;
+						this.plugin.saveSettings();
+						this.plugin.update_syntax_highlighting();
+					})
+			});
 
 		desc = document.createDocumentFragment();
 		desc.append(

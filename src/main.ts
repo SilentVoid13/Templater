@@ -1,4 +1,4 @@
-import { addIcon, EventRef, Menu, MenuItem, normalizePath, Notice, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
+import { addIcon, EventRef, Menu, MenuItem, normalizePath, Notice, Platform, Plugin, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 import { DEFAULT_SETTINGS, TemplaterSettings, TemplaterSettingTab } from 'Settings';
 import { TemplaterFuzzySuggestModal } from 'TemplaterFuzzySuggest';
@@ -6,21 +6,25 @@ import { ICON_DATA } from 'Constants';
 import { delay, resolveTFile } from 'Utils';
 import { Templater } from 'Templater';
 import { TemplaterError } from 'Error';
+import { TemplaterEditor } from 'TemplaterEditor';
 
 export default class TemplaterPlugin extends Plugin {
 	public settings: TemplaterSettings; 
+	public editor: TemplaterEditor;
 	public templater: Templater;
 	private fuzzySuggest: TemplaterFuzzySuggestModal;
 	private trigger_on_file_creation_event: EventRef;
+	private syntax_highlighting_event: EventRef;
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
 
-		// TODO
-		//await this.registerCodeMirrorMode();
-
 		this.templater = new Templater(this.app, this);
 		await this.templater.setup();
+
+		this.editor = new TemplaterEditor(this.app, this);
+		await this.editor.setup();
+		this.update_syntax_highlighting();
 
 		this.fuzzySuggest = new TemplaterFuzzySuggestModal(this.app, this);
 
@@ -88,8 +92,6 @@ export default class TemplaterPlugin extends Plugin {
 		});
 
 		this.app.workspace.onLayoutReady(() => {
-			// TODO
-			//this.registerCodeMirrorMode();
 			this.update_trigger_file_on_creation();	
 		});
 
@@ -154,15 +156,31 @@ export default class TemplaterPlugin extends Plugin {
 				}
 				this.templater.overwrite_file_templates(file);
 			});
-			this.registerEvent(
-				this.trigger_on_file_creation_event
-			);
-		}
-		else {
+			this.registerEvent(this.trigger_on_file_creation_event);
+		} else {
 			if (this.trigger_on_file_creation_event) {
 				this.app.vault.offref(this.trigger_on_file_creation_event);
 				this.trigger_on_file_creation_event = undefined;
 			}
+		}
+	}
+
+	update_syntax_highlighting() {
+		if (this.settings.syntax_highlighting) {
+			this.syntax_highlighting_event = this.app.workspace.on("codemirror", cm => {
+				cm.setOption("mode", "templater");
+			});
+			this.app.workspace.iterateCodeMirrors(cm => {
+				cm.setOption("mode", "templater");
+			});
+			this.registerEvent(this.syntax_highlighting_event);
+		} else {
+			if (this.syntax_highlighting_event) {
+				this.app.vault.offref(this.syntax_highlighting_event);
+			}
+			this.app.workspace.iterateCodeMirrors(cm => {
+				cm.setOption("mode", "hypermd");
+			});
 		}
 	}
 
@@ -199,96 +217,4 @@ export default class TemplaterPlugin extends Plugin {
 			notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}`;
 		}
 	}	
-
-	// TODO
-	async registerCodeMirrorMode() {
-		// https://codemirror.net/doc/manual.html#modeapi
-		// cm-editor-syntax-highlight-obsidian plugin
-		// https://codemirror.net/mode/diff/diff.js
-		// https://marijnhaverbeke.nl/blog/codemirror-mode-system.html
-
-		//await delay(300);
-
-		const hypermd_mode = window.CodeMirror.getMode({}, "hypermd");
-		let javascript_mode = window.CodeMirror.getMode({}, "javascript");
-		if (javascript_mode.name === "null") {
-			javascript_mode = undefined;
-		}
-
-		window.CodeMirror.extendMode("hypermd", {
-			startState: function() {
-				const hypermd_state = window.CodeMirror.startState(hypermd_mode);
-				const js_state = javascript_mode ? window.CodeMirror.startState(javascript_mode): {};
-				return {
-					...hypermd_state,
-					...js_state,
-					inCommand: false,
-					lastUsed: false,
-				};
-			},
-			copyState: function(state) {
-				const hypermd_state: {} = hypermd_mode.copyState(state);
-				const js_state = javascript_mode ? window.CodeMirror.startState(javascript_mode): {};
-				const new_state = {
-					...hypermd_state,
-					...js_state,
-					inCommand: state.inCommand,
-					lastUsed: state.lastUsed,
-				};
-				return new_state;
-			},
-			// TODO: Fix conflicts with links
-			token: function(stream, state) {
-				const m = stream.match(/(<%)/, true);
-				if (m) {
-					state.inCommand = true;
-					/*return "hmd-internal-link formatting formatting-code inline-code";*/
-				}
-
-				if (state.inCommand) {
-					state.inCommand = false;
-					state.lastUsed = true;
-
-					const mm = stream.skipTo("%>");
-					if (mm) {
-						stream.next();
-						stream.next();
-					} else {
-						stream.skipToEnd();
-					}
-					return "formatting formatting-code inline-code";
-
-					/* TODO: Add javascript syntax highlighting */
-					/*
-					if (stream.peek() == "%") {
-						console.log("END END");
-						stream.next();
-						stream.next();
-						state.code = 0;
-						state.inCommand = false;
-						return "formatting formatting-code inline-code";
-					}
-
-					let keywords = "";
-					if (javascript_mode) {
-						const js_result = javascript_mode.token(stream, state);
-						console.log("js_result:", js_result);
-						if (js_result) {
-							keywords +=  " " + js_result;
-						}
-					}
-					return keywords;
-					*/
-				} 
-
-				console.log("OLD_STATE:", state);
-				const result = hypermd_mode.token(stream, state);
-				console.log("NEW_STATE:", state);
-				if (state.lastUsed) {
-					state.lastUsed = false;
-				}
-				return result;
-			},
-		});
-	}
 };

@@ -59,3 +59,191 @@
 .templater-prompt-input {
     flex-grow: 1;
 }
+
+
+
+.theme-dark .cm-s-obsidian .templater-command {
+  color: #d4d4d4;
+  background-color: var(--background-primary-alt);
+  z-index: 0;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command{
+  color: #d4d4d4;
+  background-color: var(--background-primary-alt);
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-templater-opening-tag {
+    font-weight: bold;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-templater-closing-tag {
+    font-weight: bold;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-templater-interpolation-tag {
+    color: #008BFF;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-templater-execution-tag {
+    color: #C0D700;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-templater-raw-tag {
+    color: green;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-keyword {
+  color: #00A7AA;
+  font-weight: normal;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-atom {
+  color: #F39B35;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-number {
+  color: #A06FCA;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-type {
+  color: #A06FCA;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-def {
+  color: #98E342;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-property {
+  color: #D4D4D4;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable {
+  color: #D4D4D4;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-2 {
+  color: #da7dae;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-3 {
+  color: #A06FCA;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-type.cm-def {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-property.cm-def {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-callee {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-operator {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-qualifier {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag.cm-bracket {
+  color: #D4D4D4;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-attribute {
+  color: #A06FCA;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment {
+  color: #696d70;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-tag {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
+  color: #D4D4D4;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-string {
+  color: #E6DB74;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-string-2 {
+  color: #F39B35;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-meta {
+  color: #D4D4D4;
+  background: inherit;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-builtin {
+  color: #FC4384;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-header {
+  color: #da7dae;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-hr {
+  color: #98E342;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-link {
+  color: #696d70;
+}
+
+
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-error {
+  border-bottom: 1px solid #C42412;
+}
+
+
+.cm-s-obsidian pre.HyperMD-codeblock .cm-keyword {
+  font-weight: normal;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-activeline-background {
+  background: #272727;
+}
+
+.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-matchingbracket {
+  outline: 1px solid grey;
+  color: #D4D4D4 !important;
+}
