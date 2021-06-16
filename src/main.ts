@@ -16,6 +16,9 @@ export default class TemplaterPlugin extends Plugin {
 	async onload(): Promise<void> {
 		await this.loadSettings();
 
+		// TODO
+		//await this.registerCodeMirrorMode();
+
 		this.templater = new Templater(this.app, this);
 		await this.templater.setup();
 
@@ -197,16 +200,20 @@ export default class TemplaterPlugin extends Plugin {
 		}
 	}	
 
-	/*
 	// TODO
-	registerCodeMirrorMode() {
+	async registerCodeMirrorMode() {
 		// https://codemirror.net/doc/manual.html#modeapi
 		// cm-editor-syntax-highlight-obsidian plugin
 		// https://codemirror.net/mode/diff/diff.js
 		// https://marijnhaverbeke.nl/blog/codemirror-mode-system.html
 
+		//await delay(300);
+
 		const hypermd_mode = window.CodeMirror.getMode({}, "hypermd");
-		const javascript_mode = window.CodeMirror.getMode({}, "javascript");
+		let javascript_mode = window.CodeMirror.getMode({}, "javascript");
+		if (javascript_mode.name === "null") {
+			javascript_mode = undefined;
+		}
 
 		window.CodeMirror.extendMode("hypermd", {
 			startState: function() {
@@ -215,7 +222,8 @@ export default class TemplaterPlugin extends Plugin {
 				return {
 					...hypermd_state,
 					...js_state,
-					inCommand: false
+					inCommand: false,
+					lastUsed: false,
 				};
 			},
 			copyState: function(state) {
@@ -224,37 +232,63 @@ export default class TemplaterPlugin extends Plugin {
 				const new_state = {
 					...hypermd_state,
 					...js_state,
-					inCommand: state.inCommand
+					inCommand: state.inCommand,
+					lastUsed: state.lastUsed,
 				};
 				return new_state;
 			},
 			// TODO: Fix conflicts with links
 			token: function(stream, state) {
-				if (stream.match(/<%[*~]{0,1}[-_]{0,1}/)) {
+				const m = stream.match(/(<%)/, true);
+				if (m) {
 					state.inCommand = true;
-					return "formatting formatting-code inline-code";
+					/*return "hmd-internal-link formatting formatting-code inline-code";*/
 				}
 
 				if (state.inCommand) {
-					if (stream.match(/[-_]{0,1}%>/m, true)) {
+					state.inCommand = false;
+					state.lastUsed = true;
+
+					const mm = stream.skipTo("%>");
+					if (mm) {
+						stream.next();
+						stream.next();
+					} else {
+						stream.skipToEnd();
+					}
+					return "formatting formatting-code inline-code";
+
+					/* TODO: Add javascript syntax highlighting */
+					/*
+					if (stream.peek() == "%") {
+						console.log("END END");
+						stream.next();
+						stream.next();
+						state.code = 0;
 						state.inCommand = false;
 						return "formatting formatting-code inline-code";
 					}
 
-					let keywords = "hmd-codeblock line-testtest";
+					let keywords = "";
 					if (javascript_mode) {
 						const js_result = javascript_mode.token(stream, state);
+						console.log("js_result:", js_result);
 						if (js_result) {
 							keywords +=  " " + js_result;
 						}
 					}
 					return keywords;
+					*/
 				} 
 
+				console.log("OLD_STATE:", state);
 				const result = hypermd_mode.token(stream, state);
+				console.log("NEW_STATE:", state);
+				if (state.lastUsed) {
+					state.lastUsed = false;
+				}
 				return result;
 			},
 		});
 	}
-	*/
 };
