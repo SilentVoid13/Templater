@@ -1,6 +1,6 @@
 import { InternalModule } from "../InternalModule";
 
-import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, resolveSubpath, TFile, TFolder } from "obsidian";
+import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, Platform, resolveSubpath, TFile, TFolder } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
 
@@ -181,8 +181,7 @@ export class InternalModuleFile extends InternalModule {
     generate_path(): Function {
         return (relative: boolean = false) => {
             // TODO: Add mobile support
-            // @ts-ignore
-            if (this.app.isMobile) {
+            if (Platform.isMobileApp) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
             if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {

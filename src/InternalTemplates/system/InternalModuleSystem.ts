@@ -1,5 +1,6 @@
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { InternalModule } from "InternalTemplates/InternalModule";
+import { Platform } from "obsidian";
 import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
 
@@ -17,8 +18,7 @@ export class InternalModuleSystem extends InternalModule {
     generate_clipboard(): Function {
         return async () => {
             // TODO: Add mobile support
-            // @ts-ignore
-            if (this.app.isMobile) {
+            if (Platform.isMobileApp) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
             return await navigator.clipboard.readText();

@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, TFile } from "obsidian";
+import { App, FileSystemAdapter, Platform, TFile } from "obsidian";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -21,8 +21,7 @@ export class UserTemplateParser implements TParser {
     }
 
     setup(): void {
-        // @ts-ignore
-        if (this.app.isMobile || !(this.app.vault.adapter instanceof FileSystemAdapter)) {
+        if (Platform.isMobileApp || !(this.app.vault.adapter instanceof FileSystemAdapter)) {
             this.cwd = "";
         }
         else {
@@ -75,8 +74,7 @@ export class UserTemplateParser implements TParser {
                 continue;
             }
 
-            // @ts-ignore
-            if (this.app.isMobile) {
+            if (Platform.isMobileApp) {
                 this.user_system_command_functions.set(template, (user_args?: any): string => {
                     return UNSUPPORTED_MOBILE_TEMPLATE;
                 })
@@ -116,9 +114,9 @@ export class UserTemplateParser implements TParser {
         if (this.plugin.settings.enable_system_commands) {
             await this.generate_system_command_user_functions(config);
         }
+
         // TODO: Add mobile support
-        // @ts-ignore
-        if (!this.app.isMobile && this.plugin.settings.script_folder) {
+        if (Platform.isDesktopApp && this.plugin.settings.script_folder) {
             await this.generate_user_script_functions(config);
         }
 
