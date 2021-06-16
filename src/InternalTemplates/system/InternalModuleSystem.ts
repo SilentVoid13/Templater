@@ -41,8 +41,8 @@ export class InternalModuleSystem extends InternalModule {
     }
 
     generate_suggester(): Function {
-        return async <T>(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false): Promise<T> => {
-            const suggester = new SuggesterModal(this.app, text_items, items);
+        return async <T>(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = ""): Promise<T> => {
+            const suggester = new SuggesterModal(this.app, text_items, items, placeholder);
             const promise = new Promise((resolve: (value: T) => void, reject: (reason?: any) => void) => suggester.openAndGetValue(resolve, reject));
             try {
                 return await promise

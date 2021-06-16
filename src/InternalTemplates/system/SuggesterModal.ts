@@ -7,8 +7,9 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     private reject: (reason?: any) => void;
     private submitted: boolean = false;
 
-    constructor(app: App, private text_items: string[] | ((item: T) => string), private items: T[]) {
+    constructor(app: App, private text_items: string[] | ((item: T) => string), private items: T[], placeholder: string) {
         super(app);
+        this.setPlaceholder(placeholder);
     }
 
     getItems(): T[] {
