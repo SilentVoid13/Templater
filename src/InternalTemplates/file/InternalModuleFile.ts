@@ -39,7 +39,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_create_new(): Function {
-        return async (template: TFile | string, filename?: string, open_new: boolean = true, folder?: TFolder) => {
+        return async (template: TFile | string, filename?: string, open_new: boolean = false, folder?: TFolder) => {
             this.create_new_depth += 1;
             if (this.create_new_depth > DEPTH_LIMIT) {
                 this.create_new_depth = 0;
@@ -83,12 +83,14 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_exists(): Function {
-        return (file_link: string) => {
+        return (filename: string) => {
+            // TODO: Remove this, only here to support the old way
             let match;
-            if ((match = this.linkpath_regex.exec(file_link)) === null) {
-                throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
+            if ((match = this.linkpath_regex.exec(filename)) !== null) {
+                filename = match[1];
             }
-            const file = this.app.metadataCache.getFirstLinkpathDest(match[1], "");
+
+            const file = this.app.metadataCache.getFirstLinkpathDest(filename, "");
             return file != null;
         }
     }
@@ -117,7 +119,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_include(): Function {
-        return async (include_link: string) => {
+        return async (include_link: string | TFile) => {
             // TODO: Add mutex for this, this may currently lead to a race condition. 
             // While not very impactful, that could still be annoying.
             this.include_depth += 1;
@@ -126,27 +128,33 @@ export class InternalModuleFile extends InternalModule {
                 throw new TemplaterError("Reached inclusion depth limit (max = 10)");
             }
 
-            let match;
-            if ((match = this.linkpath_regex.exec(include_link)) === null) {
-                throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
-            }
-            const {path, subpath} = parseLinktext(match[1]);
+            let inc_file_content: string;
 
-            const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
-            if (!inc_file) {
-                throw new TemplaterError(`File ${include_link} doesn't exist`);
-            }
+            if (include_link instanceof TFile) {
+                inc_file_content = await this.app.vault.read(include_link);
+            } else {
+                let match;
+                if ((match = this.linkpath_regex.exec(include_link)) === null) {
+                    throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
+                }
+                const {path, subpath} = parseLinktext(match[1]);
 
-            let inc_file_content = await this.app.vault.read(inc_file);
-            if (subpath) {
-                const cache = this.app.metadataCache.getFileCache(inc_file);
-                if (cache) {
-                    const result = resolveSubpath(cache, subpath);
-                    if (result) {
-                        inc_file_content = inc_file_content.slice(result.start.offset, result.end?.offset);
+                const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
+                if (!inc_file) {
+                    throw new TemplaterError(`File ${include_link} doesn't exist`);
+                }
+                inc_file_content = await this.app.vault.read(inc_file);
+
+                if (subpath) {
+                    const cache = this.app.metadataCache.getFileCache(inc_file);
+                    if (cache) {
+                        const result = resolveSubpath(cache, subpath);
+                        if (result) {
+                            inc_file_content = inc_file_content.slice(result.start.offset, result.end?.offset);
+                        }
                     }
                 }
-            }
+            } 
 
             const parsed_content = await this.plugin.templater.parser.parseTemplates(inc_file_content);
             
