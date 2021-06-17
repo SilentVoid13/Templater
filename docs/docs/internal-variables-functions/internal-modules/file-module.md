@@ -24,7 +24,7 @@ Function documentation is using a specific syntax. More informations [here](../.
 | `tp.file.folder(relative: boolean = false)`                  | - `relative`: If `true`, appends the vault relative path to the folder name. | Retrieves the file's folder name.                            | `Permanent Notes`             |
 | `tp.file.include(include_link: string ⎮ TFile)`              | - `include_link`: The link to the file to include, e.g. `[[MyFile]]`, or a [TFile](https://github.com/obsidianmd/obsidian-api/blob/ddd50214f530d23ee21f440a9fa64f4507176871/obsidian.d.ts#L2834) object. Also supports sections or blocks inclusions, e.g. `[[MyFile#Section1]]` | Includes the file's link content. Templates in the included content will be resolved. | `Header for all my templates` |
 | `tp.file.last_modified_date(format: string = "YYYY-MM-DD HH:mm")` | - `format`: Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/) | Retrieves the file's last modification date.                 | `2021-01-06 20:27`            |
-| `tp.file.move(new_path: string)`                             | - `path`: The new vault relative path of the file, without the file extension, e.g. `/Notes/MyNote` | Moves the file to the desired vault's location.              | None                          |
+| `tp.file.move(new_path: string)`                             | - `path`: The new vault relative path of the file, without the file extension. **Note**: the new path needs to include the folder **and** the filename, e.g. `/Notes/MyNote` | Moves the file to the desired vault's location.              | None                          |
 | `tp.file.path(relative: boolean = false)`                    | - `relative` (optional): If `true`, only retrieves the vault's relative path. | Retrieves the file's absolute path on the system.            | `/path/to/file`               |
 | `tp.file.rename(new_title: string)`                          | - `new_title`: The new file title                            | Renames the file (keeps the same file extension).            | None                          |
 | `tp.file.selection()`                                        | None                                                         | Retrieves the active file's text selection.                  | `Some selected text`          |
@@ -57,7 +57,8 @@ File Include: <% tp.file.include("[[Template1]]") %>
 File Last Modif Date: <% tp.file.last_modified_date() %>
 File Last Modif Date with format: <% tp.file.last_modified_date("dddd Do MMMM YYYY HH:mm") %>
 
-File Move: <% await tp.file.move("/A/B/File") %>
+File Move: <% await tp.file.move("/A/B/" + tp.file.title) %>
+File Move + Rename: <% await tp.file.move("/A/B/NewTitle") %>
 
 File Path: <% tp.file.path() %>
 File Path with relative path: <% tp.file.path(true) %>
