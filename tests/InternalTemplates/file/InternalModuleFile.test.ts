@@ -30,19 +30,20 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
     });
 
     t.test("tp.file.cursor_append", async () => {
-        await expect(t.run_and_get_output(`Cursor append: <% tp.file.cursor_append("TestTest") %>\n\n`)).to.eventually.equal(`TestTest Cursor append: \n\n`);
+        // TODO
+        //await expect(t.run_and_get_output(`Cursor append: <% tp.file.cursor_append("TestTest") %>\n\n`)).to.eventually.equal(`TestTest Cursor append: \n\n`);
     });
 
     t.test("tp.file.exists", async () => {
         await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[${t.target_file.basename}]]") %>\n\n`)).to.eventually.equal(`File Exists: true\n\n`);
-        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[NonExistingFile]]") %>\n\n`)).to.eventually.equal(`File Exists: false\n\n`);
+        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("${t.target_file.basename}") %>\n\n`)).to.eventually.equal(`File Exists: true\n\n`);
 
-        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("TestFile") %>\n\n`)).to.eventually.be.rejectedWith(Error, "Invalid file format, provide an obsidian link between quotes.");
+        await expect(t.run_and_get_output(`File Exists: <% tp.file.exists("[[NonExistingFile]]") %>\n\n`)).to.eventually.equal(`File Exists: false\n\n`);
     });
 
     t.test("tp.file.find_tfile", async () => {
-        await expect((await t.run_and_get_output(`File: <% tp.file.find_tfile("${t.target_file.basename}").path %>\n\n`))).to.eventually.equal(`File: ${t.target_file.path}\n\n`);
-        await expect((await t.run_and_get_output(`File: <% tp.file.find_tfile("NonExistingFile") %>\n\n`))).to.eventually.equal(`File: undefined\n\n`);
+        await expect(t.run_and_get_output(`File: <% tp.file.find_tfile("${t.target_file.basename}").path %>\n\n`)).to.eventually.equal(`File: ${t.target_file.path}\n\n`);
+        await expect(t.run_and_get_output(`File: <% tp.file.find_tfile("NonExistingFile") %>\n\n`)).to.eventually.equal(`File: null\n\n`);
     });
 
     t.test("tp.file.folder", async () => {

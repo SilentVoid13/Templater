@@ -4,8 +4,11 @@ import TemplaterPlugin from "main";
 import { TemplaterError } from "Error";
 
 const TP_CMD_TOKEN_CLASS: string = "templater-command";
+const TP_INLINE_CLASS: string = "templater-inline";
+
 const TP_OPENING_TAG_TOKEN_CLASS: string = "templater-opening-tag";
 const TP_CLOSING_TAG_TOKEN_CLASS: string = "templater-closing-tag";
+
 const TP_INTERPOLATION_TAG_TOKEN_CLASS: string = "templater-interpolation-tag";
 const TP_RAW_TAG_TOKEN_CLASS: string = "templater-raw-tag";
 const TP_EXEC_TAG_TOKEN_CLASS: string = "templater-execution-tag";
@@ -62,7 +65,7 @@ export class TemplaterEditor {
                 },
                 blankLine: function(state: any) {
                     if (state.inCommand) {
-                        return `line-${TP_CMD_TOKEN_CLASS}`;
+                        return `line-background-templater-command-bg`;
                     }
                     return null;
                 },
@@ -79,15 +82,18 @@ export class TemplaterEditor {
                             const tag_class = state.tag_class;
                             state.tag_class = "";
 
-                            return `${keywords} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
+                            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
                         } 
 
                         const js_result = js_mode.token(stream, state);
                         if (stream.peek() == null && state.freeLine) {
-                            keywords += `line-${TP_CMD_TOKEN_CLASS}`;
+                            keywords += ` line-background-templater-command-bg`;
+                        }
+                        if (!state.freeLine) {
+                            keywords += ` line-${TP_INLINE_CLASS}`;
                         }
 
-                        return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
+                        return `${keywords} ${TP_CMD_TOKEN_CLASS} line-${TP_CMD_TOKEN_CLASS} ${js_result}`;
                     }
 
                     const match = stream.match(/<%[\-_]{0,1}\s*([*~+]{0,1})/, true);
@@ -104,7 +110,7 @@ export class TemplaterEditor {
                                 break;
                         }
                         state.inCommand = true;
-                        return `${state.tag_class} ${TP_OPENING_TAG_TOKEN_CLASS} ${TP_CMD_TOKEN_CLASS}`;
+                        return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
                     }
 
                     while (stream.next() != null && !stream.match(/<%/, false));
