@@ -1,7 +1,9 @@
 import { App, Platform } from "obsidian";
-import "mode/javascript";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "Error";
+
+import "mode/javascript";
+import "mode/custom_overlay";
 
 const TP_CMD_TOKEN_CLASS: string = "templater-command";
 const TP_INLINE_CLASS: string = "templater-inline";
@@ -36,11 +38,19 @@ export class TemplaterEditor {
 			return;
 		}
 
-        let js_mode = window.CodeMirror.getMode({}, "javascript");
+        const js_mode = window.CodeMirror.getMode({}, "javascript");
 		if (js_mode.name === "null") {
             this.plugin.log_error(new TemplaterError("Javascript syntax mode couldn't be found, can't enable syntax highlighting."));
             return;
 		}
+
+        // Custom overlay mode used to handle edge cases
+        // @ts-ignore
+        const overlay_mode = window.CodeMirror.customOverlayMode;
+        if (overlay_mode == null) {
+            this.plugin.log_error(new TemplaterError("Couldn't find customOverlayMode, can't enable syntax highlighting."));
+            return;
+        }
 
         window.CodeMirror.defineMode("templater", function(config, parserConfig) {
 			const templaterOverlay = {
@@ -81,7 +91,7 @@ export class TemplaterEditor {
                             state.freeLine = false;
                             const tag_class = state.tag_class;
                             state.tag_class = "";
-
+ 
                             return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
                         } 
 
@@ -93,7 +103,7 @@ export class TemplaterEditor {
                             keywords += ` line-${TP_INLINE_CLASS}`;
                         }
 
-                        return `${keywords} ${TP_CMD_TOKEN_CLASS} line-${TP_CMD_TOKEN_CLASS} ${js_result}`;
+                        return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
                     }
 
                     const match = stream.match(/<%[\-_]{0,1}\s*([*~+]{0,1})/, true);
@@ -117,7 +127,7 @@ export class TemplaterEditor {
                     return null;
                 }
 			};
-            return window.CodeMirror.overlayMode(window.CodeMirror.getMode(config, "hypermd"), templaterOverlay);
+            return overlay_mode(window.CodeMirror.getMode(config, "hypermd"), templaterOverlay);
 		}); 
 	}
 }
