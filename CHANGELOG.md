@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/SilentVoid13/Templater/compare/1.7.1...1.8.0) (2021-06-17)
+
+
+### Features
+
+* adding 3 new tp.file internal functions ([c26e4c1](https://github.com/SilentVoid13/Templater/commit/c26e4c1a5c18f48d6428dc4ee9f6b3a4d889e6c0))
+* adding placeholder argument for tp.system.suggester ([e0b288c](https://github.com/SilentVoid13/Templater/commit/e0b288cb1fcbab1860aba99eefb5bc700994b72a)), closes [#264](https://github.com/SilentVoid13/Templater/issues/264)
+* adding syntax highlighting for Templater commands ([2628197](https://github.com/SilentVoid13/Templater/commit/26281976fce88107fa05e9d2b278b0f248f5f547)), closes [#222](https://github.com/SilentVoid13/Templater/issues/222)
+* disabling template replacement on new files in the specified templates folder ([26eafb0](https://github.com/SilentVoid13/Templater/commit/26eafb0c59fd65a2d15714f89d834fdad81eec5d)), closes [#244](https://github.com/SilentVoid13/Templater/issues/244)
+* updating tp.file internal functions ([7a00bf8](https://github.com/SilentVoid13/Templater/commit/7a00bf8a12f27a9f50a55fd00709ef15c07c7a3c))
+
 ### [1.7.1](https://github.com/SilentVoid13/Templater/compare/1.7.0...1.7.1) (2021-05-23)
 
 

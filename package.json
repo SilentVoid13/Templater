@@ -1,6 +1,6 @@
 {
   "name": "templater-obsidian",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Create and use templates",
   "main": "main.js",
   "scripts": {
