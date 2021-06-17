@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/SilentVoid13/Templater/compare/1.8.0...1.8.1) (2021-06-17)
+
+
+### Bug Fixes
+
+* fixing edge case with code blocks and syntax highlighting ([c42b56d](https://github.com/SilentVoid13/Templater/commit/c42b56dda80999833356b836895e8c1a43d3f758))
+
 ## [1.8.0](https://github.com/SilentVoid13/Templater/compare/1.7.1...1.8.0) (2021-06-17)
 
 
