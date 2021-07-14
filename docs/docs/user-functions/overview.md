@@ -3,6 +3,10 @@ title: Overview
 slug: /user-functions
 ---
 
+:::caution Unavailable on mobile
+Currently user functions are unavailable on Obsidian for mobile.
+:::
+
 You can define your own functions in Templater.
 
 There are two types of user functions you can use:
