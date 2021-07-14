@@ -10,6 +10,7 @@ import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatt
 import { InternalModuleSystem } from "./system/InternalModuleSystem";
 import { RunningConfig } from "Templater";
 import { InternalModuleConfig } from "./config/InternalModuleConfig";
+import {InternalModuleReadwise} from "./readwise/InternalModuleReadwise";
 
 export class InternalTemplateParser implements TParser {
     private modules_array: Array<InternalModule> = new Array();
@@ -21,6 +22,7 @@ export class InternalTemplateParser implements TParser {
         this.modules_array.push(new InternalModuleFrontmatter(this.app, this.plugin));
         this.modules_array.push(new InternalModuleSystem(this.app, this.plugin));
         this.modules_array.push(new InternalModuleConfig(this.app, this.plugin));
+        this.modules_array.push(new InternalModuleReadwise(this.app, this.plugin));
     }
 
     async init(): Promise<void> {
