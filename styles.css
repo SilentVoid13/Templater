@@ -70,7 +70,6 @@
 }
 
 .cm-s-obsidian .cm-templater-command{
-  color: #d4d4d4;
   font-size: 0.85em;
   font-family: var(--font-monospace);
   line-height: 1.3;
@@ -100,157 +99,157 @@
     color: green;
 }
 
-.cm-s-obsidian .cm-templater-command.cm-keyword {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-keyword {
   color: #00A7AA;
   font-weight: normal;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-atom {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-atom {
   color: #F39B35;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-number {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-number {
   color: #A06FCA;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-type {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-type {
   color: #A06FCA;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-def {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-def {
   color: #98E342;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-property {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-property {
   color: #D4D4D4;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-variable {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable {
   color: #D4D4D4;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-variable-2 {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-2 {
   color: #da7dae;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-variable-3 {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-3 {
   color: #A06FCA;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-type.cm-def {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-type.cm-def {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-property.cm-def {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-property.cm-def {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-callee {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-callee {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-operator {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-operator {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-qualifier {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-qualifier {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-tag {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-tag.cm-bracket {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag.cm-bracket {
   color: #D4D4D4;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-attribute {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-attribute {
   color: #A06FCA;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-comment {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment {
   color: #696d70;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-comment.cm-tag {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-tag {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
   color: #D4D4D4;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-string {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-string {
   color: #E6DB74;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-string-2 {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-string-2 {
   color: #F39B35;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-meta {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-meta {
   color: #D4D4D4;
   background: inherit;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-builtin {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-builtin {
   color: #FC4384;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-header {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-header {
   color: #da7dae;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-hr {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-hr {
   color: #98E342;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-link {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-link {
   color: #696d70;
 }
 
 
-.cm-s-obsidian .cm-templater-command.cm-error {
+.theme-dark .cm-s-obsidian .cm-templater-command.cm-error {
   border-bottom: 1px solid #C42412;
 }
 
 
-.cm-s-obsidian pre.HyperMD-codeblock .cm-keyword {
+.theme-dark .cm-s-obsidian pre.HyperMD-codeblock .cm-keyword {
   font-weight: normal;
 }
 
-.cm-s-obsidian .cm-templater-command.CodeMirror-activeline-background {
+.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-activeline-background {
   background: #272727;
 }
 
-.cm-s-obsidian .cm-templater-command.CodeMirror-matchingbracket {
+.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-matchingbracket {
   outline: 1px solid grey;
   color: #D4D4D4 !important;
 }
