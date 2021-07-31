@@ -32,12 +32,6 @@ export default class TestTemplaterPlugin extends Plugin {
         this.addCommand({
 			id: "run-templater-tests",
 			name: "Run Templater Tests",
-			hotkeys: [
-				{
-					modifiers: ["Alt"],
-					key: 't',
-				},
-			],
 			callback: async () => {
                 await this.setup();
                 await this.load_tests();
