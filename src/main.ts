@@ -101,7 +101,7 @@ export default class TemplaterPlugin extends Plugin {
 					menu.addItem((item: MenuItem) => {
 						item.setTitle("Create new note from template")
 							.setIcon("templater-icon")
-							.onClick(evt => {
+							.onClick(_ => {
 								this.fuzzySuggest.create_new_note_from_template(file);
 							})
 					});
@@ -129,14 +129,8 @@ export default class TemplaterPlugin extends Plugin {
 
 				/* Avoids template replacement when syncing files */
 				const template_folder = normalizePath(this.settings.template_folder);
-				if (template_folder !== "/") {
-					let parent = file.parent;
-					while (parent != null) {
-						if (parent.path === template_folder) {
-							return;
-						}
-						parent = parent.parent;
-					}
+				if (file.path.includes(template_folder) && template_folder !== "/") {
+					return;
 				}
 
 				// TODO: find a better way to do this
