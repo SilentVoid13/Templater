@@ -65,7 +65,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/SilentVoid13/Templater/docs/edit/master/',
+            'https://github.com/SilentVoid13/Templater/edit/master/docs/docs',
         },
       },
     ],
