@@ -17,6 +17,7 @@ export interface RunningConfig {
     template_file: TFile,
     target_file: TFile,
     run_mode: RunMode,
+    active_file?: TFile,
 };
 
 export class Templater {
@@ -33,11 +34,14 @@ export class Templater {
     }
 
     create_running_config(template_file: TFile, target_file: TFile, run_mode: RunMode) {
+       const active_file = this.app.workspace.getActiveFile();
+
         return {
             template_file: template_file,
             target_file: target_file,
             run_mode: run_mode,
-        }
+            active_file: active_file,
+        };
     }
 
     async read_and_parse_template(config: RunningConfig): Promise<string> {
@@ -52,9 +56,30 @@ export class Templater {
     }
 
     async create_new_note_from_template(template: TFile | string, folder?: TFolder, filename?: string, open_new_note: boolean = true): Promise<TFile> {
+
+        // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
-            folder = this.app.fileManager.getNewFileParent("");
+            // TODO: Fix that
+            // @ts-ignore
+            const new_file_location = this.app.vault.getConfig("newFileLocation");
+            switch (new_file_location) {
+                case "current":
+                    const active_file = this.app.workspace.getActiveFile();
+                    if (active_file) {
+                        folder = active_file.parent; 
+                    }
+                    break;
+                case "folder":
+                    folder = this.app.fileManager.getNewFileParent("");
+                    break;
+                case "root":
+                    folder = this.app.vault.getRoot();
+                    break;
+                default:
+                    break;
+            }
         }
+
         // TODO: Change that, not stable atm
         // @ts-ignore
         const created_note = await this.app.fileManager.createNewMarkdownFile(folder, filename ?? "Untitled");
