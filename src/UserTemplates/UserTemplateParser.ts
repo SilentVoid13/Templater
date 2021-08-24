@@ -17,7 +17,7 @@ export class UserTemplateParser implements TParser {
     private user_script_functions: Map<string, Function> = new Map();
 
     constructor(private app: App, private plugin: TemplaterPlugin) {
-        this.setup();        
+        this.setup();
     }
 
     setup(): void {
@@ -30,7 +30,7 @@ export class UserTemplateParser implements TParser {
         }
     }
 
-    async init(): Promise<void> {}
+    async init(): Promise<void> { }
 
     async generate_user_script_functions(config: RunningConfig): Promise<void> {
         let files = getTFilesFromFolder(this.app, this.plugin.settings.script_folder);
@@ -43,26 +43,33 @@ export class UserTemplateParser implements TParser {
     }
 
     async load_user_script_function(config: RunningConfig, file: TFile): Promise<void> {
-        if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
-            throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
-        }
-        let vault_path = this.app.vault.adapter.getBasePath();
-        let file_path = `${vault_path}/${file.path}`;
+        if (Platform.isMobileApp) {
+            const content = await this.app.vault.read(file)
+            const newContent = content.replace(/module\.exports\(.+\)/, "")
+            const func = Function(`return ${newContent}`)()
+            this.user_script_functions.set(`${file.basename}`, func);
+        } else {
+            if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
+                throw new TemplaterError("app.vault is not a FileSystemAdapter instance");
+            }
+            let vault_path = this.app.vault.adapter.getBasePath();
+            let file_path = `${vault_path}/${file.path}`;
 
-        // https://stackoverflow.com/questions/26633901/reload-module-at-runtime
-        // https://stackoverflow.com/questions/1972242/how-to-auto-reload-files-in-node-js
-        if (Object.keys(window.require.cache).contains(file_path)) {
-            delete window.require.cache[window.require.resolve(file_path)];
-        }
+            // https://stackoverflow.com/questions/26633901/reload-module-at-runtime
+            // https://stackoverflow.com/questions/1972242/how-to-auto-reload-files-in-node-js
+            if (Object.keys(window.require.cache).contains(file_path)) {
+                delete window.require.cache[window.require.resolve(file_path)];
+            }
 
-        const user_function = await import(file_path);
-        if (!user_function.default) {
-            throw new TemplaterError(`Failed to load user script ${file_path}. No exports detected.`);
+            const user_function = await import(file_path);
+            if (!user_function.default) {
+                throw new TemplaterError(`Failed to load user script ${file_path}. No exports detected.`);
+            }
+            if (!(user_function.default instanceof Function)) {
+                throw new TemplaterError(`Failed to load user script ${file_path}. Default export is not a function.`);
+            }
+            this.user_script_functions.set(`${file.basename}`, user_function.default);
         }
-        if (!(user_function.default instanceof Function)) {
-            throw new TemplaterError(`Failed to load user script ${file_path}. Default export is not a function.`);
-        }
-        this.user_script_functions.set(`${file.basename}`, user_function.default);
     }
 
     // TODO: Add mobile support
@@ -92,14 +99,14 @@ export class UserTemplateParser implements TParser {
                         timeout: this.plugin.settings.command_timeout * 1000,
                         cwd: this.cwd,
                         env: process_env,
-                        ...(this.plugin.settings.shell_path !== "" && {shell: this.plugin.settings.shell_path}),
+                        ...(this.plugin.settings.shell_path !== "" && { shell: this.plugin.settings.shell_path }),
                     };
 
                     try {
-                        const {stdout} = await this.exec_promise(cmd, cmd_options);
+                        const { stdout } = await this.exec_promise(cmd, cmd_options);
                         return stdout.trimRight();
                     }
-                    catch(error) {
+                    catch (error) {
                         throw new TemplaterError(`Error with User Template ${template}`, error);
                     }
                 });
@@ -116,7 +123,7 @@ export class UserTemplateParser implements TParser {
         }
 
         // TODO: Add mobile support
-        if (Platform.isDesktopApp && this.plugin.settings.script_folder) {
+        if (this.plugin.settings.script_folder) {
             await this.generate_user_script_functions(config);
         }
 
