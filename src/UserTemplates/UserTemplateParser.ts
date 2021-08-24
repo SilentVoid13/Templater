@@ -45,7 +45,7 @@ export class UserTemplateParser implements TParser {
     async load_user_script_function(config: RunningConfig, file: TFile): Promise<void> {
         if (Platform.isMobileApp) {
             const content = await this.app.vault.read(file)
-            const newContent = content.replace(/module\.exports\(.+\)/, "")
+            const newContent = content.replace(/module\.exports = .+/, "")
             const func = Function(`return ${newContent}`)()
             this.user_script_functions.set(`${file.basename}`, func);
         } else {
