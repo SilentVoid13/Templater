@@ -1,4 +1,4 @@
-import { App, MarkdownPostProcessorContext, MarkdownView, TFile, TFolder } from "obsidian";
+import { App, MarkdownPostProcessorContext, MarkdownView, TFile, TFolder, TextFileView } from "obsidian";
 
 import { CursorJumper } from "CursorJumper";
 import TemplaterPlugin from "main";
@@ -88,6 +88,13 @@ export class Templater {
     }
 
     async append_template(template_file: TFile): Promise<void> {
+	if(this.app.workspace.activeLeaf?.view.getViewType()==="excalidraw") {
+          const view = (this.app.workspace.activeLeaf.view as TextFileView);
+          const running_config = this.create_running_config(template_file, view.file, RunMode.AppendActiveFile);
+          const output_content = await this.errorWrapper(async () => this.read_and_parse_template(running_config));  
+          return;
+        }
+
         const active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
             this.plugin.log_error(new TemplaterError("No active view, can't append templates."));
