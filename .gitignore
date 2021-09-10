@@ -15,3 +15,8 @@ test/
 tests_jest/
 
 RESOURCES.md
+
+
+# rust
+/target
+Cargo.lock
