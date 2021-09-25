@@ -1,9 +1,7 @@
 import { App, EditorPosition, EditorRangeOrCaret, EditorTransaction, MarkdownView } from "obsidian";
-import { escapeRegExp } from "Utils";
+import { escape_RegExp } from "Utils";
 
 export class CursorJumper {
-    private cursor_regex: RegExp = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>", "g");	
-
     constructor(private app: App) {}
 
     async jump_to_next_cursor_location(): Promise<void> {
@@ -40,7 +38,9 @@ export class CursorJumper {
     replace_and_get_cursor_positions(content: string): {new_content?: string, positions?: EditorPosition[]} {
         let cursor_matches = [];
         let match;
-        while((match = this.cursor_regex.exec(content)) != null) {
+        const cursor_regex: RegExp = new RegExp("<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>", "g");	
+
+        while((match = cursor_regex.exec(content)) != null) {
             cursor_matches.push(match);
         }
         if (cursor_matches.length === 0) {
@@ -62,7 +62,7 @@ export class CursorJumper {
             const index = match.index - index_offset;
             positions.push(this.get_editor_position_from_index(content, index));
 
-            content = content.replace(new RegExp(escapeRegExp(match[0])), "");
+            content = content.replace(new RegExp(escape_RegExp(match[0])), "");
             index_offset += match[0].length;
 
             // For tp.file.cursor(), we keep the default top to bottom

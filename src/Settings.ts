@@ -3,27 +3,27 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 
 import TemplaterPlugin from './main';
 
-export const DEFAULT_SETTINGS: TemplaterSettings = {
+export const DEFAULT_SETTINGS: Settings = {
 	command_timeout: 5,
-	template_folder: "",
+	templates_folder: "",
 	templates_pairs: [["", ""]],
 	trigger_on_file_creation: false,
 	enable_system_commands: false,
 	shell_path: "",
-	script_folder: undefined,
+	user_scripts_folder: undefined,
 	empty_file_template: undefined,
 	syntax_highlighting: true,
 };
 
-export interface TemplaterSettings {
+export interface Settings {
 	command_timeout: number;
-	template_folder: string;
+	templates_folder: string;
 	templates_pairs: Array<[string, string]>;
-	trigger_on_file_creation: boolean;
 	enable_system_commands: boolean;
 	shell_path: string,
-	script_folder: string,
+	user_scripts_folder: string,
 	empty_file_template: string,
+	trigger_on_file_creation: boolean;
 	syntax_highlighting: boolean,
 };
 
@@ -42,9 +42,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc("Files in this folder will be available as templates.")
 			.addText(text => {
 				text.setPlaceholder("Example: folder 1/folder 2")
-					.setValue(this.plugin.settings.template_folder)
+					.setValue(this.plugin.settings.templates_folder)
 					.onChange((new_folder) => {
-						this.plugin.settings.template_folder = new_folder;
+						this.plugin.settings.templates_folder = new_folder;
 						this.plugin.saveSettings();
 					})
 			});
@@ -96,7 +96,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.onChange(syntax_highlighting => {
 						this.plugin.settings.syntax_highlighting = syntax_highlighting;
 						this.plugin.saveSettings();
-						this.plugin.update_syntax_highlighting();
+						this.plugin.event_handler.update_syntax_highlighting();
 					})
 			});
 
@@ -121,7 +121,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.onChange(trigger_on_file_creation => {
 						this.plugin.settings.trigger_on_file_creation = trigger_on_file_creation;
 						this.plugin.saveSettings();
-						this.plugin.update_trigger_file_on_creation();
+						this.plugin.event_handler.update_trigger_file_on_creation();
 						// Force refresh
 						this.display();
 					});
@@ -167,9 +167,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc(desc)
 			.addText(text => {
 				text.setPlaceholder("Example: folder 1/folder 2")
-					.setValue(this.plugin.settings.script_folder)
+					.setValue(this.plugin.settings.user_scripts_folder)
 					.onChange((new_folder) => {
-						this.plugin.settings.script_folder = new_folder;
+						this.plugin.settings.user_scripts_folder = new_folder;
 						this.plugin.saveSettings();
 					})
 			});
@@ -184,8 +184,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
 		);
 
+        containerEl.createEl("h2", { text: "User System Command Functions"});
+
 		new Setting(containerEl)
-			.setName("Enable System Commands")
+			.setName("Enable User System Command Functions")
 			.setDesc(desc)
 			.addToggle(toggle => {
 				toggle

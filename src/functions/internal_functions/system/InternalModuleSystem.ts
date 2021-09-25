@@ -1,5 +1,5 @@
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
-import { InternalModule } from "InternalTemplates/InternalModule";
+import { InternalModule } from '../InternalModule';
 import { Platform } from "obsidian";
 import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
@@ -7,13 +7,13 @@ import { SuggesterModal } from "./SuggesterModal";
 export class InternalModuleSystem extends InternalModule {
     public name: string = "system";
 
-    async createStaticTemplates(): Promise<void> {
-        this.static_templates.set("clipboard", this.generate_clipboard());
-        this.static_templates.set("prompt", this.generate_prompt());
-        this.static_templates.set("suggester", this.generate_suggester());
+    async create_static_templates(): Promise<void> {
+        this.static_functions.set("clipboard", this.generate_clipboard());
+        this.static_functions.set("prompt", this.generate_prompt());
+        this.static_functions.set("suggester", this.generate_suggester());
     }
 
-    async updateTemplates(): Promise<void> {}
+    async create_dynamic_templates(): Promise<void> {}
 
     generate_clipboard(): Function {
         return async () => {

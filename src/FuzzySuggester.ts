@@ -1,5 +1,5 @@
 import { App, FuzzySuggestModal, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
-import { getTFilesFromFolder } from "Utils";
+import { get_tfiles_from_folder } from "Utils";
 import TemplaterPlugin from './main';
 
 export enum OpenMode {
@@ -7,7 +7,7 @@ export enum OpenMode {
     CreateNoteTemplate,
 };
 
-export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
+export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     public app: App;
     private plugin: TemplaterPlugin;
     private open_mode: OpenMode;
@@ -20,10 +20,10 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     }
 
     getItems(): TFile[] {
-        if (this.plugin.settings.template_folder === "") {
+        if (this.plugin.settings.templates_folder === "") {
             return this.app.vault.getMarkdownFiles();
         }
-        return getTFilesFromFolder(this.app, this.plugin.settings.template_folder);
+        return get_tfiles_from_folder(this.app, this.plugin.settings.templates_folder);
     }
 
     getItemText(item: TFile): string {
@@ -33,7 +33,7 @@ export class TemplaterFuzzySuggestModal extends FuzzySuggestModal<TFile> {
     onChooseItem(item: TFile, _evt: MouseEvent | KeyboardEvent): void {
         switch(this.open_mode) {
             case OpenMode.InsertTemplate:
-                this.plugin.templater.append_template(item);
+                this.plugin.templater.append_template_to_active_file(item);
                 break;
             case OpenMode.CreateNoteTemplate:
                 this.plugin.templater.create_new_note_from_template(item, this.creation_folder);

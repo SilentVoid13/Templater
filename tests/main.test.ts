@@ -3,7 +3,7 @@ import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
 import { RunMode, RunningConfig } from "Templater";
-import TemplaterPlugin from "../src/main";
+import TemplaterPlugin from "main";
 import { cache_update, delay, PLUGIN_NAME, TARGET_FILE_NAME, TEMPLATE_FILE_NAME } from "./Util.test";
 import { InternalModuleFileTests } from "./InternalTemplates/file/InternalModuleFile.test";
 import { InternalModuleDateTests } from "./InternalTemplates/date/InternalModuleDate.test";
@@ -47,7 +47,7 @@ export default class TestTemplaterPlugin extends Plugin {
         // @ts-ignore
         this.plugin = this.app.plugins.getPlugin(PLUGIN_NAME);
         this.plugin.settings.trigger_on_file_creation = false;
-        this.plugin.update_trigger_file_on_creation();
+        this.plugin.event_handler.update_trigger_file_on_creation();
         this.target_file = await this.app.vault.create(`${TARGET_FILE_NAME}.md`, "");
         this.template_file = await this.app.vault.create(`${TEMPLATE_FILE_NAME}.md`, "");
 
@@ -56,7 +56,7 @@ export default class TestTemplaterPlugin extends Plugin {
 
     async teardown() {
         this.plugin.settings.trigger_on_file_creation = true;
-        this.plugin.update_trigger_file_on_creation();
+        this.plugin.event_handler.update_trigger_file_on_creation();
         await this.cleanupFiles();
         await this.app.vault.delete(this.target_file, true);
         await this.app.vault.delete(this.template_file, true);
@@ -65,16 +65,20 @@ export default class TestTemplaterPlugin extends Plugin {
     }
 
     async disable_external_plugins() {
+        // @ts-ignore
         for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
             if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
+                // @ts-ignore
                 this.app.plugins.plugins[plugin_name].unload();
             }
         }
     }
 
     async enable_external_plugins() {
+        // @ts-ignore
         for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
             if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
+                // @ts-ignore
                 this.app.plugins.plugins[plugin_name].load();
             } 
         }

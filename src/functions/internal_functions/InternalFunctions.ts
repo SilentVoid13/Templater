@@ -1,7 +1,7 @@
-import { App, TFile } from "obsidian";
+import { App } from "obsidian";
 
 import TemplaterPlugin from "main";
-import { TParser } from "TParser";
+import { IGenerateObject } from 'functions/IGenerateObject';
 import { InternalModule } from "./InternalModule";
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
@@ -11,7 +11,7 @@ import { InternalModuleSystem } from "./system/InternalModuleSystem";
 import { RunningConfig } from "Templater";
 import { InternalModuleConfig } from "./config/InternalModuleConfig";
 
-export class InternalTemplateParser implements TParser {
+export class InternalFunctions implements IGenerateObject {
     private modules_array: Array<InternalModule> = new Array();
 
     constructor(protected app: App, protected plugin: TemplaterPlugin) {
@@ -29,13 +29,13 @@ export class InternalTemplateParser implements TParser {
         }
     }
 
-    async generateContext(config: RunningConfig): Promise<{}> {
-        const modules_context: {[key: string]: any} = {};
+    async generate_object(config: RunningConfig): Promise<{}> {
+        const internal_functions_object: {[key: string]: any} = {};
 
         for (const mod of this.modules_array) {
-            modules_context[mod.getName()] = await mod.generateContext(config);
+            internal_functions_object[mod.getName()] = await mod.generate_object(config);
         }
 
-        return modules_context;
+        return internal_functions_object;
     }
 }

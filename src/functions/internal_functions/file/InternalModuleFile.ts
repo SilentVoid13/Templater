@@ -3,6 +3,7 @@ import { InternalModule } from "../InternalModule";
 import { FileSystemAdapter, getAllTags, MarkdownView, normalizePath, parseLinktext, Platform, resolveSubpath, TFile, TFolder } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
+import { FunctionsMode } from 'functions/FunctionsGenerator';
 
 export const DEPTH_LIMIT = 10;
 
@@ -12,26 +13,26 @@ export class InternalModuleFile extends InternalModule {
     private create_new_depth: number = 0;
     private linkpath_regex: RegExp = new RegExp("^\\[\\[(.*)\\]\\]$");
 
-    async createStaticTemplates(): Promise<void> {
-        this.static_templates.set("creation_date", this.generate_creation_date());
-        this.static_templates.set("create_new", this.generate_create_new());
-        this.static_templates.set("cursor", this.generate_cursor());
-        this.static_templates.set("cursor_append", this.generate_cursor_append());
-        this.static_templates.set("exists", this.generate_exists());
-        this.static_templates.set("find_tfile", this.generate_find_tfile());
-        this.static_templates.set("folder", this.generate_folder());
-        this.static_templates.set("include", this.generate_include());
-        this.static_templates.set("last_modified_date", this.generate_last_modified_date());
-        this.static_templates.set("move", this.generate_move());
-        this.static_templates.set("path", this.generate_path());
-        this.static_templates.set("rename", this.generate_rename());
-        this.static_templates.set("selection", this.generate_selection());
+    async create_static_templates(): Promise<void> {
+        this.static_functions.set("creation_date", this.generate_creation_date());
+        this.static_functions.set("create_new", this.generate_create_new());
+        this.static_functions.set("cursor", this.generate_cursor());
+        this.static_functions.set("cursor_append", this.generate_cursor_append());
+        this.static_functions.set("exists", this.generate_exists());
+        this.static_functions.set("find_tfile", this.generate_find_tfile());
+        this.static_functions.set("folder", this.generate_folder());
+        this.static_functions.set("include", this.generate_include());
+        this.static_functions.set("last_modified_date", this.generate_last_modified_date());
+        this.static_functions.set("move", this.generate_move());
+        this.static_functions.set("path", this.generate_path());
+        this.static_functions.set("rename", this.generate_rename());
+        this.static_functions.set("selection", this.generate_selection());
     }
 
-    async updateTemplates(): Promise<void> {
-        this.dynamic_templates.set("content", await this.generate_content());
-        this.dynamic_templates.set("tags", this.generate_tags());
-        this.dynamic_templates.set("title", this.generate_title());
+    async create_dynamic_templates(): Promise<void> {
+        this.dynamic_functions.set("content", await this.generate_content());
+        this.dynamic_functions.set("tags", this.generate_tags());
+        this.dynamic_functions.set("title", this.generate_title());
     } 
 
     async generate_content(): Promise<string> {
@@ -156,7 +157,9 @@ export class InternalModuleFile extends InternalModule {
                 }
             } 
 
-            const parsed_content = await this.plugin.templater.parser.parseTemplates(inc_file_content);
+            // TODO: No need to re-generate the functions_object, we can optimize this
+            const functions_object = await this.plugin.templater.functions_generator.generate_object(this.config, FunctionsMode.USER_INTERNAL);
+            const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, functions_object);
             
             this.include_depth -= 1;
         

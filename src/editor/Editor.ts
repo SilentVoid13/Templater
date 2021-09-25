@@ -1,11 +1,11 @@
 import { App, Platform } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "Error";
+import { CursorJumper } from 'editor/CursorJumper';
 
-import "mode/javascript";
-import "mode/custom_overlay";
-import "mode/show-hint";
-import { delay } from "Utils";
+import "editor/mode/javascript";
+import "editor/mode/custom_overlay";
+//import "editor/mode/show-hint";
 
 const TP_CMD_TOKEN_CLASS: string = "templater-command";
 const TP_INLINE_CLASS: string = "templater-inline";
@@ -17,12 +17,20 @@ const TP_INTERPOLATION_TAG_TOKEN_CLASS: string = "templater-interpolation-tag";
 const TP_RAW_TAG_TOKEN_CLASS: string = "templater-raw-tag";
 const TP_EXEC_TAG_TOKEN_CLASS: string = "templater-execution-tag";
 
-export class TemplaterEditor {
-    public constructor(private app: App, private plugin: TemplaterPlugin) {}
+export class Editor {
+    private cursor_jumper: CursorJumper;
+
+    public constructor(private app: App, private plugin: TemplaterPlugin) {
+        this.cursor_jumper = new CursorJumper(this.app);
+    }
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         //await this.registerHinter();
+    }
+
+    async jump_to_next_cursor_location(): Promise<void> {
+        this.cursor_jumper.jump_to_next_cursor_location();
     }
 
 	async registerCodeMirrorMode(): Promise<void> {

@@ -4,13 +4,12 @@ import { InternalModule } from "../InternalModule";
 export class InternalModuleWeb extends InternalModule {
     name = "web";
 
-    async createStaticTemplates() {
-        this.static_templates.set("daily_quote", this.generate_daily_quote());
-        this.static_templates.set("random_picture", this.generate_random_picture());
-        //this.static_templates.set("get_request", this.generate_get_request());
+    async create_static_templates() {
+        this.static_functions.set("daily_quote", this.generate_daily_quote());
+        this.static_functions.set("random_picture", this.generate_random_picture());
     }
     
-    async updateTemplates() {}
+    async create_dynamic_templates() {}
 
     async getRequest(url: string): Promise<Response> {
         let response = await fetch(url);
@@ -38,14 +37,6 @@ export class InternalModuleWeb extends InternalModule {
             let response = await this.getRequest(`https://source.unsplash.com/random/${size ?? ''}?${query ?? ''}`);
             let url = response.url;
             return `![tp.web.random_picture](${url})`;   
-        }
-    }
-
-    generate_get_request() {
-        return async (url: string) => {
-            let response = await this.getRequest(url);
-            let json = await response.json();
-            return json;
         }
     }
 }

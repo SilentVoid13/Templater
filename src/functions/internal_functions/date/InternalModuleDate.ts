@@ -4,14 +4,14 @@ import { InternalModule } from "../InternalModule";
 export class InternalModuleDate extends InternalModule {
     public name: string = "date";
 
-    async createStaticTemplates(): Promise<void> {
-        this.static_templates.set("now", this.generate_now());
-        this.static_templates.set("tomorrow", this.generate_tomorrow());
-        this.static_templates.set("weekday", this.generate_weekday());
-        this.static_templates.set("yesterday", this.generate_yesterday());
+    async create_static_templates(): Promise<void> {
+        this.static_functions.set("now", this.generate_now());
+        this.static_functions.set("tomorrow", this.generate_tomorrow());
+        this.static_functions.set("weekday", this.generate_weekday());
+        this.static_functions.set("yesterday", this.generate_yesterday());
     }
 
-    async updateTemplates(): Promise<void> {}
+    async create_dynamic_templates(): Promise<void> {}
 
     generate_now(): Function {
         return (format: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string) => {
