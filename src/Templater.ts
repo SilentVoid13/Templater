@@ -252,7 +252,7 @@ export class Templater {
 			if (!(e instanceof TemplaterError)) {
 				this.plugin.log_error(new TemplaterError(`Template parsing error, aborting.`, e.message));
 			} else {
-				this.log_error(e);
+				this.plugin.log_error(e);
 			}
 			return null;
 		}

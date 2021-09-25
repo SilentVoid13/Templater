@@ -18,7 +18,7 @@ export default class EventHandler {
     }
 
 	update_syntax_highlighting() {
-		if (this.plugin.settings.event_syntax_highlighting) {
+		if (this.plugin.settings.syntax_highlighting) {
 			this.syntax_highlighting_event = this.app.workspace.on("codemirror", cm => {
 				cm.setOption("mode", "templater");
 			});
@@ -37,7 +37,7 @@ export default class EventHandler {
 	}
 
 	update_trigger_file_on_creation(): void {
-		if (this.settings.event_trigger_on_file_creation) {
+		if (this.settings.trigger_on_file_creation) {
 			this.trigger_on_file_creation_event = this.app.vault.on("create", this.templater.on_file_creation);
 			this.plugin.registerEvent(this.trigger_on_file_creation_event);
 		} else {
