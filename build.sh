@@ -2,5 +2,5 @@
 
 wasm-pack build --target web
 cd www
-pnpm build
+pnpm install && pnpm build
 cd ..

@@ -23,8 +23,11 @@ pub async fn create_new_note_from_template(file: TFile, creation_folder: Option<
 
 // TODO
 /// Appends the parsed template `file` to the active file
-pub async fn append_template(file: TFile) {
-
+pub async fn append_template(app: App, file: &TFile) {
+    let vault = app.vault();
+    let content = vault.read(file).await;
+    console::log_1(&content);
+    let content = content.as_string().unwrap();
 }
 
 // TODO

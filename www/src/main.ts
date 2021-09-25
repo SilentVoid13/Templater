@@ -19,7 +19,7 @@ export default class TemplaterPlugin extends Plugin {
 
 	async onload(): Promise<void> {
         const instance = await wasm();
-        instance.loaddd(this);
+        await instance.load_templater(this);
 
 		await this.loadSettings();
 

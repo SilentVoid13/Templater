@@ -42,6 +42,19 @@ impl CommandParser {
           }   
     }
 
+    pub fn render_commands(input: &str) -> Result<String, &'static str> {
+        let parser = Self::new(); 
+        let tokens = parser.parse_tokens(input)?;
+        let js_string = parser.generate_javascript_function(tokens);
+        if let Ok(content_js) = js_sys::eval(&js_string) {
+            let content = content_js.as_string()
+                .ok_or("Coulnd't convert to string")?;
+            Ok(content)
+        } else {
+            Err("Error during function eval")
+        }
+    }
+
     fn tag<'a>(&self, i: &'a str, tag: &'a str) ->  Result<(&'a str, &'a str), &'static str> {
         match self.compare(i, tag) {
             true => {
