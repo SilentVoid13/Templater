@@ -1,7 +1,9 @@
+import { App, PluginSettingTab, Setting, TFile } from "obsidian";
 import { TemplaterError } from "Error";
-import { App, PluginSettingTab, Setting } from "obsidian";
-
+import { FolderSuggest } from 'suggesters/FolderSuggester';
+import { FileSuggest, FileSuggestMode } from 'suggesters/FileSuggester';
 import TemplaterPlugin from './main';
+import { get_tfiles_from_folder } from 'Utils';
 
 export const DEFAULT_SETTINGS: Settings = {
 	command_timeout: 5,
@@ -33,40 +35,34 @@ export class TemplaterSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
-		let desc: DocumentFragment;
-		containerEl.empty();
+		this.containerEl.empty();
 
-		new Setting(containerEl)
+        this.add_template_folder_setting();
+        this.add_internal_functions_setting();
+        this.add_syntax_highlighting_setting();
+        this.add_trigger_on_new_file_creation_setting();
+        this.add_templates_hotkeys_setting();
+        this.add_user_script_functions_setting();
+        this.add_user_system_command_functions_setting();
+	}
+
+    add_template_folder_setting() {
+		new Setting(this.containerEl)
 			.setName("Template folder location")
 			.setDesc("Files in this folder will be available as templates.")
-			.addText(text => {
-				text.setPlaceholder("Example: folder 1/folder 2")
+			.addSearch(cb => {
+                new FolderSuggest(this.app, cb.inputEl);
+				cb.setPlaceholder("Example: folder 1/folder 2")
 					.setValue(this.plugin.settings.templates_folder)
 					.onChange((new_folder) => {
 						this.plugin.settings.templates_folder = new_folder;
 						this.plugin.save_settings();
 					})
 			});
+    }
 
-		new Setting(containerEl)
-			.setName("Timeout")
-			.setDesc("Maximum timeout in seconds for a system command.")
-			.addText(text => {
-				text.setPlaceholder("Timeout")
-					.setValue(this.plugin.settings.command_timeout.toString())
-					.onChange((new_value) => {
-						const new_timeout = Number(new_value);
-						if (isNaN(new_timeout)) {
-							this.plugin.log_error(new TemplaterError("Timeout must be a number"));
-							return;
-						}
-						this.plugin.settings.command_timeout = new_timeout;
-						this.plugin.save_settings();
-					})
-			});
-
-		desc = document.createDocumentFragment();
+    add_internal_functions_setting() {
+		const desc = document.createDocumentFragment();
 		desc.append(
 			"Templater provides multiples predefined variables / functions that you can use.",
 			desc.createEl("br"),
@@ -78,16 +74,18 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			" to get a list of all the available internal variables / functions.",
 		);
 
-		new Setting(containerEl)
+		new Setting(this.containerEl)
 			.setName("Internal Variables and Functions")
 			.setDesc(desc);
+    }
 
-		desc = document.createDocumentFragment();
+    add_syntax_highlighting_setting() {
+		const desc = document.createDocumentFragment();
 		desc.append(
 			"Adds syntax highlighting for Templater commands in edit mode.",
 		);	
 
-		new Setting(containerEl)
+		new Setting(this.containerEl)
 			.setName("Syntax Highlighting")
 			.setDesc(desc)
 			.addToggle(toggle => {
@@ -99,8 +97,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						this.plugin.event_handler.update_syntax_highlighting();
 					})
 			});
+    }
 
-		desc = document.createDocumentFragment();
+
+    add_trigger_on_new_file_creation_setting() {
+		let desc = document.createDocumentFragment();
 		desc.append(
 			"Templater will listen for the new file creation event, and replace every command it finds in the new file's content.",
 			desc.createEl("br"),
@@ -112,7 +113,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			"This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation."
 		);	
 
-		new Setting(containerEl)
+		new Setting(this.containerEl)
 			.setName("Trigger Templater on new file creation")
 			.setDesc(desc)
 			.addToggle(toggle => {
@@ -135,11 +136,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				"The .md extension for the file shouldn't be specified."
 			);
 			
-			new Setting(containerEl)
+			new Setting(this.containerEl)
 				.setName("Empty file template")
 				.setDesc(desc)
-				.addText(text => {
-					text.setPlaceholder("folder 1/template_file")
+				.addSearch(cb => {
+                    new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+
+					cb.setPlaceholder("folder 1/template_file")
 						.setValue(this.plugin.settings.empty_file_template)
 						.onChange((empty_file_template) => {
 							this.plugin.settings.empty_file_template = empty_file_template;
@@ -147,8 +150,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
 						});
 				});
 		}
+    }
 
-		desc = document.createDocumentFragment();
+    add_templates_hotkeys_setting() {
+        this.containerEl.createEl("h2", { text: "Templates Hotkeys"});
+    }
+
+    add_user_script_functions_setting() {
+        this.containerEl.createEl("h2", { text: "User Script Functions"});
+
+		let desc = document.createDocumentFragment();
 		desc.append(
 			"All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.", 
 			desc.createEl("br"),
@@ -162,19 +173,60 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			" for more informations.",
 		);
 
-		new Setting(containerEl)
+		new Setting(this.containerEl)
 			.setName("Script files folder location")
 			.setDesc(desc)
-			.addText(text => {
-				text.setPlaceholder("Example: folder 1/folder 2")
+			.addSearch(cb => {
+                new FolderSuggest(this.app, cb.inputEl);
+				cb.setPlaceholder("Example: folder 1/folder 2")
 					.setValue(this.plugin.settings.user_scripts_folder)
 					.onChange((new_folder) => {
 						this.plugin.settings.user_scripts_folder = new_folder;
 						this.plugin.save_settings();
-					})
+					});
 			});
 
-		desc = document.createDocumentFragment();
+        desc = document.createDocumentFragment();
+        let files: TFile[];
+        try {
+            files = get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder);
+        } catch(e) {
+            files = [];
+        }
+
+        let name: string;
+        let count = 0;
+        for (const file of files) {
+            if (file.extension === "js") {
+                count++;
+                desc.append(
+                    desc.createEl("li", {
+                        text: file.basename
+                    })
+                );
+            }
+        }
+        if (count === 0) {
+            name = "No User Scripts detected";
+        } else {
+            name = "Detected User Scripts";
+        }
+
+        new Setting(this.containerEl)
+            .setName(name)
+            .setDesc(desc)
+            .addExtraButton(extra => {
+                extra.setIcon("sync")
+                    .setTooltip("Refresh")
+                    .onClick(() => {
+                        // Force refresh
+                        this.display();  
+                    });
+            });
+    }
+
+    add_user_system_command_functions_setting() {
+		let desc = document.createDocumentFragment();
 		desc.append(
 			"Allows you to create user functions linked to system commands.",
 			desc.createEl("br"),
@@ -184,9 +236,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			"It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
 		);
 
-        containerEl.createEl("h2", { text: "User System Command Functions"});
+        this.containerEl.createEl("h2", { text: "User System Command Functions"});
 
-		new Setting(containerEl)
+		new Setting(this.containerEl)
 			.setName("Enable User System Command Functions")
 			.setDesc(desc)
 			.addToggle(toggle => {
@@ -201,6 +253,23 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			});
 
 		if (this.plugin.settings.enable_system_commands) {
+            new Setting(this.containerEl)
+                .setName("Timeout")
+                .setDesc("Maximum timeout in seconds for a system command.")
+                .addText(text => {
+                    text.setPlaceholder("Timeout")
+                        .setValue(this.plugin.settings.command_timeout.toString())
+                        .onChange((new_value) => {
+                            const new_timeout = Number(new_value);
+                            if (isNaN(new_timeout)) {
+                                this.plugin.log_error(new TemplaterError("Timeout must be a number"));
+                                return;
+                            }
+                            this.plugin.settings.command_timeout = new_timeout;
+                            this.plugin.save_settings();
+                        })
+                });
+
 			desc = document.createDocumentFragment();
 			desc.append(
 				"Full path to the shell binary to execute the command with.",
@@ -209,7 +278,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				desc.createEl("br"),
 				"You can use forward slashes ('/') as path separators on all platforms if in doubt."
 			);
-			new Setting(containerEl)
+			new Setting(this.containerEl)
 				.setName("Shell binary location")
 				.setDesc(desc)
 				.addText(text => {
@@ -223,15 +292,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
 			let i = 1;
 			this.plugin.settings.templates_pairs.forEach((template_pair) => {
-				const div = containerEl.createEl('div');
+				const div = this.containerEl.createEl('div');
 				div.addClass("templater_div");
 
-				const title = containerEl.createEl('h4', {
+				const title = this.containerEl.createEl('h4', {
 					text: 'User Function n°' + i,
 				});
 				title.addClass("templater_title");
 
-				const setting = new Setting(containerEl)
+				const setting = new Setting(this.containerEl)
 					.addExtraButton(extra => {
 						extra.setIcon("cross")
 							.setTooltip("Delete")
@@ -271,7 +340,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							}
 						});
 
-						t.inputEl.setAttr("rows", 4);
+						t.inputEl.setAttr("rows", 2);
 						t.inputEl.addClass("templater_cmd");
 
 						return t;
@@ -280,15 +349,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				setting.infoEl.remove();
 
 				div.appendChild(title);
-				div.appendChild(containerEl.lastChild);
+				div.appendChild(this.containerEl.lastChild);
 
 				i+=1;
 			});
 
-			const div = containerEl.createEl('div');
+			const div = this.containerEl.createEl('div');
 			div.addClass("templater_div2");
 
-			const setting = new Setting(containerEl)
+			const setting = new Setting(this.containerEl)
 				.addButton(button => {
 					const b = button.setButtonText("Add New User Function").onClick(() => {
 						this.plugin.settings.templates_pairs.push(["", ""]);
@@ -301,7 +370,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				});
 			setting.infoEl.remove();
 
-			div.appendChild(containerEl.lastChild);
+			div.appendChild(this.containerEl.lastChild);
 		}	
-	}
+    }
 }

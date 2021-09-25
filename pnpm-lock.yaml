@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@popperjs/core': ^2.10.1
   '@rollup/plugin-commonjs': ^18.1.0
   '@rollup/plugin-json': ^4.1.0
   '@rollup/plugin-node-resolve': ^11.2.1
@@ -22,6 +23,7 @@ specifiers:
   typescript: ^4.3.5
 
 dependencies:
+  '@popperjs/core': 2.10.1
   child_process: 1.0.2
   eta: github.com/SilentVoid13/eta/0f1ffa4f15b6a708aa303bd4b0fc07b4a9b4e45e
 
@@ -110,6 +112,10 @@ packages:
     resolution: {integrity: sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==}
     engines: {node: '>=6.9.0'}
     dev: true
+
+  /@popperjs/core/2.10.1:
+    resolution: {integrity: sha512-HnUhk1Sy9IuKrxEMdIRCxpIqPw6BFsbYSEUO9p/hNw5sMld/+3OLMWQP80F8/db9qsv3qUjs7ZR5bS/R+iinXw==}
+    dev: false
 
   /@rollup/plugin-commonjs/18.1.0_rollup@2.53.1:
     resolution: {integrity: sha512-h3e6T9rUxVMAQswpDIobfUHn/doMzM9sgkMrsMWCFLmB84PSoC8mV8tOloAJjSRwdqhXBqstlX2BwBpHJvbhxg==}

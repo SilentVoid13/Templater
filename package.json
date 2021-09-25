@@ -38,6 +38,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@popperjs/core": "^2.10.1",
     "child_process": "^1.0.2",
     "eta": "github:SilentVoid13/eta#custom-eta"
   },
