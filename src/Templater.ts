@@ -27,6 +27,7 @@ export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
 	public editor: Editor;
+    public current_functions_object: {};
 
     constructor(private app: App, private plugin: TemplaterPlugin) {
 		this.functions_generator = new FunctionsGenerator(this.app, this.plugin);
@@ -58,6 +59,7 @@ export class Templater {
 
     async parse_template(config: RunningConfig, template_content: string): Promise <string> {
         const functions_object = await this.functions_generator.generate_object(config, FunctionsMode.USER_INTERNAL);
+        this.current_functions_object = functions_object;
         const content = await this.parser.parse_commands(template_content, functions_object);
         return content;
     }
@@ -194,6 +196,7 @@ export class Templater {
                     pass = true;
                     const config = this.create_running_config(file, file, RunMode.DynamicProcessor);
                     functions_object = await this.functions_generator.generate_object(config, FunctionsMode.USER_INTERNAL);
+                    this.current_functions_object = functions_object;
                 }
 
                 while (match != null) {

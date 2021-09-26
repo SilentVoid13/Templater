@@ -157,9 +157,7 @@ export class InternalModuleFile extends InternalModule {
                 }
             } 
 
-            // TODO: No need to re-generate the functions_object, we can optimize this
-            const functions_object = await this.plugin.templater.functions_generator.generate_object(this.config, FunctionsMode.USER_INTERNAL);
-            const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, functions_object);
+            const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, this.plugin.templater.current_functions_object);
             
             this.include_depth -= 1;
         
