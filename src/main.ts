@@ -36,8 +36,10 @@ export default class TemplaterPlugin extends Plugin {
 
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
 
-        // No need to await here
-        this.templater.execute_startup_scripts();
+        // Files might not be created yet
+        this.app.workspace.onLayoutReady(() => {
+            this.templater.execute_startup_scripts();
+        });
 	}
 
 	async save_settings(): Promise<void> {
