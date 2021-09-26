@@ -3,7 +3,7 @@ import { App, normalizePath, MarkdownPostProcessorContext, MarkdownView, TAbstra
 import { resolve_tfile, delay } from 'Utils';
 import TemplaterPlugin from "main";
 import { FunctionsMode, FunctionsGenerator } from "functions/FunctionsGenerator";
-import { errorWrapper, TemplaterError } from "Error";
+import { errorWrapper, errorWrapperSync, TemplaterError } from "Error";
 import { Editor } from 'editor/Editor';
 import { Parser } from 'parser/Parser';
 import { log_error } from 'Log';
@@ -14,6 +14,7 @@ export enum RunMode {
     OverwriteFile,
     OverwriteActiveFile,
     DynamicProcessor,
+    StartupTemplate,
 };
 
 export interface RunningConfig {
@@ -247,6 +248,17 @@ export class Templater {
             await templater.write_template_to_file(template_file, file);
         } else {
             await templater.overwrite_file_commands(file);
+        }
+    }
+
+    async execute_startup_scripts() {
+        for (const template of this.plugin.settings.startup_templates) {
+            const file = errorWrapperSync(() => resolve_tfile(this.app, template), `Couldn't find startup template "${template}"`);
+            if (!file) {
+                continue;
+            }
+            const running_config = this.create_running_config(file, file, RunMode.StartupTemplate);
+            await errorWrapper(async () => this.read_and_parse_template(running_config), `Startup Template parsing error, aborting.`);
         }
     }
 }

@@ -84,6 +84,9 @@ export class CommandHandler {
                 name: `Insert ${new_template}`,
                 callback: () => {
                     const template = errorWrapperSync(() => resolve_tfile(this.app, new_template), `Couldn't find the template file associated with this hotkey`);
+                    if (!template) {
+                        return;
+                    }
                     this.plugin.templater.append_template_to_active_file(template);
                 }
             });

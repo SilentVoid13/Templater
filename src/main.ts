@@ -4,7 +4,6 @@ import { DEFAULT_SETTINGS, Settings, TemplaterSettingTab } from 'Settings';
 import { FuzzySuggester } from 'FuzzySuggester';
 import { ICON_DATA } from 'Constants';
 import { Templater } from 'Templater';
-import { TemplaterError } from 'Error';
 import EventHandler from 'EventHandler';
 import { CommandHandler } from 'CommandHandler';
 
@@ -29,12 +28,16 @@ export default class TemplaterPlugin extends Plugin {
         this.command_handler = new CommandHandler(this.app, this);
         this.command_handler.setup();
 
+
 		addIcon("templater-icon", ICON_DATA);
 		this.addRibbonIcon('templater-icon', 'Templater', async () => {
 			this.fuzzy_suggester.insert_template();
 		});
 
 		this.addSettingTab(new TemplaterSettingTab(this.app, this));
+
+        // No need to await here
+        this.templater.execute_startup_scripts();
 	}
 
 	async save_settings(): Promise<void> {

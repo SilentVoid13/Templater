@@ -3,7 +3,7 @@ import { errorWrapperSync, TemplaterError } from "Error";
 import { FolderSuggest } from 'suggesters/FolderSuggester';
 import { FileSuggest, FileSuggestMode } from 'suggesters/FileSuggester';
 import TemplaterPlugin from './main';
-import { get_tfiles_from_folder, resolve_tfolder } from 'Utils';
+import { get_tfiles_from_folder } from 'Utils';
 import { log_error } from 'Log';
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	empty_file_template: undefined,
 	syntax_highlighting: true,
     enabled_templates_hotkeys: [""],
+    startup_templates: [""],
 };
 
 export interface Settings {
@@ -30,6 +31,7 @@ export interface Settings {
 	trigger_on_file_creation: boolean;
 	syntax_highlighting: boolean,
     enabled_templates_hotkeys: Array<string>,
+    startup_templates: Array<string>,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -45,6 +47,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_syntax_highlighting_setting();
         this.add_trigger_on_new_file_creation_setting();
         this.add_templates_hotkeys_setting();
+        this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
 	}
@@ -158,8 +161,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_templates_hotkeys_setting() {
         this.containerEl.createEl("h2", { text: "Templates Hotkeys"});
 
-        this.plugin.settings.enabled_templates_hotkeys.forEach(template => {
-            new Setting(this.containerEl)
+        this.plugin.settings.enabled_templates_hotkeys.forEach((template, index) => {
+            const s = new Setting(this.containerEl)
                 .addSearch(cb => {
                     new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
                     cb.setPlaceholder("Example: folder1/template_file")
@@ -169,12 +172,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 log_error(new TemplaterError("This template is already bound to a hotkey"));
                                 return;
                             }
-                            this.plugin.command_handler.add_template_hotkey(template, new_template);
-                            const index = this.plugin.settings.enabled_templates_hotkeys.indexOf(template);
+                            this.plugin.command_handler.add_template_hotkey(this.plugin.settings.enabled_templates_hotkeys[index], new_template);
                             this.plugin.settings.enabled_templates_hotkeys[index] = new_template;
                             this.plugin.save_settings();
-                            // Force refresh
-                            this.display();
                         });
                 })
                 .addExtraButton(cb => {
@@ -194,21 +194,75 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     cb.setIcon("cross")
                         .setTooltip("Delete")
                         .onClick(() => {
-                            this.plugin.command_handler.remove_template_hotkey(template);
-                            const index = this.plugin.settings.enabled_templates_hotkeys.indexOf(template);
+                            this.plugin.command_handler.remove_template_hotkey(this.plugin.settings.enabled_templates_hotkeys[index]);
                             this.plugin.settings.enabled_templates_hotkeys.splice(index, 1);
                             // Force refresh
                             this.display();
                         });
                 });
+            s.infoEl.remove();
         });
 
         new Setting(this.containerEl)
             .addButton(cb => {
-                cb.setButtonText("Enable new hotkey for template")
+                cb.setButtonText("Add new hotkey for template")
                     .setCta()
                     .onClick(_ => {
                         this.plugin.settings.enabled_templates_hotkeys.push("");
+                        // Force refresh
+                        this.display();
+                    });
+            });
+    }
+
+    add_startup_templates_setting() {
+        this.containerEl.createEl("h2", { text: "Startup Templates"});
+
+		const desc = document.createDocumentFragment();
+		desc.append(
+			"Startup Templates are templates that will get executed once when Templater starts.",
+			desc.createEl("br"),
+			"These templates won't output anything.",
+			desc.createEl("br"),
+			"This can be useful to set up templates adding hooks to obsidian events for example.",
+		);
+        
+		new Setting(this.containerEl)
+			.setDesc(desc);
+
+        this.plugin.settings.startup_templates.forEach((template, index) => {
+            const s = new Setting(this.containerEl)
+                .addSearch(cb => {
+                    new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+                    cb.setPlaceholder("Example: folder1/template_file")
+                        .setValue(template)
+                        .onChange((new_template) => {
+                            if (new_template !== "" && this.plugin.settings.startup_templates.contains(new_template)) {
+                                log_error(new TemplaterError("This startup template already exist"));
+                                return;
+                            }
+                            this.plugin.settings.startup_templates[index] = new_template;
+                            this.plugin.save_settings();
+                        });
+                })
+                .addExtraButton(cb => {
+                    cb.setIcon("cross")
+                        .setTooltip("Delete")
+                        .onClick(() => {
+                            this.plugin.settings.startup_templates.splice(index, 1);
+                            // Force refresh
+                            this.display();
+                        });
+                });
+            s.infoEl.remove();
+        });
+
+        new Setting(this.containerEl)
+            .addButton(cb => {
+                cb.setButtonText("Add new startup template")
+                    .setCta()
+                    .onClick(_ => {
+                        this.plugin.settings.startup_templates.push("");
                         // Force refresh
                         this.display();
                     });
@@ -376,6 +430,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							const t = text.setPlaceholder('Function name')
 							.setValue(template_pair[0])
 							.onChange((new_value) => {
+                                console.log(template_pair);
 								const index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 								if (index > -1) {
 									this.plugin.settings.templates_pairs[index][0] = new_value;
