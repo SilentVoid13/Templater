@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.2](https://github.com/SilentVoid13/Templater/compare/1.9.1...1.9.2) (2021-09-26)
+
+
+### Bug Fixes
+
+* fixing startup templates bug, forgot to wait for files to be created before executing them ([3a0a21d](https://github.com/SilentVoid13/Templater/commit/3a0a21d6bdcd4d40e4975242d44d738452edcf24))
+
 ### [1.9.1](https://github.com/SilentVoid13/Templater/compare/1.9.0...1.9.1) (2021-09-26)
 
 
