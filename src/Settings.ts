@@ -1,9 +1,10 @@
 import { App, PluginSettingTab, Setting, TFile } from "obsidian";
-import { TemplaterError } from "Error";
+import { errorWrapperSync, TemplaterError } from "Error";
 import { FolderSuggest } from 'suggesters/FolderSuggester';
 import { FileSuggest, FileSuggestMode } from 'suggesters/FileSuggester';
 import TemplaterPlugin from './main';
-import { get_tfiles_from_folder } from 'Utils';
+import { get_tfiles_from_folder, resolve_tfolder } from 'Utils';
+import { log_error } from 'Log';
 
 export const DEFAULT_SETTINGS: Settings = {
 	command_timeout: 5,
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	user_scripts_folder: undefined,
 	empty_file_template: undefined,
 	syntax_highlighting: true,
+    enabled_templates_hotkeys: [""],
 };
 
 export interface Settings {
@@ -27,6 +29,7 @@ export interface Settings {
 	empty_file_template: string,
 	trigger_on_file_creation: boolean;
 	syntax_highlighting: boolean,
+    enabled_templates_hotkeys: Array<string>,
 };
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -52,7 +55,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc("Files in this folder will be available as templates.")
 			.addSearch(cb => {
                 new FolderSuggest(this.app, cb.inputEl);
-				cb.setPlaceholder("Example: folder 1/folder 2")
+				cb.setPlaceholder("Example: folder1/folder2")
 					.setValue(this.plugin.settings.templates_folder)
 					.onChange((new_folder) => {
 						this.plugin.settings.templates_folder = new_folder;
@@ -142,7 +145,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 				.addSearch(cb => {
                     new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
 
-					cb.setPlaceholder("folder 1/template_file")
+					cb.setPlaceholder("folder1/template_file")
 						.setValue(this.plugin.settings.empty_file_template)
 						.onChange((empty_file_template) => {
 							this.plugin.settings.empty_file_template = empty_file_template;
@@ -154,6 +157,62 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
     add_templates_hotkeys_setting() {
         this.containerEl.createEl("h2", { text: "Templates Hotkeys"});
+
+        this.plugin.settings.enabled_templates_hotkeys.forEach(template => {
+            new Setting(this.containerEl)
+                .addSearch(cb => {
+                    new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+                    cb.setPlaceholder("Example: folder1/template_file")
+                        .setValue(template)
+                        .onChange((new_template) => {
+                            if (new_template !== "" && this.plugin.settings.enabled_templates_hotkeys.contains(new_template)) {
+                                log_error(new TemplaterError("This template is already bound to a hotkey"));
+                                return;
+                            }
+                            this.plugin.command_handler.add_template_hotkey(template, new_template);
+                            const index = this.plugin.settings.enabled_templates_hotkeys.indexOf(template);
+                            this.plugin.settings.enabled_templates_hotkeys[index] = new_template;
+                            this.plugin.save_settings();
+                            // Force refresh
+                            this.display();
+                        });
+                })
+                .addExtraButton(cb => {
+                    cb.setIcon("any-key")
+                        .setTooltip("Configure Hotkey")
+                        .onClick(() => {
+                            // TODO: Replace with future "official" way to do this
+                            // @ts-ignore
+                            this.app.setting.openTabById("hotkeys");
+                            // @ts-ignore
+                            const tab = this.app.setting.activeTab;
+                            tab.searchInputEl.value = "Templater: Insert";
+                            tab.updateHotkeyVisibility();
+                        });
+                })
+                .addExtraButton(cb => {
+                    cb.setIcon("cross")
+                        .setTooltip("Delete")
+                        .onClick(() => {
+                            this.plugin.command_handler.remove_template_hotkey(template);
+                            const index = this.plugin.settings.enabled_templates_hotkeys.indexOf(template);
+                            this.plugin.settings.enabled_templates_hotkeys.splice(index, 1);
+                            // Force refresh
+                            this.display();
+                        });
+                });
+        });
+
+        new Setting(this.containerEl)
+            .addButton(cb => {
+                cb.setButtonText("Enable new hotkey for template")
+                    .setCta()
+                    .onClick(_ => {
+                        this.plugin.settings.enabled_templates_hotkeys.push("");
+                        // Force refresh
+                        this.display();
+                    });
+            });
     }
 
     add_user_script_functions_setting() {
@@ -178,7 +237,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			.setDesc(desc)
 			.addSearch(cb => {
                 new FolderSuggest(this.app, cb.inputEl);
-				cb.setPlaceholder("Example: folder 1/folder 2")
+				cb.setPlaceholder("Example: folder1/folder2")
 					.setValue(this.plugin.settings.user_scripts_folder)
 					.onChange((new_folder) => {
 						this.plugin.settings.user_scripts_folder = new_folder;
@@ -188,9 +247,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         desc = document.createDocumentFragment();
         let files: TFile[];
-        try {
-            files = get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder);
-        } catch(e) {
+        files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
+        if (!files) {
             files = [];
         }
 
@@ -201,7 +259,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 count++;
                 desc.append(
                     desc.createEl("li", {
-                        text: file.basename
+                        text: `tp.user.${file.basename}`
                     })
                 );
             }
@@ -262,7 +320,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .onChange((new_value) => {
                             const new_timeout = Number(new_value);
                             if (isNaN(new_timeout)) {
-                                this.plugin.log_error(new TemplaterError("Timeout must be a number"));
+                                log_error(new TemplaterError("Timeout must be a number"));
                                 return;
                             }
                             this.plugin.settings.command_timeout = new_timeout;
@@ -359,14 +417,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
 			const setting = new Setting(this.containerEl)
 				.addButton(button => {
-					const b = button.setButtonText("Add New User Function").onClick(() => {
-						this.plugin.settings.templates_pairs.push(["", ""]);
-						// Force refresh
-						this.display();
-					});
-					b.buttonEl.addClass("templater_button");
-
-					return b;
+					button.setButtonText("Add New User Function")
+                        .setCta()
+                        .onClick(() => {
+                            this.plugin.settings.templates_pairs.push(["", ""]);
+                            // Force refresh
+                            this.display();
+                        });
 				});
 			setting.infoEl.remove();
 
