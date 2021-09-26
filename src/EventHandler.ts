@@ -1,7 +1,7 @@
 import TemplaterPlugin from "main";
 import { Templater } from 'Templater';
 import { Settings } from 'Settings';
-import { App, EventRef, Menu, MenuItem, TFile, TFolder } from 'obsidian';
+import { App, EventRef, Menu, MenuItem, TAbstractFile, TFile, TFolder } from 'obsidian';
 
 export default class EventHandler {
 	private syntax_highlighting_event: EventRef;
@@ -38,7 +38,7 @@ export default class EventHandler {
 
 	update_trigger_file_on_creation(): void {
 		if (this.settings.trigger_on_file_creation) {
-			this.trigger_on_file_creation_event = this.app.vault.on("create", this.templater.on_file_creation);
+			this.trigger_on_file_creation_event = this.app.vault.on("create", (file: TAbstractFile) => Templater.on_file_creation(this.templater, file));
 			this.plugin.registerEvent(this.trigger_on_file_creation_event);
 		} else {
 			if (this.trigger_on_file_creation_event) {

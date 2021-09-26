@@ -11,6 +11,20 @@ export function escape_RegExp(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 } 
 
+export function resolve_tfolder(app: App, folder_str: string): TFolder {
+    folder_str  = normalizePath(folder_str);
+
+    const folder = app.vault.getAbstractFileByPath(folder_str);
+    if (!folder) {
+        throw new TemplaterError(`Folder "${folder_str}" doesn't exist`);
+    }
+    if (!(folder instanceof TFolder)) {
+        throw new TemplaterError(`${folder_str} is a file, not a folder`);
+    }
+
+    return folder;
+}
+
 export function resolve_tfile(app: App, file_str: string): TFile {
     file_str = normalizePath(file_str);
 
@@ -26,15 +40,7 @@ export function resolve_tfile(app: App, file_str: string): TFile {
 }
 
 export function get_tfiles_from_folder(app: App, folder_str: string): Array<TFile> {
-    folder_str = normalizePath(folder_str);
-
-    const folder = app.vault.getAbstractFileByPath(folder_str);
-    if (!folder) {
-        throw new TemplaterError(`Folder "${folder_str}" doesn't exist`);
-    }
-    if (!(folder instanceof TFolder)) {
-        throw new TemplaterError(`${folder_str} is a file, not a folder`);
-    }
+    const folder = resolve_tfolder(app, folder_str);
 
     let files: Array<TFile> = [];
     Vault.recurseChildren(folder, (file: TAbstractFile) => {

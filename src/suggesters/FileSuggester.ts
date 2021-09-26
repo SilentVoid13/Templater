@@ -4,6 +4,7 @@ import { App, TAbstractFile, TFile } from "obsidian";
 import { TextInputSuggest } from "suggesters/suggest";
 import { get_tfiles_from_folder } from 'Utils';
 import TemplaterPlugin from 'main';
+import { errorWrapperSync } from 'Error';
 
 export enum FileSuggestMode {
     TemplateFiles,
@@ -24,11 +25,18 @@ export class FileSuggest extends TextInputSuggest<TFile> {
         }
     }
 
+    get_error_msg(mode: FileSuggestMode): string {
+        switch (mode) {
+            case FileSuggestMode.TemplateFiles:
+                return `Templates folder doesn't exist`;
+            case FileSuggestMode.ScriptFiles:
+                return `User Scripts folder doesn't exist`;
+        }
+    }
+
     getSuggestions(input_str: string): TFile[] {
-        let all_files: TFile[];
-        try {
-            all_files = get_tfiles_from_folder(this.app, this.get_folder(this.mode));
-        } catch (e) {
+        const all_files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.get_folder(this.mode)), this.get_error_msg(this.mode));
+        if (!all_files) {
             return [];
         }
 

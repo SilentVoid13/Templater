@@ -1,6 +1,8 @@
 import { App, FuzzySuggestModal, TFile, TFolder, normalizePath, Vault, TAbstractFile } from "obsidian";
 import { get_tfiles_from_folder } from "Utils";
 import TemplaterPlugin from './main';
+import { errorWrapperSync } from 'Error';
+import { log_error } from 'Log';
 
 export enum OpenMode {
     InsertTemplate,
@@ -24,7 +26,11 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
         if (this.plugin.settings.templates_folder === "") {
             return this.app.vault.getMarkdownFiles();
         }
-        return get_tfiles_from_folder(this.app, this.plugin.settings.templates_folder);
+        const files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.templates_folder), `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`);
+        if (!files) {
+            return [];
+        }
+        return files;
     }
 
     getItemText(item: TFile): string {
@@ -46,7 +52,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
         try {
             this.open();
         } catch(e) {
-            this.plugin.log_error(e);
+            log_error(e);
         }
     }
 

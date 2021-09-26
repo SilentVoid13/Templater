@@ -4,14 +4,17 @@ import TemplaterPlugin from 'main';
 import { IGenerateObject } from 'functions/IGenerateObject';
 import { RunningConfig } from 'Templater';
 import { get_tfiles_from_folder } from 'Utils';
-import { TemplaterError } from 'Error';
+import { errorWrapperSync, TemplaterError } from 'Error';
 
 export class UserScriptFunctions implements IGenerateObject {
     constructor(private app: App, private plugin: TemplaterPlugin) {}
 
     async generate_user_script_functions(config: RunningConfig): Promise<Map<string, Function>> {
         const user_script_functions: Map<string, Function> = new Map();
-        let files = get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder);
+        let files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`);
+        if (!files) {
+            return new Map();
+        }
 
         for (let file of files) {
             if (file.extension.toLowerCase() === "js") {

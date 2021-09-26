@@ -43,10 +43,6 @@
     justify-content: center;
 }
 
-.templater_button:hover {
-    background-color: #00496A !important;
-}
-
 .templater-prompt-div {
     display: flex;
 }

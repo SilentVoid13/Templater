@@ -2,6 +2,7 @@ import { App, Platform } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "Error";
 import { CursorJumper } from 'editor/CursorJumper';
+import { log_error } from 'Log';
 
 import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
@@ -51,7 +52,7 @@ export class Editor {
 
         const js_mode = window.CodeMirror.getMode({}, "javascript");
 		if (js_mode.name === "null") {
-            this.plugin.log_error(new TemplaterError("Javascript syntax mode couldn't be found, can't enable syntax highlighting."));
+            log_error(new TemplaterError("Javascript syntax mode couldn't be found, can't enable syntax highlighting."));
             return;
 		}
 
@@ -59,7 +60,7 @@ export class Editor {
         // @ts-ignore
         const overlay_mode = window.CodeMirror.customOverlayMode;
         if (overlay_mode == null) {
-            this.plugin.log_error(new TemplaterError("Couldn't find customOverlayMode, can't enable syntax highlighting."));
+            log_error(new TemplaterError("Couldn't find customOverlayMode, can't enable syntax highlighting."));
             return;
         }
 
