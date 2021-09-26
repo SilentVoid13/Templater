@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://github.com/SilentVoid13/Templater/compare/1.9.0...1.9.1) (2021-09-26)
+
+
+### Bug Fixes
+
+* fixing startup templates bug, forgot to check for empty strings ([7304f3f](https://github.com/SilentVoid13/Templater/commit/7304f3f1c9cff32f6cd120602abc0b39b8f54027))
+
 ## [1.9.0](https://github.com/SilentVoid13/Templater/compare/1.8.1...1.9.0) (2021-09-26)
 
 
