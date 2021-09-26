@@ -253,6 +253,9 @@ export class Templater {
 
     async execute_startup_scripts() {
         for (const template of this.plugin.settings.startup_templates) {
+            if (template === "") {
+                continue;
+            }
             const file = errorWrapperSync(() => resolve_tfile(this.app, template), `Couldn't find startup template "${template}"`);
             if (!file) {
                 continue;
