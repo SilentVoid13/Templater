@@ -121,11 +121,12 @@ export class InternalModuleFile extends InternalModule {
 
     generate_include(): Function {
         return async (include_link: string | TFile) => {
+            console.log('DEPTH', this.include_depth);
             // TODO: Add mutex for this, this may currently lead to a race condition. 
             // While not very impactful, that could still be annoying.
             this.include_depth += 1;
             if (this.include_depth > DEPTH_LIMIT) {
-                this.include_depth = 0;
+                this.include_depth -= 1;
                 throw new TemplaterError("Reached inclusion depth limit (max = 10)");
             }
 
@@ -136,12 +137,14 @@ export class InternalModuleFile extends InternalModule {
             } else {
                 let match;
                 if ((match = this.linkpath_regex.exec(include_link)) === null) {
+                    this.include_depth -= 1;
                     throw new TemplaterError("Invalid file format, provide an obsidian link between quotes.");
                 }
                 const {path, subpath} = parseLinktext(match[1]);
 
                 const inc_file = this.app.metadataCache.getFirstLinkpathDest(path, "");
                 if (!inc_file) {
+                    this.include_depth -= 1;
                     throw new TemplaterError(`File ${include_link} doesn't exist`);
                 }
                 inc_file_content = await this.app.vault.read(inc_file);
@@ -157,11 +160,14 @@ export class InternalModuleFile extends InternalModule {
                 }
             } 
 
-            const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, this.plugin.templater.current_functions_object);
-            
-            this.include_depth -= 1;
-        
-            return parsed_content;
+            try {
+                const parsed_content = await this.plugin.templater.parser.parse_commands(inc_file_content, this.plugin.templater.current_functions_object);
+                this.include_depth -= 1;
+                return parsed_content;
+            } catch (e) {
+                this.include_depth -= 1;
+                throw e;
+            } 
         }
     }
 
