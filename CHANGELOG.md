@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/SilentVoid13/Templater/compare/1.8.1...1.9.0) (2021-09-26)
+
+
+### Features
+
+* adding active_file config option and fixing folder newFileLocation ([bb3fa5a](https://github.com/SilentVoid13/Templater/commit/bb3fa5a4b3cf9bc8cd9054679ed4a2799e25184a))
+* adding better colors for light themes when syntax highlighting, was a bit unreadable until now ([b4f23e4](https://github.com/SilentVoid13/Templater/commit/b4f23e4d3c6cd7d554cc8cc76b1552a05671b03c)), closes [#268](https://github.com/SilentVoid13/Templater/issues/268) [#303](https://github.com/SilentVoid13/Templater/issues/303)
+* **fuzzysuggester:** adding a new placeholder for fuzzysuggester ([2d734b6](https://github.com/SilentVoid13/Templater/commit/2d734b6652c76f4390f33eb8563b05a3412c148c)), closes [#352](https://github.com/SilentVoid13/Templater/issues/352)
+* **settings:** adding a way to add hotkeys for templates in settings ([34bae3f](https://github.com/SilentVoid13/Templater/commit/34bae3f11a0231ec0f744813a2ebb22e00f5ac76))
+* **settings:** adding startup templates ([920b707](https://github.com/SilentVoid13/Templater/commit/920b70762a0d712d69e284cd1b292d4f9ab233e5))
+* **settings:** adding suggesters in settings for template folder, empty file, user scripts folders ([3b59e74](https://github.com/SilentVoid13/Templater/commit/3b59e74a0637dc8d509d170dab103b7b14768382))
+
+
+### Bug Fixes
+
+* fixing small naming errors ([e250bd2](https://github.com/SilentVoid13/Templater/commit/e250bd2aa589473a8c28717e0653b5e2e1883ab3))
+* fixing the "edit this page" button for documentation ([e6a8f94](https://github.com/SilentVoid13/Templater/commit/e6a8f946cc233b03a7cae420cce933fcd3607c22)), closes [#300](https://github.com/SilentVoid13/Templater/issues/300)
+* **tp.file.include:** fixing tp.file.include incorrect depth_limit ([7a202a4](https://github.com/SilentVoid13/Templater/commit/7a202a407be19f376e12dfa9cd393bf6dc8fc8a1))
+
 ### [1.8.1](https://github.com/SilentVoid13/Templater/compare/1.8.0...1.8.1) (2021-06-17)
 
 
