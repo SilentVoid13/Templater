@@ -13,8 +13,8 @@ export const DEFAULT_SETTINGS: Settings = {
 	trigger_on_file_creation: false,
 	enable_system_commands: false,
 	shell_path: "",
-	user_scripts_folder: undefined,
-	empty_file_template: undefined,
+	user_scripts_folder: "",
+	empty_file_template: "",
 	syntax_highlighting: true,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
@@ -168,7 +168,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     cb.setPlaceholder("Example: folder1/template_file")
                         .setValue(template)
                         .onChange((new_template) => {
-                            if (new_template !== "" && this.plugin.settings.enabled_templates_hotkeys.contains(new_template)) {
+                            if (new_template && this.plugin.settings.enabled_templates_hotkeys.contains(new_template)) {
                                 log_error(new TemplaterError("This template is already bound to a hotkey"));
                                 return;
                             }
@@ -237,7 +237,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     cb.setPlaceholder("Example: folder1/template_file")
                         .setValue(template)
                         .onChange((new_template) => {
-                            if (new_template !== "" && this.plugin.settings.startup_templates.contains(new_template)) {
+                            if (new_template && this.plugin.settings.startup_templates.contains(new_template)) {
                                 log_error(new TemplaterError("This startup template already exist"));
                                 return;
                             }
@@ -300,28 +300,28 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			});
 
         desc = document.createDocumentFragment();
-        let files: TFile[];
-        files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
-        if (!files) {
-            files = [];
-        }
-
         let name: string;
-        let count = 0;
-        for (const file of files) {
-            if (file.extension === "js") {
-                count++;
-                desc.append(
-                    desc.createEl("li", {
-                        text: `tp.user.${file.basename}`
-                    })
-                );
-            }
-        }
-        if (count === 0) {
-            name = "No User Scripts detected";
+        if (!this.plugin.settings.user_scripts_folder) {
+            name = "No User Scripts folder set"; 
         } else {
-            name = "Detected User Scripts";
+            let files: TFile[];
+            files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.user_scripts_folder), `User Scripts folder doesn't exist`);
+            if (!files || files.length === 0) {
+                name = "No User Scripts detected";
+            } else {
+                let count = 0;
+                for (const file of files) {
+                    if (file.extension === "js") {
+                        count++;
+                        desc.append(
+                            desc.createEl("li", {
+                                text: `tp.user.${file.basename}`
+                            })
+                        );
+                    }
+                }
+                name = `Detected ${count} User Script(s)`;
+            }
         }
 
         new Setting(this.containerEl)

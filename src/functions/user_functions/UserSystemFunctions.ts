@@ -28,7 +28,7 @@ export class UserSystemFunctions implements IGenerateObject {
         const internal_functions_object = await this.plugin.templater.functions_generator.generate_object(config, FunctionsMode.INTERNAL);
 
         for (let [template, cmd] of this.plugin.settings.templates_pairs) {
-            if (template === "" || cmd === "") {
+            if (!template || !cmd) {
                 continue;
             }
 
@@ -49,7 +49,7 @@ export class UserSystemFunctions implements IGenerateObject {
                         timeout: this.plugin.settings.command_timeout * 1000,
                         cwd: this.cwd,
                         env: process_env,
-                        ...(this.plugin.settings.shell_path !== "" && {shell: this.plugin.settings.shell_path}),
+                        ...(this.plugin.settings.shell_path && {shell: this.plugin.settings.shell_path}),
                     };
 
                     try {

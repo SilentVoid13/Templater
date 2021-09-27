@@ -239,7 +239,7 @@ export class Templater {
 
         if (file.stat.size == 0 && templater.plugin.settings.empty_file_template) {
             const template_file: TFile = await errorWrapper(async (): Promise<TFile> => {
-                return resolve_tfile(templater.app, templater.plugin.settings.empty_file_template + ".md");
+                return resolve_tfile(templater.app, templater.plugin.settings.empty_file_template);
             }, `Couldn't find Empty file template ${templater.plugin.settings.empty_file_template}`);
             // errorWrapper failed
             if (template_file == null) {
@@ -253,7 +253,7 @@ export class Templater {
 
     async execute_startup_scripts() {
         for (const template of this.plugin.settings.startup_templates) {
-            if (template === "") {
+            if (!template) {
                 continue;
             }
             const file = errorWrapperSync(() => resolve_tfile(this.app, template), `Couldn't find startup template "${template}"`);

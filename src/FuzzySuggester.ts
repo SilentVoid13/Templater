@@ -23,7 +23,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     }
 
     getItems(): TFile[] {
-        if (this.plugin.settings.templates_folder === "") {
+        if (!this.plugin.settings.templates_folder) {
             return this.app.vault.getMarkdownFiles();
         }
         const files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.plugin.settings.templates_folder), `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`);
