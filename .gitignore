@@ -1,6 +1,11 @@
-# Intellij
+# Editors
+
+## Intellij
 *.iml
 .idea
+
+## VSCode
+.vscode/
 
 # npm
 node_modules
@@ -14,7 +19,10 @@ main.test.js
 test/
 tests_jest/
 
-RESOURCES.md
+# Obsidian
 data.json
 .hotreload
 resources/
+
+# Other
+RESOURCES.md
