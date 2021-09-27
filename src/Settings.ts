@@ -159,7 +159,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_templates_hotkeys_setting() {
-        this.containerEl.createEl("h2", { text: "Templates Hotkeys"});
+        this.containerEl.createEl("h2", { text: "Template Hotkeys"});
 
         this.plugin.settings.enabled_templates_hotkeys.forEach((template, index) => {
             const s = new Setting(this.containerEl)
