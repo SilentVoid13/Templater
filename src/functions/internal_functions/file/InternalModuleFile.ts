@@ -121,7 +121,6 @@ export class InternalModuleFile extends InternalModule {
 
     generate_include(): Function {
         return async (include_link: string | TFile) => {
-            console.log('DEPTH', this.include_depth);
             // TODO: Add mutex for this, this may currently lead to a race condition. 
             // While not very impactful, that could still be annoying.
             this.include_depth += 1;
