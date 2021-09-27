@@ -24,6 +24,7 @@ export class UserFunctions implements IGenerateObject {
         }
 
         // TODO: Add mobile support
+        // user_scripts_folder needs to be explicitly set to '/' to query from root
         if (Platform.isDesktopApp && this.plugin.settings.user_scripts_folder) {
             user_script_functions = await this.user_script_functions.generate_object(config);
         }

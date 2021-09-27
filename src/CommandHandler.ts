@@ -69,8 +69,8 @@ export class CommandHandler {
 
     register_templates_hotkeys() {
         this.plugin.settings.enabled_templates_hotkeys.forEach(template => {
-            if (template !== "") {
-                this.add_template_hotkey("", template);
+            if (template) {
+                this.add_template_hotkey(null, template);
             }
         });
     }
@@ -78,7 +78,7 @@ export class CommandHandler {
     add_template_hotkey(old_template: string, new_template: string) {
         this.remove_template_hotkey(old_template);
 
-        if (new_template !== "") {
+        if (new_template) {
             this.plugin.addCommand({
                 id: new_template,
                 name: `Insert ${new_template}`,
@@ -94,7 +94,7 @@ export class CommandHandler {
     }
 
     remove_template_hotkey(template: string) {
-        if (template !== "") {
+        if (template) {
             // TODO: Find official way to do this
             // @ts-ignore
             this.app.commands.removeCommand(`${this.plugin.manifest.id}:${template}`);
