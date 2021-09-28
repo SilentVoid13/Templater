@@ -16,7 +16,7 @@ specifiers:
   cz-conventional-changelog: ^3.3.0
   eta: github:SilentVoid13/eta#custom-eta
   obsidian: ^0.12.16
-  rollup: ^2.57.0
+  rollup: 2.53.0
   standard-version: ^9.3.1
   ts-node: ^9.1.1
   tslib: ^2.3.1
@@ -25,13 +25,13 @@ specifiers:
 dependencies:
   '@popperjs/core': 2.10.1
   child_process: 1.0.2
-  eta: github.com/SilentVoid13/eta/0f1ffa4f15b6a708aa303bd4b0fc07b4a9b4e45e
+  eta: github.com/SilentVoid13/eta/73c499b027f0ccd2441b63895bd4ff0af1601c2e
 
 devDependencies:
-  '@rollup/plugin-commonjs': 18.1.0_rollup@2.57.0
-  '@rollup/plugin-json': 4.1.0_rollup@2.57.0
-  '@rollup/plugin-node-resolve': 11.2.1_rollup@2.57.0
-  '@rollup/plugin-typescript': 8.2.5_283b0408a190511f1240c12469d64cd5
+  '@rollup/plugin-commonjs': 18.1.0_rollup@2.53.0
+  '@rollup/plugin-json': 4.1.0_rollup@2.53.0
+  '@rollup/plugin-node-resolve': 11.2.1_rollup@2.53.0
+  '@rollup/plugin-typescript': 8.2.5_68bd4aaa9d2b7739eded04e242c794f1
   '@types/chai': 4.2.22
   '@types/chai-as-promised': 7.1.4
   '@types/moment': 2.13.0
@@ -40,7 +40,7 @@ devDependencies:
   chai-as-promised: 7.1.1_chai@4.3.4
   cz-conventional-changelog: 3.3.0
   obsidian: 0.12.16
-  rollup: 2.57.0
+  rollup: 2.53.0
   standard-version: 9.3.1
   ts-node: 9.1.1_typescript@4.4.3
   tslib: 2.3.1
@@ -117,47 +117,47 @@ packages:
     resolution: {integrity: sha512-HnUhk1Sy9IuKrxEMdIRCxpIqPw6BFsbYSEUO9p/hNw5sMld/+3OLMWQP80F8/db9qsv3qUjs7ZR5bS/R+iinXw==}
     dev: false
 
-  /@rollup/plugin-commonjs/18.1.0_rollup@2.57.0:
+  /@rollup/plugin-commonjs/18.1.0_rollup@2.53.0:
     resolution: {integrity: sha512-h3e6T9rUxVMAQswpDIobfUHn/doMzM9sgkMrsMWCFLmB84PSoC8mV8tOloAJjSRwdqhXBqstlX2BwBpHJvbhxg==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       rollup: ^2.30.0
     dependencies:
-      '@rollup/pluginutils': 3.1.0_rollup@2.57.0
+      '@rollup/pluginutils': 3.1.0_rollup@2.53.0
       commondir: 1.0.1
       estree-walker: 2.0.2
       glob: 7.2.0
       is-reference: 1.2.1
       magic-string: 0.25.7
       resolve: 1.20.0
-      rollup: 2.57.0
+      rollup: 2.53.0
     dev: true
 
-  /@rollup/plugin-json/4.1.0_rollup@2.57.0:
+  /@rollup/plugin-json/4.1.0_rollup@2.53.0:
     resolution: {integrity: sha512-yfLbTdNS6amI/2OpmbiBoW12vngr5NW2jCJVZSBEz+H5KfUJZ2M7sDjk0U6GOOdCWFVScShte29o9NezJ53TPw==}
     peerDependencies:
       rollup: ^1.20.0 || ^2.0.0
     dependencies:
-      '@rollup/pluginutils': 3.1.0_rollup@2.57.0
-      rollup: 2.57.0
+      '@rollup/pluginutils': 3.1.0_rollup@2.53.0
+      rollup: 2.53.0
     dev: true
 
-  /@rollup/plugin-node-resolve/11.2.1_rollup@2.57.0:
+  /@rollup/plugin-node-resolve/11.2.1_rollup@2.53.0:
     resolution: {integrity: sha512-yc2n43jcqVyGE2sqV5/YCmocy9ArjVAP/BeXyTtADTBBX6V0e5UMqwO8CdQ0kzjb6zu5P1qMzsScCMRvE9OlVg==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0
     dependencies:
-      '@rollup/pluginutils': 3.1.0_rollup@2.57.0
+      '@rollup/pluginutils': 3.1.0_rollup@2.53.0
       '@types/resolve': 1.17.1
       builtin-modules: 3.2.0
       deepmerge: 4.2.2
       is-module: 1.0.0
       resolve: 1.20.0
-      rollup: 2.57.0
+      rollup: 2.53.0
     dev: true
 
-  /@rollup/plugin-typescript/8.2.5_283b0408a190511f1240c12469d64cd5:
+  /@rollup/plugin-typescript/8.2.5_68bd4aaa9d2b7739eded04e242c794f1:
     resolution: {integrity: sha512-QL/LvDol/PAGB2O0S7/+q2HpSUNodpw7z6nGn9BfoVCPOZ0r4EALrojFU29Bkoi2Hr2jgTocTejJ5GGWZfOxbQ==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
@@ -165,14 +165,14 @@ packages:
       tslib: '*'
       typescript: '>=3.7.0'
     dependencies:
-      '@rollup/pluginutils': 3.1.0_rollup@2.57.0
+      '@rollup/pluginutils': 3.1.0_rollup@2.53.0
       resolve: 1.20.0
-      rollup: 2.57.0
+      rollup: 2.53.0
       tslib: 2.3.1
       typescript: 4.4.3
     dev: true
 
-  /@rollup/pluginutils/3.1.0_rollup@2.57.0:
+  /@rollup/pluginutils/3.1.0_rollup@2.53.0:
     resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
@@ -181,7 +181,7 @@ packages:
       '@types/estree': 0.0.39
       estree-walker: 1.0.1
       picomatch: 2.3.0
-      rollup: 2.57.0
+      rollup: 2.53.0
     dev: true
 
   /@types/chai-as-promised/7.1.4:
@@ -1749,8 +1749,8 @@ packages:
       signal-exit: 3.0.4
     dev: true
 
-  /rollup/2.57.0:
-    resolution: {integrity: sha512-bKQIh1rWKofRee6mv8SrF2HdP6pea5QkwBZSMImJysFj39gQuiV8MEPBjXOCpzk3wSYp63M2v2wkWBmFC8O/rg==}
+  /rollup/2.53.0:
+    resolution: {integrity: sha512-spgrY78Toh+m0+zaOoeaayJKuzFuWy6o1PdFIBMVwRcuxT0xCOX9A5rChyKe+2ruL4lePKWUMImS4mMW1QAkmQ==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2161,10 +2161,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/SilentVoid13/eta/0f1ffa4f15b6a708aa303bd4b0fc07b4a9b4e45e:
-    resolution: {tarball: https://codeload.github.com/SilentVoid13/eta/tar.gz/0f1ffa4f15b6a708aa303bd4b0fc07b4a9b4e45e}
+  github.com/SilentVoid13/eta/73c499b027f0ccd2441b63895bd4ff0af1601c2e:
+    resolution: {tarball: https://codeload.github.com/SilentVoid13/eta/tar.gz/73c499b027f0ccd2441b63895bd4ff0af1601c2e}
     name: eta
-    version: 1.12.1
+    version: 1.12.2
     engines: {node: '>=6.0.0'}
     prepare: true
     requiresBuild: true

@@ -69,7 +69,7 @@ export default class TestTemplaterPlugin extends Plugin {
         for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
             if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
                 // @ts-ignore
-                this.app.plugins.plugins[plugin_name].unload();
+                await this.app.plugins.plugins[plugin_name].unload();
             }
         }
     }
@@ -79,7 +79,7 @@ export default class TestTemplaterPlugin extends Plugin {
         for (const plugin_name of Object.keys(this.app.plugins.plugins)) {
             if (plugin_name !== PLUGIN_NAME && plugin_name !== this.manifest.id) {
                 // @ts-ignore
-                this.app.plugins.plugins[plugin_name].load();
+                await this.app.plugins.plugins[plugin_name].load();
             } 
         }
     }
