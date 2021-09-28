@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.3](https://github.com/SilentVoid13/Templater/compare/1.9.2...1.9.3) (2021-09-28)
+
+
+### Bug Fixes
+
+* fixing "User Scripts folder doesn't exist", replacing string checks with proper truthy checks ([4a4fc45](https://github.com/SilentVoid13/Templater/commit/4a4fc45ea7195e3a6bb24c8d429a4d363fd8e692))
+* **tests:** reverting to a previous version of rollup, chai wasn't working otherwise ([e295d51](https://github.com/SilentVoid13/Templater/commit/e295d51ac68ffddb7f35479ee1882455c76f499c))
+
 ### [1.9.2](https://github.com/SilentVoid13/Templater/compare/1.9.1...1.9.2) (2021-09-26)
 
 
