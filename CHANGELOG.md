@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.5](https://github.com/SilentVoid13/Templater/compare/1.9.4...1.9.5) (2021-09-29)
+
+
+### Features
+
+* Folder Templates ([#384](https://github.com/SilentVoid13/Templater/issues/384)) ([3eb60d8](https://github.com/SilentVoid13/Templater/commit/3eb60d84aa8d78c7b294d2b31c471d7a41064914)), closes [#326](https://github.com/SilentVoid13/Templater/issues/326)
+
 ### [1.9.4](https://github.com/SilentVoid13/Templater/compare/1.9.3...1.9.4) (2021-09-28)
 
 ### [1.9.3](https://github.com/SilentVoid13/Templater/compare/1.9.2...1.9.3) (2021-09-28)
