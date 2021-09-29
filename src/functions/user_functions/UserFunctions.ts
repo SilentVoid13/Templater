@@ -15,7 +15,9 @@ export class UserFunctions implements IGenerateObject {
         this.user_script_functions = new UserScriptFunctions(app, plugin);
     }
 
-    async generate_object(config: RunningConfig): Promise<{}> {
+    async generate_object(
+        config: RunningConfig
+    ): Promise<Record<string, unknown>> {
         let user_system_functions = {};
         let user_script_functions = {};
 

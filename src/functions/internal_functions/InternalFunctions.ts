@@ -12,7 +12,7 @@ import { RunningConfig } from "Templater";
 import { InternalModuleConfig } from "./config/InternalModuleConfig";
 
 export class InternalFunctions implements IGenerateObject {
-    private modules_array: Array<InternalModule> = new Array();
+    private modules_array: Array<InternalModule> = [];
 
     constructor(protected app: App, protected plugin: TemplaterPlugin) {
         this.modules_array.push(new InternalModuleDate(this.app, this.plugin));
@@ -35,7 +35,9 @@ export class InternalFunctions implements IGenerateObject {
         }
     }
 
-    async generate_object(config: RunningConfig): Promise<{}> {
+    async generate_object(
+        config: RunningConfig
+    ): Promise<Record<string, unknown>> {
         const internal_functions_object: { [key: string]: any } = {};
 
         for (const mod of this.modules_array) {

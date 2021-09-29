@@ -39,7 +39,7 @@ export class UserSystemFunctions implements IGenerateObject {
                 FunctionsMode.INTERNAL
             );
 
-        for (let [template, cmd] of this.plugin.settings.templates_pairs) {
+        for (const [template, cmd] of this.plugin.settings.templates_pairs) {
             if (!template || !cmd) {
                 continue;
             }
@@ -96,7 +96,9 @@ export class UserSystemFunctions implements IGenerateObject {
         return user_system_functions;
     }
 
-    async generate_object(config: RunningConfig): Promise<{}> {
+    async generate_object(
+        config: RunningConfig
+    ): Promise<Record<string, unknown>> {
         const user_system_functions = await this.generate_system_functions(
             config
         );

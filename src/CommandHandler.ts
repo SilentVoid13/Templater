@@ -7,7 +7,7 @@ import { errorWrapperSync } from "Error";
 export class CommandHandler {
     constructor(private app: App, private plugin: TemplaterPlugin) {}
 
-    setup() {
+    setup(): void {
         this.plugin.addCommand({
             id: "insert-templater",
             name: "Open Insert Template modal",
@@ -67,7 +67,7 @@ export class CommandHandler {
         this.register_templates_hotkeys();
     }
 
-    register_templates_hotkeys() {
+    register_templates_hotkeys(): void {
         this.plugin.settings.enabled_templates_hotkeys.forEach((template) => {
             if (template) {
                 this.add_template_hotkey(null, template);
@@ -75,7 +75,7 @@ export class CommandHandler {
         });
     }
 
-    add_template_hotkey(old_template: string, new_template: string) {
+    add_template_hotkey(old_template: string, new_template: string): void {
         this.remove_template_hotkey(old_template);
 
         if (new_template) {
@@ -98,7 +98,7 @@ export class CommandHandler {
         }
     }
 
-    remove_template_hotkey(template: string) {
+    remove_template_hotkey(template: string): void {
         if (template) {
             // TODO: Find official way to do this
             // @ts-ignore

@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "rollup --config rollup.config.js -w",
         "build": "rollup --config rollup.config.js",
+        "pretest": "eslint --ignore-path .gitignore src/",
         "test": "rollup --config rollup.config.js --testBuild",
         "test-dev": "rollup --config rollup.config.js -w --testBuild",
         "release": "standard-version -t ''"

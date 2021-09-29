@@ -4,7 +4,7 @@ import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     private resolve: (value: T) => void;
     private reject: (reason?: any) => void;
-    private submitted: boolean = false;
+    private submitted = false;
 
     constructor(
         app: App,

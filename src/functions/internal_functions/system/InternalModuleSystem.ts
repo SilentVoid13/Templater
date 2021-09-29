@@ -5,7 +5,7 @@ import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
 
 export class InternalModuleSystem extends InternalModule {
-    public name: string = "system";
+    public name = "system";
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("clipboard", this.generate_clipboard());
@@ -15,7 +15,7 @@ export class InternalModuleSystem extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
-    generate_clipboard(): Function {
+    generate_clipboard(): () => Promise<string> {
         return async () => {
             // TODO: Add mobile support
             if (Platform.isMobileApp) {
@@ -25,11 +25,15 @@ export class InternalModuleSystem extends InternalModule {
         };
     }
 
-    generate_prompt(): Function {
+    generate_prompt(): (
+        prompt_text: string,
+        default_value: string,
+        throw_on_cancel: boolean
+    ) => Promise<string> {
         return async (
-            prompt_text?: string,
-            default_value?: string,
-            throw_on_cancel: boolean = false
+            prompt_text: string,
+            default_value: string,
+            throw_on_cancel = false
         ): Promise<string> => {
             const prompt = new PromptModal(
                 this.app,
@@ -53,12 +57,17 @@ export class InternalModuleSystem extends InternalModule {
         };
     }
 
-    generate_suggester(): Function {
+    generate_suggester(): <T>(
+        text_items: string[] | ((item: T) => string),
+        items: T[],
+        throw_on_cancel: boolean,
+        placeholder: string
+    ) => Promise<T> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
             items: T[],
-            throw_on_cancel: boolean = false,
-            placeholder: string = ""
+            throw_on_cancel = false,
+            placeholder = ""
         ): Promise<T> => {
             const suggester = new SuggesterModal(
                 this.app,

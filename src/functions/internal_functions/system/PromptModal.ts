@@ -5,7 +5,7 @@ export class PromptModal extends Modal {
     private promptEl: HTMLInputElement;
     private resolve: (value: string) => void;
     private reject: (reason?: any) => void;
-    private submitted: boolean = false;
+    private submitted = false;
 
     constructor(
         app: App,

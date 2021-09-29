@@ -13,15 +13,14 @@ import {
 } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
-import { FunctionsMode } from "functions/FunctionsGenerator";
 
 export const DEPTH_LIMIT = 10;
 
 export class InternalModuleFile extends InternalModule {
-    public name: string = "file";
-    private include_depth: number = 0;
-    private create_new_depth: number = 0;
-    private linkpath_regex: RegExp = new RegExp("^\\[\\[(.*)\\]\\]$");
+    public name = "file";
+    private include_depth = 0;
+    private create_new_depth = 0;
+    private linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set(
@@ -58,11 +57,16 @@ export class InternalModuleFile extends InternalModule {
         return await this.app.vault.read(this.config.target_file);
     }
 
-    generate_create_new(): Function {
+    generate_create_new(): (
+        template: TFile | string,
+        filename: string,
+        open_new: boolean,
+        folder?: TFolder
+    ) => Promise<TFile> {
         return async (
             template: TFile | string,
-            filename?: string,
-            open_new: boolean = false,
+            filename: string,
+            open_new = false,
             folder?: TFolder
         ) => {
             this.create_new_depth += 1;
@@ -87,22 +91,22 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_creation_date(): Function {
-        return (format: string = "YYYY-MM-DD HH:mm") => {
+    generate_creation_date(): (format?: string) => string {
+        return (format = "YYYY-MM-DD HH:mm") => {
             return window
                 .moment(this.config.target_file.stat.ctime)
                 .format(format);
         };
     }
 
-    generate_cursor(): Function {
+    generate_cursor(): (order?: number) => string {
         return (order?: number) => {
             // Hack to prevent empty output
             return `<% tp.file.cursor(${order ?? ""}) %>`;
         };
     }
 
-    generate_cursor_append(): Function {
+    generate_cursor_append(): (content: string) => void {
         return (content: string): string => {
             const active_view =
                 this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -122,7 +126,7 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_exists(): Function {
+    generate_exists(): (filename: string) => boolean {
         return (filename: string) => {
             // TODO: Remove this, only here to support the old way
             let match;
@@ -138,16 +142,16 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_find_tfile(): Function {
+    generate_find_tfile(): (filename: string) => TFile {
         return (filename: string) => {
             const path = normalizePath(filename);
             return this.app.metadataCache.getFirstLinkpathDest(path, "");
         };
     }
 
-    generate_folder(): Function {
-        return (relative: boolean = false) => {
-            let parent = this.config.target_file.parent;
+    generate_folder(): (relative?: boolean) => string {
+        return (relative = false) => {
+            const parent = this.config.target_file.parent;
             let folder;
 
             if (relative) {
@@ -160,7 +164,7 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_include(): Function {
+    generate_include(): (include_link: string | TFile) => Promise<string> {
         return async (include_link: string | TFile) => {
             // TODO: Add mutex for this, this may currently lead to a race condition.
             // While not very impactful, that could still be annoying.
@@ -227,15 +231,15 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_last_modified_date(): Function {
-        return (format: string = "YYYY-MM-DD HH:mm"): string => {
+    generate_last_modified_date(): (format?: string) => string {
+        return (format = "YYYY-MM-DD HH:mm"): string => {
             return window
                 .moment(this.config.target_file.stat.mtime)
                 .format(format);
         };
     }
 
-    generate_move(): Function {
+    generate_move(): (path: string) => Promise<string> {
         return async (path: string) => {
             const new_path = normalizePath(
                 `${path}.${this.config.target_file.extension}`
@@ -248,8 +252,8 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_path(): Function {
-        return (relative: boolean = false) => {
+    generate_path(): (relative: boolean) => string {
+        return (relative = false) => {
             // TODO: Add mobile support
             if (Platform.isMobileApp) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
@@ -269,9 +273,9 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_rename(): Function {
+    generate_rename(): (new_title: string) => Promise<string> {
         return async (new_title: string) => {
-            if (new_title.match(/[\\\/:]+/g)) {
+            if (new_title.match(/[\\/:]+/g)) {
                 throw new TemplaterError(
                     "File name cannot contain any of these characters: \\ / :"
                 );
@@ -287,7 +291,7 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_selection(): Function {
+    generate_selection(): () => string {
         return () => {
             const active_view =
                 this.app.workspace.getActiveViewOfType(MarkdownView);

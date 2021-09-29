@@ -1,10 +1,4 @@
-import {
-    App,
-    ButtonComponent,
-    PluginSettingTab,
-    Setting,
-    TFile,
-} from "obsidian";
+import { App, ButtonComponent, PluginSettingTab, Setting } from "obsidian";
 import { errorWrapperSync, TemplaterError } from "Error";
 import { FolderSuggest } from "suggesters/FolderSuggester";
 import { FileSuggest, FileSuggestMode } from "suggesters/FileSuggester";
@@ -69,11 +63,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_user_system_command_functions_setting();
     }
 
-    add_general_setting_header() {
+    add_general_setting_header(): void {
         this.containerEl.createEl("h2", { text: "General Settings" });
     }
 
-    add_template_folder_setting() {
+    add_template_folder_setting(): void {
         new Setting(this.containerEl)
             .setName("Template folder location")
             .setDesc("Files in this folder will be available as templates.")
@@ -88,7 +82,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_internal_functions_setting() {
+    add_internal_functions_setting(): void {
         const desc = document.createDocumentFragment();
         desc.append(
             "Templater provides multiples predefined variables / functions that you can use.",
@@ -106,7 +100,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setDesc(desc);
     }
 
-    add_syntax_highlighting_setting() {
+    add_syntax_highlighting_setting(): void {
         const desc = document.createDocumentFragment();
         desc.append(
             "Adds syntax highlighting for Templater commands in edit mode."
@@ -127,8 +121,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_trigger_on_new_file_creation_setting() {
-        let desc = document.createDocumentFragment();
+    add_trigger_on_new_file_creation_setting(): void {
+        const desc = document.createDocumentFragment();
         desc.append(
             "Templater will listen for the new file creation event, and replace every command it finds in the new file's content.",
             desc.createEl("br"),
@@ -157,7 +151,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_templates_hotkeys_setting() {
+    add_templates_hotkeys_setting(): void {
         this.containerEl.createEl("h2", { text: "Template Hotkeys" });
 
         this.plugin.settings.enabled_templates_hotkeys.forEach(
@@ -233,7 +227,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new hotkey for template")
                 .setCta()
-                .onClick((_) => {
+                .onClick(() => {
                     this.plugin.settings.enabled_templates_hotkeys.push("");
                     // Force refresh
                     this.display();
@@ -241,7 +235,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         });
     }
 
-    add_folder_templates_setting() {
+    add_folder_templates_setting(): void {
         this.containerEl.createEl("h2", { text: "Folder Templates" });
 
         const descHeading = document.createDocumentFragment();
@@ -286,8 +280,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl)
             .setName("Add New")
             .setDesc("Add new folder template")
-            .addButton((button: ButtonComponent): ButtonComponent => {
-                let b = button
+            .addButton((button: ButtonComponent) => {
+                button
                     .setTooltip("Add additional folder template")
                     .setButtonText("+")
                     .setCta()
@@ -298,8 +292,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         });
                         this.display();
                     });
-
-                return b;
             });
 
         this.plugin.settings.folder_templates.forEach(
@@ -388,7 +380,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
     }
 
-    add_startup_templates_setting() {
+    add_startup_templates_setting(): void {
         this.containerEl.createEl("h2", { text: "Startup Templates" });
 
         const desc = document.createDocumentFragment();
@@ -450,7 +442,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new startup template")
                 .setCta()
-                .onClick((_) => {
+                .onClick(() => {
                     this.plugin.settings.startup_templates.push("");
                     // Force refresh
                     this.display();
@@ -458,7 +450,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         });
     }
 
-    add_user_script_functions_setting() {
+    add_user_script_functions_setting(): void {
         this.containerEl.createEl("h2", { text: "User Script Functions" });
 
         let desc = document.createDocumentFragment();
@@ -493,8 +485,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         if (!this.plugin.settings.user_scripts_folder) {
             name = "No User Scripts folder set";
         } else {
-            let files: TFile[];
-            files = errorWrapperSync(
+            const files = errorWrapperSync(
                 () =>
                     get_tfiles_from_folder(
                         this.app,
@@ -534,7 +525,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_user_system_command_functions_setting() {
+    add_user_system_command_functions_setting(): void {
         let desc = document.createDocumentFragment();
         desc.append(
             "Allows you to create user functions linked to system commands.",

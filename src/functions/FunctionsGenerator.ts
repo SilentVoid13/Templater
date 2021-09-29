@@ -4,8 +4,8 @@ import { InternalFunctions } from "functions/internal_functions/InternalFunction
 import { UserFunctions } from "functions/user_functions/UserFunctions";
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "functions/IGenerateObject";
-import { obsidian_module } from "Utils";
 import { RunningConfig } from "Templater";
+import * as obsidian_module from "obsidian";
 
 export enum FunctionsMode {
     INTERNAL,
@@ -25,7 +25,7 @@ export class FunctionsGenerator implements IGenerateObject {
         await this.internal_functions.init();
     }
 
-    additional_functions(): {} {
+    additional_functions(): Record<string, unknown> {
         return {
             obsidian: obsidian_module,
         };
@@ -34,7 +34,7 @@ export class FunctionsGenerator implements IGenerateObject {
     async generate_object(
         config: RunningConfig,
         functions_mode: FunctionsMode = FunctionsMode.USER_INTERNAL
-    ): Promise<{}> {
+    ): Promise<Record<string, unknown>> {
         const final_object = {};
         const additional_functions_object = this.additional_functions();
         const internal_functions_object =

@@ -1,4 +1,4 @@
-import { addIcon, Notice, Plugin } from "obsidian";
+import { addIcon, Plugin } from "obsidian";
 
 import { DEFAULT_SETTINGS, Settings, TemplaterSettingTab } from "Settings";
 import { FuzzySuggester } from "FuzzySuggester";

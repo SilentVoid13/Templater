@@ -30,7 +30,7 @@ export default class EventHandler {
         this.update_file_menu();
     }
 
-    update_syntax_highlighting() {
+    update_syntax_highlighting(): void {
         if (this.plugin.settings.syntax_highlighting) {
             this.syntax_highlighting_event = this.app.workspace.on(
                 "codemirror",
@@ -75,7 +75,7 @@ export default class EventHandler {
                     menu.addItem((item: MenuItem) => {
                         item.setTitle("Create new note from template")
                             .setIcon("templater-icon")
-                            .onClick((_) => {
+                            .onClick(() => {
                                 this.plugin.fuzzy_suggester.create_new_note_from_template(
                                     file
                                 );

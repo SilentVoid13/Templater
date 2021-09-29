@@ -1,12 +1,4 @@
-import {
-    App,
-    FuzzySuggestModal,
-    TFile,
-    TFolder,
-    normalizePath,
-    Vault,
-    TAbstractFile,
-} from "obsidian";
+import { App, FuzzySuggestModal, TFile, TFolder } from "obsidian";
 import { get_tfiles_from_folder } from "Utils";
 import TemplaterPlugin from "./main";
 import { errorWrapperSync } from "Error";

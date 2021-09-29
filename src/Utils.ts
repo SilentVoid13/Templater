@@ -8,8 +8,6 @@ import {
     Vault,
 } from "obsidian";
 
-export const obsidian_module = require("obsidian");
-
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -52,7 +50,7 @@ export function get_tfiles_from_folder(
 ): Array<TFile> {
     const folder = resolve_tfolder(app, folder_str);
 
-    let files: Array<TFile> = [];
+    const files: Array<TFile> = [];
     Vault.recurseChildren(folder, (file: TAbstractFile) => {
         if (file instanceof TFile) {
             files.push(file);
@@ -66,8 +64,12 @@ export function get_tfiles_from_folder(
     return files;
 }
 
-export function arraymove(arr: any[], fromIndex: number, toIndex: number) {
-    var element = arr[fromIndex];
+export function arraymove(
+    arr: any[],
+    fromIndex: number,
+    toIndex: number
+): void {
+    const element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
 }

@@ -13,7 +13,7 @@ export class UserScriptFunctions implements IGenerateObject {
         config: RunningConfig
     ): Promise<Map<string, Function>> {
         const user_script_functions: Map<string, Function> = new Map();
-        let files = errorWrapperSync(
+        const files = errorWrapperSync(
             () =>
                 get_tfiles_from_folder(
                     this.app,
@@ -25,7 +25,7 @@ export class UserScriptFunctions implements IGenerateObject {
             return new Map();
         }
 
-        for (let file of files) {
+        for (const file of files) {
             if (file.extension.toLowerCase() === "js") {
                 await this.load_user_script_function(
                     config,
@@ -47,8 +47,8 @@ export class UserScriptFunctions implements IGenerateObject {
                 "app.vault is not a FileSystemAdapter instance"
             );
         }
-        let vault_path = this.app.vault.adapter.getBasePath();
-        let file_path = `${vault_path}/${file.path}`;
+        const vault_path = this.app.vault.adapter.getBasePath();
+        const file_path = `${vault_path}/${file.path}`;
 
         // https://stackoverflow.com/questions/26633901/reload-module-at-runtime
         // https://stackoverflow.com/questions/1972242/how-to-auto-reload-files-in-node-js
@@ -70,7 +70,9 @@ export class UserScriptFunctions implements IGenerateObject {
         user_script_functions.set(`${file.basename}`, user_function.default);
     }
 
-    async generate_object(config: RunningConfig): Promise<{}> {
+    async generate_object(
+        config: RunningConfig
+    ): Promise<Record<string, unknown>> {
         const user_script_functions = await this.generate_user_script_functions(
             config
         );

@@ -8,15 +8,15 @@ import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
 //import "editor/mode/show-hint";
 
-const TP_CMD_TOKEN_CLASS: string = "templater-command";
-const TP_INLINE_CLASS: string = "templater-inline";
+const TP_CMD_TOKEN_CLASS = "templater-command";
+const TP_INLINE_CLASS = "templater-inline";
 
-const TP_OPENING_TAG_TOKEN_CLASS: string = "templater-opening-tag";
-const TP_CLOSING_TAG_TOKEN_CLASS: string = "templater-closing-tag";
+const TP_OPENING_TAG_TOKEN_CLASS = "templater-opening-tag";
+const TP_CLOSING_TAG_TOKEN_CLASS = "templater-closing-tag";
 
-const TP_INTERPOLATION_TAG_TOKEN_CLASS: string = "templater-interpolation-tag";
-const TP_RAW_TAG_TOKEN_CLASS: string = "templater-raw-tag";
-const TP_EXEC_TAG_TOKEN_CLASS: string = "templater-execution-tag";
+const TP_INTERPOLATION_TAG_TOKEN_CLASS = "templater-interpolation-tag";
+const TP_RAW_TAG_TOKEN_CLASS = "templater-raw-tag";
+const TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 
 export class Editor {
     private cursor_jumper: CursorJumper;
@@ -74,7 +74,7 @@ export class Editor {
 
         window.CodeMirror.defineMode(
             "templater",
-            function (config, parserConfig) {
+            function (config, _parserConfig) {
                 const templaterOverlay = {
                     startState: function () {
                         const js_state = window.CodeMirror.startState(js_mode);

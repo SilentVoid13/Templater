@@ -2,7 +2,7 @@ import { InternalModule } from "functions/internal_functions/InternalModule";
 import { RunningConfig } from "Templater";
 
 export class InternalModuleConfig extends InternalModule {
-    public name: string = "config";
+    public name = "config";
 
     async create_static_templates(): Promise<void> {}
 

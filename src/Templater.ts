@@ -18,7 +18,6 @@ import { errorWrapper, errorWrapperSync, TemplaterError } from "Error";
 import { Editor } from "editor/Editor";
 import { Parser } from "parser/Parser";
 import { log_error } from "Log";
-import { FolderTemplate } from "Settings";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -51,7 +50,7 @@ export class Templater {
         this.parser = new Parser();
     }
 
-    async setup() {
+    async setup(): Promise<void> {
         await this.editor.setup();
         await this.functions_generator.init();
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
@@ -63,7 +62,7 @@ export class Templater {
         template_file: TFile,
         target_file: TFile,
         run_mode: RunMode
-    ) {
+    ): RunningConfig {
         const active_file = this.app.workspace.getActiveFile();
 
         return {
@@ -101,7 +100,7 @@ export class Templater {
         template: TFile | string,
         folder?: TFolder,
         filename?: string,
-        open_new_note: boolean = true
+        open_new_note = true
     ): Promise<TFile> {
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
@@ -110,12 +109,13 @@ export class Templater {
             const new_file_location =
                 this.app.vault.getConfig("newFileLocation");
             switch (new_file_location) {
-                case "current":
+                case "current": {
                     const active_file = this.app.workspace.getActiveFile();
                     if (active_file) {
                         folder = active_file.parent;
                     }
                     break;
+                }
                 case "folder":
                     folder = this.app.fileManager.getNewFileParent("");
                     break;
@@ -212,7 +212,10 @@ export class Templater {
         await this.editor.jump_to_next_cursor_location();
     }
 
-    async write_template_to_file(template_file: TFile, file: TFile) {
+    async write_template_to_file(
+        template_file: TFile,
+        file: TFile
+    ): Promise<void> {
         const running_config = this.create_running_config(
             template_file,
             file,
@@ -245,7 +248,7 @@ export class Templater {
 
     async overwrite_file_commands(
         file: TFile,
-        active_file: boolean = false
+        active_file = false
     ): Promise<void> {
         const running_config = this.create_running_config(
             file,
@@ -271,7 +274,7 @@ export class Templater {
         el: HTMLElement,
         ctx: MarkdownPostProcessorContext
     ): Promise<void> {
-        const dynamic_command_regex: RegExp =
+        const dynamic_command_regex =
             /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*?%>)/g;
 
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
@@ -319,9 +322,9 @@ export class Templater {
                     if (command_output == null) {
                         return;
                     }
-                    let start =
+                    const start =
                         dynamic_command_regex.lastIndex - match[0].length;
-                    let end = dynamic_command_regex.lastIndex;
+                    const end = dynamic_command_regex.lastIndex;
                     content =
                         content.substring(0, start) +
                         command_output +
@@ -348,7 +351,10 @@ export class Templater {
         } while (!folder.isRoot());
     }
 
-    static async on_file_creation(templater: Templater, file: TAbstractFile) {
+    static async on_file_creation(
+        templater: Templater,
+        file: TAbstractFile
+    ): Promise<void> {
         if (!(file instanceof TFile) || file.extension !== "md") {
             return;
         }
@@ -392,7 +398,7 @@ export class Templater {
         }
     }
 
-    async execute_startup_scripts() {
+    async execute_startup_scripts(): Promise<void> {
         for (const template of this.plugin.settings.startup_templates) {
             if (!template) {
                 continue;

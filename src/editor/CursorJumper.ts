@@ -52,7 +52,7 @@ export class CursorJumper {
     } {
         let cursor_matches = [];
         let match;
-        const cursor_regex: RegExp = new RegExp(
+        const cursor_regex = new RegExp(
             "<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>",
             "g"
         );
@@ -75,7 +75,7 @@ export class CursorJumper {
 
         const positions = [];
         let index_offset = 0;
-        for (let match of cursor_matches) {
+        for (const match of cursor_matches) {
             const index = match.index - index_offset;
             positions.push(this.get_editor_position_from_index(content, index));
 
@@ -101,12 +101,12 @@ export class CursorJumper {
         const editor = active_view.editor;
         editor.focus();
 
-        let selections: Array<EditorRangeOrCaret> = [];
-        for (let pos of positions) {
+        const selections: Array<EditorRangeOrCaret> = [];
+        for (const pos of positions) {
             selections.push({ from: pos });
         }
 
-        let transaction: EditorTransaction = {
+        const transaction: EditorTransaction = {
             selections: selections,
         };
         editor.transaction(transaction);

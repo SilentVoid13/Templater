@@ -2,7 +2,7 @@ import { TemplaterError } from "Error";
 import { InternalModule } from "../InternalModule";
 
 export class InternalModuleDate extends InternalModule {
-    public name: string = "date";
+    public name = "date";
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("now", this.generate_now());
@@ -13,9 +13,14 @@ export class InternalModuleDate extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
-    generate_now(): Function {
+    generate_now(): (
+        format?: string,
+        offset?: number | string,
+        reference?: string,
+        reference_format?: string
+    ) => string {
         return (
-            format: string = "YYYY-MM-DD",
+            format = "YYYY-MM-DD",
             offset?: number | string,
             reference?: string,
             reference_format?: string
@@ -42,15 +47,20 @@ export class InternalModuleDate extends InternalModule {
         };
     }
 
-    generate_tomorrow(): Function {
-        return (format: string = "YYYY-MM-DD") => {
+    generate_tomorrow(): (format?: string) => string {
+        return (format = "YYYY-MM-DD") => {
             return window.moment().add(1, "days").format(format);
         };
     }
 
-    generate_weekday(): Function {
+    generate_weekday(): (
+        format: string,
+        weekday: number,
+        reference?: string,
+        reference_format?: string
+    ) => string {
         return (
-            format: string = "YYYY-MM-DD",
+            format = "YYYY-MM-DD",
             weekday: number,
             reference?: string,
             reference_format?: string
@@ -70,8 +80,8 @@ export class InternalModuleDate extends InternalModule {
         };
     }
 
-    generate_yesterday(): Function {
-        return (format: string = "YYYY-MM-DD") => {
+    generate_yesterday(): (format?: string) => string {
+        return (format = "YYYY-MM-DD") => {
             return window.moment().add(-1, "days").format(format);
         };
     }
