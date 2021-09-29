@@ -1,18 +1,23 @@
 import { TemplaterError } from "Error";
-import { App, normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
-
-export const obsidian_module = require("obsidian");
+import {
+    App,
+    normalizePath,
+    TAbstractFile,
+    TFile,
+    TFolder,
+    Vault,
+} from "obsidian";
 
 export function delay(ms: number): Promise<void> {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-};
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function escape_RegExp(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-} 
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
 
 export function resolve_tfolder(app: App, folder_str: string): TFolder {
-    folder_str  = normalizePath(folder_str);
+    folder_str = normalizePath(folder_str);
 
     const folder = app.vault.getAbstractFileByPath(folder_str);
     if (!folder) {
@@ -39,10 +44,13 @@ export function resolve_tfile(app: App, file_str: string): TFile {
     return file;
 }
 
-export function get_tfiles_from_folder(app: App, folder_str: string): Array<TFile> {
+export function get_tfiles_from_folder(
+    app: App,
+    folder_str: string
+): Array<TFile> {
     const folder = resolve_tfolder(app, folder_str);
 
-    let files: Array<TFile> = [];
+    const files: Array<TFile> = [];
     Vault.recurseChildren(folder, (file: TAbstractFile) => {
         if (file instanceof TFile) {
             files.push(file);
@@ -56,8 +64,12 @@ export function get_tfiles_from_folder(app: App, folder_str: string): Array<TFil
     return files;
 }
 
-export function arraymove(arr: any[], fromIndex: number, toIndex: number) {
-    var element = arr[fromIndex];
+export function arraymove(
+    arr: any[],
+    fromIndex: number,
+    toIndex: number
+): void {
+    const element = arr[fromIndex];
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, element);
-};
+}

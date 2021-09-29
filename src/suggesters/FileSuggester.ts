@@ -2,17 +2,22 @@
 
 import { App, TAbstractFile, TFile } from "obsidian";
 import { TextInputSuggest } from "suggesters/suggest";
-import { get_tfiles_from_folder } from 'Utils';
-import TemplaterPlugin from 'main';
-import { errorWrapperSync } from 'Error';
+import { get_tfiles_from_folder } from "Utils";
+import TemplaterPlugin from "main";
+import { errorWrapperSync } from "Error";
 
 export enum FileSuggestMode {
     TemplateFiles,
     ScriptFiles,
-};
+}
 
 export class FileSuggest extends TextInputSuggest<TFile> {
-    constructor(public app: App, public inputEl: HTMLInputElement, private plugin: TemplaterPlugin, private mode: FileSuggestMode) {
+    constructor(
+        public app: App,
+        public inputEl: HTMLInputElement,
+        private plugin: TemplaterPlugin,
+        private mode: FileSuggestMode
+    ) {
         super(app, inputEl);
     }
 
@@ -35,7 +40,10 @@ export class FileSuggest extends TextInputSuggest<TFile> {
     }
 
     getSuggestions(input_str: string): TFile[] {
-        const all_files = errorWrapperSync(() => get_tfiles_from_folder(this.app, this.get_folder(this.mode)), this.get_error_msg(this.mode));
+        const all_files = errorWrapperSync(
+            () => get_tfiles_from_folder(this.app, this.get_folder(this.mode)),
+            this.get_error_msg(this.mode)
+        );
         if (!all_files) {
             return [];
         }

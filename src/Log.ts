@@ -1,5 +1,5 @@
-import { Notice } from 'obsidian';
-import { TemplaterError } from 'Error';
+import { Notice } from "obsidian";
+import { TemplaterError } from "Error";
 
 export function log_update(msg: string): void {
     const notice = new Notice("", 15000);
@@ -15,8 +15,7 @@ export function log_error(e: Error | TemplaterError): void {
         // @ts-ignore
         notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more informations`;
         console.error(`Templater Error:`, e.message, "\n", e.console_msg);
-    }
-    else {
+    } else {
         // @ts-ignore
         notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}`;
     }

@@ -1,10 +1,10 @@
-const stringifyPackage = require('stringify-package')
-const detectIndent = require('detect-indent')
-const detectNewline = require('detect-newline')
+const stringifyPackage = require("stringify-package");
+const detectIndent = require("detect-indent");
+const detectNewline = require("detect-newline");
 
 module.exports.readVersion = function (contents) {
     return Object.keys(JSON.parse(contents))[0];
-}
+};
 
 module.exports.writeVersion = function (contents, version) {
     let json = JSON.parse(contents);
@@ -18,5 +18,5 @@ module.exports.writeVersion = function (contents, version) {
     tmp[version] = obs_version;
     json = Object.assign(tmp, json);
 
-    return stringifyPackage(json, indent, newline)
-}
+    return stringifyPackage(json, indent, newline);
+};

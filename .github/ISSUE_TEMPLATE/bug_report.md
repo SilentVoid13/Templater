@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
+title: ""
 labels: bug
 assignees: SilentVoid13
-
 ---
 
 <!--
@@ -15,10 +14,11 @@ which you're running `Templater` on.
 -->
 
 **Plugin informations (please complete the following information):**
- - OS: [e.g. Windows 10]
- - Templater version: [e.g. 0.3.4]
- - Obsidian version: [e.g. 0.9.11]
- - Templater settings: [e.g. Template folder location: "Templates/", Timeout: "5" (add the templates not working with their associated command)]
+
+-   OS: [e.g. Windows 10]
+-   Templater version: [e.g. 0.3.4]
+-   Obsidian version: [e.g. 0.9.11]
+-   Templater settings: [e.g. Template folder location: "Templates/", Timeout: "5" (add the templates not working with their associated command)]
 
 **Describe the bug**
 A clear and concise description of what the bug is.
