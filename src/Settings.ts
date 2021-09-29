@@ -3,9 +3,13 @@ import { errorWrapperSync, TemplaterError } from "Error";
 import { FolderSuggest } from 'suggesters/FolderSuggester';
 import { FileSuggest, FileSuggestMode } from 'suggesters/FileSuggester';
 import TemplaterPlugin from './main';
-import { arraymove, get_tfiles_from_folder, unzip } from 'Utils';
+import { arraymove, get_tfiles_from_folder } from 'Utils';
 import { log_error } from 'Log';
-import { FolderTemplate } from "FolderTemplate";
+
+export interface FolderTemplate {
+    folder: string;
+    template: string;
+}
 
 export const DEFAULT_SETTINGS: Settings = {
 	command_timeout: 5,
@@ -15,8 +19,8 @@ export const DEFAULT_SETTINGS: Settings = {
 	enable_system_commands: false,
 	shell_path: "",
 	user_scripts_folder: "",
-	use_new_file_templates: true,
-	new_file_templates: [{folder: "", template: ""}],
+	enable_folder_templates: true,
+	folder_templates: [{folder: "", template: ""}],
 	syntax_highlighting: true,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
@@ -30,8 +34,8 @@ export interface Settings {
 	enable_system_commands: boolean;
 	shell_path: string;
 	user_scripts_folder: string;
-	use_new_file_templates: boolean;
-	new_file_templates: Array<FolderTemplate>;
+	enable_folder_templates: boolean;
+	folder_templates: Array<FolderTemplate>;
 	syntax_highlighting: boolean;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
@@ -50,10 +54,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_setting();
         this.add_trigger_on_new_file_creation_setting();
-		if (this.plugin.settings.trigger_on_file_creation) {
-			this.add_new_file_templates_setting();
-		}
         this.add_templates_hotkeys_setting();
+		if (this.plugin.settings.trigger_on_file_creation) {
+			this.add_folder_templates_setting();
+		}
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
@@ -146,116 +150,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 			});
 		}
 			
-
-	add_new_file_templates_setting() {
-		this.containerEl.createEl("h2", { text: "New File Templates"});
-
-		const descHeading = document.createDocumentFragment();
-		descHeading.append(
-			"New File Templates are triggered when a new ", descHeading.createEl("strong", { text: "empty "}), "file is created.",
-			descHeading.createEl("br"),
-			"The deepest match is used. A global default template would be defined on ", descHeading.createEl("code", {text: "/"}), ".",
-		);
-        
-		new Setting(this.containerEl)
-			.setDesc(descHeading);
-
-		const descUseNewFileTemplate = document.createDocumentFragment();
-		descUseNewFileTemplate.append(
-			"When enabled Templater will make use of the folder templates defined below.",
-		);	
-
-		new Setting(this.containerEl)
-			.setName("Use new file templates")
-			.setDesc(descUseNewFileTemplate)
-			.addToggle(toggle => {
-				toggle
-					.setValue(this.plugin.settings.use_new_file_templates)
-					.onChange(use_new_file_templates => {
-						this.plugin.settings.use_new_file_templates = use_new_file_templates;
-						this.plugin.save_settings();
-						// Force refresh
-						this.display();
-					});
-			});
-
-		new Setting(this.containerEl)
-			.setName("Add New")
-			.setDesc("Add new folder template")
-			.addButton((button: ButtonComponent): ButtonComponent => {
-				let b = button
-					.setTooltip("Add additional folder template")
-					.setButtonText("+")
-					.setCta()
-					.onClick(() => {
-						this.plugin.settings.new_file_templates.push({folder: "", template: ""});
-                        this.display();
-					})
-				
-				return b;
-			});
-
-		this.plugin.settings.new_file_templates.forEach((folder_template, index) => {
-			const s = new Setting(this.containerEl)
-				.setName("Folder Template")
-				.addSearch(cb => {
-					new FolderSuggest(this.app, cb.inputEl);
-					cb
-						.setPlaceholder("Folder")
-						.setValue(folder_template.folder)
-						.onChange((new_folder) => {
-							if (new_folder !== "" && this.plugin.settings.new_file_templates.some(e => e.folder == new_folder)) {
-								log_error(new TemplaterError("This folder already has a template associated with it"));
-                                return;
-							}
-							
-							this.plugin.settings.new_file_templates[index].folder = new_folder;
-							this.plugin.save_settings();
-						})
-				})
-				.addSearch(cb => {
-					new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
-					cb
-						.setPlaceholder("Template")
-						.setValue(folder_template.template)
-						.onChange((new_template) => {
-							this.plugin.settings.new_file_templates[index].template = new_template;
-							this.plugin.save_settings();
-						})
-				})
-				.addExtraButton(cb => {
-					cb
-						.setIcon("up-chevron-glyph")
-						.setTooltip("Move up")
-						.onClick(() => {
-							arraymove(this.plugin.settings.new_file_templates, index, index - 1);
-							this.plugin.save_settings();
-							this.display();
-						})
-				})
-				.addExtraButton(cb => {
-					cb
-						.setIcon("down-chevron-glyph")
-						.setTooltip("Move down")
-						.onClick(() => {
-							arraymove(this.plugin.settings.new_file_templates, index, index + 1);
-							this.plugin.save_settings();
-							this.display();
-						})
-				})
-				.addExtraButton(cb => {
-					cb
-						.setIcon("cross")
-						.setTooltip("Delete")
-						.onClick(() => {
-							this.plugin.settings.new_file_templates.splice(index, 1);
-							this.display();
-						})
-				});
-		});
-
-	}
-
     add_templates_hotkeys_setting() {
         this.containerEl.createEl("h2", { text: "Template Hotkeys"});
 
@@ -312,6 +206,120 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     });
             });
     }
+
+	add_folder_templates_setting() {
+		this.containerEl.createEl("h2", { text: "Folder Templates"});
+
+		const descHeading = document.createDocumentFragment();
+		descHeading.append(
+			"Folder Templates are triggered when a new ", descHeading.createEl("strong", { text: "empty "}), "file is created in a given folder.",
+			descHeading.createEl("br"),
+            "Templater will fill the empty file with the specified template.",
+			descHeading.createEl("br"),
+			"The deepest match is used. A global default template would be defined on the root ", descHeading.createEl("code", {text: "/"}), ".",
+		);
+        
+		new Setting(this.containerEl)
+			.setDesc(descHeading);
+
+		const descUseNewFileTemplate = document.createDocumentFragment();
+		descUseNewFileTemplate.append(
+			"When enabled Templater will make use of the folder templates defined below.",
+		);	
+
+		new Setting(this.containerEl)
+			.setName("Enable Folder Templates")
+			.setDesc(descUseNewFileTemplate)
+			.addToggle(toggle => {
+				toggle
+					.setValue(this.plugin.settings.enable_folder_templates)
+					.onChange(use_new_file_templates => {
+						this.plugin.settings.enable_folder_templates = use_new_file_templates;
+						this.plugin.save_settings();
+						// Force refresh
+						this.display();
+					});
+			});
+
+        if (!this.plugin.settings.enable_folder_templates) {
+            return;
+        }
+
+		new Setting(this.containerEl)
+			.setName("Add New")
+			.setDesc("Add new folder template")
+			.addButton((button: ButtonComponent): ButtonComponent => {
+				let b = button
+					.setTooltip("Add additional folder template")
+					.setButtonText("+")
+					.setCta()
+					.onClick(() => {
+						this.plugin.settings.folder_templates.push({folder: "", template: ""});
+                        this.display();
+					})
+				
+				return b;
+			});
+
+		this.plugin.settings.folder_templates.forEach((folder_template, index) => {
+			new Setting(this.containerEl)
+				.setName("Folder Template")
+				.addSearch(cb => {
+					new FolderSuggest(this.app, cb.inputEl);
+					cb
+						.setPlaceholder("Folder")
+						.setValue(folder_template.folder)
+						.onChange((new_folder) => {
+							if (new_folder && this.plugin.settings.folder_templates.some(e => e.folder == new_folder)) {
+								log_error(new TemplaterError("This folder already has a template associated with it"));
+                                return;
+							}
+							
+							this.plugin.settings.folder_templates[index].folder = new_folder;
+							this.plugin.save_settings();
+						})
+				})
+				.addSearch(cb => {
+					new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
+					cb
+						.setPlaceholder("Template")
+						.setValue(folder_template.template)
+						.onChange((new_template) => {
+							this.plugin.settings.folder_templates[index].template = new_template;
+							this.plugin.save_settings();
+						})
+				})
+				.addExtraButton(cb => {
+					cb
+						.setIcon("up-chevron-glyph")
+						.setTooltip("Move up")
+						.onClick(() => {
+							arraymove(this.plugin.settings.folder_templates, index, index - 1);
+							this.plugin.save_settings();
+							this.display();
+						})
+				})
+				.addExtraButton(cb => {
+					cb
+						.setIcon("down-chevron-glyph")
+						.setTooltip("Move down")
+						.onClick(() => {
+							arraymove(this.plugin.settings.folder_templates, index, index + 1);
+							this.plugin.save_settings();
+							this.display();
+						})
+				})
+				.addExtraButton(cb => {
+					cb
+						.setIcon("cross")
+						.setTooltip("Delete")
+						.onClick(() => {
+							this.plugin.settings.folder_templates.splice(index, 1);
+							this.display();
+						})
+				});
+		});
+	}
 
     add_startup_templates_setting() {
         this.containerEl.createEl("h2", { text: "Startup Templates"});
@@ -528,7 +536,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 							const t = text.setPlaceholder('Function name')
 							.setValue(template_pair[0])
 							.onChange((new_value) => {
-                                console.log(template_pair);
 								const index = this.plugin.settings.templates_pairs.indexOf(template_pair);
 								if (index > -1) {
 									this.plugin.settings.templates_pairs[index][0] = new_value;

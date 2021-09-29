@@ -7,7 +7,7 @@ import { errorWrapper, errorWrapperSync, TemplaterError } from "Error";
 import { Editor } from 'editor/Editor';
 import { Parser } from 'parser/Parser';
 import { log_error } from 'Log';
-import { FolderTemplate } from "FolderTemplate";
+import { FolderTemplate } from "Settings";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -222,14 +222,14 @@ export class Templater {
         }
 	}
 
-    get_new_file_template_for_folder(folder: TFolder): undefined | FolderTemplate {
-        let match = this.plugin.settings.new_file_templates.find(e => e.folder == folder.path);
-
-        if (folder.isRoot()) {
-            return match.template;
-        } else {
-            return match.template || this.get_new_file_template_for_folder(folder.parent);
-        }
+    get_new_file_template_for_folder(folder: TFolder): string {
+        do {
+            const match = this.plugin.settings.folder_templates.find(e => e.folder == folder.path);
+            if (match && match.template) {
+                return match.template;
+            }
+            folder = folder.parent;
+        } while(!folder.isRoot());
     }
 
     static async on_file_creation(templater: Templater, file: TAbstractFile) {
@@ -248,13 +248,14 @@ export class Templater {
         // Not a problem with Calendar however since it creates the file with the existing content
         await delay(300);
 
-        if (file.stat.size == 0 && templater.plugin.settings.use_new_file_templates) {
+        if (file.stat.size == 0 && templater.plugin.settings.enable_folder_templates) {
             const folder_template_match = templater.get_new_file_template_for_folder(file.parent);
+            if (!folder_template_match) {
+                return;
+            }
 
             const template_file: TFile = await errorWrapper(async (): Promise<TFile> => {
-                if (folder_template_match) {
-                    return resolve_tfile(templater.app, folder_template_match);
-                }
+                return resolve_tfile(templater.app, folder_template_match);
             }, `Couldn't find template ${folder_template_match}`);
             // errorWrapper failed
             if (template_file == null) {

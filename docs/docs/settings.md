@@ -10,15 +10,15 @@ You can set [Templater](https://github.com/SilentVoid13/Templater) to be trigger
 
 This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...
 
-## Folder Templates
-
-You can specify a template that will automatically be used on a selected folder and children using the `Folder Templates` functionality.
-
 :::caution 
 
 This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.
 
 :::
+
+## Folder Templates
+
+You can specify a template that will automatically be used on a selected folder and children using the `Folder Templates` functionality.
 
 ## System Commands
 

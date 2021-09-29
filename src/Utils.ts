@@ -56,16 +56,6 @@ export function get_tfiles_from_folder(app: App, folder_str: string): Array<TFil
     return files;
 }
 
-export function unzip(arr: any[], size: number = 0) {
-    // Python-style unzip
-    return arr.reduce(
-        (acc, val) => (val.forEach((v: any, i: number) => acc[i].push(v)), acc),
-        Array.from({
-          length: size || Math.max(...arr.map((x) => x.length)),
-        }).map(() => [])
-      );
-};
-
 export function arraymove(arr: any[], fromIndex: number, toIndex: number) {
     var element = arr[fromIndex];
     arr.splice(fromIndex, 1);
