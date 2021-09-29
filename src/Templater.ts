@@ -221,6 +221,16 @@ export class Templater {
         }
 	}
 
+    get_new_file_template_for_folder(folder: TFolder): undefined | string {
+        let match = this.plugin.settings.new_file_templates.find(e => e[0] == folder.path);
+
+        if (folder.isRoot()) {
+            return match ? match[1] : undefined;
+        } else {
+            return match ? match[1] : undefined || this.get_new_file_template_for_folder(folder.parent);
+        }
+    }
+
     static async on_file_creation(templater: Templater, file: TAbstractFile) {
         if (!(file instanceof TFile) || file.extension !== "md") {
             return;
@@ -237,10 +247,14 @@ export class Templater {
         // Not a problem with Calendar however since it creates the file with the existing content
         await delay(300);
 
-        if (file.stat.size == 0 && templater.plugin.settings.empty_file_template) {
+        if (file.stat.size == 0 && templater.plugin.settings.use_new_file_templates) {
+            const folder_template_match = templater.get_new_file_template_for_folder(file.parent);
+
             const template_file: TFile = await errorWrapper(async (): Promise<TFile> => {
-                return resolve_tfile(templater.app, templater.plugin.settings.empty_file_template);
-            }, `Couldn't find Empty file template ${templater.plugin.settings.empty_file_template}`);
+                if (folder_template_match) {
+                    return resolve_tfile(templater.app, folder_template_match);
+                }
+            }, `Couldn't find template ${folder_template_match}`);
             // errorWrapper failed
             if (template_file == null) {
                 return;
