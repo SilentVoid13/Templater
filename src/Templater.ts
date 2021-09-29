@@ -7,6 +7,7 @@ import { errorWrapper, errorWrapperSync, TemplaterError } from "Error";
 import { Editor } from 'editor/Editor';
 import { Parser } from 'parser/Parser';
 import { log_error } from 'Log';
+import { FolderTemplate } from "FolderTemplate";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -221,13 +222,13 @@ export class Templater {
         }
 	}
 
-    get_new_file_template_for_folder(folder: TFolder): undefined | string {
-        let match = this.plugin.settings.new_file_templates.find(e => e[0] == folder.path);
+    get_new_file_template_for_folder(folder: TFolder): undefined | FolderTemplate {
+        let match = this.plugin.settings.new_file_templates.find(e => e.folder == folder.path);
 
         if (folder.isRoot()) {
-            return match ? match[1] : undefined;
+            return match.template;
         } else {
-            return match ? match[1] : undefined || this.get_new_file_template_for_folder(folder.parent);
+            return match.template || this.get_new_file_template_for_folder(folder.parent);
         }
     }
 

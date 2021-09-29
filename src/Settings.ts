@@ -5,6 +5,7 @@ import { FileSuggest, FileSuggestMode } from 'suggesters/FileSuggester';
 import TemplaterPlugin from './main';
 import { arraymove, get_tfiles_from_folder, unzip } from 'Utils';
 import { log_error } from 'Log';
+import { FolderTemplate } from "FolderTemplate";
 
 export const DEFAULT_SETTINGS: Settings = {
 	command_timeout: 5,
@@ -15,7 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	shell_path: "",
 	user_scripts_folder: "",
 	use_new_file_templates: true,
-	new_file_templates: [["", ""]],
+	new_file_templates: [{folder: "", template: ""}],
 	syntax_highlighting: true,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
@@ -30,7 +31,7 @@ export interface Settings {
 	shell_path: string;
 	user_scripts_folder: string;
 	use_new_file_templates: boolean;
-	new_file_templates: Array<[string, string]>;
+	new_file_templates: Array<FolderTemplate>;
 	syntax_highlighting: boolean;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
@@ -187,28 +188,28 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					.setButtonText("+")
 					.setCta()
 					.onClick(() => {
-						this.plugin.settings.new_file_templates.push(["", ""]);
+						this.plugin.settings.new_file_templates.push({folder: "", template: ""});
                         this.display();
 					})
 				
 				return b;
 			});
 
-		this.plugin.settings.new_file_templates.forEach((pair, index) => {
+		this.plugin.settings.new_file_templates.forEach((folder_template, index) => {
 			const s = new Setting(this.containerEl)
 				.setName("Folder Template")
 				.addSearch(cb => {
 					new FolderSuggest(this.app, cb.inputEl);
 					cb
 						.setPlaceholder("Folder")
-						.setValue(pair[0])
+						.setValue(folder_template.folder)
 						.onChange((new_folder) => {
-							if (new_folder !== "" && unzip(this.plugin.settings.new_file_templates)[0].contains(new_folder)) {
+							if (new_folder !== "" && this.plugin.settings.new_file_templates.some(e => e.folder == new_folder)) {
 								log_error(new TemplaterError("This folder already has a template associated with it"));
                                 return;
 							}
 							
-							this.plugin.settings.new_file_templates[index][0] = new_folder;
+							this.plugin.settings.new_file_templates[index].folder = new_folder;
 							this.plugin.save_settings();
 						})
 				})
@@ -216,9 +217,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 					new FileSuggest(this.app, cb.inputEl, this.plugin, FileSuggestMode.TemplateFiles);
 					cb
 						.setPlaceholder("Template")
-						.setValue(pair[1])
+						.setValue(folder_template.template)
 						.onChange((new_template) => {
-							this.plugin.settings.new_file_templates[index][1] = new_template;
+							this.plugin.settings.new_file_templates[index].template = new_template;
 							this.plugin.save_settings();
 						})
 				})
