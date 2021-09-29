@@ -1,10 +1,7 @@
 ---
 name: Question
 about: Ask a question about Templater
-title: ''
+title: ""
 labels: question
 assignees: SilentVoid13
-
 ---
-
-

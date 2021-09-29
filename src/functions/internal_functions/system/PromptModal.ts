@@ -7,7 +7,11 @@ export class PromptModal extends Modal {
     private reject: (reason?: any) => void;
     private submitted: boolean = false;
 
-    constructor(app: App, private prompt_text: string, private default_value: string) {
+    constructor(
+        app: App,
+        private prompt_text: string,
+        private default_value: string
+    ) {
         super(app);
     }
 
@@ -35,17 +39,20 @@ export class PromptModal extends Modal {
             e.preventDefault();
             this.resolve(this.promptEl.value);
             this.close();
-        }
+        };
 
         this.promptEl = form.createEl("input");
         this.promptEl.type = "text";
         this.promptEl.placeholder = "Type text here...";
         this.promptEl.value = this.default_value ?? "";
-        this.promptEl.addClass("templater-prompt-input")
+        this.promptEl.addClass("templater-prompt-input");
         this.promptEl.select();
     }
 
-    async openAndGetValue(resolve: (value: string) => void, reject: (reason?: any) => void): Promise<void> {
+    async openAndGetValue(
+        resolve: (value: string) => void,
+        reject: (reason?: any) => void
+    ): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;
         this.open();

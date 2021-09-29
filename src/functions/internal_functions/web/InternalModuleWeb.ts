@@ -6,9 +6,12 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_static_templates() {
         this.static_functions.set("daily_quote", this.generate_daily_quote());
-        this.static_functions.set("random_picture", this.generate_random_picture());
+        this.static_functions.set(
+            "random_picture",
+            this.generate_random_picture()
+        );
     }
-    
+
     async create_dynamic_templates() {}
 
     async getRequest(url: string): Promise<Response> {
@@ -29,14 +32,18 @@ export class InternalModuleWeb extends InternalModule {
             let new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
 
             return new_content;
-        }
+        };
     }
 
     generate_random_picture() {
         return async (size: string, query?: string) => {
-            let response = await this.getRequest(`https://source.unsplash.com/random/${size ?? ''}?${query ?? ''}`);
+            let response = await this.getRequest(
+                `https://source.unsplash.com/random/${size ?? ""}?${
+                    query ?? ""
+                }`
+            );
             let url = response.url;
-            return `![tp.web.random_picture](${url})`;   
-        }
+            return `![tp.web.random_picture](${url})`;
+        };
     }
 }

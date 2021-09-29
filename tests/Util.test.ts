@@ -6,8 +6,8 @@ export const TEMPLATE_FILE_NAME = "TemplateFile";
 export const TARGET_FILE_NAME = "TargetFile";
 
 export function delay(ms: number): Promise<void> {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-};
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function cache_update(t: TestTemplaterPlugin): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -21,4 +21,4 @@ export function cache_update(t: TestTemplaterPlugin): Promise<void> {
         };
         t.app.metadataCache.on("changed", resolve_promise);
     });
-} 
+}

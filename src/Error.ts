@@ -1,4 +1,4 @@
-import { log_error } from 'Log';
+import { log_error } from "Log";
 
 export class TemplaterError extends Error {
     constructor(msg: string, public console_msg?: string) {
@@ -11,7 +11,7 @@ export class TemplaterError extends Error {
 export async function errorWrapper(fn: Function, msg: string): Promise<any> {
     try {
         return await fn();
-    } catch(e) {
+    } catch (e) {
         if (!(e instanceof TemplaterError)) {
             log_error(new TemplaterError(msg, e.message));
         } else {
@@ -24,7 +24,7 @@ export async function errorWrapper(fn: Function, msg: string): Promise<any> {
 export function errorWrapperSync(fn: Function, msg: string): any {
     try {
         return fn();
-    } catch(e) {
+    } catch (e) {
         log_error(new TemplaterError(msg, e.message));
         return null;
     }

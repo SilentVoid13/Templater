@@ -4,7 +4,7 @@ export class Parser {
     constructor() {}
 
     async parse_commands(content: string, object: any): Promise<string> {
-        content = await Eta.renderAsync(content, object, {
+        content = (await Eta.renderAsync(content, object, {
             varName: "tp",
             parse: {
                 exec: "*",
@@ -13,7 +13,7 @@ export class Parser {
             },
             autoTrim: false,
             globalAwait: true,
-        }) as string;
+        })) as string;
 
         return content;
     }
