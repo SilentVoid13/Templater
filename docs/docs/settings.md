@@ -10,13 +10,17 @@ You can set [Templater](https://github.com/SilentVoid13/Templater) to be trigger
 
 This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...
 
-If this setting is enabled, you can specify an "Empty File Template", which is a template that will automatically be added to newly created file.
-
 :::caution 
 
 This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.
 
 :::
+
+## Folder Templates
+
+You can specify a template that will automatically be used on a selected folder and children using the `Folder Templates` functionality.
+
+## System Commands
 
 You can enable system commands. This allows you to create [user functions](./user-functions/overview.md) linked to system commands.
 
