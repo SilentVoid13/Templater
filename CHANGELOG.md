@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.7](https://github.com/SilentVoid13/Templater/compare/1.9.6...1.9.7) (2021-09-30)
+
+
+### Bug Fixes
+
+* fixing invalid const declaration, causing errors in user system commands ([2ca59f0](https://github.com/SilentVoid13/Templater/commit/2ca59f05b04caa7c1d4bdde9e33ea95a89df8dcf)), closes [#391](https://github.com/SilentVoid13/Templater/issues/391) [#392](https://github.com/SilentVoid13/Templater/issues/392)
+
 ### [1.9.6](https://github.com/SilentVoid13/Templater/compare/1.9.5...1.9.6) (2021-09-30)
 
 
