@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.8](https://github.com/SilentVoid13/Templater/compare/1.9.7...1.9.8) (2021-09-30)
+
+
+### Bug Fixes
+
+* fixing typo bug ([2cf1486](https://github.com/SilentVoid13/Templater/commit/2cf148608c4460446d62c8d16f5bc2f7f1aeffea))
+
 ### [1.9.7](https://github.com/SilentVoid13/Templater/compare/1.9.6...1.9.7) (2021-09-30)
 
 
