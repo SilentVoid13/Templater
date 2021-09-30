@@ -72,96 +72,90 @@ export class Editor {
             return;
         }
 
-        window.CodeMirror.defineMode(
-            "templater",
-            function (config, _parserConfig) {
-                const templaterOverlay = {
-                    startState: function () {
-                        const js_state = window.CodeMirror.startState(js_mode);
-                        return {
-                            ...js_state,
-                            inCommand: false,
-                            tag_class: "",
-                            freeLine: false,
-                        };
-                    },
-                    copyState: function (state: any) {
-                        const js_state = window.CodeMirror.startState(js_mode);
-                        const new_state = {
-                            ...js_state,
-                            inCommand: state.inCommand,
-                            tag_class: state.tag_class,
-                            freeLine: state.freeLine,
-                        };
-                        return new_state;
-                    },
-                    blankLine: function (state: any) {
-                        if (state.inCommand) {
-                            return `line-background-templater-command-bg`;
-                        }
-                        return null;
-                    },
-                    token: function (stream: any, state: any) {
-                        if (stream.sol() && state.inCommand) {
-                            state.freeLine = true;
-                        }
+        window.CodeMirror.defineMode("templater", function (config) {
+            const templaterOverlay = {
+                startState: function () {
+                    const js_state = window.CodeMirror.startState(js_mode);
+                    return {
+                        ...js_state,
+                        inCommand: false,
+                        tag_class: "",
+                        freeLine: false,
+                    };
+                },
+                copyState: function (state: any) {
+                    const js_state = window.CodeMirror.startState(js_mode);
+                    const new_state = {
+                        ...js_state,
+                        inCommand: state.inCommand,
+                        tag_class: state.tag_class,
+                        freeLine: state.freeLine,
+                    };
+                    return new_state;
+                },
+                blankLine: function (state: any) {
+                    if (state.inCommand) {
+                        return `line-background-templater-command-bg`;
+                    }
+                    return null;
+                },
+                token: function (stream: any, state: any) {
+                    if (stream.sol() && state.inCommand) {
+                        state.freeLine = true;
+                    }
 
-                        if (state.inCommand) {
-                            let keywords = "";
-                            if (stream.match(/[\-_]{0,1}%>/, true)) {
-                                state.inCommand = false;
-                                state.freeLine = false;
-                                const tag_class = state.tag_class;
-                                state.tag_class = "";
+                    if (state.inCommand) {
+                        let keywords = "";
+                        if (stream.match(/[-_]{0,1}%>/, true)) {
+                            state.inCommand = false;
+                            state.freeLine = false;
+                            const tag_class = state.tag_class;
+                            state.tag_class = "";
 
-                                return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
-                            }
-
-                            const js_result = js_mode.token(stream, state);
-                            if (stream.peek() == null && state.freeLine) {
-                                keywords += ` line-background-templater-command-bg`;
-                            }
-                            if (!state.freeLine) {
-                                keywords += ` line-${TP_INLINE_CLASS}`;
-                            }
-
-                            return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
+                            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
                         }
 
-                        const match = stream.match(
-                            /<%[\-_]{0,1}\s*([*~+]{0,1})/,
-                            true
-                        );
-                        if (match != null) {
-                            switch (match[1]) {
-                                case "*":
-                                    state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
-                                    break;
-                                case "~":
-                                    state.tag_class = TP_RAW_TAG_TOKEN_CLASS;
-                                    break;
-                                default:
-                                    state.tag_class =
-                                        TP_INTERPOLATION_TAG_TOKEN_CLASS;
-                                    break;
-                            }
-                            state.inCommand = true;
-                            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
+                        const js_result = js_mode.token(stream, state);
+                        if (stream.peek() == null && state.freeLine) {
+                            keywords += ` line-background-templater-command-bg`;
+                        }
+                        if (!state.freeLine) {
+                            keywords += ` line-${TP_INLINE_CLASS}`;
                         }
 
-                        while (
-                            stream.next() != null &&
-                            !stream.match(/<%/, false)
-                        );
-                        return null;
-                    },
-                };
-                return overlay_mode(
-                    window.CodeMirror.getMode(config, "hypermd"),
-                    templaterOverlay
-                );
-            }
-        );
+                        return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
+                    }
+
+                    const match = stream.match(
+                        /<%[-_]{0,1}\s*([*~+]{0,1})/,
+                        true
+                    );
+                    if (match != null) {
+                        switch (match[1]) {
+                            case "*":
+                                state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
+                                break;
+                            case "~":
+                                state.tag_class = TP_RAW_TAG_TOKEN_CLASS;
+                                break;
+                            default:
+                                state.tag_class =
+                                    TP_INTERPOLATION_TAG_TOKEN_CLASS;
+                                break;
+                        }
+                        state.inCommand = true;
+                        return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
+                    }
+
+                    while (stream.next() != null && !stream.match(/<%/, false));
+                    return null;
+                },
+            };
+            return overlay_mode(
+                window.CodeMirror.getMode(config, "hypermd"),
+                templaterOverlay
+            );
+        });
     }
 
     async registerHinter(): Promise<void> {

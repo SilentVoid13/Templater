@@ -11,7 +11,10 @@ import { FunctionsMode } from "functions/FunctionsGenerator";
 
 export class UserSystemFunctions implements IGenerateObject {
     private cwd: string;
-    private exec_promise: Function;
+    private exec_promise: (
+        arg1: string,
+        arg2: Record<string, unknown>
+    ) => Promise<{ stdout: string; stderr: string }>;
 
     constructor(app: App, private plugin: TemplaterPlugin) {
         if (
@@ -28,10 +31,12 @@ export class UserSystemFunctions implements IGenerateObject {
     // TODO: Add mobile support
     async generate_system_functions(
         config: RunningConfig
-    ): Promise<Map<string, (user_args?: any) => Promise<string>>> {
+    ): Promise<
+        Map<string, (user_args?: Record<string, unknown>) => Promise<string>>
+    > {
         const user_system_functions: Map<
             string,
-            (user_args?: any) => Promise<string>
+            (user_args?: Record<string, unknown>) => Promise<string>
         > = new Map();
         const internal_functions_object =
             await this.plugin.templater.functions_generator.generate_object(
@@ -47,14 +52,11 @@ export class UserSystemFunctions implements IGenerateObject {
             }
 
             if (Platform.isMobileApp) {
-                user_system_functions.set(
-                    template,
-                    (_user_args?: any): Promise<string> => {
-                        return new Promise((resolve) =>
-                            resolve(UNSUPPORTED_MOBILE_TEMPLATE)
-                        );
-                    }
-                );
+                user_system_functions.set(template, (): Promise<string> => {
+                    return new Promise((resolve) =>
+                        resolve(UNSUPPORTED_MOBILE_TEMPLATE)
+                    );
+                });
             } else {
                 cmd = await this.plugin.templater.parser.parse_commands(
                     cmd,
@@ -63,7 +65,9 @@ export class UserSystemFunctions implements IGenerateObject {
 
                 user_system_functions.set(
                     template,
-                    async (user_args?: any): Promise<string> => {
+                    async (
+                        user_args?: Record<string, unknown>
+                    ): Promise<string> => {
                         const process_env = {
                             ...process.env,
                             ...user_args,

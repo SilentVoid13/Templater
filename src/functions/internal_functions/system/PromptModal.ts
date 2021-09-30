@@ -4,7 +4,7 @@ import { App, Modal } from "obsidian";
 export class PromptModal extends Modal {
     private promptEl: HTMLInputElement;
     private resolve: (value: string) => void;
-    private reject: (reason?: any) => void;
+    private reject: (reason?: TemplaterError) => void;
     private submitted = false;
 
     constructor(
@@ -51,7 +51,7 @@ export class PromptModal extends Modal {
 
     async openAndGetValue(
         resolve: (value: string) => void,
-        reject: (reason?: any) => void
+        reject: (reason?: TemplaterError) => void
     ): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;

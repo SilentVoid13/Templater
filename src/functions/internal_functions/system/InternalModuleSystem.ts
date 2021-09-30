@@ -3,6 +3,7 @@ import { InternalModule } from "../InternalModule";
 import { Platform } from "obsidian";
 import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
+import { TemplaterError } from "Error";
 
 export class InternalModuleSystem extends InternalModule {
     public name = "system";
@@ -43,7 +44,7 @@ export class InternalModuleSystem extends InternalModule {
             const promise = new Promise(
                 (
                     resolve: (value: string) => void,
-                    reject: (reason?: any) => void
+                    reject: (reason?: TemplaterError) => void
                 ) => prompt.openAndGetValue(resolve, reject)
             );
             try {
@@ -76,8 +77,10 @@ export class InternalModuleSystem extends InternalModule {
                 placeholder
             );
             const promise = new Promise(
-                (resolve: (value: T) => void, reject: (reason?: any) => void) =>
-                    suggester.openAndGetValue(resolve, reject)
+                (
+                    resolve: (value: T) => void,
+                    reject: (reason?: TemplaterError) => void
+                ) => suggester.openAndGetValue(resolve, reject)
             );
             try {
                 return await promise;

@@ -38,7 +38,7 @@ export class InternalFunctions implements IGenerateObject {
     async generate_object(
         config: RunningConfig
     ): Promise<Record<string, unknown>> {
-        const internal_functions_object: { [key: string]: any } = {};
+        const internal_functions_object: { [key: string]: unknown } = {};
 
         for (const mod of this.modules_array) {
             internal_functions_object[mod.getName()] =

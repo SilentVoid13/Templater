@@ -5,10 +5,10 @@ import { IGenerateObject } from "functions/IGenerateObject";
 
 export abstract class InternalModule implements IGenerateObject {
     public abstract name: string;
-    protected static_functions: Map<string, any> = new Map();
-    protected dynamic_functions: Map<string, any> = new Map();
+    protected static_functions: Map<string, unknown> = new Map();
+    protected dynamic_functions: Map<string, unknown> = new Map();
     protected config: RunningConfig;
-    protected static_object: { [x: string]: any };
+    protected static_object: { [x: string]: unknown };
 
     constructor(protected app: App, protected plugin: TemplaterPlugin) {}
 
@@ -26,7 +26,7 @@ export abstract class InternalModule implements IGenerateObject {
 
     async generate_object(
         new_config: RunningConfig
-    ): Promise<{ [x: string]: any }> {
+    ): Promise<Record<string, unknown>> {
         this.config = new_config;
         await this.create_dynamic_templates();
 

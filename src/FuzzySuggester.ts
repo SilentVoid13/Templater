@@ -44,7 +44,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
         return item.basename;
     }
 
-    onChooseItem(item: TFile, _evt: MouseEvent | KeyboardEvent): void {
+    onChooseItem(item: TFile): void {
         switch (this.open_mode) {
             case OpenMode.InsertTemplate:
                 this.plugin.templater.append_template_to_active_file(item);

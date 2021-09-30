@@ -64,8 +64,8 @@ export function get_tfiles_from_folder(
     return files;
 }
 
-export function arraymove(
-    arr: any[],
+export function arraymove<T>(
+    arr: T[],
     fromIndex: number,
     toIndex: number
 ): void {

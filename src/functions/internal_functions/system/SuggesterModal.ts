@@ -3,7 +3,7 @@ import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
 export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     private resolve: (value: T) => void;
-    private reject: (reason?: any) => void;
+    private reject: (reason?: TemplaterError) => void;
     private submitted = false;
 
     constructor(
@@ -44,13 +44,13 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         );
     }
 
-    onChooseItem(item: T, _evt: MouseEvent | KeyboardEvent): void {
+    onChooseItem(item: T): void {
         this.resolve(item);
     }
 
     async openAndGetValue(
         resolve: (value: T) => void,
-        reject: (reason?: any) => void
+        reject: (reason?: TemplaterError) => void
     ): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;

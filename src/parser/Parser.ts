@@ -1,7 +1,10 @@
 import * as Eta from "eta";
 
 export class Parser {
-    async parse_commands(content: string, object: any): Promise<string> {
+    async parse_commands(
+        content: string,
+        object: Record<string, unknown>
+    ): Promise<string> {
         content = (await Eta.renderAsync(content, object, {
             varName: "tp",
             parse: {

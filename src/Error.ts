@@ -8,7 +8,10 @@ export class TemplaterError extends Error {
     }
 }
 
-export async function errorWrapper(fn: Function, msg: string): Promise<any> {
+export async function errorWrapper<T>(
+    fn: () => Promise<T>,
+    msg: string
+): Promise<T> {
     try {
         return await fn();
     } catch (e) {
@@ -21,7 +24,7 @@ export async function errorWrapper(fn: Function, msg: string): Promise<any> {
     }
 }
 
-export function errorWrapperSync(fn: Function, msg: string): any {
+export function errorWrapperSync<T>(fn: () => T, msg: string): T {
     try {
         return fn();
     } catch (e) {

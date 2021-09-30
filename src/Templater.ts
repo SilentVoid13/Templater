@@ -28,18 +28,18 @@ export enum RunMode {
     StartupTemplate,
 }
 
-export interface RunningConfig {
+export type RunningConfig = {
     template_file: TFile;
     target_file: TFile;
     run_mode: RunMode;
     active_file?: TFile;
-}
+};
 
 export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
     public editor: Editor;
-    public current_functions_object: {};
+    public current_functions_object: Record<string, unknown>;
 
     constructor(private app: App, private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(
@@ -280,7 +280,7 @@ export class Templater {
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;
         let pass = false;
-        let functions_object: {};
+        let functions_object: Record<string, unknown>;
         while ((node = walker.nextNode())) {
             let content = node.nodeValue;
             let match;

@@ -10,7 +10,7 @@ export class InternalModuleConfig extends InternalModule {
 
     async generate_object(
         config: RunningConfig
-    ): Promise<{ [x: string]: any }> {
+    ): Promise<Record<string, unknown>> {
         return config;
     }
 }
