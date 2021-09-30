@@ -79,6 +79,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.templates_folder = new_folder;
                         this.plugin.save_settings();
                     });
+                // @ts-ignore
+                cb.containerEl.addClass("templater_search");
             });
     }
 
@@ -154,6 +156,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_templates_hotkeys_setting(): void {
         this.containerEl.createEl("h2", { text: "Template Hotkeys" });
 
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Template Hotkeys allows you to bind a template to a hotkey."
+        );
+
+        new Setting(this.containerEl).setDesc(desc);
+
         this.plugin.settings.enabled_templates_hotkeys.forEach(
             (template, index) => {
                 const s = new Setting(this.containerEl)
@@ -190,6 +199,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ] = new_template;
                                 this.plugin.save_settings();
                             });
+                        // @ts-ignore
+                        cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("any-key")
@@ -205,6 +216,34 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             });
                     })
                     .addExtraButton((cb) => {
+                        cb.setIcon("up-chevron-glyph")
+                            .setTooltip("Move up")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings
+                                        .enabled_templates_hotkeys,
+                                    index,
+                                    index - 1
+                                );
+                                this.plugin.save_settings();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("down-chevron-glyph")
+                            .setTooltip("Move down")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings
+                                        .enabled_templates_hotkeys,
+                                    index,
+                                    index + 1
+                                );
+                                this.plugin.save_settings();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
                             .onClick(() => {
@@ -216,6 +255,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     index,
                                     1
                                 );
+                                this.plugin.save_settings();
                                 // Force refresh
                                 this.display();
                             });
@@ -229,6 +269,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setCta()
                 .onClick(() => {
                     this.plugin.settings.enabled_templates_hotkeys.push("");
+                    this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -290,14 +331,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             folder: "",
                             template: "",
                         });
+                        this.plugin.save_settings();
                         this.display();
                     });
             });
 
         this.plugin.settings.folder_templates.forEach(
             (folder_template, index) => {
-                new Setting(this.containerEl)
-                    .setName("Folder Template")
+                const s = new Setting(this.containerEl)
                     .addSearch((cb) => {
                         new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
@@ -322,6 +363,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ].folder = new_folder;
                                 this.plugin.save_settings();
                             });
+                        // @ts-ignore
+                        cb.containerEl.addClass("templater_search");
                     })
                     .addSearch((cb) => {
                         new FileSuggest(
@@ -338,6 +381,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ].template = new_template;
                                 this.plugin.save_settings();
                             });
+                        // @ts-ignore
+                        cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
@@ -373,9 +418,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     index,
                                     1
                                 );
+                                this.plugin.save_settings();
                                 this.display();
                             });
                     });
+                s.infoEl.remove();
             }
         );
     }
@@ -423,6 +470,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 new_template;
                             this.plugin.save_settings();
                         });
+                    // @ts-ignore
+                    cb.containerEl.addClass("templater_search");
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("cross")
@@ -432,6 +481,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 index,
                                 1
                             );
+                            this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });
@@ -444,6 +494,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setCta()
                 .onClick(() => {
                     this.plugin.settings.startup_templates.push("");
+                    this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -478,6 +529,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.user_scripts_folder = new_folder;
                         this.plugin.save_settings();
                     });
+                // @ts-ignore
+                cb.containerEl.addClass("templater_search");
             });
 
         desc = document.createDocumentFragment();
@@ -624,8 +677,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                         index,
                                         1
                                     );
-                                    // Force refresh
                                     this.plugin.save_settings();
+                                    // Force refresh
                                     this.display();
                                 }
                             });
@@ -691,6 +744,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .setCta()
                         .onClick(() => {
                             this.plugin.settings.templates_pairs.push(["", ""]);
+                            this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });

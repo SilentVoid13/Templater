@@ -69,7 +69,10 @@ export function arraymove(
     fromIndex: number,
     toIndex: number
 ): void {
+    if (toIndex < 0 || toIndex === arr.length) {
+        return;
+    }
     const element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
+    arr[fromIndex] = arr[toIndex];
+    arr[toIndex] = element;
 }

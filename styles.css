@@ -1,3 +1,7 @@
+.templater_search {
+    width: calc(100% - 20px);
+}
+
 .templater_div {
     border-top: 1px solid var(--background-modifier-border);
 }
