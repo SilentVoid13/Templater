@@ -39,7 +39,9 @@ export class UserSystemFunctions implements IGenerateObject {
                 FunctionsMode.INTERNAL
             );
 
-        for (const [template, cmd] of this.plugin.settings.templates_pairs) {
+        for (const template_pair of this.plugin.settings.templates_pairs) {
+            const template = template_pair[0];
+            let cmd = template_pair[0];
             if (!template || !cmd) {
                 continue;
             }
