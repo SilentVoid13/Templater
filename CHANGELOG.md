@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.6](https://github.com/SilentVoid13/Templater/compare/1.9.5...1.9.6) (2021-09-30)
+
+
+### Features
+
+* **settings:** improving styles of settings, adding a few forgotten save_settings ([94140f3](https://github.com/SilentVoid13/Templater/commit/94140f38992d4981f98bcaf3abbdecdae18255ef)), closes [#390](https://github.com/SilentVoid13/Templater/issues/390)
+
 ### [1.9.5](https://github.com/SilentVoid13/Templater/compare/1.9.4...1.9.5) (2021-09-29)
 
 
