@@ -343,12 +343,18 @@ export class Templater {
         do {
             const match = this.plugin.settings.folder_templates.find(
                 (e) => e.folder == folder.path
-            );
+                );
+
             if (match && match.template) {
                 return match.template;
             }
+
+            if (folder.isRoot()) {
+                return;
+            }
+
             folder = folder.parent;
-        } while (!folder.isRoot());
+        } while (true);
     }
 
     static async on_file_creation(
