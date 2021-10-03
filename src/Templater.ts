@@ -344,11 +344,13 @@ export class Templater {
             const match = this.plugin.settings.folder_templates.find(
                 (e) => e.folder == folder.path
             );
+
             if (match && match.template) {
                 return match.template;
             }
+
             folder = folder.parent;
-        } while (!folder.isRoot());
+        } while (folder);
     }
 
     static async on_file_creation(
