@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.9](https://github.com/SilentVoid13/Templater/compare/1.9.8...1.9.9) (2021-10-03)
+
+
+### Features
+
+* **cursorjumper:** adding a setting to enable automatic cursor jumping after template insertion ([6bf2de1](https://github.com/SilentVoid13/Templater/commit/6bf2de174b4a8fbb187a3be8571288d037561524)), closes [#359](https://github.com/SilentVoid13/Templater/issues/359) [#393](https://github.com/SilentVoid13/Templater/issues/393)
+
+
+### Bug Fixes
+
+* Root template not resolving ([#395](https://github.com/SilentVoid13/Templater/issues/395)) ([e800c21](https://github.com/SilentVoid13/Templater/commit/e800c21ed0fa346fd02b5290458d70791ee6d20e))
+
 ### [1.9.8](https://github.com/SilentVoid13/Templater/compare/1.9.7...1.9.8) (2021-09-30)
 
 
