@@ -145,7 +145,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 toggle
                     .setValue(this.plugin.settings.auto_jump_to_cursor)
                     .onChange((auto_jump_to_cursor) => {
-                        this.plugin.settings.auto_jump_to_cursor = auto_jump_to_cursor;
+                        this.plugin.settings.auto_jump_to_cursor =
+                            auto_jump_to_cursor;
                         this.plugin.save_settings();
                     });
             });

@@ -97,7 +97,10 @@ export class Templater {
     }
 
     async jump_to_next_cursor_location(file: TFile): Promise<void> {
-        if (this.plugin.settings.auto_jump_to_cursor && this.app.workspace.getActiveFile() === file) {
+        if (
+            this.plugin.settings.auto_jump_to_cursor &&
+            this.app.workspace.getActiveFile() === file
+        ) {
             await this.editor.jump_to_next_cursor_location();
         }
     }
