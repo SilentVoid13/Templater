@@ -16,6 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
     templates_folder: "",
     templates_pairs: [["", ""]],
     trigger_on_file_creation: false,
+    auto_jump_to_cursor: false,
     enable_system_commands: false,
     shell_path: "",
     user_scripts_folder: "",
@@ -31,6 +32,7 @@ export interface Settings {
     templates_folder: string;
     templates_pairs: Array<[string, string]>;
     trigger_on_file_creation: boolean;
+    auto_jump_to_cursor: boolean;
     enable_system_commands: boolean;
     shell_path: string;
     user_scripts_folder: string;
@@ -53,6 +55,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_template_folder_setting();
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_setting();
+        this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
         this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
@@ -119,6 +122,31 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             syntax_highlighting;
                         this.plugin.save_settings();
                         this.plugin.event_handler.update_syntax_highlighting();
+                    });
+            });
+    }
+
+    add_auto_jump_to_cursor(): void {
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Automatically triggers ",
+            desc.createEl("code", { text: "tp.file.cursor" }),
+            " after inserting a template.",
+            desc.createEl("br"),
+            "You can also set a hotkey to manually trigger ",
+            desc.createEl("code", { text: "tp.file.cursor" }),
+            "."
+        );
+
+        new Setting(this.containerEl)
+            .setName("Automatic jump to cursor")
+            .setDesc(desc)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.auto_jump_to_cursor)
+                    .onChange((auto_jump_to_cursor) => {
+                        this.plugin.settings.auto_jump_to_cursor = auto_jump_to_cursor;
+                        this.plugin.save_settings();
                     });
             });
     }

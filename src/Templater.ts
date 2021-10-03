@@ -96,6 +96,12 @@ export class Templater {
         return content;
     }
 
+    async jump_to_next_cursor_location(file: TFile): Promise<void> {
+        if (this.plugin.settings.auto_jump_to_cursor && this.app.workspace.getActiveFile() === file) {
+            await this.editor.jump_to_next_cursor_location();
+        }
+    }
+
     async create_new_note_from_template(
         template: TFile | string,
         folder?: TFolder,
@@ -175,7 +181,7 @@ export class Templater {
                 state: { mode: "source" },
                 eState: { rename: "all" },
             });
-            await this.editor.jump_to_next_cursor_location();
+            await this.jump_to_next_cursor_location(created_note);
         }
 
         return created_note;
@@ -208,8 +214,7 @@ export class Templater {
         const doc = editor.getDoc();
         doc.replaceSelection(output_content);
 
-        // TODO: Remove this
-        await this.editor.jump_to_next_cursor_location();
+        await this.jump_to_next_cursor_location(active_view.file);
     }
 
     async write_template_to_file(
@@ -230,6 +235,7 @@ export class Templater {
             return;
         }
         await this.app.vault.modify(file, output_content);
+        await this.jump_to_next_cursor_location(file);
     }
 
     overwrite_active_file_commands(): void {
@@ -264,10 +270,7 @@ export class Templater {
             return;
         }
         await this.app.vault.modify(file, output_content);
-        // TODO: Remove this
-        if (this.app.workspace.getActiveFile() === file) {
-            await this.editor.jump_to_next_cursor_location();
-        }
+        await this.jump_to_next_cursor_location(file);
     }
 
     async process_dynamic_templates(
