@@ -33,7 +33,7 @@
         "chai-as-promised": "^7.1.1",
         "cz-conventional-changelog": "^3.3.0",
         "eslint": "^7.32.0",
-        "obsidian": "^0.12.16",
+        "obsidian": "^0.12.17",
         "rollup": "2.53.0",
         "standard-version": "^9.3.1",
         "ts-node": "^9.1.1",
