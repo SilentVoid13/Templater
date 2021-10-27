@@ -40,6 +40,8 @@ File creation date: <% tp.file.creation_date() %>
 File creation date with format: <% tp.file.creation_date("dddd Do MMMM YYYY HH:mm") %>
 
 File creation: [[<% (await tp.file.create_new("MyFileContent", "MyFilename")).basename %>]]
+File creation with a template, a prepended name and automatically opened: 
+<% (tp.file.create_new(tp.file.find_tfile("Comments (Template)"), "Comments: " + tp.file.title, true)) %>
 
 File cursor: <% tp.file.cursor(1) %>
 
