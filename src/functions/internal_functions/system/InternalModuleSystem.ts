@@ -4,9 +4,10 @@ import { Platform } from "obsidian";
 import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
 import { TemplaterError } from "Error";
+import { ModuleName } from "functions/TpDocumentation";
 
 export class InternalModuleSystem extends InternalModule {
-    public name = "system";
+    public name: ModuleName = "system";
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("clipboard", this.generate_clipboard());

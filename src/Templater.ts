@@ -8,7 +8,7 @@ import {
     TFolder,
 } from "obsidian";
 
-import { resolve_tfile, delay } from "Utils";
+import { generate_dynamic_command_regex, resolve_tfile, delay } from "Utils";
 import TemplaterPlugin from "main";
 import {
     FunctionsMode,
@@ -18,6 +18,7 @@ import { errorWrapper, errorWrapperSync, TemplaterError } from "Error";
 import { Editor } from "editor/Editor";
 import { Parser } from "parser/Parser";
 import { log_error } from "Log";
+import { Documentation } from "functions/TpDocumentation";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -40,6 +41,7 @@ export class Templater {
     public functions_generator: FunctionsGenerator;
     public editor: Editor;
     public current_functions_object: Record<string, unknown>;
+    public documentation: Documentation;
 
     constructor(private app: App, private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(
@@ -48,6 +50,7 @@ export class Templater {
         );
         this.editor = new Editor(this.app, this.plugin);
         this.parser = new Parser();
+        this.documentation = new Documentation(this.app);
     }
 
     async setup(): Promise<void> {
@@ -280,8 +283,7 @@ export class Templater {
         el: HTMLElement,
         ctx: MarkdownPostProcessorContext
     ): Promise<void> {
-        const dynamic_command_regex =
-            /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*?%>)/g;
+        const dynamic_command_regex = generate_dynamic_command_regex();
 
         const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;

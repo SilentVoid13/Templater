@@ -1,8 +1,9 @@
 import { TemplaterError } from "Error";
 import { InternalModule } from "../InternalModule";
+import { ModuleName } from "functions/TpDocumentation";
 
 export class InternalModuleDate extends InternalModule {
-    public name = "date";
+    public name: ModuleName = "date";
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("now", this.generate_now());

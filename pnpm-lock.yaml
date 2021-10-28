@@ -19,6 +19,7 @@ specifiers:
   eta: github:SilentVoid13/eta#custom-eta
   obsidian: ^0.12.17
   rollup: 2.53.0
+  rollup-plugin-toml: ^1.0.0
   standard-version: ^9.3.1
   ts-node: ^9.1.1
   tslib: ^2.3.1
@@ -45,6 +46,7 @@ devDependencies:
   eslint: 7.32.0
   obsidian: 0.12.17
   rollup: 2.53.0
+  rollup-plugin-toml: 1.0.0
   standard-version: 9.3.1
   ts-node: 9.1.1_typescript@4.4.3
   tslib: 2.3.1
@@ -1228,6 +1230,10 @@ packages:
     engines: {node: '>=4.0'}
     dev: true
 
+  /estree-walker/0.6.1:
+    resolution: {integrity: sha512-SqmZANLWS0mnatqbSfRP5g8OXZC12Fgg1IwNtLsyHDzJizORW4khDfjPqJZsemPWBB2uqykUah5YpQ6epsqC/w==}
+    dev: true
+
   /estree-walker/1.0.1:
     resolution: {integrity: sha512-1fMXF3YP4pZZVozF8j/ZLfvnR8NSIljt56UhbZ5PeeDmmGHpgpdwQt7ITlGvYaQukCvuBRMLEiKiYC+oeIg4cg==}
     dev: true
@@ -2383,6 +2389,19 @@ packages:
       glob: 7.2.0
     dev: true
 
+  /rollup-plugin-toml/1.0.0:
+    resolution: {integrity: sha1-flPOPQCBauro3FvCvwQBuZH0JxA=}
+    dependencies:
+      rollup-pluginutils: 2.8.2
+      toml: 2.3.6
+    dev: true
+
+  /rollup-pluginutils/2.8.2:
+    resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
+    dependencies:
+      estree-walker: 0.6.1
+    dev: true
+
   /rollup/2.53.0:
     resolution: {integrity: sha512-spgrY78Toh+m0+zaOoeaayJKuzFuWy6o1PdFIBMVwRcuxT0xCOX9A5rChyKe+2ruL4lePKWUMImS4mMW1QAkmQ==}
     engines: {node: '>=10.0.0'}
@@ -2690,6 +2709,10 @@ packages:
     engines: {node: '>=8.0'}
     dependencies:
       is-number: 7.0.0
+    dev: true
+
+  /toml/2.3.6:
+    resolution: {integrity: sha512-gVweAectJU3ebq//Ferr2JUY4WKSDe5N+z0FvjDncLGyHmIDoxgY/2Ie4qfEIDm4IS7OA6Rmdm7pdEEdMcV/xQ==}
     dev: true
 
   /trim-newlines/3.0.1:

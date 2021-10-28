@@ -1,7 +1,8 @@
 import { InternalModule } from "../InternalModule";
+import { ModuleName } from "functions/TpDocumentation";
 
 export class InternalModuleFrontmatter extends InternalModule {
-    public name = "frontmatter";
+    public name: ModuleName = "frontmatter";
 
     async create_static_templates(): Promise<void> {}
 
