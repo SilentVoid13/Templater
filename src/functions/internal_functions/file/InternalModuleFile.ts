@@ -13,6 +13,7 @@ import {
 } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
+import { dirname, sep } from "path";
 
 export const DEPTH_LIMIT = 10;
 
@@ -245,6 +246,19 @@ export class InternalModuleFile extends InternalModule {
             const new_path = normalizePath(
                 `${path}.${file.extension}`
             );
+            
+            // TODO: Add mobile support
+            if (Platform.isMobileApp) {
+                return UNSUPPORTED_MOBILE_TEMPLATE;
+            }
+            if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
+                throw new TemplaterError(
+                    "app.vault is not a FileSystemAdapter instance"
+                );
+            }
+
+            this.app.vault.adapter.mkdir(dirname(new_path).split(sep).pop());
+
             await this.app.fileManager.renameFile(
                 file,
                 new_path
