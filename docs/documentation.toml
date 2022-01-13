@@ -102,13 +102,11 @@ description = "This module contains every internal function related to files."
 name = "tp.file.content"
 description = "Retrieves the file's content"
 definition = "tp.file.content"
-example = "This is some content"
 
 [tp.file.functions.create_new]
 name = "tp.file.create_new"
 description = "Creates a new file using a specified template or with a specified content."
 definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder)"
-example = "None"
 
 [tp.file.functions.create_new.args.template]
 name = "template"
@@ -130,7 +128,6 @@ description = "The folder to put the new file in, defaults to obsidian's default
 name = "tp.file.creation_date"
 description = "Retrieves the file's creation date."
 definition = "tp.file.creation_date(format: string = \"YYYY-MM-DD HH:mm\")"
-example = "2021-01-06 20:27"
 
 [tp.file.functions.creation_date.args.format]
 name = "format"
@@ -144,7 +141,6 @@ Sets the cursor to this location after the template has been inserted.
 You can navigate between the different tp.file.cursor using the configured hotkey in obsidian settings.
 """
 definition = "tp.file.cursor(order?: number)"
-example = "None"
 
 [tp.file.functions.cursor.args.order]
 name = "order"
@@ -157,7 +153,6 @@ If you specify multiple tp.file.cursor with the same order, the editor will swit
 name = "tp.file.cursor_append"
 description = "Appends some content after the active cursor in the file."
 definition = "tp.file.cursor_append(content: string)"
-example = "None"
 
 [tp.file.functions.cursor_append.args.content]
 name = "content"
@@ -167,7 +162,6 @@ description = "The content to append after the active cursor"
 name = "tp.file.exists"
 description = "Checks if a file exists or not. Returns a true / false boolean."
 definition = "tp.file.exists(filename: string)"
-example = "true"
 
 [tp.file.functions.exists.args.filename]
 name = "filename"
@@ -177,7 +171,6 @@ description = "The filename of the file we want to check existence, e.g. MyFile.
 name = "tp.file.find_tfile"
 description = "Retrieves the file's folder name."
 definition = "tp.file.folder(relative: boolean = false)"
-example = "Permanent Notes"
 
 [tp.file.functions.find_tfile.args.relative]
 name = "relative"
@@ -187,7 +180,6 @@ description = "If set to true, appends the vault relative path to the folder nam
 name = "tp.file.include"
 description = "Includes the file's link content. Templates in the included content will be resolved."
 definition = "tp.file.include(include_link: string ⎮ TFile)"
-example = "Header for all my templates"
 
 [tp.file.functions.include.args.include_link]
 name = "include_link"
@@ -197,7 +189,6 @@ description = "The link to the file to include, e.g. [[MyFile]], or a TFile obje
 name = "tp.file.last_modified_date"
 description = "Retrieves the file's last modification date."
 definition = "tp.file.last_modified_date(format: string = \"YYYY-MM-DD HH:mm\")"
-example = "2021-01-06 20:27"
 
 [tp.file.functions.last_modified_date.args.format]
 name = "format"
@@ -207,7 +198,6 @@ description = "Format for the date, refer to format reference."
 name = "tp.file.functions.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string)"
-example = "None"
 
 [tp.file.functions.move.args.new_path]
 name = "new_path"
@@ -217,7 +207,6 @@ description = "The new vault relative path of the file, without the file extensi
 name = "tp.file.path"
 description = "Retrieves the file's absolute path on the system."
 definition = "tp.file.path(relative: boolean = false)"
-example = "/path/to/file"
 
 [tp.file.functions.path.args.relative]
 name = "relative"
@@ -227,7 +216,6 @@ description = "If set to true, only retrieves the vault's relative path."
 name = "tp.file.rename"
 description = "Renames the file (keeps the same file extension)."
 definition = "tp.file.rename(new_title: string)"
-example = "None"
 
 [tp.file.functions.rename.args.new_title]
 name = "new_title"
@@ -237,19 +225,16 @@ description = "The new file title."
 name = "tp.file.selection"
 description = "Retrieves the active file's text selection."
 definition = "tp.file.selection()"
-example = "Some selected text"
 
 [tp.file.functions.tags]
 name = "tp.file.tags"
 description = "Retrieves the file's tags (array of string)"
 definition = "tp.file.tags"
-example = "#note,#seedling,#obsidian"
 
 [tp.file.functions.title]
 name = "tp.file.title"
 definition = "tp.file.title"
 description = "Retrieves the file's title."
-example = "MyFile"
 
 
 
@@ -308,3 +293,25 @@ description = "Throws an error if the prompt is canceled, instead of returning a
 [tp.system.functions.suggester.args.placeholder]
 name = "placeholder"
 description = "Placeholder string of the prompt"
+
+[tp.web]
+name = "tp.web"
+description = "This modules contains every internal function related to the web (making web requests)."
+
+[tp.web.functions.daily_quote]
+name = "tp.web.daily_quote"
+description = "Retrieves and parses the daily quote from the API https://api.quotable.io"
+definition = "tp.web.daily_quote()"
+
+[tp.web.functions.random_picture]
+name = "tp.web.random_picture"
+description = "Gets a random image from https://unsplash.com/"
+definition = "tp.web.random_picture(size?: string, query?: string)"
+
+[tp.web.functions.random_picture.args.size]
+name = "size"
+description = "Image size in the format `<width>x<height>`"
+
+[tp.web.functions.random_picture.args.query]
+name = "query"
+description = "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`"

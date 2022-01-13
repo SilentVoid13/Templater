@@ -1,10 +1,8 @@
----
-title: Web module
----
+# Web Module
 
-This modules contains every internal variable / function related to the web (using web requests).
+{{ tp.web.description }}
 
-[Templater](https://github.com/SilentVoid13/Templater) doesn't escape characters by default. When doing web requests, it may be useful to escape dangerous characters. You can escape a command's response characters using the `<%~` opening tag. More informations [here](../../commands/overview.md).
+<!-- toc -->
 
 ## Documentation
 
@@ -14,10 +12,27 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 :::
 
-| Internal Variable / Function                           | Arguments                                                    | Description                                                  | Example Output                                               |
-| ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `tp.web.daily_quote()`                                 | None                                                         | Retrieves and parses the daily quote from the API https://quotes.rest/ | ![quote](/img/templater_daily_quote.png)                     |
-| `tp.web.random_picture(size?: string, query?: string)` | - `size`: Image size in the format `<width>x<height>`.<br />- `query`: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,` | Gets a random image from https://unsplash.com/               | `![image](https://images.unsplash.com/photo-1602583019685-26371425dc0f)` |
+{%- for key, fn in tp.web.functions %}
+### `{{ fn.definition }}` 
+
+{{ fn.description }}
+
+{% if fn.args %}
+##### Arguments
+
+{% for key, arg in fn.args %}
+- `{{ arg.name }}`: {{ arg.description }}
+{% endfor %}
+{% endif %}
+
+{% if fn.example %}
+##### Example
+
+```
+{{ fn.example }}
+```
+{% endif %}
+{%- endfor %}
 
 ## Examples
 
