@@ -24,12 +24,14 @@ export class InternalModuleWeb extends InternalModule {
 
     generate_daily_quote(): () => Promise<string> {
         return async () => {
-            const response = await this.getRequest("https://quotes.rest/qod");
+            const response = await this.getRequest(
+                "https://api.quotable.io/random"
+            );
             const json = await response.json();
 
-            const author = json.contents.quotes[0].author;
-            const quote = json.contents.quotes[0].quote;
-            const new_content = `> ${quote}\n> &mdash; <cite>${author}</cite>`;
+            const author = json.author;
+            const quote = json.content;
+            const new_content = `> ${quote}\n> — <cite>${author}</cite>`;
 
             return new_content;
         };
