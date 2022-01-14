@@ -11,15 +11,11 @@ import {
 
 import TemplaterPlugin from "main";
 import {
+    is_function_documentation,
     is_module_name,
     ModuleName,
-    TpModuleDocumentation,
-    TpFunctionDocumentation,
+    TpSuggestDocumentation,
 } from "functions/TpDocumentation";
-
-export type TpSuggestDocumentation =
-    | TpModuleDocumentation
-    | TpFunctionDocumentation;
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
@@ -27,7 +23,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private tp_keyword_regex =
         /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-z_]*)?)?$/;
     private latest_trigger_info: EditorSuggestTriggerInfo;
-    private module_name: ModuleName | "";
+    private module_name: ModuleName | string;
     private function_trigger: boolean;
     private function_name: string;
 
@@ -51,12 +47,12 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
         let query: string;
         const module_name = match.groups["module"] || "";
-        if (module_name !== "" && !is_module_name(module_name)) {
-            return;
-        }
         this.module_name = module_name;
 
         if (match.groups["fn_trigger"]) {
+            if (module_name == "" || !is_module_name(module_name)) {
+                return;
+            }
             this.function_trigger = true;
             this.function_name = match.groups["fn"] || "";
             query = this.function_name;
@@ -81,20 +77,25 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         if (this.module_name && this.function_trigger) {
             suggestions =
                 this.plugin.templater.documentation.get_all_functions_documentation(
-                    this.module_name
+                    this.module_name as ModuleName
                 );
         } else {
             suggestions =
                 this.plugin.templater.documentation.get_all_modules_documentation();
-
+        }
+        if (!suggestions) {
+            return [];
         }
         return suggestions.filter(s => s.name.startsWith(context.query));
     }
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
+        el.createEl("b", { text: value.name });
+        el.createEl("br");
+        if (this.function_trigger && is_function_documentation(value)) {
+            el.createEl("code", { text: value.definition }); 
+        }
         if (value.description) {
-            el.createEl("b", { text: value.name });
-            el.createEl("br");
             el.createEl("div", { text: value.description });
         }
     }
@@ -114,5 +115,13 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             this.latest_trigger_info.start,
             this.latest_trigger_info.end
         );
+        if (this.latest_trigger_info.start.ch == this.latest_trigger_info.end.ch) {
+            // Dirty hack to prevent the cursor being at the
+            // beginning of the word after completion, 
+            // Not sure what's the cause of this bug.
+            const cursor_pos = this.latest_trigger_info.end;
+            cursor_pos.ch += value.name.length;
+            active_view.editor.setCursor(cursor_pos);
+        }
     }
 }

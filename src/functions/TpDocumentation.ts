@@ -38,6 +38,17 @@ export type TpArgumentDocumentation = {
     description: string,
 };
 
+export type TpSuggestDocumentation =
+    | TpModuleDocumentation
+    | TpFunctionDocumentation;
+
+export function is_function_documentation(x: TpSuggestDocumentation): x is TpFunctionDocumentation {
+    if ((x as TpFunctionDocumentation).definition) {
+        return true;
+    }
+    return false;
+}
+
 export class Documentation {
     public documentation: TpDocumentation = documentation;
 
@@ -48,6 +59,9 @@ export class Documentation {
     }
 
     get_all_functions_documentation(module_name: ModuleName): TpFunctionDocumentation[] {
+        if (!this.documentation.tp[module_name].functions) {
+            return null;
+        }
         return Object.values(this.documentation.tp[module_name].functions);
     }
 
