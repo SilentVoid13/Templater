@@ -9,7 +9,7 @@ module.exports.readVersion = function (contents) {
     return Object.keys(JSON.parse(contents))[0];
 };
 
-module.exports.writeVersion = async function (contents, version) {
+module.exports.writeVersion = function (contents, version) {
     let json = JSON.parse(contents);
     let indent = detectIndent(contents).indent;
     let newline = detectNewline(contents);
