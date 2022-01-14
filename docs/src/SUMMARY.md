@@ -10,7 +10,7 @@
     - [tp.config](./internal-functions/internal-modules/config-module.md)
     - [tp.date](./internal-functions/internal-modules/date-module.md)
     - [tp.file](./internal-functions/internal-modules/file-module.md)
-    - [tp.obsidian](./internal-functions/internal-modules/frontmatter-module.md)
+    - [tp.frontmatter](./internal-functions/internal-modules/frontmatter-module.md)
     - [tp.obsidian](./internal-functions/internal-modules/obsidian-module.md)
     - [tp.system](./internal-functions/internal-modules/system-module.md)
     - [tp.web](./internal-functions/internal-modules/web-module.md)
