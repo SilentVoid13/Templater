@@ -1,8 +1,9 @@
 import { TemplaterError } from "Error";
 import { InternalModule } from "../InternalModule";
+import { ModuleName } from "functions/TpDocumentation";
 
 export class InternalModuleWeb extends InternalModule {
-    name = "web";
+    name: ModuleName = "web";
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("daily_quote", this.generate_daily_quote());

@@ -14,7 +14,7 @@
     },
     {
       "filename": "versions.json",
-      "updater": "versions-json-updater.cjs"
+      "updater": "versions-updater.cjs"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { InternalModule } from "../InternalModule";
+import { log_error } from "Log";
 
 import {
     FileSystemAdapter,
@@ -13,11 +14,12 @@ import {
 } from "obsidian";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "Constants";
 import { TemplaterError } from "Error";
+import { ModuleName } from "functions/TpDocumentation";
 
 export const DEPTH_LIMIT = 10;
 
 export class InternalModuleFile extends InternalModule {
-    public name = "file";
+    public name: ModuleName = "file";
     private include_depth = 0;
     private create_new_depth = 0;
     private linkpath_regex = new RegExp("^\\[\\[(.*)\\]\\]$");
@@ -111,7 +113,7 @@ export class InternalModuleFile extends InternalModule {
             const active_view =
                 this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view === null) {
-                this.plugin.log_error(
+                log_error(
                     new TemplaterError(
                         "No active view, can't append to cursor."
                     )

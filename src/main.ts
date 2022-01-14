@@ -6,6 +6,7 @@ import { ICON_DATA } from "Constants";
 import { Templater } from "Templater";
 import EventHandler from "EventHandler";
 import { CommandHandler } from "CommandHandler";
+import { TpDocumentation } from "functions/TpDocumentation";
 
 export default class TemplaterPlugin extends Plugin {
     public settings: Settings;

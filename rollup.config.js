@@ -2,6 +2,7 @@ import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
+import toml from 'rollup-plugin-toml';
 
 export default (commandLineArgs) => ({
     input: commandLineArgs.testBuild ? "tests/main.test.ts" : "src/main.ts",
@@ -12,5 +13,5 @@ export default (commandLineArgs) => ({
         exports: "default",
     },
     external: ["obsidian"],
-    plugins: [typescript(), nodeResolve({ browser: true }), commonjs(), json()],
+    plugins: [typescript(), nodeResolve({ browser: true }), commonjs(), json(), toml],
 });

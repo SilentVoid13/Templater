@@ -3,6 +3,7 @@ import TemplaterPlugin from "main";
 import { TemplaterError } from "Error";
 import { CursorJumper } from "editor/CursorJumper";
 import { log_error } from "Log";
+import { Autocomplete } from "editor/Autocomplete";
 
 import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
@@ -28,6 +29,7 @@ export class Editor {
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         //await this.registerHinter();
+        this.plugin.registerEditorSuggest(new Autocomplete(this.app, this.plugin));
     }
 
     async jump_to_next_cursor_location(): Promise<void> {
