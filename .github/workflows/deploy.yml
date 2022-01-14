@@ -19,7 +19,11 @@ jobs:
               run: |
                 mkdir mdbook
                 curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=./mdbook
+                curl -sSL https://github.com/avitex/mdbook-tera/releases/download/v0.5.0/mdbook-tera-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=./mdbook
+                curl -sSL https://github.com/badboy/mdbook-toc/releases/download/0.7.0/mdbook-toc-0.7.0-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=./mdbook
                 echo `pwd`/mdbook >> $GITHUB_PATH
+                echo `pwd`/mdbook-tera >> $GITHUB_PATH
+                echo `pwd`/mdbook-toc >> $GITHUB_PATH
             - uses: webfactory/ssh-agent@v0.5.2
               with:
                   ssh-private-key: ${{ secrets.GH_ACTIONS_KEY }}
