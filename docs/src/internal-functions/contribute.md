@@ -1,6 +1,4 @@
----
-title: Contributing
----
+# Contributing
 
 You can contribute to [Templater](https://github.com/SilentVoid13/Templater) by developing a new internal function / variable.
 

@@ -1,6 +1,4 @@
----
-title: Script User Functions
----
+# Script User Functions
 
 This type of user functions allows you to call JavaScript functions from JavaScript files and retrieve their output.
 
@@ -35,13 +33,12 @@ In our previous example, a complete command invocation would look like this:
 
 Which would print `Message from my script: Hello World!` in the console.
 
-:::info 
+## Global namespace
 
 In script user functions, you can still access global namespace variables like `app` or `moment`.
 
 However, you can't access Eta scoped variables like `tp` or `tR`. If you want to use them, you must pass them as arguments for your function.
 
-:::
 
 ## Functions Arguments
 

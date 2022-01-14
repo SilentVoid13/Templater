@@ -59,11 +59,11 @@ If an argument has a default value, it will be specified using an equal sign `=`
 
 If an argument can have different types, it will be specified using a pipe `|`, e.g. `arg4_name: type1|type2`
 
-:::caution
+#### Syntax warning
 
-Please note that this syntax is for documentation purposes only, to be able to understand what arguments the function expects. You mustn't specify the name nor the type nor the default value of an argument when calling a function. Only the value of the arguments are required, as explained [here](./syntax.md#function-invocation)
+Please note that this syntax is for documentation purposes only, to be able to understand what arguments the function expects. 
 
-:::
+You mustn't specify the name nor the type nor the default value of an argument when calling a function. Only the value of the arguments are required, as explained [here](./syntax.md#function-invocation)
 
 ##### Example
 

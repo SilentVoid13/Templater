@@ -1,6 +1,4 @@
----
-title: Javascript Execution Command
----
+# Javascript Execution Command
 
 This type of command allows us to execute JavaScript code.
 
@@ -8,17 +6,11 @@ With a JavaScript Execution command, we can pretty much do everything that JavaS
 
 We can still access the `tp` object and all the internal variables / functions from this type of command.
 
-:::tip
-
 JavaScript Execution commands let you access global namespace variables. This means you can access things like `app` or `moment`.
 
-:::
-
-:::info
+## Asynchronous functions
 
 Some internal functions are asynchronous. When calling such functions inside a JavaScript execution command, don't forget to use the `await` keyword if necessary.
-
-:::
 
 ## How to output a value from a JavaScript Execution Command ?
 

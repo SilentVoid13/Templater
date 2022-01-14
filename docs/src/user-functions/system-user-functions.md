@@ -1,6 +1,4 @@
----
-title: System Command User Functions
----
+# System Command User Functions
 
 This type of user functions allows you to execute system commands and retrieve their output.
 
@@ -16,7 +14,7 @@ Once this is done, [Templater](https://github.com/SilentVoid13/Templater) will c
 
 Just like internal functions, user functions are available under the `tp` JavaScript object, and more specifically under the `tp.user` object.
 
-![user_templates](/img/templater_user_templates.png)
+![user_templates](../imgs/templater_user_templates.png)
 
 ## Functions Arguments
 
@@ -28,10 +26,8 @@ In our previous example, this would give the following command declaration: `<% 
 
 If our system command was calling a bash script, we would be able to access variables `a` and `b` using `$a` and `$b`.
 
-## Internal variables / functions in system commands
+## Internal functions in system commands
 
-You can use internal variables / functions inside your system command. The internal variables / functions will be replaced by their results before your system command gets executed.
-
-You still need to use commands to call internal variables / functions.
+You can use internal functions inside your system command. The internal functions will be replaced before your system command gets executed.
 
 For example, if you configured the system command `cat <% tp.file.path() %>`, it would be replaced with `cat /path/to/file` before the system command gets executed.

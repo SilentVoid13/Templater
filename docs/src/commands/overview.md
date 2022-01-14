@@ -1,7 +1,4 @@
----
-title: Overview
-slug: /commands
----
+# Commands
 
 ## Command Types
 

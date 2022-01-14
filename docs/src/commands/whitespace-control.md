@@ -1,6 +1,4 @@
----
-title: Whitespace Control
----
+# Whitespace Control
 
 By default, **commands** in Templater are not removing any newlines. Commands are replaced with their values and that's it.
 

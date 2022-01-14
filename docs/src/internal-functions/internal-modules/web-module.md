@@ -6,11 +6,7 @@
 
 ## Documentation
 
-:::tip
-
 Function documentation is using a specific syntax. More informations [here](../../syntax.md#function-documentation-syntax)
-
-:::
 
 {%- for key, fn in tp.web.functions %}
 ### `{{ fn.definition }}` 

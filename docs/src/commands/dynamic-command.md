@@ -1,6 +1,4 @@
----
-title: Dynamic Commands
----
+# Dynamic Commands
 
 With this command utility, you can declare a command as "dynamic", which means that this command will be resolved when entering preview mode.
 
