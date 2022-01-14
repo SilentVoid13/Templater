@@ -1,5 +1,5 @@
 [tp.config]
-name = "tp.config"
+name = "config"
 description = """This module exposes Templater's running configuration.
 
 This is mostly useful when writing scripts requiring some context informations.
@@ -29,11 +29,11 @@ definition = "tp.config.active_file?"
 
 
 [tp.date]
-name = "tp.date"
+name = "date"
 description = "This module contains every internal function related to dates."
 
 [tp.date.functions.now]
-name = "tp.date.now"
+name = "now"
 description = "Retrieves the date."
 definition = "tp.date.now(format: string = \"YYYY-MM-DD\", offset?: number⎮string, reference?: string, reference_format?: string)"
 
@@ -54,7 +54,7 @@ name = "reference_format"
 description = "The date reference format."
 
 [tp.date.functions.tomorrow]
-name = "tp.date.tomorrow"
+name = "tomorrow"
 description = "Retrieves tomorrow's date."
 definition = "tp.date.tomorrow(format: string = \"YYYY-MM-DD\")"
 
@@ -63,7 +63,7 @@ name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
 [tp.date.functions.yesterday]
-name = "tp.date.yesterday"
+name = "yesterday"
 description = "Retrieves yesterday's date."
 definition = "tp.date.yesterday(format: string = \"YYYY-MM-DD\")"
 
@@ -72,7 +72,7 @@ name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
 [tp.date.functions.weekday]
-name = "tp.date.weekday"
+name = "weekday"
 description = ""
 definition = "tp.date.weekday(format: string = \"YYYY-MM-DD\", weekday: number, reference?: string, reference_format?: string)"
 
@@ -95,16 +95,16 @@ description = "The date reference format."
 
 
 [tp.file]
-name = "tp.file"
+name = "file"
 description = "This module contains every internal function related to files."
 
 [tp.file.functions.content]
-name = "tp.file.content"
+name = "content"
 description = "Retrieves the file's content"
 definition = "tp.file.content"
 
 [tp.file.functions.create_new]
-name = "tp.file.create_new"
+name = "create_new"
 description = "Creates a new file using a specified template or with a specified content."
 definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder)"
 
@@ -125,7 +125,7 @@ name = "folder"
 description = "The folder to put the new file in, defaults to obsidian's default location."
 
 [tp.file.functions.creation_date]
-name = "tp.file.creation_date"
+name = "creation_date"
 description = "Retrieves the file's creation date."
 definition = "tp.file.creation_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
@@ -134,7 +134,7 @@ name = "format"
 description = "Format for the date, refer to format reference"
 
 [tp.file.functions.cursor]
-name = "tp.file.cursor"
+name = "cursor"
 description = """
 Sets the cursor to this location after the template has been inserted. 
 
@@ -150,7 +150,7 @@ If you specify multiple tp.file.cursor with the same order, the editor will swit
 """
 
 [tp.file.functions.cursor_append]
-name = "tp.file.cursor_append"
+name = "cursor_append"
 description = "Appends some content after the active cursor in the file."
 definition = "tp.file.cursor_append(content: string)"
 
@@ -159,7 +159,7 @@ name = "content"
 description = "The content to append after the active cursor"
 
 [tp.file.functions.exists]
-name = "tp.file.exists"
+name = "exists"
 description = "Checks if a file exists or not. Returns a true / false boolean."
 definition = "tp.file.exists(filename: string)"
 
@@ -168,7 +168,7 @@ name = "filename"
 description = "The filename of the file we want to check existence, e.g. MyFile."
 
 [tp.file.functions.find_tfile]
-name = "tp.file.find_tfile"
+name = "find_tfile"
 description = "Retrieves the file's folder name."
 definition = "tp.file.folder(relative: boolean = false)"
 
@@ -177,7 +177,7 @@ name = "relative"
 description = "If set to true, appends the vault relative path to the folder name."
 
 [tp.file.functions.include]
-name = "tp.file.include"
+name = "include"
 description = "Includes the file's link content. Templates in the included content will be resolved."
 definition = "tp.file.include(include_link: string ⎮ TFile)"
 
@@ -186,7 +186,7 @@ name = "include_link"
 description = "The link to the file to include, e.g. [[MyFile]], or a TFile object. Also supports sections or blocks inclusions, e.g. [[MyFile#Section1]]"
 
 [tp.file.functions.last_modified_date]
-name = "tp.file.last_modified_date"
+name = "last_modified_date"
 description = "Retrieves the file's last modification date."
 definition = "tp.file.last_modified_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
@@ -195,7 +195,7 @@ name = "format"
 description = "Format for the date, refer to format reference."
 
 [tp.file.functions.move]
-name = "tp.file.functions.move"
+name = "functions.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string)"
 
@@ -204,7 +204,7 @@ name = "new_path"
 description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. /Notes/MyNote"
 
 [tp.file.functions.path]
-name = "tp.file.path"
+name = "path"
 description = "Retrieves the file's absolute path on the system."
 definition = "tp.file.path(relative: boolean = false)"
 
@@ -213,7 +213,7 @@ name = "relative"
 description = "If set to true, only retrieves the vault's relative path."
 
 [tp.file.functions.rename]
-name = "tp.file.rename"
+name = "rename"
 description = "Renames the file (keeps the same file extension)."
 definition = "tp.file.rename(new_title: string)"
 
@@ -222,42 +222,42 @@ name = "new_title"
 description = "The new file title."
 
 [tp.file.functions.selection]
-name = "tp.file.selection"
+name = "selection"
 description = "Retrieves the active file's text selection."
 definition = "tp.file.selection()"
 
 [tp.file.functions.tags]
-name = "tp.file.tags"
+name = "tags"
 description = "Retrieves the file's tags (array of string)"
 definition = "tp.file.tags"
 
 [tp.file.functions.title]
-name = "tp.file.title"
+name = "title"
 definition = "tp.file.title"
 description = "Retrieves the file's title."
 
 
 
 [tp.frontmatter]
-name = "tp.frontmatter"
+name = "frontmatter"
 description = "This modules exposes all the frontmatter variables of a file as variables."
 
 [tp.obsidian]
-name = "tp.obsidian"
+name = "obsidian"
 description = "This module exposes all the functions and classes from the obsidian API."
 
 
 [tp.system]
-name = "tp.system"
+name = "system"
 description = "This module contains system related functions."
 
 [tp.system.functions.clipboard]
-name = "tp.system.clipboard"
+name = "clipboard"
 description = "Retrieves the clipboard's content"
 definition = "tp.system.clipboard()"
 
 [tp.system.functions.prompt]
-name = "tp.system.prompt"
+name = "prompt"
 description = "Spawns a prompt modal and returns the user's input."
 definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false)"
 
@@ -274,7 +274,7 @@ name = "throw_on_cancel"
 description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
 
 [tp.system.functions.suggester]
-name = "tp.system.suggester"
+name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
 definition = "tp.system.suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\")"
 
@@ -295,16 +295,16 @@ name = "placeholder"
 description = "Placeholder string of the prompt"
 
 [tp.web]
-name = "tp.web"
+name = "web"
 description = "This modules contains every internal function related to the web (making web requests)."
 
 [tp.web.functions.daily_quote]
-name = "tp.web.daily_quote"
+name = "daily_quote"
 description = "Retrieves and parses the daily quote from the API https://api.quotable.io"
 definition = "tp.web.daily_quote()"
 
 [tp.web.functions.random_picture]
-name = "tp.web.random_picture"
+name = "random_picture"
 description = "Gets a random image from https://unsplash.com/"
 definition = "tp.web.random_picture(size?: string, query?: string)"
 
