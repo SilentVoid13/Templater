@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.11](///compare/1.9.10...1.9.11) (2022-01-14)
+
+
+### Features
+
+* adding autocomplete and documentation for tp.file module 35f8bee
+* adding docs for all modules 94452db
+* adding tp.web docs 8abb219
+* working autocompletion 8431c80
+
+
+### Bug Fixes
+
+* fixing docs SUMMARY mistake eaa6859
+
 ### [1.9.10](https://github.com/SilentVoid13/Templater/compare/1.9.9...1.9.10) (2022-01-13)
 
 ### [1.9.9](https://github.com/SilentVoid13/Templater/compare/1.9.8...1.9.9) (2021-10-03)
