@@ -48,21 +48,21 @@ export class UserScriptFunctions implements IGenerateObject {
         };
 
         const file_content = await this.app.vault.read(file);
-        const wrapping_eval = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
-        wrapping_eval(req, exp, mod);
-        const user_export = exp;
+        const wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        wrapping_fn(req, mod, exp);
+        const user_function = exp['default'] || mod.exports;
 
-        if (!user_export.exports) {
+        if (!user_function) {
             throw new TemplaterError(
                 `Failed to load user script ${file.path}. No exports detected.`
             );
         }
-        if (!(user_export.exports instanceof Function)) {
+        if (!(user_function instanceof Function)) {
             throw new TemplaterError(
                 `Failed to load user script ${file.path}. Default export is not a function.`
             );
         }
-        user_script_functions.set(`${file.basename}`, user_export.exports);
+        user_script_functions.set(`${file.basename}`, user_function);
     }
 
     async generate_object(): Promise<Record<string, unknown>> {
