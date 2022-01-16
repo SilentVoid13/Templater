@@ -5,7 +5,7 @@ import {
     EditorTransaction,
     MarkdownView,
 } from "obsidian";
-import { escape_RegExp } from "Utils";
+import { escape_RegExp } from "utils/Utils";
 
 export class CursorJumper {
     constructor(private app: App) {}
@@ -33,7 +33,7 @@ export class CursorJumper {
         content: string,
         index: number
     ): EditorPosition {
-        const substr = content.substr(0, index);
+        const substr = content.slice(0, index);
 
         let l = 0;
         let offset = -1;
@@ -41,7 +41,7 @@ export class CursorJumper {
         for (; (r = substr.indexOf("\n", r + 1)) !== -1; l++, offset = r);
         offset += 1;
 
-        const ch = content.substr(offset, index - offset).length;
+        const ch = content.slice(offset, index).length;
 
         return { line: l, ch: ch };
     }

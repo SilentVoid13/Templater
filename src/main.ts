@@ -1,12 +1,12 @@
 import { addIcon, Plugin } from "obsidian";
 
-import { DEFAULT_SETTINGS, Settings, TemplaterSettingTab } from "Settings";
-import { FuzzySuggester } from "FuzzySuggester";
-import { ICON_DATA } from "Constants";
-import { Templater } from "Templater";
-import EventHandler from "EventHandler";
-import { CommandHandler } from "CommandHandler";
-import { TpDocumentation } from "functions/TpDocumentation";
+import { DEFAULT_SETTINGS, Settings, TemplaterSettingTab } from "settings/Settings";
+import { FuzzySuggester } from "handlers/FuzzySuggester";
+import { ICON_DATA } from "utils/Constants";
+import { Templater } from "core/Templater";
+import EventHandler from "handlers/EventHandler";
+import { CommandHandler } from "handlers/CommandHandler";
+import { Editor } from "editor/Editor";
 
 export default class TemplaterPlugin extends Plugin {
     public settings: Settings;
@@ -14,12 +14,16 @@ export default class TemplaterPlugin extends Plugin {
     public event_handler: EventHandler;
     public command_handler: CommandHandler;
     public fuzzy_suggester: FuzzySuggester;
+    public editor_handler: Editor;
 
     async onload(): Promise<void> {
         await this.load_settings();
 
         this.templater = new Templater(this.app, this);
         await this.templater.setup();
+
+        this.editor_handler = new Editor(this.app, this);
+        await this.editor_handler.setup();
 
         this.fuzzy_suggester = new FuzzySuggester(this.app, this);
 

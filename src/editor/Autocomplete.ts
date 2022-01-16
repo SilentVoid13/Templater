@@ -15,13 +15,15 @@ import {
     is_module_name,
     ModuleName,
     TpSuggestDocumentation,
-} from "functions/TpDocumentation";
+    Documentation 
+} from "./TpDocumentation";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
     // https://regex101.com/r/ocmHzR/1
     private tp_keyword_regex =
         /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-z_]*)?)?$/;
+    private documentation: Documentation;
     private latest_trigger_info: EditorSuggestTriggerInfo;
     private module_name: ModuleName | string;
     private function_trigger: boolean;
@@ -29,6 +31,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
     constructor(private app: App, private plugin: TemplaterPlugin) {
         super(app);
+        this.documentation = new Documentation(this.app);
     }
 
     onTrigger(
@@ -76,12 +79,12 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
             suggestions =
-                this.plugin.templater.documentation.get_all_functions_documentation(
+                this.documentation.get_all_functions_documentation(
                     this.module_name as ModuleName
                 );
         } else {
             suggestions =
-                this.plugin.templater.documentation.get_all_modules_documentation();
+                this.documentation.get_all_modules_documentation();
         }
         if (!suggestions) {
             return [];

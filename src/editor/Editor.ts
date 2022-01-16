@@ -1,8 +1,8 @@
-import { App, Platform } from "obsidian";
+import { App, Platform, TFile } from "obsidian";
 import TemplaterPlugin from "main";
-import { TemplaterError } from "Error";
+import { TemplaterError } from "utils/Error";
 import { CursorJumper } from "editor/CursorJumper";
-import { log_error } from "Log";
+import { log_error } from "utils/Log";
 import { Autocomplete } from "editor/Autocomplete";
 
 import "editor/mode/javascript";
@@ -28,11 +28,16 @@ export class Editor {
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
-        //await this.registerHinter();
         this.plugin.registerEditorSuggest(new Autocomplete(this.app, this.plugin));
     }
 
-    async jump_to_next_cursor_location(): Promise<void> {
+    async jump_to_next_cursor_location(file: TFile = null, auto_jump = false): Promise<void> {
+        if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
+            return;
+        }
+        if (file && this.app.workspace.getActiveFile() !== file) {
+            return;
+        }
         this.cursor_jumper.jump_to_next_cursor_location();
     }
 
@@ -158,57 +163,5 @@ export class Editor {
                 templaterOverlay
             );
         });
-    }
-
-    async registerHinter(): Promise<void> {
-        // TODO
-        /*
-        await delay(1000);
-
-        var comp = [
-            ["here", "hither"],
-            ["asynchronous", "nonsynchronous"],
-            ["completion", "achievement", "conclusion", "culmination", "expirations"],
-            ["hinting", "advise", "broach", "imply"],
-            ["function","action"],
-            ["provide", "add", "bring", "give"],
-            ["synonyms", "equivalents"],
-            ["words", "token"],
-            ["each", "every"],
-        ];
-    
-        function synonyms(cm: any, option: any) {
-            return new Promise(function(accept) {
-                setTimeout(function() {
-                    var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
-                    var start = cursor.ch, end = cursor.ch
-                    while (start && /\w/.test(line.charAt(start - 1))) --start
-                    while (end < line.length && /\w/.test(line.charAt(end))) ++end
-                    var word = line.slice(start, end).toLowerCase()
-                    for (var i = 0; i < comp.length; i++) {
-                        if (comp[i].indexOf(word) != -1) {
-                            return accept({
-                                list: comp[i],
-                                from: window.CodeMirror.Pos(cursor.line, start),
-                                to: window.CodeMirror.Pos(cursor.line, end)
-                            });
-                        }
-                    }
-                    return accept(null);
-                }, 100)
-            });
-        }
-
-        this.app.workspace.on("codemirror", cm => {
-            cm.setOption("extraKeys", {"Ctrl-Space": "autocomplete"});
-            cm.setOption("hintOptions", {hint: synonyms});
-        });
-
-        this.app.workspace.iterateCodeMirrors(cm => {
-            console.log("CM:", cm);
-            cm.setOption("extraKeys", {"Space": "autocomplete"});
-            cm.setOption("hintOptions", {hint: synonyms});
-        });
-        */
     }
 }
