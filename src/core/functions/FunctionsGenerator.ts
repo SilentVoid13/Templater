@@ -5,7 +5,7 @@ import { UserFunctions } from "./user_functions/UserFunctions";
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "./IGenerateObject";
 import { RunningConfig } from "core/Templater";
-//import obsidian_module from "obsidian";
+import * as obsidian_module from "obsidian";
 
 export enum FunctionsMode {
     INTERNAL,
@@ -27,7 +27,7 @@ export class FunctionsGenerator implements IGenerateObject {
 
     additional_functions(): Record<string, unknown> {
         return {
-            obsidian: null,
+            obsidian: obsidian_module,
         };
     }
 

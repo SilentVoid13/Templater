@@ -1,6 +1,6 @@
 # Templater Obsidian Plugin
 
-![templater_logo](docs/static/img/templater_logo.svg)
+![templater_logo](./imgs/templater_logo.svg)
 
 [Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your [Obsidian](https://obsidian.md/) notes. It will also let you execute JavaScript code manipulating those variables and functions.
 
