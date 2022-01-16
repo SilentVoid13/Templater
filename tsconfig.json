@@ -9,8 +9,8 @@
         "noImplicitAny": true,
         "moduleResolution": "node",
         "importHelpers": true,
-        "esModuleInterop": true,
-        "lib": ["dom", "es6", "scripthost", "es2015", "es2019"]
+        "lib": ["dom", "es5", "es6", "es7"],
+        "allowSyntheticDefaultImports": true
     },
     "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

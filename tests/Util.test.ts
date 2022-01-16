@@ -1,4 +1,4 @@
-import { TFile, TFolder } from "obsidian";
+import { TFile } from "obsidian";
 import TestTemplaterPlugin from "./main.test";
 
 export const PLUGIN_NAME = "templater-obsidian";

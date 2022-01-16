@@ -2,7 +2,7 @@ import { Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 
-import { RunMode, RunningConfig } from "Templater";
+import { RunMode, RunningConfig } from "core/Templater";
 import TemplaterPlugin from "main";
 import {
     cache_update,
