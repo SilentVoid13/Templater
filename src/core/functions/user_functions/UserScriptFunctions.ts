@@ -1,4 +1,4 @@
-import { App, FileSystemAdapter, TFile } from "obsidian";
+import { App, TFile } from "obsidian";
 
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "../IGenerateObject";
@@ -10,7 +10,6 @@ export class UserScriptFunctions implements IGenerateObject {
     constructor(private app: App, private plugin: TemplaterPlugin) {}
 
     async generate_user_script_functions(
-        config: RunningConfig
     ): Promise<Map<string, Function>> {
         const user_script_functions: Map<string, Function> = new Map();
         const files = errorWrapperSync(
@@ -28,7 +27,6 @@ export class UserScriptFunctions implements IGenerateObject {
         for (const file of files) {
             if (file.extension.toLowerCase() === "js") {
                 await this.load_user_script_function(
-                    config,
                     file,
                     user_script_functions
                 );
@@ -38,44 +36,37 @@ export class UserScriptFunctions implements IGenerateObject {
     }
 
     async load_user_script_function(
-        config: RunningConfig,
         file: TFile,
         user_script_functions: Map<string, Function>
     ): Promise<void> {
-        if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
-            throw new TemplaterError(
-                "app.vault is not a FileSystemAdapter instance"
-            );
-        }
-        const vault_path = this.app.vault.adapter.getBasePath();
-        const file_path = `${vault_path}/${file.path}`;
+        let req = (s: string) => {
+            return window.require && window.require(s);
+        };
+        let exp: Record<string, unknown> = {};
+        let mod = {
+            exports: exp
+        };
 
-        // https://stackoverflow.com/questions/26633901/reload-module-at-runtime
-        // https://stackoverflow.com/questions/1972242/how-to-auto-reload-files-in-node-js
-        if (Object.keys(window.require.cache).contains(file_path)) {
-            delete window.require.cache[window.require.resolve(file_path)];
-        }
+        const file_content = await this.app.vault.read(file);
+        const wrapping_eval = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        wrapping_eval(req, exp, mod);
+        const user_export = exp;
 
-        const user_function = await import(file_path);
-        if (!user_function.default) {
+        if (!user_export.exports) {
             throw new TemplaterError(
-                `Failed to load user script ${file_path}. No exports detected.`
+                `Failed to load user script ${file.path}. No exports detected.`
             );
         }
-        if (!(user_function.default instanceof Function)) {
+        if (!(user_export.exports instanceof Function)) {
             throw new TemplaterError(
-                `Failed to load user script ${file_path}. Default export is not a function.`
+                `Failed to load user script ${file.path}. Default export is not a function.`
             );
         }
-        user_script_functions.set(`${file.basename}`, user_function.default);
+        user_script_functions.set(`${file.basename}`, user_export.exports);
     }
 
-    async generate_object(
-        config: RunningConfig
-    ): Promise<Record<string, unknown>> {
-        const user_script_functions = await this.generate_user_script_functions(
-            config
-        );
+    async generate_object(): Promise<Record<string, unknown>> {
+        const user_script_functions = await this.generate_user_script_functions();
         return Object.fromEntries(user_script_functions);
     }
 }
