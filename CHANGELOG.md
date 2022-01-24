@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/SilentVoid13/Templater/compare/1.9.11...1.10.0) (2022-01-24)
+
+
+### Features
+
+* adding mobile support for user script templates ([06fef36](https://github.com/SilentVoid13/Templater/commit/06fef36c66fe52fcdc7bec3f23db0beff1c3dca8))
+
 ### [1.9.11](///compare/1.9.10...1.9.11) (2022-01-14)
 
 
