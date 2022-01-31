@@ -9,8 +9,7 @@ import { errorWrapperSync, TemplaterError } from "utils/Error";
 export class UserScriptFunctions implements IGenerateObject {
     constructor(private app: App, private plugin: TemplaterPlugin) {}
 
-    async generate_user_script_functions(
-    ): Promise<Map<string, Function>> {
+    async generate_user_script_functions(): Promise<Map<string, Function>> {
         const user_script_functions: Map<string, Function> = new Map();
         const files = errorWrapperSync(
             () =>
@@ -44,13 +43,20 @@ export class UserScriptFunctions implements IGenerateObject {
         };
         let exp: Record<string, unknown> = {};
         let mod = {
-            exports: exp
+            exports: exp,
         };
 
-        const file_content = await this.app.vault.read(file);
-        const wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        let file_content = await this.app.vault.read(file);
+        file_content = await this.inline_requires(file_content);
+        const wrapping_fn = window.eval(
+            "(function anonymous(require, module, exports){" +
+                file_content +
+                "\n})"
+        );
+        console.log(wrapping_fn);
         wrapping_fn(req, mod, exp);
-        const user_function = exp['default'] || mod.exports;
+        const user_function = exp["default"] || mod.exports;
+        console.log(user_function);
 
         if (!user_function) {
             throw new TemplaterError(
@@ -66,7 +72,36 @@ export class UserScriptFunctions implements IGenerateObject {
     }
 
     async generate_object(): Promise<Record<string, unknown>> {
-        const user_script_functions = await this.generate_user_script_functions();
+        const user_script_functions =
+            await this.generate_user_script_functions();
         return Object.fromEntries(user_script_functions);
+    }
+
+    async inline_requires(file_content) {
+        const require = file_content.match(/require\('\.\/(.*)(\.js)?'\)/);
+        if (!require) {
+            return file_content;
+        }
+        if (require && require[1]) {
+            const require_path = `${this.plugin.settings.user_scripts_folder}/${require[1]}.js`;
+            const require_file =
+                this.app.vault.getAbstractFileByPath(require_path);
+            let require_content = await this.app.vault.read(require_file);
+            require_content = require_content.replace(
+                /module\.exports = .*$/,
+                ""
+            );
+            const exists = file_content.includes(require_content);
+            let inlined = file_content;
+            if (!exists) {
+                inlined = file_content.replace(
+                    `const ${require[1]} = ${require[0]}`,
+                    require_content
+                );
+            } else {
+                inlined = file_content.replace(`const ${require[1]} = ${require[0]}`, "");
+            }
+            return this.inline_requires(inlined);
+        }
     }
 }
