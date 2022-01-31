@@ -47,8 +47,37 @@ export class UserScriptFunctions implements IGenerateObject {
             exports: exp
         };
 
-        const file_content = await this.app.vault.read(file);
-        const wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        let file_content = await this.app.vault.read(file);
+        let wrapping_fn;
+        const requires = file_content.match(/require\('\.\/(.*)'\)/g)?.map(
+            (r) => {
+                r = r.replace(/require\('\.\/(.*)'\)/, "$1")
+                if (r.includes(".js")) {
+                    return r.split(".")[0]
+                }
+                return r;
+            }
+        );
+        if (requires) {
+        const functions = await requires.reduce(async (acc, r) => {
+            const path = this.plugin.settings.user_scripts_folder + "/" + r + ".js";
+            const file = this.app.vault.getAbstractFileByPath(path);
+            if (file) {
+                acc[r] = await this.app.vault.read(file);
+            }
+            return acc;
+        }, {})
+        requires.forEach((r, i) => {
+            const script = functions[r]
+            if (script) {
+                file_content = file_content.replace(`${r}.js`, r)
+                file_content = file_content.replace(`require('./${r}')`, script);
+            }
+        })
+        wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        } else {
+            wrapping_fn = window.eval("(function anonymous(require, module, exports){" + file_content + "\n})");
+        }
         wrapping_fn(req, mod, exp);
         const user_function = exp['default'] || mod.exports;
 
