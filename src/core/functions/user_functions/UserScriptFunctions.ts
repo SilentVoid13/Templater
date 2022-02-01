@@ -53,10 +53,8 @@ export class UserScriptFunctions implements IGenerateObject {
                 file_content +
                 "\n})"
         );
-        console.log(wrapping_fn);
         wrapping_fn(req, mod, exp);
         const user_function = exp["default"] || mod.exports;
-        console.log(user_function);
 
         if (!user_function) {
             throw new TemplaterError(
@@ -77,7 +75,7 @@ export class UserScriptFunctions implements IGenerateObject {
         return Object.fromEntries(user_script_functions);
     }
 
-    async inline_requires(file_content) {
+    async inline_requires(file_content: string): Promise<string> {
         const require = file_content.match(/require\('\.\/(.*)(\.js)?'\)/);
         if (!require) {
             return file_content;
@@ -86,7 +84,7 @@ export class UserScriptFunctions implements IGenerateObject {
             const require_path = `${this.plugin.settings.user_scripts_folder}/${require[1]}.js`;
             const require_file =
                 this.app.vault.getAbstractFileByPath(require_path);
-            let require_content = await this.app.vault.read(require_file);
+            let require_content = await this.app.vault.read(require_file as TFile);
             require_content = require_content.replace(
                 /module\.exports = .*$/,
                 ""
