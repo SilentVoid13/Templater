@@ -76,7 +76,7 @@ export class UserScriptFunctions implements IGenerateObject {
     }
 
     async inline_requires(file_content: string): Promise<string> {
-        const require = file_content.match(/require\('\.\/(.*)(\.js)?'\)/);
+        const require = file_content.match(/require\('\.\/(.*?)(\.js)?'\)/);
         if (!require) {
             return file_content;
         }
