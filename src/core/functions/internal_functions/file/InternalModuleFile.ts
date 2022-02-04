@@ -256,7 +256,9 @@ export class InternalModuleFile extends InternalModule {
 
     generate_path(): (relative: boolean) => string {
         return (relative = false) => {
-            // TODO: Add mobile support
+            if (relative) {
+                return this.config.target_file.path;
+            }
             if (Platform.isMobileApp) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
@@ -266,12 +268,7 @@ export class InternalModuleFile extends InternalModule {
                 );
             }
             const vault_path = this.app.vault.adapter.getBasePath();
-
-            if (relative) {
-                return this.config.target_file.path;
-            } else {
-                return `${vault_path}/${this.config.target_file.path}`;
-            }
+            return `${vault_path}/${this.config.target_file.path}`;
         };
     }
 
