@@ -167,10 +167,17 @@ export class Templater {
                 return;
             }
             await active_leaf.openFile(created_note, {
-                state: { mode: "source" },
-                eState: { rename: "all" },
+              state: { mode: "source" },
             });
-            await this.plugin.editor_handler.jump_to_next_cursor_location(created_note, true);
+
+            await this.plugin.editor_handler.jump_to_next_cursor_location(
+              created_note,
+              true
+            );
+
+            active_leaf.setEphemeralState({
+              rename: "all",
+            });
         }
 
         return created_note;
