@@ -160,11 +160,10 @@ export class Templater {
 
         await this.app.vault.modify(created_note, output_content);
 
-        this.app.workspace.trigger(
-          "templater:new-note-from-template",
-          created_note,
-          output_content
-        );
+        this.app.workspace.trigger("templater:new-note-from-template", {
+          file: created_note,
+          content: output_content,
+        });
 
         if (open_new_note) {
             const active_leaf = this.app.workspace.activeLeaf;
