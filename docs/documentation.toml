@@ -276,7 +276,7 @@ description = "Throws an error if the prompt is canceled, instead of returning a
 [tp.system.functions.suggester]
 name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
-definition = "tp.system.suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\")"
+definition = "tp.system.suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\", limit?: number = undefined)"
 
 [tp.system.functions.suggester.args.text_items]
 name = "text_items"
@@ -293,6 +293,10 @@ description = "Throws an error if the prompt is canceled, instead of returning a
 [tp.system.functions.suggester.args.placeholder]
 name = "placeholder"
 description = "Placeholder string of the prompt"
+
+[tp.system.functions.suggester.args.limit]
+name = "limit"
+description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)"
 
 [tp.web]
 name = "web"
