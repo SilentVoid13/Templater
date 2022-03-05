@@ -9,6 +9,7 @@
         "pretest": "eslint --ignore-path .gitignore src/",
         "test-build": "node esbuild.config.mjs production test",
         "test-dev": "node esbuild.config.mjs test",
+        "commit": "cz",
         "release": "standard-version -t ''"
     },
     "keywords": [
