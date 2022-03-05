@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://github-personal/liamcain/Templater/compare/1.11.0...1.11.1) (2022-03-05)
+
+
+### Bug Fixes
+
+* rename args for new `templater:template-appended` event to be plural ([fecccad](https://github-personal/liamcain/Templater/commit/fecccad72fee43bab1bd5dcfb2c93db79de4bb25))
+
 ## [1.11.0](https://github-personal/liamcain/Templater/compare/1.10.0...1.11.0) (2022-03-05)
 
 
