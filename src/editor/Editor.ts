@@ -38,7 +38,7 @@ export class Editor {
         if (file && this.app.workspace.getActiveFile() !== file) {
             return;
         }
-        this.cursor_jumper.jump_to_next_cursor_location();
+        await this.cursor_jumper.jump_to_next_cursor_location();
     }
 
     async registerCodeMirrorMode(): Promise<void> {
