@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github-personal/liamcain/Templater/compare/1.10.0...1.11.0) (2022-03-05)
+
+
+### Features
+
+* Trigger events on template insertion ([#573](https://github-personal/liamcain/Templater/issues/573)) ([6b959d8](https://github-personal/liamcain/Templater/commit/6b959d8b5727837b1df5d13cb3c9524284064d1c))
+
+
+### Bug Fixes
+
+* **cursorjumper:** Activate cursor jump before renaming file ([#576](https://github-personal/liamcain/Templater/issues/576)) ([3cb9932](https://github-personal/liamcain/Templater/commit/3cb99321922d44de9b7350a59227e36711de9dc6))
+
 ## [1.10.0](https://github.com/SilentVoid13/Templater/compare/1.9.11...1.10.0) (2022-01-24)
 
 
