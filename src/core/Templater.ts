@@ -213,14 +213,14 @@ export class Templater {
 
         const editor = active_view.editor;
         const doc = editor.getDoc();
-        const oldSelection = doc.listSelections();
+        const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
 
         this.app.workspace.trigger("templater:template-appended", {
           view: active_view,
           content: output_content,
-          oldSelection,
-          newSelection: doc.listSelections(),
+          oldSelections,
+          newSelections: doc.listSelections(),
         });
 
         await this.plugin.editor_handler.jump_to_next_cursor_location(active_view.file, true);
