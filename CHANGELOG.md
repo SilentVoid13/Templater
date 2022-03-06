@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://github-personal/liamcain/Templater/compare/1.11.1...1.11.2) (2022-03-06)
+
+
+### Bug Fixes
+
+* **cursorjumper:** fix issues with jump cursor stealing focus away from the 'rename file' text field ([410c3a8](https://github-personal/liamcain/Templater/commit/410c3a886e117e6a79849190aa0e9a9e64e56608))
+
 ### [1.11.1](https://github-personal/liamcain/Templater/compare/1.11.0...1.11.1) (2022-03-05)
 
 
