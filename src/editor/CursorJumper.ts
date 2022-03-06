@@ -99,7 +99,6 @@ export class CursorJumper {
         }
 
         const editor = active_view.editor;
-        editor.focus();
 
         const selections: Array<EditorRangeOrCaret> = [];
         for (const pos of positions) {
