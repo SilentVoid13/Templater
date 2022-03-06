@@ -18,7 +18,7 @@ specifiers:
   esbuild-plugin-toml: ^0.0.1
   eslint: ^7.32.0
   eta: github:SilentVoid13/eta#custom-eta
-  obsidian: ^0.12.17
+  obsidian: ^0.13.26
   standard-version: ^9.3.2
   stringify-package: ^1.0.1
   ts-node: ^9.1.1
@@ -45,7 +45,7 @@ devDependencies:
   esbuild: 0.13.15
   esbuild-plugin-toml: 0.0.1
   eslint: 7.32.0
-  obsidian: 0.12.17
+  obsidian: 0.13.26
   standard-version: 9.3.2
   stringify-package: 1.0.1
   ts-node: 9.1.1_typescript@4.5.4
@@ -79,6 +79,32 @@ packages:
       '@babel/helper-validator-identifier': 7.16.7
       chalk: 2.4.2
       js-tokens: 4.0.0
+    dev: true
+
+  /@codemirror/rangeset/0.19.8:
+    resolution: {integrity: sha512-1vusIkxSD0vK5KQ22JO/4Ejfww5268PgM/CpKNBSpTpWZEFlZbmOPyRiY4HXO2oEzOpypbA/walMiNInWnrT0Q==}
+    dependencies:
+      '@codemirror/state': 0.19.9
+    dev: true
+
+  /@codemirror/state/0.19.9:
+    resolution: {integrity: sha512-psOzDolKTZkx4CgUqhBQ8T8gBc0xN5z4gzed109aF6x7D7umpDRoimacI/O6d9UGuyl4eYuDCZmDFr2Rq7aGOw==}
+    dependencies:
+      '@codemirror/text': 0.19.6
+    dev: true
+
+  /@codemirror/text/0.19.6:
+    resolution: {integrity: sha512-T9jnREMIygx+TPC1bOuepz18maGq/92q2a+n4qTqObKwvNMg+8cMTslb8yxeEDEq7S3kpgGWxgO1UWbQRij0dA==}
+    dev: true
+
+  /@codemirror/view/0.19.46:
+    resolution: {integrity: sha512-gnIRJ4OrHt7RIC8q+NNOJeUy+nah6IOM/BPbS0uNnYPhfhpO938HCKbEE2CDLnD6LqcIBLD6u2xCKHYD9g5pTw==}
+    dependencies:
+      '@codemirror/rangeset': 0.19.8
+      '@codemirror/state': 0.19.9
+      '@codemirror/text': 0.19.6
+      style-mod: 4.0.0
+      w3c-keyname: 2.2.4
     dev: true
 
   /@commitlint/config-validator/16.0.0:
@@ -2138,9 +2164,11 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /obsidian/0.12.17:
-    resolution: {integrity: sha512-YvCAlRym9D8zNPXt6Ez8QubSTVGoChx6lb58zqI13Dcrz3l1lgUO+pcOGDiD5Qa67nzDZLXo3aV2rqkCCpTvGQ==}
+  /obsidian/0.13.26:
+    resolution: {integrity: sha512-7NLjrX8Yw5q3zROiOo52KUh4U0qEm3Oj5T62OhG/tbdHfq2/hqB2U93S/rquIseCbKUHnV4AVGIlYKGczvy8rg==}
     dependencies:
+      '@codemirror/state': 0.19.9
+      '@codemirror/view': 0.19.46
       '@types/codemirror': 0.0.108
       moment: 2.29.1
     dev: true
@@ -2719,6 +2747,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /style-mod/4.0.0:
+    resolution: {integrity: sha512-OPhtyEjyyN9x3nhPsu76f52yUGXiZcgvsrFVtvTkyGRQJ0XK+GPc6ov1z+lRpbeabka+MYEQxOYRnt5nF30aMw==}
+    dev: true
+
   /supports-color/5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -2937,6 +2969,10 @@ packages:
     dependencies:
       spdx-correct: 3.1.1
       spdx-expression-parse: 3.0.1
+    dev: true
+
+  /w3c-keyname/2.2.4:
+    resolution: {integrity: sha512-tOhfEwEzFLJzf6d1ZPkYfGj+FWhIpBux9ppoP3rlclw3Z0BZv3N7b7030Z1kYth+6rDuAsXUFr+d0VE6Ed1ikw==}
     dev: true
 
   /which/1.3.1:
