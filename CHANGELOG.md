@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.3](https://github-personal/liamcain/Templater/compare/1.11.2...1.11.3) (2022-03-06)
+
 ### [1.11.2](https://github-personal/liamcain/Templater/compare/1.11.1...1.11.2) (2022-03-06)
 
 
