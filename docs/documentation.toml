@@ -2,7 +2,7 @@
 name = "config"
 description = """This module exposes Templater's running configuration.
 
-This is mostly useful when writing scripts requiring some context informations.
+This is mostly useful when writing scripts requiring some context information.
 """
 
 [tp.config.functions.template_file]

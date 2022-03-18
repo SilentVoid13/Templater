@@ -544,7 +544,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 href: "https://silentvoid13.github.io/Templater/",
                 text: "documentation",
             }),
-            " for more informations."
+            " for more information."
         );
 
         new Setting(this.containerEl)

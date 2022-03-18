@@ -14,4 +14,4 @@ If you understood the [object hierarchy](../syntax.md#objects-hierarchy) correct
 
 ## Contribution 
 
-I invite everyone to contribute to this plugin development by adding new internal functions. More informations [here](./contribute.md).
+I invite everyone to contribute to this plugin development by adding new internal functions. More information [here](./contribute.md).

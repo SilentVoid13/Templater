@@ -6,7 +6,7 @@
 
 ## Documentation
 
-Function documentation is using a specific syntax. More informations [here](../../syntax.md#function-documentation-syntax)
+Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax)
 
 {%- for key, fn in tp.date.functions %}
 ### `{{ fn.definition }}` 
@@ -34,7 +34,7 @@ Function documentation is using a specific syntax. More informations [here](../.
 
 Templater gives you access to the `moment` object, with all of its functionalities.
 
-More informations on moment.js [here](https://momentjs.com/docs/#/displaying/)
+More information on moment.js [here](https://momentjs.com/docs/#/displaying/)
 
 ## Examples
 

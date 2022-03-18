@@ -13,7 +13,7 @@ export function log_error(e: Error | TemplaterError): void {
     if (e instanceof TemplaterError && e.console_msg) {
         // TODO: Find a better way for this
         // @ts-ignore
-        notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more informations`;
+        notice.noticeEl.innerHTML = `<b>Templater Error</b>:<br/>${e.message}<br/>Check console for more information`;
         console.error(`Templater Error:`, e.message, "\n", e.console_msg);
     } else {
         // @ts-ignore
