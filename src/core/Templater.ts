@@ -241,6 +241,10 @@ export class Templater {
             return;
         }
         await this.app.vault.modify(file, output_content);
+        this.app.workspace.trigger("templater:new-note-from-template", {
+          file,
+          content: output_content,
+        });
         await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
     }
 
@@ -276,6 +280,10 @@ export class Templater {
             return;
         }
         await this.app.vault.modify(file, output_content);
+        this.app.workspace.trigger("templater:overwrite-file", {
+          file,
+          content: output_content,
+        });
         await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
     }
 
