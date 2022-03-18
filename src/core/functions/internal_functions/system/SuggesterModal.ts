@@ -10,10 +10,12 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         app: App,
         private text_items: string[] | ((item: T) => string),
         private items: T[],
-        placeholder: string
+        placeholder: string,
+        limit?: number
     ) {
         super(app);
         this.setPlaceholder(placeholder);
+        this.limit = limit;
     }
 
     getItems(): T[] {
