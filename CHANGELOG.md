@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github-personal/liamcain/Templater/compare/1.11.3...1.12.0) (2022-03-19)
+
+
+### Features
+
+* **suggester:** Add limit to suggester ([#578](https://github-personal/liamcain/Templater/issues/578)) ([f7ca9a1](https://github-personal/liamcain/Templater/commit/f7ca9a10ffe1f3f5f36cb4fb3487ddb34cb20028))
+* trigger events on template overwrite, new file creation ([#588](https://github-personal/liamcain/Templater/issues/588)) ([3c6238e](https://github-personal/liamcain/Templater/commit/3c6238e47e0abf8a571dc4688946d7f64b7b464d))
+
 ### [1.11.3](https://github-personal/liamcain/Templater/compare/1.11.2...1.11.3) (2022-03-06)
 
 ### [1.11.2](https://github-personal/liamcain/Templater/compare/1.11.1...1.11.2) (2022-03-06)
