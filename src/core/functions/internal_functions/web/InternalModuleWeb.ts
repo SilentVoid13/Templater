@@ -49,7 +49,7 @@ export class InternalModuleWeb extends InternalModule {
                 }`
             );
             const url = response.url;
-            return `![tp.web.random_picture](${url})`;
+            return `![tp.web.random_picture|${size}](${url})`;
         };
     }
 }
