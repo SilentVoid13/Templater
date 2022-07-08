@@ -110,7 +110,7 @@ definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, 
 
 [tp.file.functions.create_new.args.template]
 name = "template"
-description = "Either the template used for the new file content, or the file content as a string."
+description = "Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with `tp.file.find_tfile(TEMPLATENAME)`"
 
 [tp.file.functions.create_new.args.filename]
 name = "filename"
@@ -122,7 +122,7 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [tp.file.functions.create_new.args.folder]
 name = "folder"
-description = "The folder to put the new file in, defaults to obsidian's default location."
+description = "The folder to put the new file in, defaults to obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath("FOLDERNAME")`"
 
 [tp.file.functions.creation_date]
 name = "creation_date"
