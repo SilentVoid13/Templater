@@ -30,17 +30,20 @@ export class InternalModuleSystem extends InternalModule {
     generate_prompt(): (
         prompt_text: string,
         default_value: string,
-        throw_on_cancel: boolean
+        throw_on_cancel: boolean,
+        multi_line: boolean
     ) => Promise<string> {
         return async (
             prompt_text: string,
             default_value: string,
-            throw_on_cancel = false
+            throw_on_cancel = false,
+            multi_line = false
         ): Promise<string> => {
             const prompt = new PromptModal(
                 this.app,
                 prompt_text,
-                default_value
+                default_value,
+                multi_line
             );
             const promise = new Promise(
                 (
