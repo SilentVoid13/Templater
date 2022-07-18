@@ -1,16 +1,17 @@
 import { TemplaterError } from "utils/Error";
-import { App, Modal } from "obsidian";
+import { App, ButtonComponent, Modal, Platform, TextAreaComponent, TextComponent } from "obsidian";
 
 export class PromptModal extends Modal {
-    private promptEl: HTMLInputElement;
     private resolve: (value: string) => void;
     private reject: (reason?: TemplaterError) => void;
     private submitted = false;
+    private value: string;
 
     constructor(
         app: App,
         private prompt_text: string,
-        private default_value: string
+        private default_value: string,
+        private multi_line: boolean
     ) {
         super(app);
     }
@@ -26,10 +27,35 @@ export class PromptModal extends Modal {
             this.reject(new TemplaterError("Cancelled prompt"));
         }
     }
-
+    
     createForm(): void {
         const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
+        let textInput;
+        if (this.multi_line) {
+            textInput = new TextAreaComponent(div);
+
+            // Add submit button since enter needed for multiline input on mobile
+            const buttonDiv = this.contentEl.createDiv();
+            buttonDiv.addClass("templater-button-div");
+            const submitButton = new ButtonComponent(buttonDiv);
+            submitButton.buttonEl.addClass("mod-cta");
+            submitButton
+                .setButtonText("Submit")
+                .onClick((evt: Event) => {
+                    this.resolveAndClose(evt)
+                });
+        } else {
+            textInput = new TextComponent(div);
+        }
+
+        textInput.inputEl.addClass("templater-prompt-input");
+        textInput.setValue(this.default_value ?? "");
+        textInput.setPlaceholder("Type text here");
+        textInput.onChange(value => this.value = value)
+        textInput.inputEl.addEventListener('keydown', (evt: KeyboardEvent) => this.enterCallback(evt));
+    }
+
 
         const form = div.createEl("form");
         form.addClass("templater-prompt-form");
