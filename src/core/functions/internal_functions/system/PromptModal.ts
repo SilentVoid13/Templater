@@ -56,23 +56,31 @@ export class PromptModal extends Modal {
         textInput.inputEl.addEventListener('keydown', (evt: KeyboardEvent) => this.enterCallback(evt));
     }
 
+    private enterCallback(evt: KeyboardEvent) {
+        if (this.multi_line) {
+            if (Platform.isDesktop) {
+                if (evt.shiftKey && evt.key === "Enter") {
+                } else if (evt.key === "Enter") {
+                    this.resolveAndClose(evt)
+                }
+            } else {
+                // allow pressing enter on mobile for multi-line input
+                if (evt.key === "Enter") {
+                    evt.preventDefault();
+                }
+            }
+        } else {
+            if (evt.key === "Enter") {
+                this.resolveAndClose(evt);
+            }
+        }
+    }
 
-        const form = div.createEl("form");
-        form.addClass("templater-prompt-form");
-        form.type = "submit";
-        form.onsubmit = (e: Event) => {
-            this.submitted = true;
-            e.preventDefault();
-            this.resolve(this.promptEl.value);
-            this.close();
-        };
-
-        this.promptEl = form.createEl("input");
-        this.promptEl.type = "text";
-        this.promptEl.placeholder = "Type text here...";
-        this.promptEl.value = this.default_value ?? "";
-        this.promptEl.addClass("templater-prompt-input");
-        this.promptEl.select();
+    private resolveAndClose(evt: Event|KeyboardEvent) {
+        this.submitted = true;
+        evt.preventDefault();
+        this.resolve(this.value);
+        this.close();
     }
 
     async openAndGetValue(
