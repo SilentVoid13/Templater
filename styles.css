@@ -72,6 +72,9 @@
 
 textarea.templater-prompt-input {
     height: 10rem;
+}
+
+textarea.templater-prompt-input:focus {
     border-color: var(--interactive-accent);
 }
 
