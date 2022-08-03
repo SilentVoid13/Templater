@@ -391,7 +391,6 @@ export class Templater {
         await delay(300);
 
         if (
-            file.stat.size == 0 &&
             templater.plugin.settings.enable_folder_templates
         ) {
             const folder_template_match =
