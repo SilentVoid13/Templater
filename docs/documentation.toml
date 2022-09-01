@@ -122,7 +122,7 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [tp.file.functions.create_new.args.folder]
 name = "folder"
-description = "The folder to put the new file in, defaults to obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath("FOLDERNAME")`"
+description = "The folder to put the new file in, defaults to obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath(\"FOLDERNAME\")`"
 
 [tp.file.functions.creation_date]
 name = "creation_date"
@@ -169,10 +169,19 @@ description = "The filename of the file we want to check existence, e.g. MyFile.
 
 [tp.file.functions.find_tfile]
 name = "find_tfile"
+description = "Search for a file and returns its `TFile` instance"
+definition = "tp.file.find_tfile(filename: string)"
+
+[tp.file.functions.find_tfile.args.filename]
+name = "filename"
+description = "The filename we want to search and resolve as a `TFile`"
+
+[tp.file.functions.folder]
+name = "folder"
 description = "Retrieves the file's folder name."
 definition = "tp.file.folder(relative: boolean = false)"
 
-[tp.file.functions.find_tfile.args.relative]
+[tp.file.functions.folder.args.relative]
 name = "relative"
 description = "If set to true, appends the vault relative path to the folder name."
 
