@@ -23,7 +23,9 @@ export class PromptModal extends Modal {
     onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
-            this.reject(new TemplaterError("Cancelled prompt"));
+            // TOFIX: for some reason throwing TemplaterError on iOS causes the app to freeze.
+            // this.reject(new TemplaterError("Cancelled prompt"));
+            this.reject();
         }
     }
 
