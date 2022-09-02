@@ -42,6 +42,7 @@ export class InternalModuleWeb extends InternalModule {
                 return new_content;
             } catch (error) {
                 new TemplaterError("Error generating daily quote");
+                return "Error generating daily quote";
             }
         };
     }
@@ -61,6 +62,7 @@ export class InternalModuleWeb extends InternalModule {
                 return `![tp.web.random_picture|${size}](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
+                return "Error generating random picture";
             }
         };
     }
