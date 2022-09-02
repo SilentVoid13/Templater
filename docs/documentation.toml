@@ -268,7 +268,7 @@ definition = "tp.system.clipboard()"
 [tp.system.functions.prompt]
 name = "prompt"
 description = "Spawns a prompt modal and returns the user's input."
-definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false)"
+definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)"
 
 [tp.system.functions.prompt.args.prompt_text]
 name = "prompt_text"
@@ -281,6 +281,10 @@ description = "A default value for the input field"
 [tp.system.functions.prompt.args.throw_on_cancel]
 name = "throw_on_cancel"
 description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
+
+[tp.system.functions.prompt.args.multiline]
+name = "multiline"
+description = "If set to true, the input field will be a multiline textarea"
 
 [tp.system.functions.suggester]
 name = "suggester"
