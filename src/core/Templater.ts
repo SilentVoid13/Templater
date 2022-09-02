@@ -163,7 +163,7 @@ export class Templater {
         });
 
         if (open_new_note) {
-            const active_leaf = this.app.workspace.activeLeaf;
+            const active_leaf = yield this.app.workspace.getLeaf(false);
             if (!active_leaf) {
                 log_error(new TemplaterError("No active leaf"));
                 return;
