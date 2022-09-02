@@ -1,3 +1,7 @@
+.templater_search {
+    width: calc(100% - 20px);
+}
+
 .templater_div {
     border-top: 1px solid var(--background-modifier-border);
 }
@@ -13,7 +17,10 @@
     width: 100%;
 }
 
-.templater_div > .setting-item > .setting-item-control > .setting-editor-extra-setting-button {
+.templater_div
+    > .setting-item
+    > .setting-item-control
+    > .setting-editor-extra-setting-button {
     align-self: center;
 }
 
@@ -43,10 +50,6 @@
     justify-content: center;
 }
 
-.templater_button:hover {
-    background-color: #00496A !important;
-}
-
 .templater-prompt-div {
     display: flex;
 }
@@ -60,23 +63,20 @@
     flex-grow: 1;
 }
 
-
-
-
 .cm-s-obsidian .templater-command-bg {
-  left: 0px;
-  right: 0px;
-  background-color: var(--background-primary-alt);
+    left: 0px;
+    right: 0px;
+    background-color: var(--background-primary-alt);
 }
 
-.cm-s-obsidian .cm-templater-command{
-  font-size: 0.85em;
-  font-family: var(--font-monospace);
-  line-height: 1.3;
+.cm-s-obsidian .cm-templater-command {
+    font-size: 0.85em;
+    font-family: var(--font-monospace);
+    line-height: 1.3;
 }
 
 .cm-s-obsidian .templater-inline .cm-templater-command {
-  background-color: var(--background-primary-alt);
+    background-color: var(--background-primary-alt);
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-opening-tag {
@@ -88,11 +88,11 @@
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-interpolation-tag {
-    color: #008BFF;
+    color: #008bff;
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-execution-tag {
-    color: #C0D700;
+    color: #c0d700;
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-raw-tag {
@@ -100,196 +100,167 @@
 }
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-keyword {
-  color: #00A7AA;
-  font-weight: normal;
+    color: #00a7aa;
+    font-weight: normal;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-atom {
-  color: #F39B35;
+    color: #f39b35;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-number {
-  color: #A06FCA;
+    color: #a06fca;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-type {
-  color: #A06FCA;
+    color: #a06fca;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-def {
-  color: #98E342;
+    color: #98e342;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-property {
-  color: #D4D4D4;
+    color: #d4d4d4;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-variable {
-  color: #D4D4D4;
+    color: #d4d4d4;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-2 {
-  color: #da7dae;
+    color: #da7dae;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-3 {
-  color: #A06FCA;
+    color: #a06fca;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-type.cm-def {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-property.cm-def {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-callee {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-operator {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-qualifier {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-tag {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-tag.cm-bracket {
-  color: #D4D4D4;
+    color: #d4d4d4;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-attribute {
-  color: #A06FCA;
+    color: #a06fca;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-comment {
-  color: #696d70;
+    color: #696d70;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-tag {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
-  color: #D4D4D4;
+    color: #d4d4d4;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-string {
-  color: #E6DB74;
+    color: #e6db74;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-string-2 {
-  color: #F39B35;
+    color: #f39b35;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-meta {
-  color: #D4D4D4;
-  background: inherit;
+    color: #d4d4d4;
+    background: inherit;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-builtin {
-  color: #FC4384;
+    color: #fc4384;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-header {
-  color: #da7dae;
+    color: #da7dae;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-hr {
-  color: #98E342;
+    color: #98e342;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-link {
-  color: #696d70;
+    color: #696d70;
 }
-
 
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-error {
-  border-bottom: 1px solid #C42412;
+    border-bottom: 1px solid #c42412;
 }
-
 
 .theme-dark .cm-s-obsidian pre.HyperMD-codeblock .cm-keyword {
-  font-weight: normal;
+    font-weight: normal;
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-activeline-background {
-  background: #272727;
+.theme-dark
+    .cm-s-obsidian
+    .cm-templater-command.CodeMirror-activeline-background {
+    background: #272727;
 }
 
 .theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-matchingbracket {
-  outline: 1px solid grey;
-  color: #D4D4D4 !important;
+    outline: 1px solid grey;
+    color: #d4d4d4 !important;
 }
 
-
-
-
 .CodeMirror-hints {
-  position: absolute;
-  z-index: 10;
-  overflow: hidden;
-  list-style: none;
+    position: absolute;
+    z-index: 10;
+    overflow: hidden;
+    list-style: none;
 
-  margin: 0;
-  padding: 2px;
+    margin: 0;
+    padding: 2px;
 
-  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
-  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
-  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
-  border-radius: 3px;
-  border: 1px solid silver;
+    -webkit-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    border: 1px solid silver;
 
-  background: white;
-  font-size: 90%;
-  font-family: monospace;
+    background: white;
+    font-size: 90%;
+    font-family: monospace;
 
-  max-height: 20em;
-  overflow-y: auto;
+    max-height: 20em;
+    overflow-y: auto;
 }
 
 .CodeMirror-hint {
-  margin: 0;
-  padding: 0 4px;
-  border-radius: 2px;
-  white-space: pre;
-  color: black;
-  cursor: pointer;
+    margin: 0;
+    padding: 0 4px;
+    border-radius: 2px;
+    white-space: pre;
+    color: black;
+    cursor: pointer;
 }
 
 li.CodeMirror-hint-active {
-  background: #08f;
-  color: white;
+    background: #08f;
+    color: white;
 }

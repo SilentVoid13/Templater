@@ -1,14 +1,48 @@
 mod utils;
 mod parser;
+mod obsidian_api;
 
 use wasm_bindgen::prelude::*;
-use obsidian_api_rs::*;
+use wasm_bindgen::JsCast;
+
 use web_sys::console;
 use parser::CommandParser;
+use obsidian_api::{TFile, Plugin, App, MarkdownView};
+
+use crate::obsidian_api::WorkspaceLeaf;
 
 #[wasm_bindgen]
-pub async fn load_templater(plugin: Plugin) {
-      
+pub struct Templater {
+    plugin: Plugin,
+    //parser: CommandParser,
+}
+
+#[wasm_bindgen]
+impl Templater {
+    pub fn new(plugin: Plugin) -> Self {
+        Templater {
+            plugin
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn append_template_to_active_file(&self, template: &TFile) {
+        let app = self.plugin.app();
+
+        let a = WorkspaceLeaf::new();
+
+        //let md = MarkdownView::new(&WorkspaceLeaf::new());
+        
+        //let closure: Closure<dyn FnMut(WorkspaceLeaf) -> MarkdownView> = Closure::new(MarkdownView::new);
+        //let active_view = app.workspace().get_active_view_of_type(&closure.as_ref().unchecked_ref());
+        //let active_view = app.workspace().get_active_view_of_type(&MarkdownView::new);
+        //let active_view = app.workspace().get_active_view_of_type(&md);
+    }
+}
+
+#[wasm_bindgen]
+pub async fn init_templater(plugin: Plugin) -> Templater {
+    Templater::new(plugin)
 }
 
 // TODO
@@ -26,7 +60,6 @@ pub async fn create_new_note_from_template(file: TFile, creation_folder: Option<
 pub async fn append_template(app: App, file: &TFile) {
     let vault = app.vault();
     let content = vault.read(file).await;
-    console::log_1(&content);
     let content = content.as_string().unwrap();
 }
 

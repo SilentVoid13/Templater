@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
-wasm-bindgen = "0.2.76"
+wasm-bindgen = "0.2.82"
 wasm-bindgen-futures = "0.4.27"
 js-sys = "0.3.53"
 
@@ -18,14 +18,9 @@ js-sys = "0.3.53"
 version = "0.1.6"
 optional = true
 
-[dependencies.obsidian-api-rs]
-path = "../obsidian-api-rs"
-
 [dependencies.web-sys]
 version = "0.3.53"
-features = [
-    "console"
-]
+features = ["console", "HtmlElement"]
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.26"
