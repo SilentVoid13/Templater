@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/SilentVoid13/Templater/compare/1.12.0...1.13.0) (2022-09-02)
+
+
+### Features
+
+* Add new optional parameter for multiline input ([4802287](https://github.com/SilentVoid13/Templater/commit/4802287ab11f30588ebfa9e0c71600b99ef3e811))
+* Add option to show/hide Templater ribbon icon ([7cb450d](https://github.com/SilentVoid13/Templater/commit/7cb450d364a4ab6633517689de020b0f21ecb3f7))
+* Update sizing of image ([dbc3df5](https://github.com/SilentVoid13/Templater/commit/dbc3df55647e4dd2167e0ae47dc161b4e181dc0f))
+
+
+### Bug Fixes
+
+* add try/catch logic to web commands ([#785](https://github.com/SilentVoid13/Templater/issues/785)) ([e03ffec](https://github.com/SilentVoid13/Templater/commit/e03ffeca5e9cb167bdf13ec5f0a5e49e719bf675))
+* change `activeLeaf` to `getLeaf` ([#787](https://github.com/SilentVoid13/Templater/issues/787)) ([c85de3e](https://github.com/SilentVoid13/Templater/commit/c85de3ef1d332685a74a4607658179f6f1415a8e)), closes [#691](https://github.com/SilentVoid13/Templater/issues/691)
+* change activeLead to getLeaf ([752a6a2](https://github.com/SilentVoid13/Templater/commit/752a6a222ec2309a117d1c6d5e8e3e70bfd36cba))
+* comment out `reject` throwing a new TemplaterError to avoid freezing app ([5b95d7e](https://github.com/SilentVoid13/Templater/commit/5b95d7e66fd7e1d5073dd47bb43fe742770b1318))
+* fixing broken documentation ([0a24f7e](https://github.com/SilentVoid13/Templater/commit/0a24f7ebca8f530a33087f3738001505395cc84c))
+* **user scripts:** removed check that only allowed use of user scripts on desktop ([3e4b1ea](https://github.com/SilentVoid13/Templater/commit/3e4b1ea6fddfb5d57b962fa324594f4b35610572)), closes [#586](https://github.com/SilentVoid13/Templater/issues/586)
+
 ## [1.12.0](https://github-personal/liamcain/Templater/compare/1.11.3...1.12.0) (2022-03-19)
 
 
