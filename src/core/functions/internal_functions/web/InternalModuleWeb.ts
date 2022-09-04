@@ -59,7 +59,7 @@ export class InternalModuleWeb extends InternalModule {
                     }`
                 );
                 const url = response.url;
-                return `![tp.web.random_picture|${size}](${url})`;
+                return `![tp.web.random_picture](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
