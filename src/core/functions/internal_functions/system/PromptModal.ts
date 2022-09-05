@@ -1,5 +1,12 @@
 import { TemplaterError } from "utils/Error";
-import { App, ButtonComponent, Modal, Platform, TextAreaComponent, TextComponent } from "obsidian";
+import {
+    App,
+    ButtonComponent,
+    Modal,
+    Platform,
+    TextAreaComponent,
+    TextComponent,
+} from "obsidian";
 
 export class PromptModal extends Modal {
     private resolve: (value: string) => void;
@@ -29,7 +36,7 @@ export class PromptModal extends Modal {
             this.reject();
         }
     }
-    
+
     createForm(): void {
         const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
@@ -42,20 +49,20 @@ export class PromptModal extends Modal {
             buttonDiv.addClass("templater-button-div");
             const submitButton = new ButtonComponent(buttonDiv);
             submitButton.buttonEl.addClass("mod-cta");
-            submitButton
-                .setButtonText("Submit")
-                .onClick((evt: Event) => {
-                    this.resolveAndClose(evt)
-                });
+            submitButton.setButtonText("Submit").onClick((evt: Event) => {
+                this.resolveAndClose(evt);
+            });
         } else {
             textInput = new TextComponent(div);
         }
 
         textInput.inputEl.addClass("templater-prompt-input");
-        textInput.setValue(this.default_value ?? "");
         textInput.setPlaceholder("Type text here");
-        textInput.onChange(value => this.value = value)
-        textInput.inputEl.addEventListener('keydown', (evt: KeyboardEvent) => this.enterCallback(evt));
+        textInput.setValue(this.default_value ?? "");
+        textInput.onChange((value) => (this.value = value));
+        textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
+            this.enterCallback(evt)
+        );
     }
 
     private enterCallback(evt: KeyboardEvent) {
@@ -63,7 +70,7 @@ export class PromptModal extends Modal {
             if (Platform.isDesktop) {
                 if (evt.shiftKey && evt.key === "Enter") {
                 } else if (evt.key === "Enter") {
-                    this.resolveAndClose(evt)
+                    this.resolveAndClose(evt);
                 }
             } else {
                 // allow pressing enter on mobile for multi-line input
@@ -78,7 +85,7 @@ export class PromptModal extends Modal {
         }
     }
 
-    private resolveAndClose(evt: Event|KeyboardEvent) {
+    private resolveAndClose(evt: Event | KeyboardEvent) {
         this.submitted = true;
         evt.preventDefault();
         this.resolve(this.value);
