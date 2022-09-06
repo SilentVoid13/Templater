@@ -1,6 +1,6 @@
 # Templater Obsidian Plugin
 
-![templater_logo](docs/static/img/templater_logo.svg)
+![templater_logo](./imgs/templater_logo.svg)
 
 [Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your [Obsidian](https://obsidian.md/) notes. It will also let you execute JavaScript code manipulating those variables and functions.
 
@@ -55,11 +55,11 @@ You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to r
 
 You can make a [pull request](https://github.com/SilentVoid13/Templater/pulls) to contribute to this plugin development.
 
-Go [here](https://silentvoid13.github.io/Templater/docs/internal-variables-functions/contribute) to get more informations on how to develop a new internal variable / function.
+Go [here](https://silentvoid13.github.io/Templater/docs/internal-variables-functions/contribute) to get more information on how to develop a new internal variable / function.
 
 ## License
 
-[Templater](https://github.com/SilentVoid13/Templater) is licensed under the GNU AGPLv3 license. Refer to [LICENSE](https://github.com/SilentVoid13/Templater/blob/master/LICENSE.TXT) for more informations.
+[Templater](https://github.com/SilentVoid13/Templater) is licensed under the GNU AGPLv3 license. Refer to [LICENSE](https://github.com/SilentVoid13/Templater/blob/master/LICENSE.TXT) for more information.
 
 ## Support
 

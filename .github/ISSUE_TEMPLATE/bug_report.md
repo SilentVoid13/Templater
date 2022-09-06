@@ -3,7 +3,6 @@ name: Bug report
 about: Create a report to help us improve
 title: ""
 labels: bug
-assignees: SilentVoid13
 ---
 
 <!--
@@ -13,7 +12,7 @@ In order to reproduce your issue, we might need to know a little bit more about 
 which you're running `Templater` on.
 -->
 
-**Plugin informations (please complete the following information):**
+**Plugin information (please complete the following information):**
 
 -   OS: [e.g. Windows 10]
 -   Templater version: [e.g. 0.3.4]

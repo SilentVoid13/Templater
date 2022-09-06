@@ -2,6 +2,85 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/SilentVoid13/Templater/compare/1.12.0...1.13.0) (2022-09-02)
+
+
+### Features
+
+* Add new optional parameter for multiline input ([4802287](https://github.com/SilentVoid13/Templater/commit/4802287ab11f30588ebfa9e0c71600b99ef3e811))
+* Add option to show/hide Templater ribbon icon ([7cb450d](https://github.com/SilentVoid13/Templater/commit/7cb450d364a4ab6633517689de020b0f21ecb3f7))
+* Update sizing of image ([dbc3df5](https://github.com/SilentVoid13/Templater/commit/dbc3df55647e4dd2167e0ae47dc161b4e181dc0f))
+
+
+### Bug Fixes
+
+* add try/catch logic to web commands ([#785](https://github.com/SilentVoid13/Templater/issues/785)) ([e03ffec](https://github.com/SilentVoid13/Templater/commit/e03ffeca5e9cb167bdf13ec5f0a5e49e719bf675))
+* change `activeLeaf` to `getLeaf` ([#787](https://github.com/SilentVoid13/Templater/issues/787)) ([c85de3e](https://github.com/SilentVoid13/Templater/commit/c85de3ef1d332685a74a4607658179f6f1415a8e)), closes [#691](https://github.com/SilentVoid13/Templater/issues/691)
+* change activeLead to getLeaf ([752a6a2](https://github.com/SilentVoid13/Templater/commit/752a6a222ec2309a117d1c6d5e8e3e70bfd36cba))
+* comment out `reject` throwing a new TemplaterError to avoid freezing app ([5b95d7e](https://github.com/SilentVoid13/Templater/commit/5b95d7e66fd7e1d5073dd47bb43fe742770b1318))
+* fixing broken documentation ([0a24f7e](https://github.com/SilentVoid13/Templater/commit/0a24f7ebca8f530a33087f3738001505395cc84c))
+* **user scripts:** removed check that only allowed use of user scripts on desktop ([3e4b1ea](https://github.com/SilentVoid13/Templater/commit/3e4b1ea6fddfb5d57b962fa324594f4b35610572)), closes [#586](https://github.com/SilentVoid13/Templater/issues/586)
+
+## [1.12.0](https://github-personal/liamcain/Templater/compare/1.11.3...1.12.0) (2022-03-19)
+
+
+### Features
+
+* **suggester:** Add limit to suggester ([#578](https://github-personal/liamcain/Templater/issues/578)) ([f7ca9a1](https://github-personal/liamcain/Templater/commit/f7ca9a10ffe1f3f5f36cb4fb3487ddb34cb20028))
+* trigger events on template overwrite, new file creation ([#588](https://github-personal/liamcain/Templater/issues/588)) ([3c6238e](https://github-personal/liamcain/Templater/commit/3c6238e47e0abf8a571dc4688946d7f64b7b464d))
+
+### [1.11.3](https://github-personal/liamcain/Templater/compare/1.11.2...1.11.3) (2022-03-06)
+
+### [1.11.2](https://github-personal/liamcain/Templater/compare/1.11.1...1.11.2) (2022-03-06)
+
+
+### Bug Fixes
+
+* **cursorjumper:** fix issues with jump cursor stealing focus away from the 'rename file' text field ([410c3a8](https://github-personal/liamcain/Templater/commit/410c3a886e117e6a79849190aa0e9a9e64e56608))
+
+### [1.11.1](https://github-personal/liamcain/Templater/compare/1.11.0...1.11.1) (2022-03-05)
+
+
+### Bug Fixes
+
+* rename args for new `templater:template-appended` event to be plural ([fecccad](https://github-personal/liamcain/Templater/commit/fecccad72fee43bab1bd5dcfb2c93db79de4bb25))
+
+## [1.11.0](https://github-personal/liamcain/Templater/compare/1.10.0...1.11.0) (2022-03-05)
+
+
+### Features
+
+* Trigger events on template insertion ([#573](https://github-personal/liamcain/Templater/issues/573)) ([6b959d8](https://github-personal/liamcain/Templater/commit/6b959d8b5727837b1df5d13cb3c9524284064d1c))
+
+
+### Bug Fixes
+
+* **cursorjumper:** Activate cursor jump before renaming file ([#576](https://github-personal/liamcain/Templater/issues/576)) ([3cb9932](https://github-personal/liamcain/Templater/commit/3cb99321922d44de9b7350a59227e36711de9dc6))
+
+## [1.10.0](https://github.com/SilentVoid13/Templater/compare/1.9.11...1.10.0) (2022-01-24)
+
+
+### Features
+
+* adding mobile support for user script templates ([06fef36](https://github.com/SilentVoid13/Templater/commit/06fef36c66fe52fcdc7bec3f23db0beff1c3dca8))
+
+### [1.9.11](///compare/1.9.10...1.9.11) (2022-01-14)
+
+
+### Features
+
+* adding autocomplete and documentation for tp.file module 35f8bee
+* adding docs for all modules 94452db
+* adding tp.web docs 8abb219
+* working autocompletion 8431c80
+
+
+### Bug Fixes
+
+* fixing docs SUMMARY mistake eaa6859
+
+### [1.9.10](https://github.com/SilentVoid13/Templater/compare/1.9.9...1.9.10) (2022-01-13)
+
 ### [1.9.9](https://github.com/SilentVoid13/Templater/compare/1.9.8...1.9.9) (2021-10-03)
 
 
