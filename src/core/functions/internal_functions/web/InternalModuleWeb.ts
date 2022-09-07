@@ -49,9 +49,10 @@ export class InternalModuleWeb extends InternalModule {
 
     generate_random_picture(): (
         size: string,
-        query?: string
+        query?: string,
+        include_size?: boolean
     ) => Promise<string> {
-        return async (size: string, query?: string) => {
+        return async (size: string, query?: string, include_size = false) => {
             try {
                 const response = await this.getRequest(
                     `https://source.unsplash.com/random/${size ?? ""}?${
@@ -59,7 +60,10 @@ export class InternalModuleWeb extends InternalModule {
                     }`
                 );
                 const url = response.url;
-                return `![tp.web.random_picture|${size}](${url})`;
+                if (include_size) {
+                    return `![tp.web.random_picture|${size}](${url})`;
+                }
+                return `![tp.web.random_picture](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
