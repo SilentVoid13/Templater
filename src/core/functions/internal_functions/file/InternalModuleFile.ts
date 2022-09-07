@@ -15,6 +15,7 @@ import {
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "utils/Constants";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
+import { dirname, sep } from "path";
 
 export const DEPTH_LIMIT = 10;
 
@@ -241,13 +242,27 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_move(): (path: string) => Promise<string> {
-        return async (path: string) => {
+    generate_move(): (path: string, file_to_move?: TFile) => Promise<string> {
+        return async (path: string, file_to_move?: TFile) => {
+            const file = file_to_move || this.config.target_file;
             const new_path = normalizePath(
-                `${path}.${this.config.target_file.extension}`
+                `${path}.${file.extension}`
             );
+            
+            // TODO: Add mobile support
+            if (Platform.isMobileApp) {
+                return UNSUPPORTED_MOBILE_TEMPLATE;
+            }
+            if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
+                throw new TemplaterError(
+                    "app.vault is not a FileSystemAdapter instance"
+                );
+            }
+
+            this.app.vault.adapter.mkdir(dirname(new_path).split(sep).pop());
+
             await this.app.fileManager.renameFile(
-                this.config.target_file,
+                file,
                 new_path
             );
             return "";
