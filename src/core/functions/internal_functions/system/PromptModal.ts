@@ -56,9 +56,10 @@ export class PromptModal extends Modal {
             textInput = new TextComponent(div);
         }
 
+        this.value = this.default_value ?? "";
         textInput.inputEl.addClass("templater-prompt-input");
         textInput.setPlaceholder("Type text here");
-        textInput.setValue(this.default_value ?? "");
+        textInput.setValue(this.value);
         textInput.onChange((value) => (this.value = value));
         textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
             this.enterCallback(evt)
