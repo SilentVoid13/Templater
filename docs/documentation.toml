@@ -323,7 +323,7 @@ definition = "tp.web.daily_quote()"
 [tp.web.functions.random_picture]
 name = "random_picture"
 description = "Gets a random image from https://unsplash.com/"
-definition = "tp.web.random_picture(size?: string, query?: string)"
+definition = "tp.web.random_picture(size?: string, query?: string, include_size?: boolean)"
 
 [tp.web.functions.random_picture.args.size]
 name = "size"
@@ -332,3 +332,7 @@ description = "Image size in the format `<width>x<height>`"
 [tp.web.functions.random_picture.args.query]
 name = "query"
 description = "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`"
+
+[tp.web.functions.random_picture.args.include_dimensions]
+name = "include_size"
+description = "Optional argument to include the specified size in the image link markdown. Defaults to false"
