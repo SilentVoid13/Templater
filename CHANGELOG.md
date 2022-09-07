@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/SilentVoid13/Templater/compare/1.13.0...1.14.0) (2022-09-07)
+
+
+### Features
+
+* add optional argument to include size in tp.web.random_image ([#810](https://github.com/SilentVoid13/Templater/issues/810)) ([97a4adf](https://github.com/SilentVoid13/Templater/commit/97a4adf7508b6b245e74d9355cead66c5afea62c))
+* additional argument for tp.file.move for passing down specific files. ([#444](https://github.com/SilentVoid13/Templater/issues/444)) ([e46f1fb](https://github.com/SilentVoid13/Templater/commit/e46f1fb61a3327d44ac9480be08b826e69dafaa0))
+
+
+### Bug Fixes
+
+* prompt default_value and placeholder order ([#802](https://github.com/SilentVoid13/Templater/issues/802)) ([fdd1060](https://github.com/SilentVoid13/Templater/commit/fdd106070cf549a78e822482880d95361b573ebb))
+
 ## [1.13.0](https://github.com/SilentVoid13/Templater/compare/1.12.0...1.13.0) (2022-09-02)
 
 
