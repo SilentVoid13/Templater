@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.1](https://github.com/SilentVoid13/Templater/compare/1.14.0...1.14.1) (2022-09-08)
+
+
+### Bug Fixes
+
+* move on mobile using obsidian api (not path) ([#814](https://github.com/SilentVoid13/Templater/issues/814)) ([6fbe143](https://github.com/SilentVoid13/Templater/commit/6fbe1431db41c3ad428758d5fcd5ef9c3981d04e))
+* PromptModal default value needs to be set to this.value on load ([#813](https://github.com/SilentVoid13/Templater/issues/813)) ([42e0816](https://github.com/SilentVoid13/Templater/commit/42e081648d548acf82a167570d07b16ad5f6a009))
+
 ## [1.14.0](https://github.com/SilentVoid13/Templater/compare/1.13.0...1.14.0) (2022-09-07)
 
 
