@@ -1,4 +1,4 @@
-import { App, TFile } from "obsidian";
+import { TFile } from "obsidian";
 
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "../IGenerateObject";
@@ -6,7 +6,7 @@ import { get_tfiles_from_folder } from "utils/Utils";
 import { errorWrapperSync, TemplaterError } from "utils/Error";
 
 export class UserScriptFunctions implements IGenerateObject {
-    constructor(private app: App, private plugin: TemplaterPlugin) {}
+    constructor(private plugin: TemplaterPlugin) {}
 
     async generate_user_script_functions(): Promise<
         Map<string, () => unknown>
@@ -15,7 +15,7 @@ export class UserScriptFunctions implements IGenerateObject {
         const files = errorWrapperSync(
             () =>
                 get_tfiles_from_folder(
-                    this.app,
+                    app,
                     this.plugin.settings.user_scripts_folder
                 ),
             `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`
@@ -47,7 +47,7 @@ export class UserScriptFunctions implements IGenerateObject {
             exports: exp,
         };
 
-        const file_content = await this.app.vault.read(file);
+        const file_content = await app.vault.read(file);
         const wrapping_fn = window.eval(
             "(function anonymous(require, module, exports){" +
                 file_content +

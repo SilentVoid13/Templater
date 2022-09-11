@@ -40,7 +40,6 @@ export class InternalModuleSystem extends InternalModule {
             multi_line = false
         ): Promise<string | null> => {
             const prompt = new PromptModal(
-                this.app,
                 prompt_text,
                 default_value,
                 multi_line
@@ -77,7 +76,6 @@ export class InternalModuleSystem extends InternalModule {
             limit?: number
         ): Promise<T> => {
             const suggester = new SuggesterModal(
-                this.app,
                 text_items,
                 items,
                 placeholder,

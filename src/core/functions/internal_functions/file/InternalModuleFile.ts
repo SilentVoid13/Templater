@@ -56,7 +56,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     async generate_content(): Promise<string> {
-        return await this.app.vault.read(this.config.target_file);
+        return await app.vault.read(this.config.target_file);
     }
 
     generate_create_new(): (
@@ -110,8 +110,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_cursor_append(): (content: string) => void {
         return (content: string): string | undefined => {
-            const active_view =
-                this.app.workspace.getActiveViewOfType(MarkdownView);
+            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view === null) {
                 log_error(
                     new TemplaterError(
@@ -136,10 +135,7 @@ export class InternalModuleFile extends InternalModule {
                 filename = match[1];
             }
 
-            const file = this.app.metadataCache.getFirstLinkpathDest(
-                filename,
-                ""
-            );
+            const file = app.metadataCache.getFirstLinkpathDest(filename, "");
             return file != null;
         };
     }
@@ -147,7 +143,7 @@ export class InternalModuleFile extends InternalModule {
     generate_find_tfile(): (filename: string) => TFile | null {
         return (filename: string) => {
             const path = normalizePath(filename);
-            return this.app.metadataCache.getFirstLinkpathDest(path, "");
+            return app.metadataCache.getFirstLinkpathDest(path, "");
         };
     }
 
@@ -181,7 +177,7 @@ export class InternalModuleFile extends InternalModule {
             let inc_file_content: string;
 
             if (include_link instanceof TFile) {
-                inc_file_content = await this.app.vault.read(include_link);
+                inc_file_content = await app.vault.read(include_link);
             } else {
                 let match;
                 if ((match = this.linkpath_regex.exec(include_link)) === null) {
@@ -192,7 +188,7 @@ export class InternalModuleFile extends InternalModule {
                 }
                 const { path, subpath } = parseLinktext(match[1]);
 
-                const inc_file = this.app.metadataCache.getFirstLinkpathDest(
+                const inc_file = app.metadataCache.getFirstLinkpathDest(
                     path,
                     ""
                 );
@@ -202,10 +198,10 @@ export class InternalModuleFile extends InternalModule {
                         `File ${include_link} doesn't exist`
                     );
                 }
-                inc_file_content = await this.app.vault.read(inc_file);
+                inc_file_content = await app.vault.read(inc_file);
 
                 if (subpath) {
-                    const cache = this.app.metadataCache.getFileCache(inc_file);
+                    const cache = app.metadataCache.getFileCache(inc_file);
                     if (cache) {
                         const result = resolveSubpath(cache, subpath);
                         if (result) {
@@ -253,7 +249,7 @@ export class InternalModuleFile extends InternalModule {
                     await window.app.vault.createFolder(dir);
                 }
             }
-            await this.app.fileManager.renameFile(file, new_path);
+            await app.fileManager.renameFile(file, new_path);
             return "";
         };
     }
@@ -264,12 +260,12 @@ export class InternalModuleFile extends InternalModule {
             if (Platform.isMobileApp) {
                 return UNSUPPORTED_MOBILE_TEMPLATE;
             }
-            if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
+            if (!(app.vault.adapter instanceof FileSystemAdapter)) {
                 throw new TemplaterError(
                     "app.vault is not a FileSystemAdapter instance"
                 );
             }
-            const vault_path = this.app.vault.adapter.getBasePath();
+            const vault_path = app.vault.adapter.getBasePath();
 
             if (relative) {
                 return this.config.target_file.path;
@@ -289,18 +285,14 @@ export class InternalModuleFile extends InternalModule {
             const new_path = normalizePath(
                 `${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`
             );
-            await this.app.fileManager.renameFile(
-                this.config.target_file,
-                new_path
-            );
+            await app.fileManager.renameFile(this.config.target_file, new_path);
             return "";
         };
     }
 
     generate_selection(): () => string {
         return () => {
-            const active_view =
-                this.app.workspace.getActiveViewOfType(MarkdownView);
+            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view == null) {
                 throw new TemplaterError(
                     "Active view is null, can't read selection."
@@ -314,9 +306,7 @@ export class InternalModuleFile extends InternalModule {
 
     // TODO: Turn this into a function
     generate_tags(): string[] | null {
-        const cache = this.app.metadataCache.getFileCache(
-            this.config.target_file
-        );
+        const cache = app.metadataCache.getFileCache(this.config.target_file);
         if (cache) {
             return getAllTags(cache);
         }
