@@ -17,7 +17,7 @@ export class InternalModuleSystem extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
-    generate_clipboard(): () => Promise<string> {
+    generate_clipboard(): () => Promise<string | null> {
         return async () => {
             // TODO: Add mobile support
             if (Platform.isMobileApp) {
@@ -32,13 +32,13 @@ export class InternalModuleSystem extends InternalModule {
         default_value: string,
         throw_on_cancel: boolean,
         multi_line: boolean
-    ) => Promise<string> {
+    ) => Promise<string | null> {
         return async (
             prompt_text: string,
             default_value: string,
             throw_on_cancel = false,
             multi_line = false
-        ): Promise<string> => {
+        ): Promise<string | null> => {
             const prompt = new PromptModal(
                 this.app,
                 prompt_text,
@@ -67,7 +67,7 @@ export class InternalModuleSystem extends InternalModule {
         items: T[],
         throw_on_cancel: boolean,
         placeholder: string,
-        limit?: number,
+        limit?: number
     ) => Promise<T> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
@@ -81,7 +81,7 @@ export class InternalModuleSystem extends InternalModule {
                 text_items,
                 items,
                 placeholder,
-                limit,
+                limit
             );
             const promise = new Promise(
                 (
@@ -95,7 +95,7 @@ export class InternalModuleSystem extends InternalModule {
                 if (throw_on_cancel) {
                     throw error;
                 }
-                return null;
+                return null as T;
             }
         };
     }

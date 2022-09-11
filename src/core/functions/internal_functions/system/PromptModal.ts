@@ -69,6 +69,7 @@ export class PromptModal extends Modal {
     private enterCallback(evt: KeyboardEvent) {
         if (this.multi_line) {
             if (Platform.isDesktop) {
+                // eslint-disable-next-line no-empty
                 if (evt.shiftKey && evt.key === "Enter") {
                 } else if (evt.key === "Enter") {
                     this.resolveAndClose(evt);

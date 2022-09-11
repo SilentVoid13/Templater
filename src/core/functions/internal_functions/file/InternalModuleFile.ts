@@ -64,7 +64,7 @@ export class InternalModuleFile extends InternalModule {
         filename: string,
         open_new: boolean,
         folder?: TFolder
-    ) => Promise<TFile> {
+    ) => Promise<TFile | undefined> {
         return async (
             template: TFile | string,
             filename: string,
@@ -109,7 +109,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_cursor_append(): (content: string) => void {
-        return (content: string): string => {
+        return (content: string): string | undefined => {
             const active_view =
                 this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view === null) {
@@ -144,7 +144,7 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_find_tfile(): (filename: string) => TFile {
+    generate_find_tfile(): (filename: string) => TFile | null {
         return (filename: string) => {
             const path = normalizePath(filename);
             return this.app.metadataCache.getFirstLinkpathDest(path, "");
@@ -244,9 +244,7 @@ export class InternalModuleFile extends InternalModule {
     generate_move(): (path: string, file_to_move?: TFile) => Promise<string> {
         return async (path: string, file_to_move?: TFile) => {
             const file = file_to_move || this.config.target_file;
-            const new_path = normalizePath(
-                `${path}.${file.extension}`
-            );
+            const new_path = normalizePath(`${path}.${file.extension}`);
             const dirs = new_path.replace(/\\/g, "/").split("/");
             dirs.pop(); // remove basename
             if (dirs.length) {
@@ -255,10 +253,7 @@ export class InternalModuleFile extends InternalModule {
                     await window.app.vault.createFolder(dir);
                 }
             }
-            await this.app.fileManager.renameFile(
-                file,
-                new_path
-            );
+            await this.app.fileManager.renameFile(file, new_path);
             return "";
         };
     }
@@ -318,11 +313,14 @@ export class InternalModuleFile extends InternalModule {
     }
 
     // TODO: Turn this into a function
-    generate_tags(): string[] {
+    generate_tags(): string[] | null {
         const cache = this.app.metadataCache.getFileCache(
             this.config.target_file
         );
-        return getAllTags(cache);
+        if (cache) {
+            return getAllTags(cache);
+        }
+        return null;
     }
 
     // TODO: Turn this into a function
