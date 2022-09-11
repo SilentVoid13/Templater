@@ -128,19 +128,9 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_exists(): (filename: string) => boolean {
-        return (filename: string) => {
-            // TODO: Remove this, only here to support the old way
-            let match;
-            if ((match = this.linkpath_regex.exec(filename)) !== null) {
-                filename = match[1];
-            }
-
-            const file = this.app.metadataCache.getFirstLinkpathDest(
-                filename,
-                ""
-            );
-            return file != null;
+    generate_exists(): (filename: string) => Promise<boolean> {
+        return async (filename: string) => {
+            return await this.app.FileSystemAdapter.exists(filename);
         };
     }
 
@@ -244,9 +234,7 @@ export class InternalModuleFile extends InternalModule {
     generate_move(): (path: string, file_to_move?: TFile) => Promise<string> {
         return async (path: string, file_to_move?: TFile) => {
             const file = file_to_move || this.config.target_file;
-            const new_path = normalizePath(
-                `${path}.${file.extension}`
-            );
+            const new_path = normalizePath(`${path}.${file.extension}`);
             const dirs = new_path.replace(/\\/g, "/").split("/");
             dirs.pop(); // remove basename
             if (dirs.length) {
@@ -255,10 +243,7 @@ export class InternalModuleFile extends InternalModule {
                     await window.app.vault.createFolder(dir);
                 }
             }
-            await this.app.fileManager.renameFile(
-                file,
-                new_path
-            );
+            await this.app.fileManager.renameFile(file, new_path);
             return "";
         };
     }
