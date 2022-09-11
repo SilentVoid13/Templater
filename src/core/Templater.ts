@@ -400,13 +400,14 @@ export class Templater {
         }
 
         await new Promise<void>((resolve) => {
-            let timeout: NodeJS.Timeout;
-            const onFileOpenRef = templater.app.workspace.on("file-open", async (openedFile: TAbstractFile) => {
-                if (openedFile !== file) {
+            // eslint-disable-next-line prefer-const
+            let timeout: number;
+            const file_open_ref = templater.app.workspace.on("file-open", async (opened_file: TFile) => {
+                if (opened_file !== file) {
                     return;
                 }
-                clearTimeout(timeout);
-                templater.app.workspace.offref(onFileOpenRef);
+                window.clearTimeout(timeout);
+                templater.app.workspace.offref(file_open_ref);
 
                 // TODO: find a better way to do this
                 // Currently, I have to wait for the daily note plugin to add the file content before replacing
@@ -441,8 +442,8 @@ export class Templater {
                 }
                 resolve();
             });
-            timeout = setTimeout(() => {
-                templater.app.workspace.offref(onFileOpenRef);
+            timeout = window.setTimeout(() => {
+                templater.app.workspace.offref(file_open_ref);
                 resolve();
             }, 300);
         });
