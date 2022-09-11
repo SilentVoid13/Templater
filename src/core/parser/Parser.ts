@@ -5,6 +5,7 @@ export class Parser {
         content: string,
         object: Record<string, unknown>
     ): Promise<string> {
+        content = content.replace(/\/\/.*\n/g, "");
         content = (await renderAsync(content, object, {
             varName: "tp",
             parse: {
