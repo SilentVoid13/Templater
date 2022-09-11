@@ -13,7 +13,7 @@ import {
 
 export default class EventHandler {
     private syntax_highlighting_event: EventRef;
-    private trigger_on_file_creation_event: EventRef;
+    private trigger_on_file_creation_event: EventRef | undefined;
 
     constructor(
         private app: App,
