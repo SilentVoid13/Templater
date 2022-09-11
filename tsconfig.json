@@ -11,7 +11,7 @@
         "importHelpers": true,
         "isolatedModules": true,
         "strictNullChecks": true,
-        "lib": ["DOM", "ES5", "ES6", "ES7"]
+        "lib": ["DOM", "ES5", "ES6", "ES7", "ESNext"]
     },
-    "include": ["src/**/*.ts", "tests/**/*.ts"]
+    "include": ["src/**/*.ts", "tests/**/*.ts", "docs/**/*"]
 }

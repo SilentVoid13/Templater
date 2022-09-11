@@ -29,7 +29,7 @@ export class UserFunctions implements IGenerateObject {
         // user_scripts_folder needs to be explicitly set to '/' to query from root
         if (this.plugin.settings.user_scripts_folder) {
             user_script_functions =
-                await this.user_script_functions.generate_object(config);
+                await this.user_script_functions.generate_object();
         }
 
         return {
