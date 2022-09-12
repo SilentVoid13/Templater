@@ -241,13 +241,22 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_move(): (path: string) => Promise<string> {
-        return async (path: string) => {
+    generate_move(): (path: string, file_to_move?: TFile) => Promise<string> {
+        return async (path: string, file_to_move?: TFile) => {
+            const file = file_to_move || this.config.target_file;
             const new_path = normalizePath(
-                `${path}.${this.config.target_file.extension}`
+                `${path}.${file.extension}`
             );
+            const dirs = new_path.replace(/\\/g, "/").split("/");
+            dirs.pop(); // remove basename
+            if (dirs.length) {
+                const dir = dirs.join("/");
+                if (!window.app.vault.getAbstractFileByPath(dir)) {
+                    await window.app.vault.createFolder(dir);
+                }
+            }
             await this.app.fileManager.renameFile(
-                this.config.target_file,
+                file,
                 new_path
             );
             return "";

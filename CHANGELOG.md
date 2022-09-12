@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.1](https://github.com/SilentVoid13/Templater/compare/1.14.0...1.14.1) (2022-09-08)
+
+
+### Bug Fixes
+
+* move on mobile using obsidian api (not path) ([#814](https://github.com/SilentVoid13/Templater/issues/814)) ([6fbe143](https://github.com/SilentVoid13/Templater/commit/6fbe1431db41c3ad428758d5fcd5ef9c3981d04e))
+* PromptModal default value needs to be set to this.value on load ([#813](https://github.com/SilentVoid13/Templater/issues/813)) ([42e0816](https://github.com/SilentVoid13/Templater/commit/42e081648d548acf82a167570d07b16ad5f6a009))
+
+## [1.14.0](https://github.com/SilentVoid13/Templater/compare/1.13.0...1.14.0) (2022-09-07)
+
+
+### Features
+
+* add optional argument to include size in tp.web.random_image ([#810](https://github.com/SilentVoid13/Templater/issues/810)) ([97a4adf](https://github.com/SilentVoid13/Templater/commit/97a4adf7508b6b245e74d9355cead66c5afea62c))
+* additional argument for tp.file.move for passing down specific files. ([#444](https://github.com/SilentVoid13/Templater/issues/444)) ([e46f1fb](https://github.com/SilentVoid13/Templater/commit/e46f1fb61a3327d44ac9480be08b826e69dafaa0))
+
+
+### Bug Fixes
+
+* prompt default_value and placeholder order ([#802](https://github.com/SilentVoid13/Templater/issues/802)) ([fdd1060](https://github.com/SilentVoid13/Templater/commit/fdd106070cf549a78e822482880d95361b573ebb))
+
+## [1.13.0](https://github.com/SilentVoid13/Templater/compare/1.12.0...1.13.0) (2022-09-02)
+
+
+### Features
+
+* Add new optional parameter for multiline input ([4802287](https://github.com/SilentVoid13/Templater/commit/4802287ab11f30588ebfa9e0c71600b99ef3e811))
+* Add option to show/hide Templater ribbon icon ([7cb450d](https://github.com/SilentVoid13/Templater/commit/7cb450d364a4ab6633517689de020b0f21ecb3f7))
+* Update sizing of image ([dbc3df5](https://github.com/SilentVoid13/Templater/commit/dbc3df55647e4dd2167e0ae47dc161b4e181dc0f))
+
+
+### Bug Fixes
+
+* add try/catch logic to web commands ([#785](https://github.com/SilentVoid13/Templater/issues/785)) ([e03ffec](https://github.com/SilentVoid13/Templater/commit/e03ffeca5e9cb167bdf13ec5f0a5e49e719bf675))
+* change `activeLeaf` to `getLeaf` ([#787](https://github.com/SilentVoid13/Templater/issues/787)) ([c85de3e](https://github.com/SilentVoid13/Templater/commit/c85de3ef1d332685a74a4607658179f6f1415a8e)), closes [#691](https://github.com/SilentVoid13/Templater/issues/691)
+* change activeLead to getLeaf ([752a6a2](https://github.com/SilentVoid13/Templater/commit/752a6a222ec2309a117d1c6d5e8e3e70bfd36cba))
+* comment out `reject` throwing a new TemplaterError to avoid freezing app ([5b95d7e](https://github.com/SilentVoid13/Templater/commit/5b95d7e66fd7e1d5073dd47bb43fe742770b1318))
+* fixing broken documentation ([0a24f7e](https://github.com/SilentVoid13/Templater/commit/0a24f7ebca8f530a33087f3738001505395cc84c))
+* **user scripts:** removed check that only allowed use of user scripts on desktop ([3e4b1ea](https://github.com/SilentVoid13/Templater/commit/3e4b1ea6fddfb5d57b962fa324594f4b35610572)), closes [#586](https://github.com/SilentVoid13/Templater/issues/586)
+
 ## [1.12.0](https://github-personal/liamcain/Templater/compare/1.11.3...1.12.0) (2022-03-19)
 
 

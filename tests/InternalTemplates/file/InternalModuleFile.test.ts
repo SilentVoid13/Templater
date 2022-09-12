@@ -171,16 +171,26 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
     t.test("tp.file.move", async () => {
         const saved_target_file = t.target_file;
         const folder_name = `TestFolder`;
+        const nested_name = `TestFolder/nested`;
         const folder = await t.createFolder(folder_name);
         const file1 = await t.createFile(`File1.md`);
+        const nested1 = await t.createFile(`Nested1.md`);
+        
         t.target_file = file1;
-
         await expect(
             t.run_and_get_output(
                 `Move <% tp.file.move("${folder_name}/File2") %>\n\n`
             )
         ).to.eventually.equal(`Move \n\n`);
         expect(file1.path).to.equal(`${folder_name}/File2.md`);
+
+        t.target_file = nested1;
+        await expect(
+            t.run_and_get_output(
+                `Move <% tp.file.move("${nested_name}/Nested2") %>\n\n`
+            )
+        ).to.eventually.equal(`Move \n\n`);
+        expect(nested1.path).to.equal(`${nested_name}/Nested2.md`);
 
         t.target_file = saved_target_file;
         await t.app.vault.delete(folder, true);

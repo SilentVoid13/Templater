@@ -39,9 +39,11 @@ export default class TemplaterPlugin extends Plugin {
         this.command_handler.setup();
 
         addIcon("templater-icon", ICON_DATA);
-        this.addRibbonIcon("templater-icon", "Templater", async () => {
-            this.fuzzy_suggester.insert_template();
-        });
+        if(this.settings.enable_ribbon_icon) {
+            this.addRibbonIcon("templater-icon", "Templater", async () => {
+                this.fuzzy_suggester.insert_template();
+            }).setAttribute("id", "rb-templater-icon");
+        }
 
         this.addSettingTab(new TemplaterSettingTab(this.app, this));
 
