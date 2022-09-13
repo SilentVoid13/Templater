@@ -12,11 +12,13 @@ You can then create your script named `Scripts/my_script.js` (The `.js` extensio
 
 Scripts should follow the [CommonJS module specification](https://flaviocopes.com/commonjs/), and export a single function.
 
-Let's have an example with our previous script `my_script.js`:
+Let's have an example with our previous script `my_script.js`.
+
+Note that instead of outputting directly to the console, as we did earlier, a user script needs to `return` its output:
 
 ```javascript
 function my_function (msg) {
-    console.log("Message from my script:", msg);
+    return "Message from my script:";
 }
 module.exports = my_function;
 ```
