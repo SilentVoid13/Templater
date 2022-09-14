@@ -265,16 +265,20 @@ export class InternalModuleFile extends InternalModule {
 
     generate_path(): (relative: boolean) => string {
         return (relative = false) => {
-            // TODO: Add mobile support
+            let vault_path = "";
             if (Platform.isMobileApp) {
-                return UNSUPPORTED_MOBILE_TEMPLATE;
+                const vault_adapter = app.fileManager.vault.adapter.fs.uri;
+                const vault_base = app.fileManager.vault.adapter.basePath;
+                vault_path = `${vault_adapter}/${vault_base}`;
+            } else {
+                if (this.app.vault.adapter instanceof FileSystemAdapter) {
+                    vault_path = this.app.vault.adapter.getBasePath();
+                } else {
+                    throw new TemplaterError(
+                        "app.vault is not a FileSystemAdapter instance"
+                    );
+                }
             }
-            if (!(this.app.vault.adapter instanceof FileSystemAdapter)) {
-                throw new TemplaterError(
-                    "app.vault is not a FileSystemAdapter instance"
-                );
-            }
-            const vault_path = this.app.vault.adapter.getBasePath();
 
             if (relative) {
                 return this.config.target_file.path;
