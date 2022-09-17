@@ -1,18 +1,22 @@
 import {
     App,
-    normalizePath,
     MarkdownPostProcessorContext,
     MarkdownView,
+    normalizePath,
     TAbstractFile,
     TFile,
     TFolder,
 } from "obsidian";
 
-import { generate_dynamic_command_regex, resolve_tfile, delay } from "utils/Utils";
+import {
+    delay,
+    generate_dynamic_command_regex,
+    resolve_tfile,
+} from "utils/Utils";
 import TemplaterPlugin from "main";
 import {
-    FunctionsMode,
     FunctionsGenerator,
+    FunctionsMode,
 } from "./functions/FunctionsGenerator";
 import { errorWrapper, errorWrapperSync, TemplaterError } from "utils/Error";
 import { Parser } from "./parser/Parser";
@@ -100,7 +104,8 @@ export class Templater {
     ): Promise<TFile> {
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
-            const new_file_location = this.app.vault.getConfig("newFileLocation");
+            const new_file_location =
+                this.app.vault.getConfig("newFileLocation");
             switch (new_file_location) {
                 case "current": {
                     const active_file = this.app.workspace.getActiveFile();
@@ -158,27 +163,27 @@ export class Templater {
         await this.app.vault.modify(created_note, output_content);
 
         this.app.workspace.trigger("templater:new-note-from-template", {
-          file: created_note,
-          content: output_content,
+            file: created_note,
+            content: output_content,
         });
 
         if (open_new_note) {
-            const active_leaf = this.app.workspace.activeLeaf;
+            const active_leaf = this.app.workspace.getLeaf(false);
             if (!active_leaf) {
                 log_error(new TemplaterError("No active leaf"));
                 return;
             }
             await active_leaf.openFile(created_note, {
-              state: { mode: "source" },
+                state: { mode: "source" },
             });
 
             await this.plugin.editor_handler.jump_to_next_cursor_location(
-              created_note,
-              true
+                created_note,
+                true
             );
 
             active_leaf.setEphemeralState({
-              rename: "all",
+                rename: "all",
             });
         }
 
@@ -214,13 +219,16 @@ export class Templater {
         doc.replaceSelection(output_content);
 
         this.app.workspace.trigger("templater:template-appended", {
-          view: active_view,
-          content: output_content,
-          oldSelections,
-          newSelections: doc.listSelections(),
+            view: active_view,
+            content: output_content,
+            oldSelections,
+            newSelections: doc.listSelections(),
         });
 
-        await this.plugin.editor_handler.jump_to_next_cursor_location(active_view.file, true);
+        await this.plugin.editor_handler.jump_to_next_cursor_location(
+            active_view.file,
+            true
+        );
     }
 
     async write_template_to_file(
@@ -242,10 +250,13 @@ export class Templater {
         }
         await this.app.vault.modify(file, output_content);
         this.app.workspace.trigger("templater:new-note-from-template", {
-          file,
-          content: output_content,
+            file,
+            content: output_content,
         });
-        await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
+        await this.plugin.editor_handler.jump_to_next_cursor_location(
+            file,
+            true
+        );
     }
 
     overwrite_active_file_commands(): void {
@@ -281,10 +292,13 @@ export class Templater {
         }
         await this.app.vault.modify(file, output_content);
         this.app.workspace.trigger("templater:overwrite-file", {
-          file,
-          content: output_content,
+            file,
+            content: output_content,
         });
-        await this.plugin.editor_handler.jump_to_next_cursor_location(file, true);
+        await this.plugin.editor_handler.jump_to_next_cursor_location(
+            file,
+            true
+        );
     }
 
     async process_dynamic_templates(
@@ -385,35 +399,54 @@ export class Templater {
             return;
         }
 
-        // TODO: find a better way to do this
-        // Currently, I have to wait for the daily note plugin to add the file content before replacing
-        // Not a problem with Calendar however since it creates the file with the existing content
-        await delay(300);
+        await new Promise<void>((resolve) => {
+            // eslint-disable-next-line prefer-const
+            let timeout: number;
+            const file_open_ref = templater.app.workspace.on("file-open", async (opened_file: TFile) => {
+                if (opened_file !== file) {
+                    return;
+                }
+                window.clearTimeout(timeout);
+                templater.app.workspace.offref(file_open_ref);
 
-        if (
-            file.stat.size == 0 &&
-            templater.plugin.settings.enable_folder_templates
-        ) {
-            const folder_template_match =
-                templater.get_new_file_template_for_folder(file.parent);
-            if (!folder_template_match) {
-                return;
-            }
+                // TODO: find a better way to do this
+                // Currently, I have to wait for the daily note plugin to add the file content before replacing
+                // Not a problem with Calendar however since it creates the file with the existing content
+                await delay(300);
 
-            const template_file: TFile = await errorWrapper(
-                async (): Promise<TFile> => {
-                    return resolve_tfile(templater.app, folder_template_match);
-                },
-                `Couldn't find template ${folder_template_match}`
-            );
-            // errorWrapper failed
-            if (template_file == null) {
-                return;
-            }
-            await templater.write_template_to_file(template_file, file);
-        } else {
-            await templater.overwrite_file_commands(file);
-        }
+                if (
+                    file.stat.size == 0 &&
+                    templater.plugin.settings.enable_folder_templates
+                ) {
+                    const folder_template_match =
+                        templater.get_new_file_template_for_folder(file.parent);
+                    if (!folder_template_match) {
+                        resolve();
+                        return;
+                    }
+
+                    const template_file: TFile = await errorWrapper(
+                        async (): Promise<TFile> => {
+                            return resolve_tfile(templater.app, folder_template_match);
+                        },
+                        `Couldn't find template ${folder_template_match}`
+                    );
+                    // errorWrapper failed
+                    if (template_file == null) {
+                        resolve();
+                        return;
+                    }
+                    await templater.write_template_to_file(template_file, file);
+                } else {
+                    await templater.overwrite_file_commands(file);
+                }
+                resolve();
+            });
+            timeout = window.setTimeout(() => {
+                templater.app.workspace.offref(file_open_ref);
+                resolve();
+            }, 300);
+        });
     }
 
     async execute_startup_scripts(): Promise<void> {

@@ -1,16 +1,24 @@
 import { TemplaterError } from "utils/Error";
-import { App, Modal } from "obsidian";
+import {
+    App,
+    ButtonComponent,
+    Modal,
+    Platform,
+    TextAreaComponent,
+    TextComponent,
+} from "obsidian";
 
 export class PromptModal extends Modal {
-    private promptEl: HTMLInputElement;
     private resolve: (value: string) => void;
     private reject: (reason?: TemplaterError) => void;
     private submitted = false;
+    private value: string;
 
     constructor(
         app: App,
         private prompt_text: string,
-        private default_value: string
+        private default_value: string,
+        private multi_line: boolean
     ) {
         super(app);
     }
@@ -23,30 +31,66 @@ export class PromptModal extends Modal {
     onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
-            this.reject(new TemplaterError("Cancelled prompt"));
+            // TOFIX: for some reason throwing TemplaterError on iOS causes the app to freeze.
+            // this.reject(new TemplaterError("Cancelled prompt"));
+            this.reject();
         }
     }
 
     createForm(): void {
         const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
+        let textInput;
+        if (this.multi_line) {
+            textInput = new TextAreaComponent(div);
 
-        const form = div.createEl("form");
-        form.addClass("templater-prompt-form");
-        form.type = "submit";
-        form.onsubmit = (e: Event) => {
-            this.submitted = true;
-            e.preventDefault();
-            this.resolve(this.promptEl.value);
-            this.close();
-        };
+            // Add submit button since enter needed for multiline input on mobile
+            const buttonDiv = this.contentEl.createDiv();
+            buttonDiv.addClass("templater-button-div");
+            const submitButton = new ButtonComponent(buttonDiv);
+            submitButton.buttonEl.addClass("mod-cta");
+            submitButton.setButtonText("Submit").onClick((evt: Event) => {
+                this.resolveAndClose(evt);
+            });
+        } else {
+            textInput = new TextComponent(div);
+        }
 
-        this.promptEl = form.createEl("input");
-        this.promptEl.type = "text";
-        this.promptEl.placeholder = "Type text here...";
-        this.promptEl.value = this.default_value ?? "";
-        this.promptEl.addClass("templater-prompt-input");
-        this.promptEl.select();
+        this.value = this.default_value ?? "";
+        textInput.inputEl.addClass("templater-prompt-input");
+        textInput.setPlaceholder("Type text here");
+        textInput.setValue(this.value);
+        textInput.onChange((value) => (this.value = value));
+        textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
+            this.enterCallback(evt)
+        );
+    }
+
+    private enterCallback(evt: KeyboardEvent) {
+        if (this.multi_line) {
+            if (Platform.isDesktop) {
+                if (evt.shiftKey && evt.key === "Enter") {
+                } else if (evt.key === "Enter") {
+                    this.resolveAndClose(evt);
+                }
+            } else {
+                // allow pressing enter on mobile for multi-line input
+                if (evt.key === "Enter") {
+                    evt.preventDefault();
+                }
+            }
+        } else {
+            if (evt.key === "Enter") {
+                this.resolveAndClose(evt);
+            }
+        }
+    }
+
+    private resolveAndClose(evt: Event | KeyboardEvent) {
+        this.submitted = true;
+        evt.preventDefault();
+        this.resolve(this.value);
+        this.close();
     }
 
     async openAndGetValue(

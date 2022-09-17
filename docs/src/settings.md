@@ -16,6 +16,8 @@ It can be dangerous if you create new files with unknown / unsafe content on cre
 
 You can specify a template that will automatically be used on a selected folder and children using the `Folder Templates` functionality.
 
+**Note**: This setting is hidden by default.  To view it first enable the `Trigger Template on new file creation` setting.
+
 ## System Commands
 
 You can enable system commands. This allows you to create [user functions](./user-functions/overview.md) linked to system commands.
