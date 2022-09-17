@@ -15,7 +15,6 @@ export class UserScriptFunctions implements IGenerateObject {
         const files = errorWrapperSync(
             () =>
                 get_tfiles_from_folder(
-                    app,
                     this.plugin.settings.user_scripts_folder
                 ),
             `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`
