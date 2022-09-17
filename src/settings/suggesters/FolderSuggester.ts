@@ -5,7 +5,7 @@ import { TextInputSuggest } from "./suggest";
 
 export class FolderSuggest extends TextInputSuggest<TFolder> {
     getSuggestions(inputStr: string): TFolder[] {
-        const abstractFiles = this.app.vault.getAllLoadedFiles();
+        const abstractFiles = app.vault.getAllLoadedFiles();
         const folders: TFolder[] = [];
         const lowerCaseInputStr = inputStr.toLowerCase();
 

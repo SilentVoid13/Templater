@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { App, Platform, TFile } from "obsidian";
+import { Platform, TFile } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "utils/Error";
 import { CursorJumper } from "editor/CursorJumper";
@@ -23,13 +23,13 @@ const TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 export class Editor {
     private cursor_jumper: CursorJumper;
 
-    public constructor(private app: App, private plugin: TemplaterPlugin) {
-        this.cursor_jumper = new CursorJumper(this.app);
+    public constructor(private plugin: TemplaterPlugin) {
+        this.cursor_jumper = new CursorJumper();
     }
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
-        this.plugin.registerEditorSuggest(new Autocomplete(this.app));
+        this.plugin.registerEditorSuggest(new Autocomplete(app));
     }
 
     async jump_to_next_cursor_location(
@@ -39,7 +39,7 @@ export class Editor {
         if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
             return;
         }
-        if (file && this.app.workspace.getActiveFile() !== file) {
+        if (file && app.workspace.getActiveFile() !== file) {
             return;
         }
         await this.cursor_jumper.jump_to_next_cursor_location();
