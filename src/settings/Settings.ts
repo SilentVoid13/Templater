@@ -201,13 +201,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.enable_ribbon_icon =
                             enable_ribbon_icon;
                         this.plugin.save_settings();
-                        if(this.plugin.settings.enable_ribbon_icon) {
-                            this.plugin.addRibbonIcon("templater-icon", "Templater", async () => {
-                                this.fuzzy_suggester.insert_template();
-                            }).setAttribute("id", "rb-templater-icon");
-                        }
-                        else {
-                            document.getElementById("rb-templater-icon")?.remove();
+                        if (this.plugin.settings.enable_ribbon_icon) {
+                            this.plugin
+                                .addRibbonIcon(
+                                    "templater-icon",
+                                    "Templater",
+                                    async () => {
+                                        this.plugin.fuzzy_suggester.insert_template();
+                                    }
+                                )
+                                .setAttribute("id", "rb-templater-icon");
+                        } else {
+                            document
+                                .getElementById("rb-templater-icon")
+                                ?.remove();
                         }
                     });
             });
@@ -789,7 +796,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 setting.infoEl.remove();
 
                 div.appendChild(title);
-                div.appendChild(this.containerEl.lastChild);
+                div.appendChild(this.containerEl.lastChild as Node);
 
                 i += 1;
             });
@@ -812,7 +819,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             );
             setting.infoEl.remove();
 
-            div.appendChild(this.containerEl.lastChild);
+            div.appendChild(this.containerEl.lastChild as Node);
         }
     }
 }

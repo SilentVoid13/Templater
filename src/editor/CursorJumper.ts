@@ -24,7 +24,7 @@ export class CursorJumper {
         const { new_content, positions } =
             this.replace_and_get_cursor_positions(content);
         if (positions) {
-            await this.app.vault.modify(active_file, new_content);
+            await app.vault.modify(active_file, new_content as string);
             this.set_cursor_location(positions);
         }
     }
@@ -65,7 +65,10 @@ export class CursorJumper {
         }
 
         cursor_matches.sort((m1, m2) => {
-            return Number(m1.groups["order"]) - Number(m2.groups["order"]);
+            return (
+                Number(m1.groups && m1.groups["order"]) -
+                Number(m2.groups && m2.groups["order"])
+            );
         });
         const match_str = cursor_matches[0][0];
 

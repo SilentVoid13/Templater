@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { App, Platform, TFile } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "utils/Error";
@@ -28,10 +29,13 @@ export class Editor {
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
-        this.plugin.registerEditorSuggest(new Autocomplete(this.app, this.plugin));
+        this.plugin.registerEditorSuggest(new Autocomplete(this.app));
     }
 
-    async jump_to_next_cursor_location(file: TFile = null, auto_jump = false): Promise<void> {
+    async jump_to_next_cursor_location(
+        file: TFile | null = null,
+        auto_jump = false
+    ): Promise<void> {
         if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
             return;
         }
@@ -122,7 +126,8 @@ export class Editor {
                             return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
                         }
 
-                        const js_result = js_mode.token(stream, state);
+                        const js_result =
+                            js_mode.token && js_mode.token(stream, state);
                         if (stream.peek() == null && state.freeLine) {
                             keywords += ` line-background-templater-command-bg`;
                         }
