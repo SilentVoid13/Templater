@@ -12,7 +12,6 @@ import {
     TFile,
     TFolder,
 } from "obsidian";
-import { UNSUPPORTED_MOBILE_TEMPLATE } from "utils/Constants";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
 
@@ -130,7 +129,6 @@ export class InternalModuleFile extends InternalModule {
     generate_exists(): (filename: string) => Promise<boolean> {
         return async (filename: string) => {
             return await app.vault.exists(filename);
-
         };
     }
 
@@ -252,8 +250,8 @@ export class InternalModuleFile extends InternalModule {
         return (relative = false) => {
             let vault_path = "";
             if (Platform.isMobileApp) {
-                const vault_adapter = app.fileManager.vault.adapter.fs.uri;
-                const vault_base = app.fileManager.vault.adapter.basePath;
+                const vault_adapter = app.vault.adapter.fs.uri;
+                const vault_base = app.vault.adapter.basePath;
                 vault_path = `${vault_adapter}/${vault_base}`;
             } else {
                 if (app.vault.adapter instanceof FileSystemAdapter) {
@@ -264,7 +262,6 @@ export class InternalModuleFile extends InternalModule {
                     );
                 }
             }
-
 
             if (relative) {
                 return this.config.target_file.path;
