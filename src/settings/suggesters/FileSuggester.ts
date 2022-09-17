@@ -17,7 +17,7 @@ export class FileSuggest extends TextInputSuggest<TFile> {
         private plugin: TemplaterPlugin,
         private mode: FileSuggestMode
     ) {
-        super(inputEl);
+        super(app, inputEl);
     }
 
     get_folder(mode: FileSuggestMode): string {
