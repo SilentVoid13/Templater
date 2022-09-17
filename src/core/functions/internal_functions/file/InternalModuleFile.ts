@@ -130,7 +130,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_exists(): (filename: string) => Promise<boolean> {
         return async (filename: string) => {
-            return await this.app.FileSystemAdapter.exists(filename);
+            return await this.app.vault.exists(filename);
         };
     }
 
