@@ -28,6 +28,11 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private function_trigger: boolean;
     private function_name: string;
 
+    constructor() {
+        super(app);
+        this.documentation = new Documentation();
+    }
+
     onTrigger(
         cursor: EditorPosition,
         editor: Editor,
