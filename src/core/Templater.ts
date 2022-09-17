@@ -399,35 +399,54 @@ export class Templater {
             return;
         }
 
-        // TODO: find a better way to do this
-        // Currently, I have to wait for the daily note plugin to add the file content before replacing
-        // Not a problem with Calendar however since it creates the file with the existing content
-        await delay(300);
+        await new Promise<void>((resolve) => {
+            // eslint-disable-next-line prefer-const
+            let timeout: number;
+            const file_open_ref = templater.app.workspace.on("file-open", async (opened_file: TFile) => {
+                if (opened_file !== file) {
+                    return;
+                }
+                window.clearTimeout(timeout);
+                templater.app.workspace.offref(file_open_ref);
 
-        if (
-            file.stat.size == 0 &&
-            templater.plugin.settings.enable_folder_templates
-        ) {
-            const folder_template_match =
-                templater.get_new_file_template_for_folder(file.parent);
-            if (!folder_template_match) {
-                return;
-            }
+                // TODO: find a better way to do this
+                // Currently, I have to wait for the daily note plugin to add the file content before replacing
+                // Not a problem with Calendar however since it creates the file with the existing content
+                await delay(300);
 
-            const template_file: TFile = await errorWrapper(
-                async (): Promise<TFile> => {
-                    return resolve_tfile(templater.app, folder_template_match);
-                },
-                `Couldn't find template ${folder_template_match}`
-            );
-            // errorWrapper failed
-            if (template_file == null) {
-                return;
-            }
-            await templater.write_template_to_file(template_file, file);
-        } else {
-            await templater.overwrite_file_commands(file);
-        }
+                if (
+                    file.stat.size == 0 &&
+                    templater.plugin.settings.enable_folder_templates
+                ) {
+                    const folder_template_match =
+                        templater.get_new_file_template_for_folder(file.parent);
+                    if (!folder_template_match) {
+                        resolve();
+                        return;
+                    }
+
+                    const template_file: TFile = await errorWrapper(
+                        async (): Promise<TFile> => {
+                            return resolve_tfile(templater.app, folder_template_match);
+                        },
+                        `Couldn't find template ${folder_template_match}`
+                    );
+                    // errorWrapper failed
+                    if (template_file == null) {
+                        resolve();
+                        return;
+                    }
+                    await templater.write_template_to_file(template_file, file);
+                } else {
+                    await templater.overwrite_file_commands(file);
+                }
+                resolve();
+            });
+            timeout = window.setTimeout(() => {
+                templater.app.workspace.offref(file_open_ref);
+                resolve();
+            }, 300);
+        });
     }
 
     async execute_startup_scripts(): Promise<void> {
