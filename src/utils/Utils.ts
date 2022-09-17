@@ -1,12 +1,5 @@
 import { TemplaterError } from "./Error";
-import {
-    App,
-    normalizePath,
-    TAbstractFile,
-    TFile,
-    TFolder,
-    Vault,
-} from "obsidian";
+import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -24,7 +17,7 @@ export function generate_dynamic_command_regex(): RegExp {
     return /(<%(?:-|_)?\s*[*~]{0,1})\+((?:.|\s)*?%>)/g;
 }
 
-export function resolve_tfolder(app: App, folder_str: string): TFolder {
+export function resolve_tfolder(folder_str: string): TFolder {
     folder_str = normalizePath(folder_str);
 
     const folder = app.vault.getAbstractFileByPath(folder_str);
@@ -38,7 +31,7 @@ export function resolve_tfolder(app: App, folder_str: string): TFolder {
     return folder;
 }
 
-export function resolve_tfile(app: App, file_str: string): TFile {
+export function resolve_tfile(file_str: string): TFile {
     file_str = normalizePath(file_str);
 
     const file = app.vault.getAbstractFileByPath(file_str);
@@ -52,11 +45,8 @@ export function resolve_tfile(app: App, file_str: string): TFile {
     return file;
 }
 
-export function get_tfiles_from_folder(
-    app: App,
-    folder_str: string
-): Array<TFile> {
-    const folder = resolve_tfolder(app, folder_str);
+export function get_tfiles_from_folder(folder_str: string): Array<TFile> {
+    const folder = resolve_tfolder(folder_str);
 
     const files: Array<TFile> = [];
     Vault.recurseChildren(folder, (file: TAbstractFile) => {

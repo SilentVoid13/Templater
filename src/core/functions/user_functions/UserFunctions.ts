@@ -1,5 +1,3 @@
-import { App } from "obsidian";
-
 import TemplaterPlugin from "main";
 import { RunningConfig } from "core/Templater";
 import { IGenerateObject } from "../IGenerateObject";
@@ -10,9 +8,9 @@ export class UserFunctions implements IGenerateObject {
     private user_system_functions: UserSystemFunctions;
     private user_script_functions: UserScriptFunctions;
 
-    constructor(app: App, private plugin: TemplaterPlugin) {
-        this.user_system_functions = new UserSystemFunctions(app, plugin);
-        this.user_script_functions = new UserScriptFunctions(app, plugin);
+    constructor(private plugin: TemplaterPlugin) {
+        this.user_system_functions = new UserSystemFunctions(plugin);
+        this.user_script_functions = new UserScriptFunctions(plugin);
     }
 
     async generate_object(

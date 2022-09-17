@@ -1,5 +1,3 @@
-import { App } from "obsidian";
-
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "core/functions/IGenerateObject";
 import { InternalModule } from "./InternalModule";
@@ -14,19 +12,13 @@ import { InternalModuleConfig } from "./config/InternalModuleConfig";
 export class InternalFunctions implements IGenerateObject {
     private modules_array: Array<InternalModule> = [];
 
-    constructor(protected app: App, protected plugin: TemplaterPlugin) {
-        this.modules_array.push(new InternalModuleDate(this.app, this.plugin));
-        this.modules_array.push(new InternalModuleFile(this.app, this.plugin));
-        this.modules_array.push(new InternalModuleWeb(this.app, this.plugin));
-        this.modules_array.push(
-            new InternalModuleFrontmatter(this.app, this.plugin)
-        );
-        this.modules_array.push(
-            new InternalModuleSystem(this.app, this.plugin)
-        );
-        this.modules_array.push(
-            new InternalModuleConfig(this.app, this.plugin)
-        );
+    constructor(protected plugin: TemplaterPlugin) {
+        this.modules_array.push(new InternalModuleDate(this.plugin));
+        this.modules_array.push(new InternalModuleFile(this.plugin));
+        this.modules_array.push(new InternalModuleWeb(this.plugin));
+        this.modules_array.push(new InternalModuleFrontmatter(this.plugin));
+        this.modules_array.push(new InternalModuleSystem(this.plugin));
+        this.modules_array.push(new InternalModuleConfig(this.plugin));
     }
 
     async init(): Promise<void> {

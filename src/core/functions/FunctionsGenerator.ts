@@ -1,5 +1,3 @@
-import { App } from "obsidian";
-
 import { InternalFunctions } from "./internal_functions/InternalFunctions";
 import { UserFunctions } from "./user_functions/UserFunctions";
 import TemplaterPlugin from "main";
@@ -16,9 +14,9 @@ export class FunctionsGenerator implements IGenerateObject {
     public internal_functions: InternalFunctions;
     public user_functions: UserFunctions;
 
-    constructor(private app: App, private plugin: TemplaterPlugin) {
-        this.internal_functions = new InternalFunctions(this.app, this.plugin);
-        this.user_functions = new UserFunctions(this.app, this.plugin);
+    constructor(private plugin: TemplaterPlugin) {
+        this.internal_functions = new InternalFunctions(this.plugin);
+        this.user_functions = new UserFunctions(this.plugin);
     }
 
     async init(): Promise<void> {

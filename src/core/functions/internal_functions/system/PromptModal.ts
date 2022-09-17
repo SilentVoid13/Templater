@@ -1,6 +1,5 @@
 import { TemplaterError } from "utils/Error";
 import {
-    App,
     ButtonComponent,
     Modal,
     Platform,
@@ -15,7 +14,6 @@ export class PromptModal extends Modal {
     private value: string;
 
     constructor(
-        app: App,
         private prompt_text: string,
         private default_value: string,
         private multi_line: boolean
