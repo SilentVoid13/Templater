@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/SilentVoid13/Templater/compare/1.14.1...2.0.0) (2022-09-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* use app.fileSystemAdapter.exists for tp.file.exists (#820)
+
+### Bug Fixes
+
+* change to new unsplash api ([#827](https://github.com/SilentVoid13/Templater/issues/827)) ([1e1daa7](https://github.com/SilentVoid13/Templater/commit/1e1daa730f0d52c9d87048977ad026937e620e96))
+* don't trigger on creation unless new file is opened in a pane ([#816](https://github.com/SilentVoid13/Templater/issues/816)) ([10d5de7](https://github.com/SilentVoid13/Templater/commit/10d5de7fc29cc3c61a458ba91349f9a43e7311c8)), closes [#716](https://github.com/SilentVoid13/Templater/issues/716) [#554](https://github.com/SilentVoid13/Templater/issues/554)
+* errors after merging PRs ([#832](https://github.com/SilentVoid13/Templater/issues/832)) ([08792f8](https://github.com/SilentVoid13/Templater/commit/08792f8ec23f0dbc04460a420df98976d69421aa))
+* make tp.file.path(...) work on mobile ([#829](https://github.com/SilentVoid13/Templater/issues/829)) ([0f4da99](https://github.com/SilentVoid13/Templater/commit/0f4da99536a5803e5a3227fd20c2a6335f2a0ca1))
+* use app.fileSystemAdapter.exists for tp.file.exists ([#820](https://github.com/SilentVoid13/Templater/issues/820)) ([cefbd67](https://github.com/SilentVoid13/Templater/commit/cefbd67fdb99e3b8a471d5224f50d1b44bfa888f))
+
 ### [1.14.1](https://github.com/SilentVoid13/Templater/compare/1.14.0...1.14.1) (2022-09-08)
 
 
