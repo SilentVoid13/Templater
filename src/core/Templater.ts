@@ -32,10 +32,10 @@ export enum RunMode {
 }
 
 export type RunningConfig = {
-    template_file: TFile;
+    template_file: TFile | undefined;
     target_file: TFile;
     run_mode: RunMode;
-    active_file?: TFile;
+    active_file?: TFile | null;
 };
 
 export class Templater {
@@ -59,7 +59,7 @@ export class Templater {
     }
 
     create_running_config(
-        template_file: TFile,
+        template_file: TFile | undefined,
         target_file: TFile,
         run_mode: RunMode
     ): RunningConfig {
@@ -75,7 +75,7 @@ export class Templater {
 
     async read_and_parse_template(config: RunningConfig): Promise<string> {
         const template_content = await this.app.vault.read(
-            config.template_file
+            config.template_file as TFile
         );
         return this.parse_template(config, template_content);
     }
@@ -101,7 +101,7 @@ export class Templater {
         folder?: TFolder,
         filename?: string,
         open_new_note = true
-    ): Promise<TFile> {
+    ): Promise<TFile | undefined> {
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
             const new_file_location =
@@ -126,7 +126,7 @@ export class Templater {
         }
 
         // TODO: Change that, not stable atm
-        const created_note = await this.app.fileManager.createNewMarkdownFile(
+        const created_note = await app.fileManager.createNewMarkdownFile(
             folder,
             filename ?? "Untitled"
         );
@@ -313,28 +313,30 @@ export class Templater {
         let functions_object: Record<string, unknown>;
         while ((node = walker.nextNode())) {
             let content = node.nodeValue;
-            let match;
-            if ((match = dynamic_command_regex.exec(content)) != null) {
-                const file = this.app.metadataCache.getFirstLinkpathDest(
-                    "",
-                    ctx.sourcePath
-                );
-                if (!file || !(file instanceof TFile)) {
-                    return;
-                }
-                if (!pass) {
-                    pass = true;
-                    const config = this.create_running_config(
-                        file,
-                        file,
-                        RunMode.DynamicProcessor
+            if (content !== null) {
+                let match = dynamic_command_regex.exec(content);
+                if (match !== null) {
+                    const file = this.app.metadataCache.getFirstLinkpathDest(
+                        "",
+                        ctx.sourcePath
                     );
-                    functions_object =
-                        await this.functions_generator.generate_object(
-                            config,
-                            FunctionsMode.USER_INTERNAL
+                    if (!file || !(file instanceof TFile)) {
+                        return;
+                    }
+                    if (!pass) {
+                        pass = true;
+                        const config = this.create_running_config(
+                            file,
+                            file,
+                            RunMode.DynamicProcessor
                         );
-                    this.current_functions_object = functions_object;
+                        functions_object =
+                            await this.functions_generator.generate_object(
+                                config,
+                                FunctionsMode.USER_INTERNAL
+                            );
+                        this.current_functions_object = functions_object;
+                    }
                 }
 
                 while (match != null) {
@@ -369,7 +371,7 @@ export class Templater {
         }
     }
 
-    get_new_file_template_for_folder(folder: TFolder): string {
+    get_new_file_template_for_folder(folder: TFolder): string | undefined {
         do {
             const match = this.plugin.settings.folder_templates.find(
                 (e) => e.folder == folder.path

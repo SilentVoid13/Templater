@@ -75,7 +75,10 @@ export class CommandHandler {
         });
     }
 
-    add_template_hotkey(old_template: string, new_template: string): void {
+    add_template_hotkey(
+        old_template: string | null,
+        new_template: string
+    ): void {
         this.remove_template_hotkey(old_template);
 
         if (new_template) {
@@ -98,7 +101,7 @@ export class CommandHandler {
         }
     }
 
-    remove_template_hotkey(template: string): void {
+    remove_template_hotkey(template: string | null): void {
         if (template) {
             // TODO: Find official way to do this
             // @ts-ignore

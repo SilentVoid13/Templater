@@ -1,6 +1,6 @@
 import { App, FuzzySuggestModal, TFile, TFolder } from "obsidian";
 import { get_tfiles_from_folder } from "utils/Utils";
-import TemplaterPlugin from "./main";
+import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
 import { log_error } from "utils/Log";
 
@@ -13,7 +13,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     public app: App;
     private plugin: TemplaterPlugin;
     private open_mode: OpenMode;
-    private creation_folder: TFolder;
+    private creation_folder: TFolder | undefined;
 
     constructor(app: App, plugin: TemplaterPlugin) {
         super(app);

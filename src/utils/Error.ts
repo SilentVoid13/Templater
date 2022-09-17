@@ -20,7 +20,7 @@ export async function errorWrapper<T>(
         } else {
             log_error(e);
         }
-        return null;
+        return null as T;
     }
 }
 
@@ -29,6 +29,6 @@ export function errorWrapperSync<T>(fn: () => T, msg: string): T {
         return fn();
     } catch (e) {
         log_error(new TemplaterError(msg, e.message));
-        return null;
+        return null as T;
     }
 }

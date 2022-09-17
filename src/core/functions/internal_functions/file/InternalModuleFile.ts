@@ -64,7 +64,7 @@ export class InternalModuleFile extends InternalModule {
         filename: string,
         open_new: boolean,
         folder?: TFolder
-    ) => Promise<TFile> {
+    ) => Promise<TFile | undefined> {
         return async (
             template: TFile | string,
             filename: string,
@@ -109,7 +109,7 @@ export class InternalModuleFile extends InternalModule {
     }
 
     generate_cursor_append(): (content: string) => void {
-        return (content: string): string => {
+        return (content: string): string | undefined => {
             const active_view =
                 this.app.workspace.getActiveViewOfType(MarkdownView);
             if (active_view === null) {
@@ -134,7 +134,7 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_find_tfile(): (filename: string) => TFile {
+    generate_find_tfile(): (filename: string) => TFile | null {
         return (filename: string) => {
             const path = normalizePath(filename);
             return this.app.metadataCache.getFirstLinkpathDest(path, "");
@@ -307,11 +307,14 @@ export class InternalModuleFile extends InternalModule {
     }
 
     // TODO: Turn this into a function
-    generate_tags(): string[] {
+    generate_tags(): string[] | null {
         const cache = this.app.metadataCache.getFileCache(
             this.config.target_file
         );
-        return getAllTags(cache);
+        if (cache) {
+            return getAllTags(cache);
+        }
+        return null;
     }
 
     // TODO: Turn this into a function

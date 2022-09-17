@@ -1,8 +1,8 @@
 import TemplaterPlugin from "main";
 import { App } from "obsidian";
-import { RunningConfig } from "Templater";
-import { IGenerateObject } from "functions/IGenerateObject";
-import { ModuleName } from "functions/TpDocumentation";
+import { RunningConfig } from "core/Templater";
+import { IGenerateObject } from "core/functions/IGenerateObject";
+import { ModuleName } from "editor/TpDocumentation";
 
 export abstract class InternalModule implements IGenerateObject {
     public abstract name: ModuleName;
