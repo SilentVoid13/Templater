@@ -127,16 +127,10 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_exists(): (filename: string) => boolean {
-        return (filename: string) => {
-            // TODO: Remove this, only here to support the old way
-            let match;
-            if ((match = this.linkpath_regex.exec(filename)) !== null) {
-                filename = match[1];
-            }
+    generate_exists(): (filename: string) => Promise<boolean> {
+        return async (filename: string) => {
+            return await app.vault.exists(filename);
 
-            const file = app.metadataCache.getFirstLinkpathDest(filename, "");
-            return file != null;
         };
     }
 
@@ -256,16 +250,21 @@ export class InternalModuleFile extends InternalModule {
 
     generate_path(): (relative: boolean) => string {
         return (relative = false) => {
-            // TODO: Add mobile support
+            let vault_path = "";
             if (Platform.isMobileApp) {
-                return UNSUPPORTED_MOBILE_TEMPLATE;
+                const vault_adapter = app.fileManager.vault.adapter.fs.uri;
+                const vault_base = app.fileManager.vault.adapter.basePath;
+                vault_path = `${vault_adapter}/${vault_base}`;
+            } else {
+                if (app.vault.adapter instanceof FileSystemAdapter) {
+                    vault_path = app.vault.adapter.getBasePath();
+                } else {
+                    throw new TemplaterError(
+                        "app.vault is not a FileSystemAdapter instance"
+                    );
+                }
             }
-            if (!(app.vault.adapter instanceof FileSystemAdapter)) {
-                throw new TemplaterError(
-                    "app.vault is not a FileSystemAdapter instance"
-                );
-            }
-            const vault_path = app.vault.adapter.getBasePath();
+
 
             if (relative) {
                 return this.config.target_file.path;
@@ -307,6 +306,7 @@ export class InternalModuleFile extends InternalModule {
     // TODO: Turn this into a function
     generate_tags(): string[] | null {
         const cache = app.metadataCache.getFileCache(this.config.target_file);
+
         if (cache) {
             return getAllTags(cache);
         }

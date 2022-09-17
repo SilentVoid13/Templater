@@ -55,15 +55,23 @@ export class InternalModuleWeb extends InternalModule {
         return async (size: string, query?: string, include_size = false) => {
             try {
                 const response = await this.getRequest(
-                    `https://source.unsplash.com/random/${size ?? ""}?${
-                        query ?? ""
+                    `https://templater-unsplash.fly.dev/${
+                        query ? "?q=" + query : ""
                     }`
-                );
-                const url = response.url;
-                if (include_size) {
-                    return `![tp.web.random_picture|${size}](${url})`;
+                ).then((res) => res.json());
+                let url = response.full;
+                if (size && !include_size) {
+                    if (size.includes("x")) {
+                        const [width, height] = size.split("x");
+                        url = url.concat(`&w=${width}&h=${height}`);
+                    } else {
+                        url = url.concat(`&w=${size}`);
+                    }
                 }
-                return `![tp.web.random_picture](${url})`;
+                if (include_size) {
+                    return `![photo by ${response.photog} on Unsplash|${size}](${url})`;
+                }
+                return `![photo by ${response.photog} on Unsplash](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
