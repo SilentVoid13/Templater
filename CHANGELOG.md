@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.3](https://github.com/SilentVoid13/Templater/compare/1.14.2...1.14.3) (2022-09-19)
+
+
+### Bug Fixes
+
+* revert pr [#816](https://github.com/SilentVoid13/Templater/issues/816) ([#835](https://github.com/SilentVoid13/Templater/issues/835)) ([5ee485a](https://github.com/SilentVoid13/Templater/commit/5ee485a4e877ef13189e172db7f6d018beade4f4))
+
 ### [1.14.2](https://github.com/SilentVoid13/Templater/compare/1.14.1...1.14.2) (2022-09-17)
 
 
