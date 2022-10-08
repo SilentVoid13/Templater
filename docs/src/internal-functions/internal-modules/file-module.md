@@ -44,11 +44,11 @@ Function documentation is using a specific syntax. More information [here](../..
 <pre>File cursor: </pre><% tp.file.cursor(1) %>
 
 <pre>File cursor append: </pre><% tp.file.cursor_append("Some text") %>
-
+    
 <pre>File existence: </pre><% await tp.file.exists("MyFolder/MyFile.md") %>
 
 <pre>File find TFile: </pre><% tp.file.find_tfile("MyFile").basename %>
-
+    
 <pre>File Folder: </pre><% tp.file.folder() %>
 <pre>File Folder with relative path: </pre><% tp.file.folder(true) %>
 
