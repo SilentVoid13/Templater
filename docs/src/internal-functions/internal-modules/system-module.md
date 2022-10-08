@@ -39,5 +39,5 @@ Function documentation is using a specific syntax. More information [here](../..
 <pre>Mood today: </pre><% tp.system.prompt("What is your mood today ?", "happy") %>
 
 <pre>Mood today: </pre><% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>
-<pre>Picked file: [[</pre><% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]
+<pre>Picked file: </pre>[[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]
 ```
