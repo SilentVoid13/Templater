@@ -31,7 +31,7 @@ file content
 
 Then you can use the following template:
 
-````javascript
-<pre>File's metadata alias: </pre><% tp.frontmatter.alias %>
-<pre>Note's type: </pre><% tp.frontmatter["note type"] %>
+````
+File's metadata alias: <% tp.frontmatter.alias %>
+Note's type: <% tp.frontmatter["note type"] %>
 ````
