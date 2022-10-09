@@ -33,15 +33,15 @@ Function documentation is using a specific syntax. More information [here](../..
 ## Examples
 
 ```javascript
-Web Daily quote:  
+<pre>Web Daily quote: </pre>
 <% tp.web.daily_quote() %>
 
-Web Random picture: 
+<pre>Web Random picture: </pre>
 <% tp.web.random_picture() %>
 
-Web Random picture with size: 
+<pre>Web Random picture with size: </pre>
 <% tp.web.random_picture("200x200") %>
 
-Web random picture with size + query: 
+<pre>Web random picture with size + query: </pre>
 <% tp.web.random_picture("200x200", "landscape,water") %>
 ```
