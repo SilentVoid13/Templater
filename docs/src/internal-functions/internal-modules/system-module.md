@@ -33,11 +33,11 @@ Function documentation is using a specific syntax. More information [here](../..
 ## Examples
 
 ```javascript
-<pre>Clipboard content: </pre><% tp.system.clipboard() %>
+Clipboard content: <% tp.system.clipboard() %>
 
-<pre>Entered value: </pre><% tp.system.prompt("Please enter a value") %>
-<pre>Mood today: </pre><% tp.system.prompt("What is your mood today ?", "happy") %>
+Entered value: <% tp.system.prompt("Please enter a value") %>
+Mood today: <% tp.system.prompt("What is your mood today ?", "happy") %>
 
-<pre>Mood today: </pre><% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>
-<pre>Picked file: </pre>[[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]
+Mood today: <% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>
+Picked file: [[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]
 ```
