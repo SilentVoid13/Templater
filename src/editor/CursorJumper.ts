@@ -1,5 +1,4 @@
 import {
-    App,
     EditorPosition,
     EditorRangeOrCaret,
     EditorTransaction,
@@ -8,23 +7,22 @@ import {
 import { escape_RegExp } from "utils/Utils";
 
 export class CursorJumper {
-    constructor(private app: App) {}
+    constructor() {}
 
     async jump_to_next_cursor_location(): Promise<void> {
-        const active_view =
-            this.app.workspace.getActiveViewOfType(MarkdownView);
+        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         if (!active_view) {
             return;
         }
         const active_file = active_view.file;
         await active_view.save();
 
-        const content = await this.app.vault.read(active_file);
+        const content = await app.vault.read(active_file);
 
         const { new_content, positions } =
             this.replace_and_get_cursor_positions(content);
         if (positions) {
-            await this.app.vault.modify(active_file, new_content);
+            await app.vault.modify(active_file, new_content as string);
             this.set_cursor_location(positions);
         }
     }
@@ -65,7 +63,10 @@ export class CursorJumper {
         }
 
         cursor_matches.sort((m1, m2) => {
-            return Number(m1.groups["order"]) - Number(m2.groups["order"]);
+            return (
+                Number(m1.groups && m1.groups["order"]) -
+                Number(m2.groups && m2.groups["order"])
+            );
         });
         const match_str = cursor_matches[0][0];
 
@@ -92,8 +93,7 @@ export class CursorJumper {
     }
 
     set_cursor_location(positions: EditorPosition[]): void {
-        const active_view =
-            this.app.workspace.getActiveViewOfType(MarkdownView);
+        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         if (!active_view) {
             return;
         }

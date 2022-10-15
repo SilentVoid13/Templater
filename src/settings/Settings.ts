@@ -1,4 +1,4 @@
-import { App, ButtonComponent, PluginSettingTab, Setting } from "obsidian";
+import { ButtonComponent, PluginSettingTab, Setting } from "obsidian";
 import { errorWrapperSync, TemplaterError } from "utils/Error";
 import { FolderSuggest } from "./suggesters/FolderSuggester";
 import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
@@ -46,7 +46,7 @@ export interface Settings {
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
-    constructor(public app: App, private plugin: TemplaterPlugin) {
+    constructor(private plugin: TemplaterPlugin) {
         super(app, plugin);
     }
 
@@ -78,7 +78,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Template folder location")
             .setDesc("Files in this folder will be available as templates.")
             .addSearch((cb) => {
-                new FolderSuggest(this.app, cb.inputEl);
+                new FolderSuggest(cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.templates_folder)
                     .onChange((new_folder) => {
@@ -201,13 +201,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.enable_ribbon_icon =
                             enable_ribbon_icon;
                         this.plugin.save_settings();
-                        if(this.plugin.settings.enable_ribbon_icon) {
-                            this.plugin.addRibbonIcon("templater-icon", "Templater", async () => {
-                                this.fuzzy_suggester.insert_template();
-                            }).setAttribute("id", "rb-templater-icon");
-                        }
-                        else {
-                            document.getElementById("rb-templater-icon")?.remove();
+                        if (this.plugin.settings.enable_ribbon_icon) {
+                            this.plugin
+                                .addRibbonIcon(
+                                    "templater-icon",
+                                    "Templater",
+                                    async () => {
+                                        this.plugin.fuzzy_suggester.insert_template();
+                                    }
+                                )
+                                .setAttribute("id", "rb-templater-icon");
+                        } else {
+                            document
+                                .getElementById("rb-templater-icon")
+                                ?.remove();
                         }
                     });
             });
@@ -228,7 +235,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 const s = new Setting(this.containerEl)
                     .addSearch((cb) => {
                         new FileSuggest(
-                            this.app,
                             cb.inputEl,
                             this.plugin,
                             FileSuggestMode.TemplateFiles
@@ -268,9 +274,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(() => {
                                 // TODO: Replace with future "official" way to do this
                                 // @ts-ignore
-                                this.app.setting.openTabById("hotkeys");
+                                app.setting.openTabById("hotkeys");
                                 // @ts-ignore
-                                const tab = this.app.setting.activeTab;
+                                const tab = app.setting.activeTab;
                                 tab.searchInputEl.value = "Templater: Insert";
                                 tab.updateHotkeyVisibility();
                             });
@@ -400,7 +406,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             (folder_template, index) => {
                 const s = new Setting(this.containerEl)
                     .addSearch((cb) => {
-                        new FolderSuggest(this.app, cb.inputEl);
+                        new FolderSuggest(cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(folder_template.folder)
                             .onChange((new_folder) => {
@@ -428,7 +434,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     })
                     .addSearch((cb) => {
                         new FileSuggest(
-                            this.app,
                             cb.inputEl,
                             this.plugin,
                             FileSuggestMode.TemplateFiles
@@ -505,7 +510,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
             const s = new Setting(this.containerEl)
                 .addSearch((cb) => {
                     new FileSuggest(
-                        this.app,
                         cb.inputEl,
                         this.plugin,
                         FileSuggestMode.TemplateFiles
@@ -582,7 +586,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Script files folder location")
             .setDesc(desc)
             .addSearch((cb) => {
-                new FolderSuggest(this.app, cb.inputEl);
+                new FolderSuggest(cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.user_scripts_folder)
                     .onChange((new_folder) => {
@@ -601,7 +605,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
             const files = errorWrapperSync(
                 () =>
                     get_tfiles_from_folder(
-                        this.app,
                         this.plugin.settings.user_scripts_folder
                     ),
                 `User Scripts folder doesn't exist`
@@ -789,7 +792,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 setting.infoEl.remove();
 
                 div.appendChild(title);
-                div.appendChild(this.containerEl.lastChild);
+                div.appendChild(this.containerEl.lastChild as Node);
 
                 i += 1;
             });
@@ -812,7 +815,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             );
             setting.infoEl.remove();
 
-            div.appendChild(this.containerEl.lastChild);
+            div.appendChild(this.containerEl.lastChild as Node);
         }
     }
 }

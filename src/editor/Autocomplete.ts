@@ -1,21 +1,20 @@
 import {
-    App,
+    Editor,
+    EditorPosition,
     EditorSuggest,
     EditorSuggestContext,
     EditorSuggestTriggerInfo,
-    EditorPosition,
-    Editor,
     MarkdownView,
     TFile,
 } from "obsidian";
 
-import TemplaterPlugin from "main";
 import {
+    Documentation,
     is_function_documentation,
     is_module_name,
     ModuleName,
+    TpFunctionDocumentation,
     TpSuggestDocumentation,
-    Documentation 
 } from "./TpDocumentation";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
@@ -29,15 +28,15 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private function_trigger: boolean;
     private function_name: string;
 
-    constructor(private app: App, private plugin: TemplaterPlugin) {
+    constructor() {
         super(app);
-        this.documentation = new Documentation(this.app);
+        this.documentation = new Documentation();
     }
 
     onTrigger(
         cursor: EditorPosition,
         editor: Editor,
-        file: TFile
+        _file: TFile
     ): EditorSuggestTriggerInfo | null {
         const range = editor.getRange(
             { line: cursor.line, ch: 0 },
@@ -49,12 +48,12 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         }
 
         let query: string;
-        const module_name = match.groups["module"] || "";
+        const module_name = (match.groups && match.groups["module"]) || "";
         this.module_name = module_name;
 
-        if (match.groups["fn_trigger"]) {
+        if (match.groups && match.groups["fn_trigger"]) {
             if (module_name == "" || !is_module_name(module_name)) {
-                return;
+                return null;
             }
             this.function_trigger = true;
             this.function_name = match.groups["fn"] || "";
@@ -73,30 +72,26 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         return trigger_info;
     }
 
-    getSuggestions(
-        context: EditorSuggestContext
-    ): Array<TpSuggestDocumentation> {
+    getSuggestions(context: EditorSuggestContext): TpSuggestDocumentation[] {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
-            suggestions =
-                this.documentation.get_all_functions_documentation(
-                    this.module_name as ModuleName
-                );
+            suggestions = this.documentation.get_all_functions_documentation(
+                this.module_name as ModuleName
+            ) as TpFunctionDocumentation[];
         } else {
-            suggestions =
-                this.documentation.get_all_modules_documentation();
+            suggestions = this.documentation.get_all_modules_documentation();
         }
         if (!suggestions) {
             return [];
         }
-        return suggestions.filter(s => s.name.startsWith(context.query));
+        return suggestions.filter((s) => s.name.startsWith(context.query));
     }
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
         el.createEl("b", { text: value.name });
         el.createEl("br");
         if (this.function_trigger && is_function_documentation(value)) {
-            el.createEl("code", { text: value.definition }); 
+            el.createEl("code", { text: value.definition });
         }
         if (value.description) {
             el.createEl("div", { text: value.description });
@@ -105,10 +100,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
     selectSuggestion(
         value: TpSuggestDocumentation,
-        evt: MouseEvent | KeyboardEvent
+        _evt: MouseEvent | KeyboardEvent
     ): void {
-        const active_view =
-            this.app.workspace.getActiveViewOfType(MarkdownView);
+        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         if (!active_view) {
             // TODO: Error msg
             return;
@@ -118,9 +112,11 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             this.latest_trigger_info.start,
             this.latest_trigger_info.end
         );
-        if (this.latest_trigger_info.start.ch == this.latest_trigger_info.end.ch) {
+        if (
+            this.latest_trigger_info.start.ch == this.latest_trigger_info.end.ch
+        ) {
             // Dirty hack to prevent the cursor being at the
-            // beginning of the word after completion, 
+            // beginning of the word after completion,
             // Not sure what's the cause of this bug.
             const cursor_pos = this.latest_trigger_info.end;
             cursor_pos.ch += value.name.length;

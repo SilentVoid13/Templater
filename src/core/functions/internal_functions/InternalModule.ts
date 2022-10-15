@@ -1,8 +1,7 @@
 import TemplaterPlugin from "main";
-import { App } from "obsidian";
-import { RunningConfig } from "Templater";
-import { IGenerateObject } from "functions/IGenerateObject";
-import { ModuleName } from "functions/TpDocumentation";
+import { RunningConfig } from "core/Templater";
+import { IGenerateObject } from "core/functions/IGenerateObject";
+import { ModuleName } from "editor/TpDocumentation";
 
 export abstract class InternalModule implements IGenerateObject {
     public abstract name: ModuleName;
@@ -11,7 +10,7 @@ export abstract class InternalModule implements IGenerateObject {
     protected config: RunningConfig;
     protected static_object: { [x: string]: unknown };
 
-    constructor(protected app: App, protected plugin: TemplaterPlugin) {}
+    constructor(protected plugin: TemplaterPlugin) {}
 
     getName(): ModuleName {
         return this.name;

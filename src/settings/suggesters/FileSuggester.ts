@@ -1,6 +1,6 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { App, TAbstractFile, TFile } from "obsidian";
+import { TAbstractFile, TFile } from "obsidian";
 import { TextInputSuggest } from "./suggest";
 import { get_tfiles_from_folder } from "utils/Utils";
 import TemplaterPlugin from "main";
@@ -13,12 +13,11 @@ export enum FileSuggestMode {
 
 export class FileSuggest extends TextInputSuggest<TFile> {
     constructor(
-        public app: App,
         public inputEl: HTMLInputElement,
         private plugin: TemplaterPlugin,
         private mode: FileSuggestMode
     ) {
-        super(app, inputEl);
+        super(inputEl);
     }
 
     get_folder(mode: FileSuggestMode): string {
@@ -41,7 +40,7 @@ export class FileSuggest extends TextInputSuggest<TFile> {
 
     getSuggestions(input_str: string): TFile[] {
         const all_files = errorWrapperSync(
-            () => get_tfiles_from_folder(this.app, this.get_folder(this.mode)),
+            () => get_tfiles_from_folder(this.get_folder(this.mode)),
             this.get_error_msg(this.mode)
         );
         if (!all_files) {

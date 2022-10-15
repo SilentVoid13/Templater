@@ -1,6 +1,6 @@
-import { App, FuzzySuggestModal, TFile, TFolder } from "obsidian";
+import { FuzzySuggestModal, TFile, TFolder } from "obsidian";
 import { get_tfiles_from_folder } from "utils/Utils";
-import TemplaterPlugin from "./main";
+import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
 import { log_error } from "utils/Log";
 
@@ -10,28 +10,22 @@ export enum OpenMode {
 }
 
 export class FuzzySuggester extends FuzzySuggestModal<TFile> {
-    public app: App;
     private plugin: TemplaterPlugin;
     private open_mode: OpenMode;
-    private creation_folder: TFolder;
+    private creation_folder: TFolder | undefined;
 
-    constructor(app: App, plugin: TemplaterPlugin) {
+    constructor(plugin: TemplaterPlugin) {
         super(app);
-        this.app = app;
         this.plugin = plugin;
         this.setPlaceholder("Type name of a template...");
     }
 
     getItems(): TFile[] {
         if (!this.plugin.settings.templates_folder) {
-            return this.app.vault.getMarkdownFiles();
+            return app.vault.getMarkdownFiles();
         }
         const files = errorWrapperSync(
-            () =>
-                get_tfiles_from_folder(
-                    this.app,
-                    this.plugin.settings.templates_folder
-                ),
+            () => get_tfiles_from_folder(this.plugin.settings.templates_folder),
             `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`
         );
         if (!files) {

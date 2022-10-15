@@ -1,6 +1,5 @@
 import { TemplaterError } from "utils/Error";
 import {
-    App,
     ButtonComponent,
     Modal,
     Platform,
@@ -15,7 +14,6 @@ export class PromptModal extends Modal {
     private value: string;
 
     constructor(
-        app: App,
         private prompt_text: string,
         private default_value: string,
         private multi_line: boolean
@@ -69,6 +67,7 @@ export class PromptModal extends Modal {
     private enterCallback(evt: KeyboardEvent) {
         if (this.multi_line) {
             if (Platform.isDesktop) {
+                // eslint-disable-next-line no-empty
                 if (evt.shiftKey && evt.key === "Enter") {
                 } else if (evt.key === "Enter") {
                     this.resolveAndClose(evt);

@@ -1,5 +1,5 @@
 import { TemplaterError } from "utils/Error";
-import { App, FuzzyMatch, FuzzySuggestModal } from "obsidian";
+import { FuzzyMatch, FuzzySuggestModal } from "obsidian";
 
 export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     private resolve: (value: T) => void;
@@ -7,7 +7,6 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     private submitted = false;
 
     constructor(
-        app: App,
         private text_items: string[] | ((item: T) => string),
         private items: T[],
         placeholder: string,
@@ -15,7 +14,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     ) {
         super(app);
         this.setPlaceholder(placeholder);
-        this.limit = limit;
+        limit && (this.limit = limit);
     }
 
     getItems(): T[] {

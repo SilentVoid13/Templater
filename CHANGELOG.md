@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.14.3](https://github.com/SilentVoid13/Templater/compare/1.14.2...1.14.3) (2022-09-19)
+
+
+### Bug Fixes
+
+* revert pr [#816](https://github.com/SilentVoid13/Templater/issues/816) ([#835](https://github.com/SilentVoid13/Templater/issues/835)) ([5ee485a](https://github.com/SilentVoid13/Templater/commit/5ee485a4e877ef13189e172db7f6d018beade4f4))
+
+### [1.14.2](https://github.com/SilentVoid13/Templater/compare/1.14.1...1.14.2) (2022-09-17)
+
+
+### Bug Fixes
+
+* change to new unsplash api ([#827](https://github.com/SilentVoid13/Templater/issues/827)) ([c5ccd7a](https://github.com/SilentVoid13/Templater/commit/c5ccd7ac2b30e98e1c436ae13a2468ffb1b6f6e8))
+* don't trigger on creation unless new file is opened in a pane ([#816](https://github.com/SilentVoid13/Templater/issues/816)) ([10d5de7](https://github.com/SilentVoid13/Templater/commit/10d5de7fc29cc3c61a458ba91349f9a43e7311c8)), closes [#716](https://github.com/SilentVoid13/Templater/issues/716) [#554](https://github.com/SilentVoid13/Templater/issues/554)
+* errors after merging PRs ([#832](https://github.com/SilentVoid13/Templater/issues/832)) ([e44a485](https://github.com/SilentVoid13/Templater/commit/e44a48575843610dc97857f3a6aabee3104bbeaf))
+* make tp.file.path(...) work on mobile ([#829](https://github.com/SilentVoid13/Templater/issues/829)) ([5273570](https://github.com/SilentVoid13/Templater/commit/5273570861f9a4e0d4956482a5798315de51cbd7))
+* post merge errors ([#833](https://github.com/SilentVoid13/Templater/issues/833)) ([dd315d2](https://github.com/SilentVoid13/Templater/commit/dd315d2c69514336b7f3d03e94ab78c20714c08e))
+* use app.fileSystemAdapter.exists for tp.file.exists ([#820](https://github.com/SilentVoid13/Templater/issues/820)) ([e57cc6c](https://github.com/SilentVoid13/Templater/commit/e57cc6c0d8d9691fe99d25618ed6aed25dd0768f))
+
 ### [1.14.1](https://github.com/SilentVoid13/Templater/compare/1.14.0...1.14.1) (2022-09-08)
 
 

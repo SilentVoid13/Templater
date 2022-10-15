@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import { promisify } from "util";
-import { App, Platform, FileSystemAdapter } from "obsidian";
+import { FileSystemAdapter, Platform } from "obsidian";
 
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "../IGenerateObject";
@@ -16,7 +16,7 @@ export class UserSystemFunctions implements IGenerateObject {
         arg2: Record<string, unknown>
     ) => Promise<{ stdout: string; stderr: string }>;
 
-    constructor(app: App, private plugin: TemplaterPlugin) {
+    constructor(private plugin: TemplaterPlugin) {
         if (
             Platform.isMobileApp ||
             !(app.vault.adapter instanceof FileSystemAdapter)

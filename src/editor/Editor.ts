@@ -1,4 +1,5 @@
-import { App, Platform, TFile } from "obsidian";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Platform, TFile } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "utils/Error";
 import { CursorJumper } from "editor/CursorJumper";
@@ -22,20 +23,23 @@ const TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 export class Editor {
     private cursor_jumper: CursorJumper;
 
-    public constructor(private app: App, private plugin: TemplaterPlugin) {
-        this.cursor_jumper = new CursorJumper(this.app);
+    public constructor(private plugin: TemplaterPlugin) {
+        this.cursor_jumper = new CursorJumper();
     }
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
-        this.plugin.registerEditorSuggest(new Autocomplete(this.app, this.plugin));
+        this.plugin.registerEditorSuggest(new Autocomplete(app));
     }
 
-    async jump_to_next_cursor_location(file: TFile = null, auto_jump = false): Promise<void> {
+    async jump_to_next_cursor_location(
+        file: TFile | null = null,
+        auto_jump = false
+    ): Promise<void> {
         if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
             return;
         }
-        if (file && this.app.workspace.getActiveFile() !== file) {
+        if (file && app.workspace.getActiveFile() !== file) {
             return;
         }
         await this.cursor_jumper.jump_to_next_cursor_location();
@@ -122,7 +126,8 @@ export class Editor {
                             return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
                         }
 
-                        const js_result = js_mode.token(stream, state);
+                        const js_result =
+                            js_mode.token && js_mode.token(stream, state);
                         if (stream.peek() == null && state.freeLine) {
                             keywords += ` line-background-templater-command-bg`;
                         }

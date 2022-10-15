@@ -1,11 +1,9 @@
-import { App } from "obsidian";
-
 import TemplaterPlugin from "main";
 import { resolve_tfile } from "utils/Utils";
 import { errorWrapperSync } from "utils/Error";
 
 export class CommandHandler {
-    constructor(private app: App, private plugin: TemplaterPlugin) {}
+    constructor(private plugin: TemplaterPlugin) {}
 
     setup(): void {
         this.plugin.addCommand({
@@ -75,7 +73,10 @@ export class CommandHandler {
         });
     }
 
-    add_template_hotkey(old_template: string, new_template: string): void {
+    add_template_hotkey(
+        old_template: string | null,
+        new_template: string
+    ): void {
         this.remove_template_hotkey(old_template);
 
         if (new_template) {
@@ -84,7 +85,7 @@ export class CommandHandler {
                 name: `Insert ${new_template}`,
                 callback: () => {
                     const template = errorWrapperSync(
-                        () => resolve_tfile(this.app, new_template),
+                        () => resolve_tfile(new_template),
                         `Couldn't find the template file associated with this hotkey`
                     );
                     if (!template) {
@@ -98,11 +99,11 @@ export class CommandHandler {
         }
     }
 
-    remove_template_hotkey(template: string): void {
+    remove_template_hotkey(template: string | null): void {
         if (template) {
             // TODO: Find official way to do this
             // @ts-ignore
-            this.app.commands.removeCommand(
+            app.commands.removeCommand(
                 `${this.plugin.manifest.id}:${template}`
             );
         }
