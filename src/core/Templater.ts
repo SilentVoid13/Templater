@@ -124,7 +124,10 @@ export class Templater {
             folder,
             filename ?? "Untitled"
         );
-
+        
+        // Set activeFile to newly created note
+        await app.workspace.getLeaf(false).openFile(created_note, { state: { mode: "source" }, })
+        
         let running_config: RunningConfig;
         let output_content: string;
         if (template instanceof TFile) {
