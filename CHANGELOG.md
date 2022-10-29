@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/SilentVoid13/Templater/compare/1.14.4...1.15.0) (2022-10-29)
+
+
+### Features
+
+* enable syntax highlighting in cm6 ([#889](https://github.com/SilentVoid13/Templater/issues/889)) ([1cc6615](https://github.com/SilentVoid13/Templater/commit/1cc661576ad3318cf8309527a8ac4a5f5ef32fee))
+
 ### [1.14.4](https://github.com/SilentVoid13/Templater/compare/1.14.3...1.14.4) (2022-10-29)
 
 
