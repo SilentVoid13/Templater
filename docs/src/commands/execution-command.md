@@ -24,7 +24,7 @@ For example, the following command: `<%* tR += "test" %>` will output `test`.
 
 ### Suggesters and Prompts
 
-It is important to note that the `tp.system.prompt()` and `tp.system.suggester()` both requrire a `await` statment to save the value to a variable
+It is important to note that the `tp.system.prompt()` and `tp.system.suggester()` both require a `await` statment to save the value to a variable
 
 ## Examples
 
