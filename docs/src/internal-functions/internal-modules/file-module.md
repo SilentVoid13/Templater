@@ -46,6 +46,7 @@ File cursor: <% tp.file.cursor(1) %>
 File cursor append: <% tp.file.cursor_append("Some text") %>
     
 File existence: <% await tp.file.exists("MyFolder/MyFile.md") %>
+File existence of current file: <% await tp.file.exists(tp.file.folder(true)+"/"+tp.file.title+".md") %>
 
 File find TFile: <% tp.file.find_tfile("MyFile").basename %>
     

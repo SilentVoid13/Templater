@@ -161,7 +161,7 @@ description = "The content to append after the active cursor"
 
 [tp.file.functions.exists]
 name = "exists"
-description = "Checks if a file exists or not. Returns a true / false boolean."
+description = "The filename of the file we want to check existence. The fullpath to the file, relative to the Vault and containing the extension, must be provided. e.g. MyFolder/SubFolder/MyFile."
 definition = "tp.file.exists(filename: string)"
 
 [tp.file.functions.exists.args.filename]
