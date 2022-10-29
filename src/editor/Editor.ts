@@ -8,6 +8,7 @@ import { Autocomplete } from "editor/Autocomplete";
 
 import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
+import { StreamLanguage } from "@codemirror/language";
 //import "editor/mode/show-hint";
 
 const TP_CMD_TOKEN_CLASS = "templater-command";
@@ -30,6 +31,9 @@ export class Editor {
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         this.plugin.registerEditorSuggest(new Autocomplete(app));
+        this.plugin.registerEditorExtension(
+            StreamLanguage.define(window.CodeMirror.getMode({}, { name: 'templater' }) as any)
+        )
     }
 
     async jump_to_next_cursor_location(
