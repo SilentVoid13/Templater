@@ -25,6 +25,15 @@ export class CursorJumper {
             await app.vault.modify(active_file, new_content as string);
             this.set_cursor_location(positions);
         }
+
+        // enter insert mode for vim users
+        if (app.vault.getConfig("vimMode")) {
+           // @ts-ignore
+           const cm = active_view.editor.cm.cm
+           // @ts-ignore
+           window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping")
+        }
+
     }
 
     get_editor_position_from_index(
