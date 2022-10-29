@@ -22,6 +22,10 @@ This means that, to output something from a JS execution command, you just need 
 
 For example, the following command: `<%* tR += "test" %>` will output `test`.
 
+### Suggesters and Prompts
+
+It is important to note that the `tp.system.prompt()` and `tp.system.suggester()` both requrire a `await` statment to save the value to a variable
+
 ## Examples
 
 Here are some examples of things you can do using JavaScript Execution Commands:
