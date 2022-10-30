@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.15.2](https://github.com/SilentVoid13/Templater/compare/1.15.1...1.15.2) (2022-10-30)
+
+### [1.15.1](https://github.com/SilentVoid13/Templater/compare/1.15.0...1.15.1) (2022-10-29)
+
+
+### Bug Fixes
+
+* syntax highlighting breaks live preview on mobile. ([#892](https://github.com/SilentVoid13/Templater/issues/892)) ([7fd3b33](https://github.com/SilentVoid13/Templater/commit/7fd3b332e5688fa6e0b93c3ac01f280a33018f84))
+
+## [1.15.0](https://github.com/SilentVoid13/Templater/compare/1.14.4...1.15.0) (2022-10-29)
+
+
+### Features
+
+* enable syntax highlighting in cm6 ([#889](https://github.com/SilentVoid13/Templater/issues/889)) ([1cc6615](https://github.com/SilentVoid13/Templater/commit/1cc661576ad3318cf8309527a8ac4a5f5ef32fee))
+
+### [1.14.4](https://github.com/SilentVoid13/Templater/compare/1.14.3...1.14.4) (2022-10-29)
+
+
+### Bug Fixes
+
+* hard coded file size limit for parsing ([#874](https://github.com/SilentVoid13/Templater/issues/874)) ([fcba602](https://github.com/SilentVoid13/Templater/commit/fcba6025bda7c3596228d96e7d7f0df1c6e6c7d7))
+* tp.file.exists in Obsidian v1.0.0 always returns false for files; ([#879](https://github.com/SilentVoid13/Templater/issues/879)) ([fc08873](https://github.com/SilentVoid13/Templater/commit/fc0887356fb227e4f7f039adb87103a02edcbeeb)), closes [#878](https://github.com/SilentVoid13/Templater/issues/878) [#878](https://github.com/SilentVoid13/Templater/issues/878)
+
 ### [1.14.3](https://github.com/SilentVoid13/Templater/compare/1.14.2...1.14.3) (2022-09-19)
 
 

@@ -1,6 +1,6 @@
 {
     "name": "templater-obsidian",
-    "version": "1.14.3",
+    "version": "1.15.2",
     "description": "Create and use templates",
     "main": "main.js",
     "scripts": {
@@ -9,6 +9,7 @@
         "pretest": "eslint --ignore-path .gitignore src/",
         "test-build": "node esbuild.config.mjs production test",
         "test-dev": "node esbuild.config.mjs test",
+        "docs-dev": "mdbook serve docs",
         "commit": "cz",
         "release": "standard-version -t ''"
     },
@@ -46,6 +47,7 @@
     "dependencies": {
         "@codemirror/state": "^6.1.1",
         "@codemirror/view": "^6.2.3",
+        "@codemirror/language": "https://github.com/lishid/cm-language",
         "@popperjs/core": "^2.11.2",
         "child_process": "^1.0.2",
         "eta": "github:SilentVoid13/eta#custom-eta"
