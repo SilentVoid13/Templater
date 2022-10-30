@@ -31,8 +31,8 @@ export class Editor {
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         this.plugin.registerEditorSuggest(new Autocomplete());
-    // only enable syntax highlighting on desktop because it breaks live preview on mobile
-        if (Platform.isDesktopApp) {
+        // only enable syntax highlighting on desktop because it breaks live preview on mobile
+        if (Platform.isDesktopApp && this.plugin.settings.syntax_highlighting) {
             this.plugin.registerEditorExtension(
                 StreamLanguage.define(
                     window.CodeMirror.getMode({}, { name: "templater" }) as any
