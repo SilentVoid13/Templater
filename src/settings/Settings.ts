@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
     enable_folder_templates: true,
     folder_templates: [{ folder: "", template: "" }],
     syntax_highlighting: true,
+    syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
     enable_ribbon_icon: true,
@@ -40,6 +41,7 @@ export interface Settings {
     enable_folder_templates: boolean;
     folder_templates: Array<FolderTemplate>;
     syntax_highlighting: boolean;
+    syntax_highlighting_mobile: boolean;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
     enable_ribbon_icon: boolean;
@@ -56,7 +58,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_general_setting_header();
         this.add_template_folder_setting();
         this.add_internal_functions_setting();
-        this.add_syntax_highlighting_setting();
+        this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
         this.add_ribbon_icon_setting();
@@ -108,21 +110,42 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setDesc(desc);
     }
 
-    add_syntax_highlighting_setting(): void {
-        const desc = document.createDocumentFragment();
-        desc.append(
+    add_syntax_highlighting_settings(): void {
+        const desktopDesc = document.createDocumentFragment();
+        desktopDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode."
         );
 
+        const mobileDesc = document.createDocumentFragment();
+        mobileDesc.append(
+            "Adds syntax highlighting for Templater commands in edit mode on " +
+            "mobile. Use with caution: this may break live preview on mobile " +
+            "platforms."
+        );
+
         new Setting(this.containerEl)
-            .setName("Syntax Highlighting")
-            .setDesc(desc)
+            .setName("Syntax Highlighting on Desktop")
+            .setDesc(desktopDesc)
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.syntax_highlighting)
                     .onChange((syntax_highlighting) => {
                         this.plugin.settings.syntax_highlighting =
                             syntax_highlighting;
+                        this.plugin.save_settings();
+                        this.plugin.event_handler.update_syntax_highlighting();
+                    });
+            });
+
+        new Setting(this.containerEl)
+            .setName("Syntax Highlighting on Mobile")
+            .setDesc(mobileDesc)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.syntax_highlighting_mobile)
+                    .onChange((syntax_highlighting_mobile) => {
+                        this.plugin.settings.syntax_highlighting_mobile =
+                            syntax_highlighting_mobile;
                         this.plugin.save_settings();
                         this.plugin.event_handler.update_syntax_highlighting();
                     });
