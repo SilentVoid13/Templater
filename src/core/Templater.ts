@@ -47,6 +47,7 @@ export class Templater {
     }
 
     async setup(): Promise<void> {
+        await this.parser.init();
         await this.functions_generator.init();
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
             this.process_dynamic_templates(el, ctx)

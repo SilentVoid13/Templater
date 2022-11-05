@@ -1,21 +1,29 @@
-import { renderAsync } from "eta";
+import init, {ParserConfig, Renderer} from '@silentvoid13/rusty_engine';
+
+// @ts-ignore
+import {
+  default as wasmbin
+} from '../../../node_modules/@silentvoid13/rusty_engine/rusty_engine_bg.wasm';
 
 export class Parser {
-    async parse_commands(
-        content: string,
-        object: Record<string, unknown>
-    ): Promise<string> {
-        content = (await renderAsync(content, object, {
-            varName: "tp",
-            parse: {
-                exec: "*",
-                interpolate: "~",
-                raw: "",
-            },
-            autoTrim: false,
-            globalAwait: true,
-        })) as string;
+  private renderer: Renderer;
 
-        return content;
-    }
+  async init() {
+    await init(wasmbin);
+    const config = new ParserConfig(
+        "<%",
+        "%>",
+        '\0',
+        '*',
+        '-',
+        '_',
+        "tR",
+    );
+    this.renderer = new Renderer(config);
+  }
+
+  async parse_commands(content: string,
+                       context: Record<string, unknown>): Promise<string> {
+    return this.renderer.render_content(content, context);
+  }
 }
