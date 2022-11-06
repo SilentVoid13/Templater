@@ -4,8 +4,7 @@
 
 [Templater](https://github.com/SilentVoid13/Templater) defines 3 types of opening tags, that defines 3 types of **commands**:
 
-- `<%`:  Raw display command. It will just output the expression that's inside.
-- `<%~`: Interpolation command. Same as the raw display tag, but adds some character escaping.
+- `<%`:  Interpolation command. It will output the result of the expression that's inside.
 - `<%*`: [JavaScript execution command](./execution-command.md). It will execute the JavaScript code that's inside. It does not output anything by default.
 
 The closing tag for a command is always the same: `%>`

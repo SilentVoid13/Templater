@@ -14,9 +14,9 @@ Some internal functions are asynchronous. When calling such functions inside a J
 
 ## How to output a value from a JavaScript Execution Command ?
 
-Sometimes, you may want to output something when using a JS execution command. This is possible although a raw display / interpolation command is preferable.
+Sometimes, you may want to output something when using a JS execution command.
 
-When the [Eta](https://eta.js.org/) templating engine generates a replacement string using all of our commands results, it is stored in a variable named `tR`. This is the string that will contain the processed file content. You are allowed to access that variable from a JS execution command.
+When our templating engine generates a replacement string using all of our commands results, it is stored in a variable named `tR`. This is the string that will contain the processed file content. You are allowed to access that variable from a JS execution command.
 
 This means that, to output something from a JS execution command, you just need to append what you want to output to that `tR` string variable.
 

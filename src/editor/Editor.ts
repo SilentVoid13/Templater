@@ -18,7 +18,6 @@ const TP_OPENING_TAG_TOKEN_CLASS = "templater-opening-tag";
 const TP_CLOSING_TAG_TOKEN_CLASS = "templater-closing-tag";
 
 const TP_INTERPOLATION_TAG_TOKEN_CLASS = "templater-interpolation-tag";
-const TP_RAW_TAG_TOKEN_CLASS = "templater-raw-tag";
 const TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 
 export class Editor {
@@ -148,16 +147,13 @@ export class Editor {
                     }
 
                     const match = stream.match(
-                        /<%[-_]{0,1}\s*([*~+]{0,1})/,
+                        /<%[-_]{0,1}\s*([*+]{0,1})/,
                         true
                     );
                     if (match != null) {
                         switch (match[1]) {
                             case "*":
                                 state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
-                                break;
-                            case "~":
-                                state.tag_class = TP_RAW_TAG_TOKEN_CLASS;
                                 break;
                             default:
                                 state.tag_class =

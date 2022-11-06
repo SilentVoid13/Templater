@@ -110,10 +110,6 @@ textarea.templater-prompt-input:focus {
     color: #c0d700;
 }
 
-.cm-s-obsidian .cm-templater-command.cm-templater-raw-tag {
-    color: green;
-}
-
 .theme-dark .cm-s-obsidian .cm-templater-command.cm-keyword {
     color: #00a7aa;
     font-weight: normal;
