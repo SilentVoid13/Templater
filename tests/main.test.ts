@@ -10,12 +10,12 @@ import {
     PLUGIN_NAME,
     TARGET_FILE_NAME,
     TEMPLATE_FILE_NAME,
-} from "./Util.test";
-import { InternalModuleFileTests } from "./InternalTemplates/file/InternalModuleFile.test";
-import { InternalModuleDateTests } from "./InternalTemplates/date/InternalModuleDate.test";
-import { InternalModuleFrontmatterTests } from "./InternalTemplates/frontmatter/InternalModuleFrontmatter.test";
-import { InternalModuleSystemTests } from "./InternalTemplates/system/InternalModuleSystem.test";
-import { InternalModuleConfigTests } from "./InternalTemplates/config/InternalModuleConfig.test";
+} from "./utils.test";
+import { InternalModuleFileTests } from "./InternalTemplates/InternalModuleFile.test";
+import { InternalModuleDateTests } from "./InternalTemplates/InternalModuleDate.test";
+import { InternalModuleFrontmatterTests } from "./InternalTemplates/InternalModuleFrontmatter.test";
+import { InternalModuleSystemTests } from "./InternalTemplates/InternalModuleSystem.test";
+import { InternalModuleConfigTests } from "./InternalTemplates/InternalModuleConfig.test";
 
 chai.use(chaiAsPromised);
 
