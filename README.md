@@ -54,6 +54,6 @@ Check [this](https://silentvoid13.github.io/Templater/docs/internal-variables-fu
 
 If you want to support me and my work, you can [sponsor me on Github](https://github.com/sponsors/SilentVoid13) (preferred method) or donate something on [**Paypal**](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q).
 
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/silentvoid13?style=social)](https://github.com/sponsors/silentvoid13)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/silentvoid13?label=Sponsor&logo=GitHub%20Sponsors&style=for-the-badge)](https://github.com/sponsors/silentvoid13)
 [![Paypal](https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal)](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q)
 

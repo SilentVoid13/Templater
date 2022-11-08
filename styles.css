@@ -24,6 +24,10 @@
     align-self: center;
 }
 
+.templater_donating {
+    margin: 10px;
+}
+
 .templater_title {
     margin: 0;
     padding: 0;

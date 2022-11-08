@@ -5,6 +5,7 @@ import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
 import TemplaterPlugin from "main";
 import { arraymove, get_tfiles_from_folder } from "utils/Utils";
 import { log_error } from "utils/Log";
+import { HEART, PAYPAL } from "utils/Constants";
 
 export interface FolderTemplate {
     folder: string;
@@ -67,6 +68,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
+        this.add_donating_setting();
     }
 
     add_general_setting_header(): void {
@@ -817,5 +819,31 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
             div.appendChild(this.containerEl.lastChild as Node);
         }
+    }
+
+    add_donating_setting(): void {
+        const s = new Setting(this.containerEl)
+            .setName("Donate")
+            .setDesc(
+                "If you like this Plugin, consider donating to support continued development."
+            )
+
+
+        const a1 = document.createElement("a");
+        a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
+        a1.addClass("templater_donating");
+        const img1 = document.createElement("img");
+        img1.src = "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
+        a1.appendChild(img1);
+
+        const a2 = document.createElement("a");
+        a2.setAttribute("href", "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q");
+        a2.addClass("templater_donating");
+        const img2 = document.createElement("img");
+        img2.src = "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
+        a2.appendChild(img2);
+
+        s.settingEl.appendChild(a1);
+        s.settingEl.appendChild(a2);
     }
 }
