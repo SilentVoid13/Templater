@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/SilentVoid13/Templater/compare/1.15.3...1.16.0) (2022-11-08)
+
+
+### Features
+
+* cleaning package, preparing for release ([79e2925](https://github.com/SilentVoid13/Templater/commit/79e2925f495cba50a4b1033a3caaaac423fbb6f1))
+* moving from eta.js to rusty_engine ([a69ac22](https://github.com/SilentVoid13/Templater/commit/a69ac22252a5fc9f943949e4944b3247077921c6))
+* updating README ([8689da4](https://github.com/SilentVoid13/Templater/commit/8689da49e7979c027ee6dcbdfc1218347bf33287))
+* updating settings ([34330d2](https://github.com/SilentVoid13/Templater/commit/34330d2a3a13eb61a242415f2e4b21c7e3569593))
+
 ### [1.15.3](https://github.com/SilentVoid13/Templater/compare/1.15.2...1.15.3) (2022-11-01)
 
 
