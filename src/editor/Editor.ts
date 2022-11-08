@@ -27,11 +27,22 @@ export class Editor {
         this.cursor_jumper = new CursorJumper();
     }
 
+    desktopShouldHighlight(): boolean {
+        return Platform.isDesktopApp
+            && this.plugin.settings.syntax_highlighting;
+    }
+
+    mobileShouldHighlight(): boolean {
+        return Platform.isMobileApp
+            && this.plugin.settings.syntax_highlighting_mobile;
+    }
+
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         this.plugin.registerEditorSuggest(new Autocomplete());
-        // only enable syntax highlighting on desktop because it breaks live preview on mobile
-        if (Platform.isDesktopApp && this.plugin.settings.syntax_highlighting) {
+
+        // Selectively enable syntax highlighting via per-platform preferences.
+        if (this.desktopShouldHighlight() || this.mobileShouldHighlight()) {
             this.plugin.registerEditorExtension(
                 StreamLanguage.define(
                     window.CodeMirror.getMode({}, { name: "templater" }) as any
@@ -60,12 +71,8 @@ export class Editor {
         // https://codemirror.net/demo/mustache.html
         // https://marijnhaverbeke.nl/blog/codemirror-mode-system.html
 
-        if (!this.plugin.settings.syntax_highlighting) {
-            return;
-        }
-
-        // TODO: Add mobile support
-        if (Platform.isMobileApp) {
+        // If no configuration requests highlighting we should bail.
+        if (!this.desktopShouldHighlight() && !this.mobileShouldHighlight()) {
             return;
         }
 

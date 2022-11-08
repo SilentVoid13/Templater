@@ -107,140 +107,79 @@ textarea.templater-prompt-input:focus {
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-interpolation-tag {
-    color: #008bff;
+    color: var(--code-property, #008bff);
 }
 
 .cm-s-obsidian .cm-templater-command.cm-templater-execution-tag {
-    color: #c0d700;
+    color: var(--code-function, #c0d700);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-keyword {
-    color: #00a7aa;
+.cm-s-obsidian .cm-templater-command.cm-keyword {
+    color: var(--code-keyword, #00a7aa);
     font-weight: normal;
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-atom {
-    color: #f39b35;
+.cm-s-obsidian .cm-templater-command.cm-atom {
+    color: var(--code-normal, #f39b35);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-number {
-    color: #a06fca;
+.cm-s-obsidian .cm-templater-command.cm-value,
+.cm-s-obsidian .cm-templater-command.cm-number,
+.cm-s-obsidian .cm-templater-command.cm-type {
+    color: var(--code-value, #a06fca);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-type {
-    color: #a06fca;
+.cm-s-obsidian .cm-templater-command.cm-def,
+.cm-s-obsidian .cm-templater-command.cm-type.cm-def {
+    color: var(--code-normal, var(--text-normal));
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-def {
-    color: #98e342;
+.cm-s-obsidian .cm-templater-command.cm-property,
+.cm-s-obsidian .cm-templater-command.cm-property.cm-def
+.cm-s-obsidian .cm-templater-command.cm-attribute {
+    color: var(--code-function, #98e342);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-property {
-    color: #d4d4d4;
+.cm-s-obsidian .cm-templater-command.cm-variable,
+.cm-s-obsidian .cm-templater-command.cm-variable-2,
+.cm-s-obsidian .cm-templater-command.cm-variable-3,
+.cm-s-obsidian .cm-templater-command.cm-meta {
+    color: var(--code-property, #d4d4d4);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable {
-    color: #d4d4d4;
+.cm-s-obsidian .cm-templater-command.cm-callee,
+.cm-s-obsidian .cm-templater-command.cm-operator,
+.cm-s-obsidian .cm-templater-command.cm-qualifier,
+.cm-s-obsidian .cm-templater-command.cm-builtin {
+    color: var(--code-operator, #fc4384);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-2 {
-    color: #da7dae;
+.cm-s-obsidian .cm-templater-command.cm-tag {
+    color: var(--code-tag, #fc4384);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-variable-3 {
-    color: #a06fca;
+.cm-s-obsidian .cm-templater-command.cm-comment,
+.cm-s-obsidian .cm-templater-command.cm-comment.cm-tag,
+.cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
+    color: var(--code-comment, #696d70);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-type.cm-def {
-    color: #fc4384;
+.cm-s-obsidian .cm-templater-command.cm-string,
+.cm-s-obsidian .cm-templater-command.cm-string-2 {
+    color: var(--code-string, #e6db74);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-property.cm-def {
-    color: #fc4384;
+.cm-s-obsidian .cm-templater-command.cm-header,
+.cm-s-obsidian .cm-templater-command.cm-hr {
+    color: var(--code-keyword, #da7dae);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-callee {
-    color: #fc4384;
+.cm-s-obsidian .cm-templater-command.cm-link {
+    color: var(--code-normal, #696d70);
 }
 
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-operator {
-    color: #fc4384;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-qualifier {
-    color: #fc4384;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag {
-    color: #fc4384;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-tag.cm-bracket {
-    color: #d4d4d4;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-attribute {
-    color: #a06fca;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment {
-    color: #696d70;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-tag {
-    color: #fc4384;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-comment.cm-attribute {
-    color: #d4d4d4;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-string {
-    color: #e6db74;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-string-2 {
-    color: #f39b35;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-meta {
-    color: #d4d4d4;
-    background: inherit;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-builtin {
-    color: #fc4384;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-header {
-    color: #da7dae;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-hr {
-    color: #98e342;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-link {
-    color: #696d70;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.cm-error {
+.cm-s-obsidian .cm-templater-command.cm-error {
     border-bottom: 1px solid #c42412;
-}
-
-.theme-dark .cm-s-obsidian pre.HyperMD-codeblock .cm-keyword {
-    font-weight: normal;
-}
-
-.theme-dark
-    .cm-s-obsidian
-    .cm-templater-command.CodeMirror-activeline-background {
-    background: #272727;
-}
-
-.theme-dark .cm-s-obsidian .cm-templater-command.CodeMirror-matchingbracket {
-    outline: 1px solid grey;
-    color: #d4d4d4 !important;
 }
 
 .CodeMirror-hints {
