@@ -24,6 +24,10 @@
     align-self: center;
 }
 
+.templater_donating {
+    margin: 10px;
+}
+
 .templater_title {
     margin: 0;
     padding: 0;
@@ -108,10 +112,6 @@ textarea.templater-prompt-input:focus {
 
 .cm-s-obsidian .cm-templater-command.cm-templater-execution-tag {
     color: var(--code-function, #c0d700);
-}
-
-.cm-s-obsidian .cm-templater-command.cm-templater-raw-tag {
-    color: var(--code-string, green);
 }
 
 .cm-s-obsidian .cm-templater-command.cm-keyword {

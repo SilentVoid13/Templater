@@ -50,4 +50,3 @@ Which would produce the following output:
 This isn't my file!
 Some content ...
 ```
-

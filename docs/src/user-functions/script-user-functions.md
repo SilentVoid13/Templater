@@ -40,7 +40,7 @@ Which would print `Message from my script: Hello World!` in the console.
 
 In script user functions, you can still access global namespace variables like `app` or `moment`.
 
-However, you can't access Eta scoped variables like `tp` or `tR`. If you want to use them, you must pass them as arguments for your function.
+However, you can't access the template engine scoped variables like `tp` or `tR`. If you want to use them, you must pass them as arguments for your function.
 
 
 ## Functions Arguments
