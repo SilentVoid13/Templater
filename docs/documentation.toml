@@ -8,7 +8,7 @@ This is mostly useful when writing scripts requiring some context information.
 [tp.config.functions.template_file]
 name = "template_file"
 description = "The `TFile` object representing the template file."
-definition = "tp.file.template_file"
+definition = "tp.config.template_file"
 
 [tp.config.functions.target_file]
 name = "target_file"
