@@ -22,7 +22,7 @@ Note that instead of outputting directly to the console, as we did earlier, a us
 
 ```javascript
 function my_function (msg) {
-    return "Message from my script:";
+    return `Message from my script: ${msg}`;
 }
 module.exports = my_function;
 ```
