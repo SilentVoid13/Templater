@@ -94,6 +94,9 @@ export class InternalModuleFile extends InternalModule {
 
     generate_creation_date(): (format?: string) => string {
         return (format = "YYYY-MM-DD HH:mm") => {
+            if (!this.config.target_file.stat.ctime) {
+                throw new TemplaterError("Invalid file creation date.");
+            }
             return window
                 .moment(this.config.target_file.stat.ctime)
                 .format(format);
