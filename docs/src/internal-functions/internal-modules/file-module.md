@@ -17,7 +17,7 @@ Function documentation is using a specific syntax. More information [here](../..
 {% if fn.args %}
 ##### Arguments
 
-{% for key, arg in fn.args %}
+{% for arg in fn.args %}
 - `{{ arg.name }}`: {{ arg.description }}
 {% endfor %}
 {% endif %}
