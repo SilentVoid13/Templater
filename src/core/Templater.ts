@@ -188,9 +188,14 @@ export class Templater {
     async append_template_to_active_file(template_file: TFile): Promise<void> {
         const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         if (active_view === null) {
-            log_error(
-                new TemplaterError("No active view, can't append templates.")
-            );
+            if (!this.plugin.settings.trigger_create_new_note_from_insert_template_command) {
+                log_error(
+                    new TemplaterError("No active view, can't append templates.")
+                );
+            } else {
+                this.create_new_note_from_template(template_file);
+            }
+
             return;
         }
         const running_config = this.create_running_config(
