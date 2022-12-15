@@ -35,6 +35,7 @@ export interface Settings {
     templates_folder: string;
     templates_pairs: Array<[string, string]>;
     trigger_on_file_creation: boolean;
+    trigger_create_new_note_from_insert_template_command: boolean;
     auto_jump_to_cursor: boolean;
     enable_system_commands: boolean;
     shell_path: string;
@@ -62,6 +63,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
+        this.add_trigger_create_new_note_from_insert_template_command_setting();
         this.add_ribbon_icon_setting();
         this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
@@ -206,6 +208,21 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.event_handler.update_trigger_file_on_creation();
                         // Force refresh
                         this.display();
+                    });
+            });
+    }
+
+    add_trigger_create_new_note_from_insert_template_command_setting(): void {
+        new Setting(this.containerEl)
+            .setName("Trigger Create new note from Insert Template command")
+            .setDesc("Templater will trigger `Create new note from template` when `Insert Template` is called and no active note is opened")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.trigger_create_new_note_from_insert_template_command)
+                    .onChange((trigger_create_new_note_from_insert_template_command) => {
+                        this.plugin.settings.trigger_create_new_note_from_insert_template_command =
+                        trigger_create_new_note_from_insert_template_command;
+                        this.plugin.save_settings();
                     });
             });
     }
