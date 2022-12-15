@@ -221,7 +221,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.trigger_create_new_note_from_insert_template_command)
                     .onChange((trigger_create_new_note_from_insert_template_command) => {
                         this.plugin.settings.trigger_create_new_note_from_insert_template_command =
-                        trigger_create_new_note_from_insert_template_command;
+                            trigger_create_new_note_from_insert_template_command;
                         this.plugin.save_settings();
                     });
             });
