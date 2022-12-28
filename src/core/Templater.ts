@@ -364,18 +364,15 @@ export class Templater {
         }
     }
 
-    get_new_file_template_for_folder(folder: TFolder): string | undefined {
-        do {
-            const match = this.plugin.settings.folder_templates.find(
-                (e) => e.folder == folder.path
-            );
+    get_new_file_template_for_file(file: TFile): string | undefined {
+        const match = this.plugin.settings.file_templates.find((e) => {
+            const eRegex = new RegExp(e.regex);
+            return eRegex.test(file.path);
+        });
 
-            if (match && match.template) {
-                return match.template;
-            }
-
-            folder = folder.parent;
-        } while (folder);
+        if (match && match.template) {
+            return match.template;
+        }
     }
 
     static async on_file_creation(
@@ -401,10 +398,10 @@ export class Templater {
 
         if (
             file.stat.size == 0 &&
-            templater.plugin.settings.enable_folder_templates
+            templater.plugin.settings.enable_file_templates
         ) {
             const folder_template_match =
-                templater.get_new_file_template_for_folder(file.parent);
+                templater.get_new_file_template_for_file(file);
             if (!folder_template_match) {
                 return;
             }
