@@ -364,6 +364,20 @@ export class Templater {
         }
     }
 
+    get_new_file_template_for_folder(folder: TFolder): string | undefined {
+        do {
+            const match = this.plugin.settings.folder_templates.find(
+                (e) => e.folder == folder.path
+            );
+
+            if (match && match.template) {
+                return match.template;
+            }
+
+            folder = folder.parent;
+        } while (folder);
+    }
+
     get_new_file_template_for_file(file: TFile): string | undefined {
         const match = this.plugin.settings.file_templates.find((e) => {
             const eRegex = new RegExp(e.regex);
@@ -395,13 +409,12 @@ export class Templater {
         // Currently, I have to wait for the daily note plugin to add the file content before replacing
         // Not a problem with Calendar however since it creates the file with the existing content
         await delay(300);
-
         if (
             file.stat.size == 0 &&
-            templater.plugin.settings.enable_file_templates
+            templater.plugin.settings.enable_folder_templates
         ) {
             const folder_template_match =
-                templater.get_new_file_template_for_file(file);
+                templater.get_new_file_template_for_folder(file.parent);
             if (!folder_template_match) {
                 return;
             }
@@ -410,6 +423,26 @@ export class Templater {
                     return resolve_tfile(folder_template_match);
                 },
                 `Couldn't find template ${folder_template_match}`
+            );
+            // errorWrapper failed
+            if (template_file == null) {
+                return;
+            }
+            await templater.write_template_to_file(template_file, file);
+        } else if (
+            file.stat.size == 0 &&
+            templater.plugin.settings.enable_file_templates
+        ) {
+            const file_template_match =
+                templater.get_new_file_template_for_file(file);
+            if (!file_template_match) {
+                return;
+            }
+            const template_file: TFile = await errorWrapper(
+                async (): Promise<TFile> => {
+                    return resolve_tfile(file_template_match);
+                },
+                `Couldn't find template ${file_template_match}`
             );
             // errorWrapper failed
             if (template_file == null) {
