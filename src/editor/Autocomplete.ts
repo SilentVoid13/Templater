@@ -7,6 +7,7 @@ import {
     MarkdownView,
     TFile,
 } from "obsidian";
+import { Settings } from "settings/Settings";
 
 import {
     Documentation,
@@ -28,9 +29,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private function_trigger: boolean;
     private function_name: string;
 
-    constructor() {
+    constructor(settings: Settings) {
         super(app);
-        this.documentation = new Documentation();
+        this.documentation = new Documentation(settings);
     }
 
     onTrigger(
