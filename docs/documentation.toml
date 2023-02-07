@@ -324,7 +324,7 @@ definition = "tp.web.daily_quote()"
 [tp.web.functions.random_picture]
 name = "random_picture"
 description = "Gets a random image from https://unsplash.com/"
-definition = "tp.web.random_picture(size?: string, query?: string, include_size?: boolean, raw_output?: boolean)"
+definition = "tp.web.random_picture(size?: string, query?: string, include_size?: boolean, url_only?: boolean)"
 
 [tp.web.functions.random_picture.args.size]
 name = "size"
@@ -338,6 +338,6 @@ description = "Limits selection to photos matching a search term. Multiple searc
 name = "include_size"
 description = "Optional argument to include the specified size in the image link markdown. Defaults to false"
 
-[tp.web.functions.random_picture.args.raw_output]
-name = "raw_output"
-description = "Optional argument to return the raw image link instead of the markdown. Defaults to false"
+[tp.web.functions.random_picture.args.url_only]
+name = "url_only"
+description = "Optional argument to return only the url image link instead of the markdown. Defaults to false"

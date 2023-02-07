@@ -51,9 +51,9 @@ export class InternalModuleWeb extends InternalModule {
         size: string,
         query?: string,
         include_size?: boolean,
-        raw_output?: boolean
+        url_only?: boolean
     ) => Promise<string> {
-        return async (size: string, query?: string, include_size = false, raw_output = false) => {
+        return async (size: string, query?: string, include_size = false, url_only = false) => {
             try {
                 const response = await this.getRequest(
                     `https://templater-unsplash.fly.dev/${
@@ -69,7 +69,7 @@ export class InternalModuleWeb extends InternalModule {
                         url = url.concat(`&w=${size}`);
                     }
                 }
-                if(raw_output) {
+                if(url_only) {
                     return url;
                 }
                 if (include_size) {
