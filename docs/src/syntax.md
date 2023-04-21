@@ -1,6 +1,6 @@
 # Syntax
 
-[Templater](https://github.com/SilentVoid13/Templater) uses the [Eta](https://eta.js.org/) templating engine syntax to declare a command. You may need a bit of time to get used to it, but once you get the idea, the syntax is not that hard.
+[Templater](https://github.com/SilentVoid13/Templater) uses a custom templating engine ([rusty_engine](https://github.com/SilentVoid13/Templater)) syntax to declare a command. You may need a bit of time to get used to it, but once you get the idea, the syntax is not that hard.
 
 All of Templater's functions are JavaScript objects that are invoked using a **command**.
 

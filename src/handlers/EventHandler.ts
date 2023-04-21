@@ -29,7 +29,12 @@ export default class EventHandler {
     }
 
     update_syntax_highlighting(): void {
-        if (this.plugin.settings.syntax_highlighting) {
+        const desktopShouldHighlight =
+            this.plugin.editor_handler.desktopShouldHighlight();
+        const mobileShouldHighlight =
+            this.plugin.editor_handler.mobileShouldHighlight();
+
+        if (desktopShouldHighlight || mobileShouldHighlight) {
             this.syntax_highlighting_event = app.workspace.on(
                 "codemirror",
                 (cm) => {

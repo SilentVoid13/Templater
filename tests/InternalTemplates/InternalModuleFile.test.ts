@@ -1,5 +1,5 @@
-import TestTemplaterPlugin from "../../main.test";
-import { TARGET_FILE_NAME } from "../../Util.test";
+import TestTemplaterPlugin from "../main.test";
+import { TARGET_FILE_NAME } from "../utils.test";
 import { expect } from "chai";
 
 export function InternalModuleFileTests(t: TestTemplaterPlugin) {
@@ -57,18 +57,13 @@ export function InternalModuleFileTests(t: TestTemplaterPlugin) {
     t.test("tp.file.exists", async () => {
         await expect(
             t.run_and_get_output(
-                `File Exists: <% tp.file.exists("[[${t.target_file.basename}]]") %>\n\n`
-            )
-        ).to.eventually.equal(`File Exists: true\n\n`);
-        await expect(
-            t.run_and_get_output(
-                `File Exists: <% tp.file.exists("${t.target_file.basename}") %>\n\n`
+                `File Exists: <% tp.file.exists("${t.target_file.basename}.md") %>\n\n`
             )
         ).to.eventually.equal(`File Exists: true\n\n`);
 
         await expect(
             t.run_and_get_output(
-                `File Exists: <% tp.file.exists("[[NonExistingFile]]") %>\n\n`
+                `File Exists: <% tp.file.exists("NonExistingFile.md") %>\n\n`
             )
         ).to.eventually.equal(`File Exists: false\n\n`);
     });

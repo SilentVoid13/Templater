@@ -18,7 +18,6 @@ const TP_OPENING_TAG_TOKEN_CLASS = "templater-opening-tag";
 const TP_CLOSING_TAG_TOKEN_CLASS = "templater-closing-tag";
 
 const TP_INTERPOLATION_TAG_TOKEN_CLASS = "templater-interpolation-tag";
-const TP_RAW_TAG_TOKEN_CLASS = "templater-raw-tag";
 const TP_EXEC_TAG_TOKEN_CLASS = "templater-execution-tag";
 
 export class Editor {
@@ -28,11 +27,22 @@ export class Editor {
         this.cursor_jumper = new CursorJumper();
     }
 
+    desktopShouldHighlight(): boolean {
+        return Platform.isDesktopApp
+            && this.plugin.settings.syntax_highlighting;
+    }
+
+    mobileShouldHighlight(): boolean {
+        return Platform.isMobileApp
+            && this.plugin.settings.syntax_highlighting_mobile;
+    }
+
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
         this.plugin.registerEditorSuggest(new Autocomplete());
-        // only enable syntax highlighting on desktop because it breaks live preview on mobile
-        if (Platform.isDesktopApp && this.plugin.settings.syntax_highlighting) {
+
+        // Selectively enable syntax highlighting via per-platform preferences.
+        if (this.desktopShouldHighlight() || this.mobileShouldHighlight()) {
             this.plugin.registerEditorExtension(
                 StreamLanguage.define(
                     window.CodeMirror.getMode({}, { name: "templater" }) as any
@@ -61,12 +71,8 @@ export class Editor {
         // https://codemirror.net/demo/mustache.html
         // https://marijnhaverbeke.nl/blog/codemirror-mode-system.html
 
-        if (!this.plugin.settings.syntax_highlighting) {
-            return;
-        }
-
-        // TODO: Add mobile support
-        if (Platform.isMobileApp) {
+        // If no configuration requests highlighting we should bail.
+        if (!this.desktopShouldHighlight() && !this.mobileShouldHighlight()) {
             return;
         }
 
@@ -148,16 +154,13 @@ export class Editor {
                     }
 
                     const match = stream.match(
-                        /<%[-_]{0,1}\s*([*~+]{0,1})/,
+                        /<%[-_]{0,1}\s*([*+]{0,1})/,
                         true
                     );
                     if (match != null) {
                         switch (match[1]) {
                             case "*":
                                 state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
-                                break;
-                            case "~":
-                                state.tag_class = TP_RAW_TAG_TOKEN_CLASS;
                                 break;
                             default:
                                 state.tag_class =
