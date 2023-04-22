@@ -91,7 +91,7 @@ export class InternalModuleDate extends InternalModule {
 
     generate_date_picker(): (
         title: string,
-        placeholder: string,
+        format: string,
         throw_on_cancel: boolean,
     ) => Promise<string> {
         return async (
