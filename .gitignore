@@ -5,8 +5,7 @@
 .idea
 
 ## VSCode
-.vscode/*
-!.vscode/settings.json
+.vscode/
 
 # npm
 node_modules
