@@ -6,7 +6,6 @@
 
 ## VSCode
 .vscode/*
-!.vscode/settings.json
 
 # npm
 node_modules
