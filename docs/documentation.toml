@@ -287,6 +287,39 @@ description = "Throws an error if the prompt is canceled, instead of returning a
 name = "multiline"
 description = "If set to true, the input field will be a multiline textarea"
 
+[tp.system.functions.multiselect]
+name = "multiselect"
+description = "Spawns a multiselect prompt and returns the user's chosen items."
+definition = "tp.system.multiselect(text_items: string[] ⎮ ((item: T) => string), items: T[], unrestricted: boolean = false, throw_on_cancel: boolean = false, placeholder: string = \"\", title: string = \"Multiselect\", limit?: number = undefined)"
+
+[tp.system.functions.multiselect.args.text_items]
+name = "text_items"
+description = "Array of strings representing the text that will be displayed for each item in the multiselect prompt. This can also be a function that maps an item to its text representation."
+
+[tp.system.functions.multiselect.args.items]
+name = "items"
+description = "Array containing the values of each item in the correct order."
+
+[tp.system.functions.multiselect.args.unrestricted]
+name = "unrestricted"
+description = "A boolean which represents whether the values outside suggestions can be selected or not"
+
+[tp.system.functions.multiselect.args.throw_on_cancel]
+name = "throw_on_cancel"
+description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
+
+[tp.system.functions.multiselect.args.placeholder]
+name = "placeholder"
+description = "Placeholder string of the prompt"
+
+[tp.system.functions.multiselect.args.title]
+name = "title"
+description = "Title of multiselect prompt"
+
+[tp.system.functions.multiselect.args.limit]
+name = "limit"
+description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)"
+
 [tp.system.functions.suggester]
 name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."

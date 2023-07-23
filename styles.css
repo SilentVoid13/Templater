@@ -54,6 +54,49 @@
     justify-content: center;
 }
 
+.templater-multiselect-modal {
+    position: absolute;
+    top: 80px;
+}
+
+.templater-multiselect-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.templater-multiselect-chips {
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 106px;
+    gap: 8px;
+}
+
+.templater-multiselect-chip {
+    border: var(--border-width) solid var(--color-green);
+    border-radius: var(--radius-s);
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 4px 8px;
+    cursor: pointer;
+    height: 30px;
+}
+
+.templater-multiselect-chip:hover {
+    border: var(--border-width) solid var(--color-red);
+}
+
+.templater-multiselect-suggestions {
+    overflow-y: auto;
+    max-height: 324px;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
 .templater-prompt-div {
     display: flex;
 }
@@ -135,8 +178,10 @@ textarea.templater-prompt-input:focus {
 }
 
 .cm-s-obsidian .cm-templater-command.cm-property,
-.cm-s-obsidian .cm-templater-command.cm-property.cm-def
-.cm-s-obsidian .cm-templater-command.cm-attribute {
+.cm-s-obsidian
+    .cm-templater-command.cm-property.cm-def
+    .cm-s-obsidian
+    .cm-templater-command.cm-attribute {
     color: var(--code-function, #98e342);
 }
 

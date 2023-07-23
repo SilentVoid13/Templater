@@ -3,6 +3,7 @@ import { InternalModule } from "../InternalModule";
 import { Platform } from "obsidian";
 import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
+import { MultiSelectModal } from "./MultiSelectModal";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
 
@@ -12,6 +13,7 @@ export class InternalModuleSystem extends InternalModule {
     async create_static_templates(): Promise<void> {
         this.static_functions.set("clipboard", this.generate_clipboard());
         this.static_functions.set("prompt", this.generate_prompt());
+        this.static_functions.set("multiselect", this.generate_multiselect());
         this.static_functions.set("suggester", this.generate_suggester());
     }
 
@@ -57,6 +59,49 @@ export class InternalModuleSystem extends InternalModule {
                     throw error;
                 }
                 return null;
+            }
+        };
+    }
+
+    generate_multiselect(): <T>(
+        text_items: string[] | ((item: T) => string),
+        items: T[],
+        unrestricted: boolean,
+        throw_on_cancel: boolean,
+        placeholder: string,
+        title: string,
+        limit?: number
+    ) => Promise<T[]> {
+        return async <T>(
+            text_items: string[] | ((item: T) => string),
+            items: T[],
+            unrestricted = false,
+            throw_on_cancel = false,
+            placeholder = "",
+            title = "Multiselect",
+            limit?: number
+        ): Promise<T[]> => {
+            const multiselect = new MultiSelectModal(
+                text_items,
+                items,
+                unrestricted,
+                placeholder,
+                title,
+                limit
+            );
+            const promise = new Promise(
+                (
+                    resolve: (values: T[]) => void,
+                    reject: (reason?: TemplaterError) => void
+                ) => multiselect.openAndGetValues(resolve, reject)
+            );
+            try {
+                return await promise;
+            } catch (error) {
+                if (throw_on_cancel) {
+                    throw error;
+                }
+                return [];
             }
         };
     }
