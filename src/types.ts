@@ -1,7 +1,9 @@
 declare module "obsidian" {
-    interface dom {
-        appContainerEl: HTMLElement;
-    }
+    interface App {
+        dom: {
+          appContainerEl: HTMLElement;
+        }
+      }
 
     interface Vault {
         getConfig: (key: string) => string;
