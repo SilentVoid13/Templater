@@ -24,11 +24,13 @@ export class MultiSelectModal<T> extends Modal {
         private limit?: number
     ) {
         super(app);
+        this.initializeModal(items, title, placeholder);
+    }
 
-        // If `T` is of type `string`, then `unrestricted` is set to provided value
-        // else `unrestricted` is always false
-        if (items.length === 0 || typeof items[0] === "string") {
-            this.unrestricted = unrestricted;
+    initializeModal(items: T[], title: string, placeholder: string) {
+        // If item isn't of type string or items array is empty, then unrestricted is false
+        if (items.length === 0 || typeof items[0] !== "string") {
+            this.unrestricted = false;
         }
 
         // Map each item to its text representation
