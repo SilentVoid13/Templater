@@ -290,7 +290,7 @@ description = "If set to true, the input field will be a multiline textarea"
 [tp.system.functions.multiselect]
 name = "multiselect"
 description = "Spawns a multiselect prompt and returns the user's chosen items."
-definition = "tp.system.multiselect(text_items: string[] ⎮ ((item: T) => string), items: T[], unrestricted: boolean = false, throw_on_cancel: boolean = false, placeholder: string = \"\", title: string = \"Multiselect\", limit?: number = undefined)"
+definition = "tp.system.multiselect(text_items: string[] ⎮ ((item: T) => string), items: T[], unrestricted: boolean = false, throw_on_cancel: boolean = false, title: string = \"Multiselect\", limit?: number = undefined)"
 
 [tp.system.functions.multiselect.args.text_items]
 name = "text_items"
@@ -307,10 +307,6 @@ description = "A boolean which represents whether the values outside suggestions
 [tp.system.functions.multiselect.args.throw_on_cancel]
 name = "throw_on_cancel"
 description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
-
-[tp.system.functions.multiselect.args.placeholder]
-name = "placeholder"
-description = "Placeholder string of the prompt"
 
 [tp.system.functions.multiselect.args.title]
 name = "title"

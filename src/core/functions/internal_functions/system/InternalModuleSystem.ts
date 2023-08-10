@@ -68,7 +68,6 @@ export class InternalModuleSystem extends InternalModule {
         items: T[],
         unrestricted: boolean,
         throw_on_cancel: boolean,
-        placeholder: string,
         title: string,
         limit?: number
     ) => Promise<T[]> {
@@ -77,7 +76,6 @@ export class InternalModuleSystem extends InternalModule {
             items: T[],
             unrestricted = false,
             throw_on_cancel = false,
-            placeholder = "",
             title = "Multiselect",
             limit?: number
         ): Promise<T[]> => {
@@ -85,7 +83,6 @@ export class InternalModuleSystem extends InternalModule {
                 text_items,
                 items,
                 unrestricted,
-                placeholder,
                 title,
                 limit
             );

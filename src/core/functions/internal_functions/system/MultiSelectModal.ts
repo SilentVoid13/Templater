@@ -19,15 +19,14 @@ export class MultiSelectModal<T> extends Modal {
         private text_items: string[] | ((item: T) => string),
         private items: T[],
         private unrestricted: boolean,
-        placeholder: string,
         title: string,
         private limit?: number
     ) {
         super(app);
-        this.initializeModal(items, title, placeholder);
+        this.initializeModal(items, title);
     }
 
-    initializeModal(items: T[], title: string, placeholder: string) {
+    initializeModal(items: T[], title: string) {
         // If item isn't of type string or items array is empty, then unrestricted is false
         if (items.length === 0 || typeof items[0] !== "string") {
             this.unrestricted = false;
@@ -42,7 +41,6 @@ export class MultiSelectModal<T> extends Modal {
         this.titleEl.setText(title);
         this.chipsContainer = this.contentEl.createDiv();
         this.textInput = new TextComponent(this.contentEl);
-        this.textInput.setPlaceholder(placeholder);
         this.suggestionsContainer = this.contentEl.createDiv();
 
         // Add styles
