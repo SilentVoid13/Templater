@@ -256,16 +256,16 @@ export class Templater {
     }
 
     overwrite_active_file_commands(): void {
-        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
+        const active_editor = app.workspace.activeEditor;
+        if (!active_editor || !active_editor.file) {
             log_error(
                 new TemplaterError(
-                    "Active view is null, can't overwrite content"
+                    "Active editor is null, can't overwrite content"
                 )
             );
             return;
         }
-        this.overwrite_file_commands(active_view.file, true);
+        this.overwrite_file_commands(active_editor.file, true);
     }
 
     async overwrite_file_commands(
