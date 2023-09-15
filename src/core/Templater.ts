@@ -187,15 +187,16 @@ export class Templater {
 
     async append_template_to_active_file(template_file: TFile): Promise<void> {
         const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-        if (active_view === null) {
+        const active_editor = app.workspace.activeEditor;
+        if (!active_editor || !active_editor.file || !active_editor.editor) {
             log_error(
-                new TemplaterError("No active view, can't append templates.")
+                new TemplaterError("No active editor, can't append templates.")
             );
             return;
         }
         const running_config = this.create_running_config(
             template_file,
-            active_view.file,
+            active_editor.file,
             RunMode.AppendActiveFile
         );
         const output_content = await errorWrapper(
@@ -207,20 +208,21 @@ export class Templater {
             return;
         }
 
-        const editor = active_view.editor;
+        const editor = active_editor.editor;
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
 
         app.workspace.trigger("templater:template-appended", {
             view: active_view,
+            editor: active_editor,
             content: output_content,
             oldSelections,
             newSelections: doc.listSelections(),
         });
 
         await this.plugin.editor_handler.jump_to_next_cursor_location(
-            active_view.file,
+            active_editor.file,
             true
         );
     }
