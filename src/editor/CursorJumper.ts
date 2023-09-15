@@ -2,7 +2,6 @@ import {
     EditorPosition,
     EditorRangeOrCaret,
     EditorTransaction,
-    MarkdownView,
 } from "obsidian";
 import { escape_RegExp } from "utils/Utils";
 
@@ -10,30 +9,26 @@ export class CursorJumper {
     constructor() {}
 
     async jump_to_next_cursor_location(): Promise<void> {
-        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-        if (!active_view) {
+        const active_editor = app.workspace.activeEditor;
+        if (!active_editor || !active_editor.editor) {
             return;
         }
-        const active_file = active_view.file;
-        await active_view.save();
-
-        const content = await app.vault.read(active_file);
+        const content = active_editor.editor.getValue();
 
         const { new_content, positions } =
             this.replace_and_get_cursor_positions(content);
         if (positions) {
-            await app.vault.modify(active_file, new_content as string);
+            active_editor.editor.setValue(new_content as string);
             this.set_cursor_location(positions);
         }
 
         // enter insert mode for vim users
         if (app.vault.getConfig("vimMode")) {
-           // @ts-ignore
-           const cm = active_view.editor.cm.cm
-           // @ts-ignore
-           window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping")
+            // @ts-ignore
+            const cm = active_editor.editor.cm.cm;
+            // @ts-ignore
+            window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
         }
-
     }
 
     get_editor_position_from_index(
@@ -102,12 +97,12 @@ export class CursorJumper {
     }
 
     set_cursor_location(positions: EditorPosition[]): void {
-        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-        if (!active_view) {
+        const active_editor = app.workspace.activeEditor;
+        if (!active_editor || !active_editor.editor) {
             return;
         }
 
-        const editor = active_view.editor;
+        const editor = active_editor.editor;
 
         const selections: Array<EditorRangeOrCaret> = [];
         for (const pos of positions) {
