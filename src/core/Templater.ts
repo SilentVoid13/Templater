@@ -59,7 +59,7 @@ export class Templater {
         target_file: TFile,
         run_mode: RunMode
     ): RunningConfig {
-        const active_file = app.workspace.getActiveFile();
+        const active_file = app.workspace.activeEditor?.file;
 
         return {
             template_file: template_file,
@@ -103,7 +103,7 @@ export class Templater {
             const new_file_location = app.vault.getConfig("newFileLocation");
             switch (new_file_location) {
                 case "current": {
-                    const active_file = app.workspace.getActiveFile();
+                    const active_file = app.workspace.activeEditor?.file;
                     if (active_file) {
                         folder = active_file.parent;
                     }

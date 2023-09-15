@@ -58,7 +58,7 @@ export class Editor {
         if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
             return;
         }
-        if (file && app.workspace.getActiveFile() !== file) {
+        if (file && app.workspace.activeEditor?.file !== file) {
             return;
         }
         await this.cursor_jumper.jump_to_next_cursor_location();
