@@ -4,7 +4,6 @@ import { log_error } from "utils/Log";
 import {
     FileSystemAdapter,
     getAllTags,
-    MarkdownView,
     normalizePath,
     parseLinktext,
     Platform,
@@ -109,17 +108,17 @@ export class InternalModuleFile extends InternalModule {
 
     generate_cursor_append(): (content: string) => void {
         return (content: string): string | undefined => {
-            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-            if (active_view === null) {
+            const active_editor = app.workspace.activeEditor;
+            if (!active_editor || !active_editor.editor) {
                 log_error(
                     new TemplaterError(
-                        "No active view, can't append to cursor."
+                        "No active editor, can't append to cursor."
                     )
                 );
                 return;
             }
 
-            const editor = active_view.editor;
+            const editor = active_editor.editor;
             const doc = editor.getDoc();
             doc.replaceSelection(content);
             return "";
@@ -289,14 +288,14 @@ export class InternalModuleFile extends InternalModule {
 
     generate_selection(): () => string {
         return () => {
-            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-            if (active_view == null) {
+            const active_editor = app.workspace.activeEditor;
+            if (!active_editor || !active_editor.editor) {
                 throw new TemplaterError(
-                    "Active view is null, can't read selection."
+                    "Active editor is null, can't read selection."
                 );
             }
 
-            const editor = active_view.editor;
+            const editor = active_editor.editor;
             return editor.getSelection();
         };
     }

@@ -4,7 +4,6 @@ import {
     EditorSuggest,
     EditorSuggestContext,
     EditorSuggestTriggerInfo,
-    MarkdownView,
     TFile,
 } from "obsidian";
 
@@ -102,12 +101,12 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         value: TpSuggestDocumentation,
         _evt: MouseEvent | KeyboardEvent
     ): void {
-        const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-        if (!active_view) {
+        const active_editor = app.workspace.activeEditor;
+        if (!active_editor || !active_editor.editor) {
             // TODO: Error msg
             return;
         }
-        active_view.editor.replaceRange(
+        active_editor.editor.replaceRange(
             value.name,
             this.latest_trigger_info.start,
             this.latest_trigger_info.end
@@ -120,7 +119,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             // Not sure what's the cause of this bug.
             const cursor_pos = this.latest_trigger_info.end;
             cursor_pos.ch += value.name.length;
-            active_view.editor.setCursor(cursor_pos);
+            active_editor.editor.setCursor(cursor_pos);
         }
     }
 }
