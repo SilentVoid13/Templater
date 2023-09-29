@@ -37,19 +37,19 @@ name = "now"
 description = "Retrieves the date."
 definition = "tp.date.now(format: string = \"YYYY-MM-DD\", offset?: number⎮string, reference?: string, reference_format?: string)"
 
-[tp.date.functions.now.args.format]
+[[tp.date.functions.now.args]]
 name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
-[tp.date.functions.now.args.offset]
+[[tp.date.functions.now.args]]
 name = "offset"
 description = "Offset for the day, e.g. set this to `-7` to get last week's date. You can also specify the offset as a string using the ISO 8601 format"
 
-[tp.date.functions.now.args.reference]
+[[tp.date.functions.now.args]]
 name = "reference"
 description = "The date referential, e.g. set this to the note's title"
 
-[tp.date.functions.now.args.reference_format]
+[[tp.date.functions.now.args]]
 name = "reference_format"
 description = "The date reference format."
 
@@ -58,7 +58,7 @@ name = "tomorrow"
 description = "Retrieves tomorrow's date."
 definition = "tp.date.tomorrow(format: string = \"YYYY-MM-DD\")"
 
-[tp.date.functions.tomorrow.args.format]
+[[tp.date.functions.tomorrow.args]]
 name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
@@ -67,7 +67,7 @@ name = "yesterday"
 description = "Retrieves yesterday's date."
 definition = "tp.date.yesterday(format: string = \"YYYY-MM-DD\")"
 
-[tp.date.functions.yesterday.args.format]
+[[tp.date.functions.yesterday.args]]
 name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
@@ -76,19 +76,19 @@ name = "weekday"
 description = ""
 definition = "tp.date.weekday(format: string = \"YYYY-MM-DD\", weekday: number, reference?: string, reference_format?: string)"
 
-[tp.date.functions.weekday.args.format]
+[[tp.date.functions.weekday.args]]
 name = "format"
 description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
 
-[tp.date.functions.weekday.args.weekday]
+[[tp.date.functions.weekday.args]]
 name = "weekday"
 description = "Week day number. If the locale assigns Monday as the first day of the week, `0` will be Monday, `-7` will be last week's day."
 
-[tp.date.functions.weekday.args.reference]
+[[tp.date.functions.weekday.args]]
 name = "reference"
 description = "The date referential, e.g. set this to the note's title"
 
-[tp.date.functions.weekday.args.reference_format]
+[[tp.date.functions.weekday.args]]
 name = "reference_format"
 description = "The date reference format."
 
@@ -108,19 +108,19 @@ name = "create_new"
 description = "Creates a new file using a specified template or with a specified content."
 definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder)"
 
-[tp.file.functions.create_new.args.template]
+[[tp.file.functions.create_new.args]]
 name = "template"
 description = "Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with `tp.file.find_tfile(TEMPLATENAME)`"
 
-[tp.file.functions.create_new.args.filename]
+[[tp.file.functions.create_new.args]]
 name = "filename"
 description = "The filename of the new file, defaults to \"Untitled\"."
 
-[tp.file.functions.create_new.args.open_new]
+[[tp.file.functions.create_new.args]]
 name = "open_new"
 description = "Whether to open or not the newly created file. Warning: if you use this option, since commands are executed asynchronously, the file can be opened first and then other commands are appended to that new file and not the previous file."
 
-[tp.file.functions.create_new.args.folder]
+[[tp.file.functions.create_new.args]]
 name = "folder"
 description = "The folder to put the new file in, defaults to obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath(\"FOLDERNAME\")`"
 
@@ -130,7 +130,7 @@ name = "creation_date"
 description = "Retrieves the file's creation date."
 definition = "tp.file.creation_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
-[tp.file.functions.creation_date.args.format]
+[[tp.file.functions.creation_date.args]]
 name = "format"
 description = "Format for the date, refer to format reference"
 
@@ -143,7 +143,7 @@ You can navigate between the different tp.file.cursor using the configured hotke
 """
 definition = "tp.file.cursor(order?: number)"
 
-[tp.file.functions.cursor.args.order]
+[[tp.file.functions.cursor.args]]
 name = "order"
 description = """
 The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.
@@ -155,7 +155,7 @@ name = "cursor_append"
 description = "Appends some content after the active cursor in the file."
 definition = "tp.file.cursor_append(content: string)"
 
-[tp.file.functions.cursor_append.args.content]
+[[tp.file.functions.cursor_append.args]]
 name = "content"
 description = "The content to append after the active cursor"
 
@@ -164,7 +164,7 @@ name = "exists"
 description = "The filename of the file we want to check existence. The fullpath to the file, relative to the Vault and containing the extension, must be provided. e.g. MyFolder/SubFolder/MyFile."
 definition = "tp.file.exists(filename: string)"
 
-[tp.file.functions.exists.args.filename]
+[[tp.file.functions.exists.args]]
 name = "filename"
 description = "The filename of the file we want to check existence, e.g. MyFile."
 
@@ -173,7 +173,7 @@ name = "find_tfile"
 description = "Search for a file and returns its `TFile` instance"
 definition = "tp.file.find_tfile(filename: string)"
 
-[tp.file.functions.find_tfile.args.filename]
+[[tp.file.functions.find_tfile.args]]
 name = "filename"
 description = "The filename we want to search and resolve as a `TFile`"
 
@@ -182,7 +182,7 @@ name = "folder"
 description = "Retrieves the file's folder name."
 definition = "tp.file.folder(relative: boolean = false)"
 
-[tp.file.functions.folder.args.relative]
+[[tp.file.functions.folder.args]]
 name = "relative"
 description = "If set to true, appends the vault relative path to the folder name."
 
@@ -191,7 +191,7 @@ name = "include"
 description = "Includes the file's link content. Templates in the included content will be resolved."
 definition = "tp.file.include(include_link: string ⎮ TFile)"
 
-[tp.file.functions.include.args.include_link]
+[[tp.file.functions.include.args]]
 name = "include_link"
 description = "The link to the file to include, e.g. [[MyFile]], or a TFile object. Also supports sections or blocks inclusions, e.g. [[MyFile#Section1]]"
 
@@ -200,7 +200,7 @@ name = "last_modified_date"
 description = "Retrieves the file's last modification date."
 definition = "tp.file.last_modified_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
-[tp.file.functions.last_modified_date.args.format]
+[[tp.file.functions.last_modified_date.args]]
 name = "format"
 description = "Format for the date, refer to format reference."
 
@@ -209,7 +209,7 @@ name = "functions.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string, file_to_move?: TFile)"
 
-[tp.file.functions.move.args.new_path]
+[[tp.file.functions.move.args]]
 name = "new_path"
 description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. /Notes/MyNote"
 
@@ -218,7 +218,7 @@ name = "path"
 description = "Retrieves the file's absolute path on the system."
 definition = "tp.file.path(relative: boolean = false)"
 
-[tp.file.functions.path.args.relative]
+[[tp.file.functions.path.args]]
 name = "relative"
 description = "If set to true, only retrieves the vault's relative path."
 
@@ -227,7 +227,7 @@ name = "rename"
 description = "Renames the file (keeps the same file extension)."
 definition = "tp.file.rename(new_title: string)"
 
-[tp.file.functions.rename.args.new_title]
+[[tp.file.functions.rename.args]]
 name = "new_title"
 description = "The new file title."
 
@@ -271,19 +271,19 @@ name = "prompt"
 description = "Spawns a prompt modal and returns the user's input."
 definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)"
 
-[tp.system.functions.prompt.args.prompt_text]
+[[tp.system.functions.prompt.args]]
 name = "prompt_text"
 description = "Text placed above the input field"
 
-[tp.system.functions.prompt.args.default_value]
+[[tp.system.functions.prompt.args]]
 name = "default_value"
 description = "A default value for the input field"
 
-[tp.system.functions.prompt.args.throw_on_cancel]
+[[tp.system.functions.prompt.args]]
 name = "throw_on_cancel"
 description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
 
-[tp.system.functions.prompt.args.multiline]
+[[tp.system.functions.prompt.args]]
 name = "multiline"
 description = "If set to true, the input field will be a multiline textarea"
 
@@ -292,23 +292,23 @@ name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
 definition = "tp.system.suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\", limit?: number = undefined)"
 
-[tp.system.functions.suggester.args.text_items]
+[[tp.system.functions.suggester.args]]
 name = "text_items"
 description = "Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation."
 
-[tp.system.functions.suggester.args.items]
+[[tp.system.functions.suggester.args]]
 name = "items"
 description = "Array containing the values of each item in the correct order."
 
-[tp.system.functions.suggester.args.throw_on_cancel]
+[[tp.system.functions.suggester.args]]
 name = "throw_on_cancel"
 description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
 
-[tp.system.functions.suggester.args.placeholder]
+[[tp.system.functions.suggester.args]]
 name = "placeholder"
 description = "Placeholder string of the prompt"
 
-[tp.system.functions.suggester.args.limit]
+[[tp.system.functions.suggester.args]]
 name = "limit"
 description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)"
 
@@ -326,14 +326,14 @@ name = "random_picture"
 description = "Gets a random image from https://unsplash.com/"
 definition = "tp.web.random_picture(size?: string, query?: string, include_size?: boolean)"
 
-[tp.web.functions.random_picture.args.size]
+[[tp.web.functions.random_picture.args]]
 name = "size"
 description = "Image size in the format `<width>x<height>`"
 
-[tp.web.functions.random_picture.args.query]
+[[tp.web.functions.random_picture.args]]
 name = "query"
 description = "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`"
 
-[tp.web.functions.random_picture.args.include_dimensions]
+[[tp.web.functions.random_picture.args]]
 name = "include_size"
 description = "Optional argument to include the specified size in the image link markdown. Defaults to false"
