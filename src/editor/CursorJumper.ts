@@ -55,7 +55,7 @@ export class CursorJumper {
         let cursor_matches = [];
         let match;
         const cursor_regex = new RegExp(
-            "<%\\s*tp.file.cursor\\((?<order>[0-9]{0,2})\\)\\s*%>",
+            "<%\\s*tp.file.cursor\\((?<order>[0-9]*)\\)\\s*%>",
             "g"
         );
 
