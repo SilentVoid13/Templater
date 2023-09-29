@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/SilentVoid13/Templater/compare/1.16.0...1.16.1) (2023-09-29)
+
+
+### Bug Fixes
+
+* fixing merge conflict ([1e2fdda](https://github.com/SilentVoid13/Templater/commit/1e2fdda82f5335bb43b98534698a8c19fea1eba4))
+
 ## [1.16.0](https://github.com/SilentVoid13/Templater/compare/1.15.3...1.16.0) (2022-11-08)
 
 
