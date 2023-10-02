@@ -10,6 +10,7 @@ import {
 import {
     delay,
     generate_dynamic_command_regex,
+    get_active_file,
     resolve_tfile,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
@@ -60,7 +61,7 @@ export class Templater {
         target_file: TFile,
         run_mode: RunMode
     ): RunningConfig {
-        const active_file = app.workspace.activeEditor?.file;
+        const active_file = get_active_file(app);
 
         return {
             template_file: template_file,
@@ -104,7 +105,7 @@ export class Templater {
             const new_file_location = app.vault.getConfig("newFileLocation");
             switch (new_file_location) {
                 case "current": {
-                    const active_file = app.workspace.activeEditor?.file;
+                    const active_file = get_active_file(app);
                     if (active_file) {
                         folder = active_file.parent;
                     }

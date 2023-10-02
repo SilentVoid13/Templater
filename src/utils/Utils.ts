@@ -1,5 +1,12 @@
 import { TemplaterError } from "./Error";
-import { normalizePath, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
+import {
+    App,
+    normalizePath,
+    TAbstractFile,
+    TFile,
+    TFolder,
+    Vault,
+} from "obsidian";
 
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -73,4 +80,8 @@ export function arraymove<T>(
     const element = arr[fromIndex];
     arr[fromIndex] = arr[toIndex];
     arr[toIndex] = element;
+}
+
+export function get_active_file(app: App) {
+    return app.workspace.activeEditor?.file ?? app.workspace.getActiveFile();
 }
