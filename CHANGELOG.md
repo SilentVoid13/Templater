@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.2](https://github.com/SilentVoid13/Templater/compare/1.16.1...1.16.2) (2023-10-02)
+
+
+### Bug Fixes
+
+* active file is undefined in binary files ([27af7a3](https://github.com/SilentVoid13/Templater/commit/27af7a3f9c7a78a477f31f11c709137d2834e528)), closes [#1210](https://github.com/SilentVoid13/Templater/issues/1210)
+
 ### [1.16.1](https://github.com/SilentVoid13/Templater/compare/1.16.0...1.16.1) (2023-09-29)
 
 
