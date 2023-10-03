@@ -52,17 +52,24 @@ export class UserScriptFunctions implements IGenerateObject {
                 file_content +
                 "\n})"
         );
-        wrapping_fn(req, mod, exp);
+        try {
+            wrapping_fn(req, mod, exp);
+        } catch (err) {
+            throw new TemplaterError(
+                `Failed to load user script at "${file.path}".`,
+                err.message
+            );
+        }
         const user_function = exp["default"] || mod.exports;
 
         if (!user_function) {
             throw new TemplaterError(
-                `Failed to load user script ${file.path}. No exports detected.`
+                `Failed to load user script at "${file.path}". No exports detected.`
             );
         }
         if (!(user_function instanceof Function)) {
             throw new TemplaterError(
-                `Failed to load user script ${file.path}. Default export is not a function.`
+                `Failed to load user script at "${file.path}". Default export is not a function.`
             );
         }
         user_script_functions.set(
