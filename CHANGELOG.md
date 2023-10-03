@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.3](https://github.com/SilentVoid13/Templater/compare/1.16.2...1.16.3) (2023-10-03)
+
+
+### Bug Fixes
+
+* clearer error message when user scripts are preventing templates from executing ([0cb0202](https://github.com/SilentVoid13/Templater/commit/0cb02026f9b0c3b98f8caef9f3e5c72bcdf765c4)), closes [#1212](https://github.com/SilentVoid13/Templater/issues/1212)
+
 ### [1.16.2](https://github.com/SilentVoid13/Templater/compare/1.16.1...1.16.2) (2023-10-02)
 
 
