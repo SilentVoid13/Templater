@@ -45,6 +45,6 @@ Picked file: [[<% (await tp.system.suggester((item) => item.basename, app.vault.
 <%*
 const execution_value = await tp.system.suggester(["Yes", "No"], ["true", "false"])
 %>
-Are you using Execution Commands: <%*  tR + execution_value %>
+Are you using Execution Commands: <%*  tR += execution_value %>
 
 ```
