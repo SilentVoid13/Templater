@@ -205,7 +205,7 @@ name = "format"
 description = "Format for the date, refer to format reference."
 
 [tp.file.functions.move]
-name = "functions.move"
+name = "file.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string, file_to_move?: TFile)"
 
