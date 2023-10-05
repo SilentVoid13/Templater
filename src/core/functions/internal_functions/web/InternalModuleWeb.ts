@@ -37,7 +37,7 @@ export class InternalModuleWeb extends InternalModule {
 
                 const author = json.author;
                 const quote = json.content;
-                const new_content = `> ${quote}\n> — ${author}`;
+                const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
             } catch (error) {
