@@ -2,7 +2,7 @@
 
 ## Command Types
 
-[Templater](https://github.com/SilentVoid13/Templater) defines 3 types of opening tags, that defines 3 types of **commands**:
+[Templater](https://github.com/SilentVoid13/Templater) defines 2 types of opening tags, that defines 2 types of **commands**:
 
 - `<%`:  Interpolation command. It will output the result of the expression that's inside.
 - `<%*`: [JavaScript execution command](./execution-command.md). It will execute the JavaScript code that's inside. It does not output anything by default.
