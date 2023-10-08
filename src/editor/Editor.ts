@@ -40,7 +40,7 @@ export class Editor {
 
     async setup(): Promise<void> {
         await this.registerCodeMirrorMode();
-        this.plugin.registerEditorSuggest(new Autocomplete());
+        this.plugin.registerEditorSuggest(new Autocomplete(this.plugin.settings));
 
         // Selectively enable syntax highlighting via per-platform preferences.
         if (this.desktopShouldHighlight() || this.mobileShouldHighlight()) {
