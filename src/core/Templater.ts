@@ -399,12 +399,8 @@ export class Templater {
         }
 
         // TODO: find a better way to do this
-        // Currently, I have to wait for the daily note plugin to add the file content before replacing
-        // Not a problem with Calendar or after version 1.0 of Obsidian however since it creates the file with the existing content
-        // https://forum.obsidian.md/t/why-i-need-to-wait-a-random-amount-of-time-after-creating-a-file-with-teplater/66066/8
-        if (!requireApiVersion("1.0")) {
-            await delay(300);
-        }
+        // Currently, I have to wait for the note extractor plugin to add the file content before replacing
+        await delay(300);
 
         if (
             file.stat.size == 0 &&
