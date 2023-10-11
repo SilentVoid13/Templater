@@ -208,10 +208,15 @@ description = "Format for the date, refer to format reference."
 name = "functions.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string, file_to_move?: TFile)"
+example = "<% tp.file.move(\"/Notes/MyNote\") %>"
 
 [[tp.file.functions.move.args]]
 name = "new_path"
-description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. /Notes/MyNote"
+description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. `\"/Notes/MyNote\"`"
+
+[[tp.file.functions.move.args]]
+name = "file_to_move"
+description = "The file to move, defaults to the current file."
 
 [tp.file.functions.path]
 name = "path"
