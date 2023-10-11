@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.4](https://github.com/SilentVoid13/Templater/compare/1.16.3...1.16.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* add missing `=` in docs example for `tp.system.suggester` ([ea6d2c4](https://github.com/SilentVoid13/Templater/commit/ea6d2c4f26d596eef6480b696d1fbb51639e21a3)), closes [#995](https://github.com/SilentVoid13/Templater/issues/995)
+* define app.dom ([7557939](https://github.com/SilentVoid13/Templater/commit/755793979b49c2166da790eb34f339f41fd87fa4))
+* re-add delay on triggering templates on file creation to account for note extractor core plugin ([59603e5](https://github.com/SilentVoid13/Templater/commit/59603e5c535bb38f5cfdafff41e258974b1025eb)), closes [#1219](https://github.com/SilentVoid13/Templater/issues/1219)
+
 ### [1.16.3](https://github.com/SilentVoid13/Templater/compare/1.16.2...1.16.3) (2023-10-03)
 
 
