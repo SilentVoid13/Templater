@@ -178,10 +178,8 @@ textarea.templater-prompt-input:focus {
 }
 
 .cm-s-obsidian .cm-templater-command.cm-property,
-.cm-s-obsidian
-    .cm-templater-command.cm-property.cm-def
-    .cm-s-obsidian
-    .cm-templater-command.cm-attribute {
+.cm-s-obsidian .cm-templater-command.cm-property.cm-def
+.cm-s-obsidian .cm-templater-command.cm-attribute {
     color: var(--code-function, #98e342);
 }
 
