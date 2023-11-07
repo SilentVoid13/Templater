@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.5](https://github.com/SilentVoid13/Templater/compare/1.16.4...1.16.5) (2023-11-07)
+
+
+### Bug Fixes
+
+* place cursor after frontmatter ([a65bc08](https://github.com/SilentVoid13/Templater/commit/a65bc0890cdf684e1afa0a7ab40b1cc6d8d1d09c)), closes [#1231](https://github.com/SilentVoid13/Templater/issues/1231)
+
 ### [1.16.4](https://github.com/SilentVoid13/Templater/compare/1.16.3...1.16.4) (2023-10-11)
 
 
