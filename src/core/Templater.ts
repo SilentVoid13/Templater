@@ -233,6 +233,7 @@ export class Templater {
         template_file: TFile,
         file: TFile
     ): Promise<void> {
+        const active_editor = app.workspace.activeEditor;
         const running_config = this.create_running_config(
             template_file,
             file,
@@ -247,6 +248,10 @@ export class Templater {
             return;
         }
         await app.vault.modify(file, output_content);
+        if (active_editor && active_editor.editor) {
+            const editor = active_editor.editor;
+            editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
+        }
         app.workspace.trigger("templater:new-note-from-template", {
             file,
             content: output_content,
