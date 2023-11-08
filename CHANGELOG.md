@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/SilentVoid13/Templater/compare/1.16.5...1.17.0) (2023-11-08)
+
+
+### Features
+
+* jump to next cursor will only expand folds if cursor jump position is within fold bounds ([b1729e3](https://github.com/SilentVoid13/Templater/commit/b1729e335c9cca7902c16551fe779bfbf3dcfec7)), closes [#1222](https://github.com/SilentVoid13/Templater/issues/1222)
+* support tp.system.clipboard on mobile ([5c6744d](https://github.com/SilentVoid13/Templater/commit/5c6744d50b562ac76b3465decd18cdb348edf338)), closes [#589](https://github.com/SilentVoid13/Templater/issues/589)
+
 ### [1.16.5](https://github.com/SilentVoid13/Templater/compare/1.16.4...1.16.5) (2023-11-07)
 
 
