@@ -2,6 +2,7 @@ import {
     EditorPosition,
     EditorRangeOrCaret,
     EditorTransaction,
+    MarkdownView,
 } from "obsidian";
 import { escape_RegExp } from "utils/Utils";
 
@@ -18,7 +19,23 @@ export class CursorJumper {
         const { new_content, positions } =
             this.replace_and_get_cursor_positions(content);
         if (positions) {
+            const fold_info =
+                active_editor instanceof MarkdownView
+                    ? active_editor.currentMode.getFoldInfo()
+                    : null;
             active_editor.editor.setValue(new_content as string);
+            // only expand folds that have a cursor placed within it's bounds
+            if (fold_info && Array.isArray(fold_info.folds)) {
+                positions.forEach((position) => {
+                    fold_info.folds = fold_info.folds.filter(
+                        (fold) =>
+                            fold.from > position.line || fold.to < position.line
+                    );
+                });
+                if (active_editor instanceof MarkdownView) {
+                    active_editor.currentMode.applyFoldInfo(fold_info);
+                }
+            }
             this.set_cursor_location(positions);
         }
 

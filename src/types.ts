@@ -1,9 +1,9 @@
 declare module "obsidian" {
     interface App {
         dom: {
-          appContainerEl: HTMLElement;
-        }
-      }
+            appContainerEl: HTMLElement;
+        };
+    }
 
     interface Vault {
         getConfig: (key: string) => string;
@@ -20,6 +20,21 @@ declare module "obsidian" {
         fs: {
             uri: string;
         };
+    }
+
+    interface MarkdownSubView {
+        applyFoldInfo(foldInfo: FoldInfo): void;
+        getFoldInfo(): FoldInfo | null;
+    }
+
+    interface FoldInfo {
+        folds: FoldRange[];
+        lines: number;
+    }
+
+    interface FoldRange {
+        from: number;
+        to: number;
     }
 }
 
