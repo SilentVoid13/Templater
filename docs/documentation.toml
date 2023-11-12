@@ -265,7 +265,7 @@ description = "This module exposes hooks that allow you to execute code when a T
 
 [tp.hooks.functions.on_all_templates_executed]
 name = "on_all_templates_executed"
-description = """Hooks into when all actively running templates have finished executing. Most of the time this will be a single template, unless you are using `tp.file.includes` or `tp.file.create_new`.
+description = """Hooks into when all actively running templates have finished executing. Most of the time this will be a single template, unless you are using `tp.file.include` or `tp.file.create_new`.
 
 Multiple invokations of this method will have their callback functions run in parallel."""
 definition = "tp.hooks.on_all_templates_executed(callback_function: () => any)"
