@@ -15,6 +15,8 @@ export class InternalModuleSystem extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
+    async teardown(): Promise<void> {}
+
     generate_clipboard(): () => Promise<string | null> {
         return async () => {
             return await navigator.clipboard.readText();

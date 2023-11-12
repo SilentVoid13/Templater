@@ -9,6 +9,8 @@ export class InternalModuleConfig extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
+    async teardown(): Promise<void> {}
+
     async generate_object(
         config: RunningConfig
     ): Promise<Record<string, unknown>> {

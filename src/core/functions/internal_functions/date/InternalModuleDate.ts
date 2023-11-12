@@ -14,6 +14,8 @@ export class InternalModuleDate extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
+    async teardown(): Promise<void> {}
+
     generate_now(): (
         format?: string,
         offset?: number | string,

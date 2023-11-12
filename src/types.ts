@@ -9,17 +9,30 @@ declare module "obsidian" {
         getConfig: (key: string) => string;
         exists: (path: string) => Promise<boolean>;
     }
+
     interface FileManager {
         createNewMarkdownFile: (
             folder: TFolder | undefined,
             filename: string
         ) => Promise<TFile>;
     }
+
     interface DataAdapter {
         basePath: string;
         fs: {
             uri: string;
         };
+    }
+
+    interface Workspace {
+        on(
+            name: "templater:all-templates-executed",
+            callback: () => unknown
+        ): EventRef;
+    }
+
+    interface EventRef {
+        e: Events;
     }
 
     interface MarkdownSubView {

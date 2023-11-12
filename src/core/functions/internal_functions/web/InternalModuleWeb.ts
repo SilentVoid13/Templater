@@ -15,6 +15,8 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
+    async teardown(): Promise<void> {}
+
     async getRequest(url: string): Promise<Response> {
         try {
             const response = await fetch(url);

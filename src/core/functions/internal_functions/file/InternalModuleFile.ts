@@ -53,6 +53,8 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_functions.set("title", this.generate_title());
     }
 
+    async teardown(): Promise<void> {}
+
     async generate_content(): Promise<string> {
         return await app.vault.read(this.config.target_file);
     }

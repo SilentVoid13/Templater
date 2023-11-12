@@ -23,6 +23,10 @@ export class FunctionsGenerator implements IGenerateObject {
         await this.internal_functions.init();
     }
 
+    async teardown(): Promise<void> {
+        await this.internal_functions.teardown();
+    }
+
     additional_functions(): Record<string, unknown> {
         return {
             obsidian: obsidian_module,

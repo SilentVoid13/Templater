@@ -2,7 +2,6 @@ import {
     MarkdownPostProcessorContext,
     MarkdownView,
     normalizePath,
-    requireApiVersion,
     TAbstractFile,
     TFile,
     TFolder,
@@ -42,6 +41,7 @@ export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
     public current_functions_object: Record<string, unknown>;
+    private templater_task_counter: number;
 
     constructor(private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(this.plugin);
@@ -49,6 +49,7 @@ export class Templater {
     }
 
     async setup(): Promise<void> {
+        this.templater_task_counter = 0;
         await this.parser.init();
         await this.functions_generator.init();
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
@@ -94,12 +95,25 @@ export class Templater {
         return content;
     }
 
+    private start_templater_task() {
+        this.templater_task_counter++;
+    }
+
+    private async end_templater_task() {
+        this.templater_task_counter--;
+        if (this.templater_task_counter === 0) {
+            app.workspace.trigger("templater:all-templates-executed");
+            await this.functions_generator.teardown();
+        }
+    }
+
     async create_new_note_from_template(
         template: TFile | string,
         folder?: TFolder,
         filename?: string,
         open_new_note = true
     ): Promise<TFile | undefined> {
+        this.start_templater_task();
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
             const new_file_location = app.vault.getConfig("newFileLocation");
@@ -123,10 +137,19 @@ export class Templater {
         }
 
         // TODO: Change that, not stable atm
-        const created_note = await app.fileManager.createNewMarkdownFile(
-            folder,
-            filename ?? "Untitled"
+        const created_note = await errorWrapper(
+            async () =>
+                app.fileManager.createNewMarkdownFile(
+                    folder,
+                    filename ?? "Untitled"
+                ),
+            "Couldn't create markdown file."
         );
+
+        if (created_note == null) {
+            await this.end_templater_task();
+            return;
+        }
 
         let running_config: RunningConfig;
         let output_content: string;
@@ -154,6 +177,7 @@ export class Templater {
 
         if (output_content == null) {
             await app.vault.delete(created_note);
+            await this.end_templater_task();
             return;
         }
 
@@ -184,16 +208,19 @@ export class Templater {
             });
         }
 
+        await this.end_templater_task();
         return created_note;
     }
 
     async append_template_to_active_file(template_file: TFile): Promise<void> {
+        this.start_templater_task();
         const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         const active_editor = app.workspace.activeEditor;
         if (!active_editor || !active_editor.file || !active_editor.editor) {
             log_error(
                 new TemplaterError("No active editor, can't append templates.")
             );
+            await this.end_templater_task();
             return;
         }
         const running_config = this.create_running_config(
@@ -207,6 +234,7 @@ export class Templater {
         );
         // errorWrapper failed
         if (output_content == null) {
+            await this.end_templater_task();
             return;
         }
 
@@ -214,6 +242,7 @@ export class Templater {
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
+        await app.vault.modify(active_editor.file, editor.getValue());
 
         app.workspace.trigger("templater:template-appended", {
             view: active_view,
@@ -227,12 +256,14 @@ export class Templater {
             active_editor.file,
             true
         );
+        await this.end_templater_task();
     }
 
     async write_template_to_file(
         template_file: TFile,
         file: TFile
     ): Promise<void> {
+        this.start_templater_task();
         const active_editor = app.workspace.activeEditor;
         const running_config = this.create_running_config(
             template_file,
@@ -260,6 +291,7 @@ export class Templater {
             file,
             true
         );
+        await this.end_templater_task();
     }
 
     overwrite_active_file_commands(): void {
@@ -279,6 +311,7 @@ export class Templater {
         file: TFile,
         active_file = false
     ): Promise<void> {
+        this.start_templater_task();
         const running_config = this.create_running_config(
             file,
             file,
@@ -290,6 +323,7 @@ export class Templater {
         );
         // errorWrapper failed
         if (output_content == null) {
+            await this.end_templater_task();
             return;
         }
         await app.vault.modify(file, output_content);
@@ -301,6 +335,7 @@ export class Templater {
             file,
             true
         );
+        await this.end_templater_task();
     }
 
     async process_dynamic_templates(
@@ -451,6 +486,7 @@ export class Templater {
             if (!file) {
                 continue;
             }
+            this.start_templater_task();
             const running_config = this.create_running_config(
                 file,
                 file,
@@ -460,6 +496,7 @@ export class Templater {
                 async () => this.read_and_parse_template(running_config),
                 `Startup Template parsing error, aborting.`
             );
+            await this.end_templater_task();
         }
     }
 }
