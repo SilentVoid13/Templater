@@ -4,6 +4,7 @@ import { InternalModule } from "./InternalModule";
 import { InternalModuleDate } from "./date/InternalModuleDate";
 import { InternalModuleFile } from "./file/InternalModuleFile";
 import { InternalModuleWeb } from "./web/InternalModuleWeb";
+import { InternalModuleHooks } from "./hooks/InternalModuleHooks";
 import { InternalModuleFrontmatter } from "./frontmatter/InternalModuleFrontmatter";
 import { InternalModuleSystem } from "./system/InternalModuleSystem";
 import { RunningConfig } from "core/Templater";
@@ -17,6 +18,7 @@ export class InternalFunctions implements IGenerateObject {
         this.modules_array.push(new InternalModuleFile(this.plugin));
         this.modules_array.push(new InternalModuleWeb(this.plugin));
         this.modules_array.push(new InternalModuleFrontmatter(this.plugin));
+        this.modules_array.push(new InternalModuleHooks(this.plugin));
         this.modules_array.push(new InternalModuleSystem(this.plugin));
         this.modules_array.push(new InternalModuleConfig(this.plugin));
     }
@@ -24,6 +26,12 @@ export class InternalFunctions implements IGenerateObject {
     async init(): Promise<void> {
         for (const mod of this.modules_array) {
             await mod.init();
+        }
+    }
+
+    async teardown(): Promise<void> {
+        for (const mod of this.modules_array) {
+            await mod.teardown();
         }
     }
 

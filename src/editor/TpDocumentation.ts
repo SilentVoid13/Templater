@@ -8,12 +8,13 @@ const module_names = [
     "date",
     "file",
     "frontmatter",
+    "hooks",
     "obsidian",
     "system",
     "user",
     "web",
 ] as const;
-export type ModuleName = typeof module_names[number];
+export type ModuleName = (typeof module_names)[number];
 const module_names_checker: Set<string> = new Set(module_names);
 
 export function is_module_name(x: unknown): x is ModuleName {
