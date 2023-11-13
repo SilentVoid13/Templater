@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/SilentVoid13/Templater/compare/1.17.0...1.18.0) (2023-11-13)
+
+
+### Features
+
+* add hooks module ([e5d1aa8](https://github.com/SilentVoid13/Templater/commit/e5d1aa874fd67378fce238c1443763b8dd093434))
+
 ## [1.17.0](https://github.com/SilentVoid13/Templater/compare/1.16.5...1.17.0) (2023-11-08)
 
 
