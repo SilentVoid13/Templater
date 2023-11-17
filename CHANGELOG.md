@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.1](https://github.com/SilentVoid13/Templater/compare/1.18.0...1.18.1) (2023-11-17)
+
+
+### Bug Fixes
+
+* frontmatter updates not persisting when using app.vault.processFrontMatter outside of a tp.hooks module ([21aa13e](https://github.com/SilentVoid13/Templater/commit/21aa13eedc42eb966dd0810b2d551c14b5621901)), closes [#1245](https://github.com/SilentVoid13/Templater/issues/1245)
+
 ## [1.18.0](https://github.com/SilentVoid13/Templater/compare/1.17.0...1.18.0) (2023-11-13)
 
 
