@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.2](https://github.com/SilentVoid13/Templater/compare/1.18.1...1.18.2) (2023-12-01)
+
+
+### Bug Fixes
+
+* plugin not unloading properly when disabled ([3cd000a](https://github.com/SilentVoid13/Templater/commit/3cd000ad6c49e4b16316ee7ebb0d40666c726665))
+* properties from template not showing in note until editor change ([b349aff](https://github.com/SilentVoid13/Templater/commit/b349affc83193f69be81ac4f63e7568d326a0302)), closes [#1253](https://github.com/SilentVoid13/Templater/issues/1253)
+
 ### [1.18.1](https://github.com/SilentVoid13/Templater/compare/1.18.0...1.18.1) (2023-11-17)
 
 
