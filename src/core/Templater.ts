@@ -242,9 +242,6 @@ export class Templater {
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
-        if (active_view) {
-            await active_view.save();
-        }
 
         app.workspace.trigger("templater:template-appended", {
             view: active_view,
