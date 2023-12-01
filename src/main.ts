@@ -56,9 +56,9 @@ export default class TemplaterPlugin extends Plugin {
         });
     }
 
-    async unload(): Promise<void> {
+    onunload(): void {
         // Failsafe in case teardown doesn't happen immediately after template execution
-        await this.templater.functions_generator.teardown();
+        this.templater.functions_generator.teardown();
     }
 
     async save_settings(): Promise<void> {
