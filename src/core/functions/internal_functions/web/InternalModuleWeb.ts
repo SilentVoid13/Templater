@@ -52,9 +52,10 @@ export class InternalModuleWeb extends InternalModule {
     generate_random_picture(): (
         size: string,
         query?: string,
-        include_size?: boolean
+        include_size?: boolean,
+        url_only?: boolean
     ) => Promise<string> {
-        return async (size: string, query?: string, include_size = false) => {
+        return async (size: string, query?: string, include_size = false, url_only = false) => {
             try {
                 const response = await this.getRequest(
                     `https://templater-unsplash.fly.dev/${
@@ -69,6 +70,9 @@ export class InternalModuleWeb extends InternalModule {
                     } else {
                         url = url.concat(`&w=${size}`);
                     }
+                }
+                if(url_only) {
+                    return url;
                 }
                 if (include_size) {
                     return `![photo by ${response.photog} on Unsplash|${size}](${url})`;
