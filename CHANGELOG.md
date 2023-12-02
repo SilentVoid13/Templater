@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.3](https://github.com/SilentVoid13/Templater/compare/1.18.2...1.18.3) (2023-12-02)
+
+
+### Bug Fixes
+
+* do not stack trace using Error.captureStackTrace in environments that don't support it (iOS) ([de54d0c](https://github.com/SilentVoid13/Templater/commit/de54d0cbc30e63a4434d914160ffabe26d7f5474))
+
 ### [1.18.2](https://github.com/SilentVoid13/Templater/compare/1.18.1...1.18.2) (2023-12-01)
 
 
