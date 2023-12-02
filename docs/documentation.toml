@@ -271,12 +271,12 @@ example = """<% tp.file.cursor_append("Some text") %>"""
 
 [tp.file.functions.exists]
 name = "exists"
-description = """The filename of the file we want to check existence. The fullpath to the file, relative to the Vault and containing the extension, must be provided. e.g. `"MyFolder/SubFolder/MyFile"`."""
-definition = "tp.file.exists(filename: string)"
+description = """Check to see if a file exists by it's file path. The full path to the file, relative to the Vault and containing the extension, must be provided."""
+definition = "tp.file.exists(filepath: string)"
 
 [[tp.file.functions.exists.args]]
-name = "filename"
-description = "The filename of the file we want to check existence."
+name = "filepath"
+description = "The full file path of the file we want to check existence for."
 
 [[tp.file.functions.exists.examples]]
 name = "File existence"
