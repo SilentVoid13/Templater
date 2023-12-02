@@ -1,11 +1,9 @@
-import {UNSUPPORTED_MOBILE_TEMPLATE} from "utils/Constants";
-import {InternalModule} from "../InternalModule";
-import {Platform} from "obsidian";
-import {PromptModal} from "./PromptModal";
-import {SuggesterModal} from "./SuggesterModal";
-import {MultiSuggesterModal} from "./MultiSuggesterModal";
-import {TemplaterError} from "utils/Error";
-import {ModuleName} from "editor/TpDocumentation";
+import { InternalModule } from "../InternalModule";
+import { PromptModal } from "./PromptModal";
+import { SuggesterModal } from "./SuggesterModal";
+import { MultiSuggesterModal } from "./MultiSuggesterModal";
+import { TemplaterError } from "utils/Error";
+import { ModuleName } from "editor/TpDocumentation";
 
 export class InternalModuleSystem extends InternalModule {
     public name: ModuleName = "system";
@@ -22,10 +20,6 @@ export class InternalModuleSystem extends InternalModule {
 
     generate_clipboard(): () => Promise<string | null> {
         return async () => {
-            // TODO: Add mobile support
-            if (Platform.isMobileApp) {
-                return UNSUPPORTED_MOBILE_TEMPLATE;
-            }
             return await navigator.clipboard.readText();
         };
     }
