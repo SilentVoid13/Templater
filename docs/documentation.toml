@@ -17,7 +17,7 @@ definition = "tp.config.target_file"
 
 [tp.config.functions.run_mode]
 name = "run_mode"
-description = "The `RunMode`, representing the way Templater was launched (Create new from template, Append to active file, ...)"
+description = "The `RunMode`, representing the way Templater was launched (Create new from template, Append to active file, ...)."
 definition = "tp.config.run_mode"
 
 [tp.config.functions.active_file]
@@ -39,19 +39,51 @@ definition = "tp.date.now(format: string = \"YYYY-MM-DD\", offset?: number⎮str
 
 [[tp.date.functions.now.args]]
 name = "format"
-description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
+description = """The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
 
 [[tp.date.functions.now.args]]
 name = "offset"
-description = "Offset for the day, e.g. set this to `-7` to get last week's date. You can also specify the offset as a string using the ISO 8601 format"
+description = "Duration to offset the date from. If a number is provided, duration will be added to the date in days. You can also specify the offset as a string using the ISO 8601 format."
 
 [[tp.date.functions.now.args]]
 name = "reference"
-description = "The date referential, e.g. set this to the note's title"
+description = "The date referential, e.g. set this to the note's title."
 
 [[tp.date.functions.now.args]]
 name = "reference_format"
-description = "The date reference format."
+description = "The format for the reference date. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."
+
+[[tp.date.functions.now.examples]]
+name = "Date now"
+example = "<% tp.date.now() %>"
+
+[[tp.date.functions.now.examples]]
+name = "Date now with format"
+example = """<% tp.date.now("Do MMMM YYYY") %>"""
+
+[[tp.date.functions.now.examples]]
+name = "Last week"
+example = """<% tp.date.now("YYYY-MM-DD", -7) %>"""
+
+[[tp.date.functions.now.examples]]
+name = "Next week"
+example = """<% tp.date.now("YYYY-MM-DD", 7) %>"""
+
+[[tp.date.functions.now.examples]]
+name = "Last month"
+example = """<% tp.date.now("YYYY-MM-DD", "P-1M") %>"""
+
+[[tp.date.functions.now.examples]]
+name = "Next year"
+example = """<% tp.date.now("YYYY-MM-DD", "P1Y") %>"""
+
+[[tp.date.functions.now.examples]]
+name = "File's title date + 1 day (tomorrow)"
+example = """<% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>"""
+
+[[tp.date.functions.now.examples]]
+name = "File's title date - 1 day (yesterday)"
+example = """<% tp.date.now("YYYY-MM-DD", -1, tp.file.title, "YYYY-MM-DD") %>"""
 
 [tp.date.functions.tomorrow]
 name = "tomorrow"
@@ -60,7 +92,15 @@ definition = "tp.date.tomorrow(format: string = \"YYYY-MM-DD\")"
 
 [[tp.date.functions.tomorrow.args]]
 name = "format"
-description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
+description = """The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
+
+[[tp.date.functions.tomorrow.examples]]
+name = "Date tomorrow"
+example = "<% tp.date.tomorrow() %>"
+
+[[tp.date.functions.tomorrow.examples]]
+name = "Date tomorrow with format"
+example = """<% tp.date.tomorrow("Do MMMM YYYY") %>"""
 
 [tp.date.functions.yesterday]
 name = "yesterday"
@@ -69,7 +109,15 @@ definition = "tp.date.yesterday(format: string = \"YYYY-MM-DD\")"
 
 [[tp.date.functions.yesterday.args]]
 name = "format"
-description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
+description = """The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
+
+[[tp.date.functions.yesterday.examples]]
+name = "Date yesterday"
+example = "<% tp.date.yesterday() %>"
+
+[[tp.date.functions.yesterday.examples]]
+name = "Date yesterday with format"
+example = """<% tp.date.yesterday("Do MMMM YYYY") %>"""
 
 [tp.date.functions.weekday]
 name = "weekday"
@@ -78,7 +126,7 @@ definition = "tp.date.weekday(format: string = \"YYYY-MM-DD\", weekday: number, 
 
 [[tp.date.functions.weekday.args]]
 name = "format"
-description = "Format for the date, refer to [format reference](https://momentjs.com/docs/#/displaying/format/)"
+description = """The format for the date. Defaults to `"YYYY-MM-DD"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
 
 [[tp.date.functions.weekday.args]]
 name = "weekday"
@@ -86,12 +134,27 @@ description = "Week day number. If the locale assigns Monday as the first day of
 
 [[tp.date.functions.weekday.args]]
 name = "reference"
-description = "The date referential, e.g. set this to the note's title"
+description = "The date referential, e.g. set this to the note's title."
 
 [[tp.date.functions.weekday.args]]
 name = "reference_format"
-description = "The date reference format."
+description = "The format for the reference date. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."
 
+[[tp.date.functions.weekday.examples]]
+name = "This week's Monday"
+example = """<% tp.date.weekday("YYYY-MM-DD", 0) %>"""
+
+[[tp.date.functions.weekday.examples]]
+name = "Next Monday"
+example = """<% tp.date.weekday("YYYY-MM-DD", 7) %>"""
+
+[[tp.date.functions.weekday.examples]]
+name = "File's title Monday"
+example = """<% tp.date.weekday("YYYY-MM-DD", 0, tp.file.title, "YYYY-MM-DD") %>"""
+
+[[tp.date.functions.weekday.examples]]
+name = "File's title previous Monday"
+example = """<% tp.date.weekday("YYYY-MM-DD", -7, tp.file.title, "YYYY-MM-DD") %>"""
 
 
 [tp.file]
@@ -100,8 +163,12 @@ description = "This module contains every internal function related to files."
 
 [tp.file.functions.content]
 name = "content"
-description = "Retrieves the file's content"
+description = "The string contents of the file at the time that Templater was executed. Manipulating this string will *not* update the current file."
 definition = "tp.file.content"
+
+[[tp.file.functions.content.examples]]
+name = "Retrieve file content"
+example = "<% tp.file.content %>"
 
 [tp.file.functions.create_new]
 name = "create_new"
@@ -110,7 +177,7 @@ definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, 
 
 [[tp.file.functions.create_new.args]]
 name = "template"
-description = "Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with `tp.file.find_tfile(TEMPLATENAME)`"
+description = "Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with `tp.file.find_tfile(TEMPLATENAME)`."
 
 [[tp.file.functions.create_new.args]]
 name = "filename"
@@ -122,8 +189,31 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [[tp.file.functions.create_new.args]]
 name = "folder"
-description = "The folder to put the new file in, defaults to obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath(\"FOLDERNAME\")`"
+description = "The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath(\"FOLDERNAME\")`."
 
+[[tp.file.functions.create_new.examples]]
+name = "File creation"
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename") %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation with template"
+example = """<%* await tp.file.create_new(tp.file.find_tfile("MyTemplate"), "MyFilename") %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation and open created note"
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", true) %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation in current folder"
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, tp.file.folder()) %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation in specified folder"
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, app.vault.getAbstractFileByPath("MyFolder")) %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation and append link to current note"
+example = """[[<% (await tp.file.create_new("MyFileContent", "MyFilename")).basename %>]]"""
 
 [tp.file.functions.creation_date]
 name = "creation_date"
@@ -132,14 +222,22 @@ definition = "tp.file.creation_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
 [[tp.file.functions.creation_date.args]]
 name = "format"
-description = "Format for the date, refer to format reference"
+description = """The format for the date. Defaults to `"YYYY-MM-DD HH:mm"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
+
+[[tp.file.functions.creation_date.examples]]
+name = "File creation date"
+example = "<% tp.file.creation_date() %>"
+
+[[tp.file.functions.creation_date.examples]]
+name = "File creation date with format"
+example = """<% tp.file.creation_date("dddd Do MMMM YYYY HH:mm") %>"""
 
 [tp.file.functions.cursor]
 name = "cursor"
 description = """
 Sets the cursor to this location after the template has been inserted. 
 
-You can navigate between the different tp.file.cursor using the configured hotkey in obsidian settings.
+You can navigate between the different cursors using the configured hotkey in Obsidian settings.
 """
 definition = "tp.file.cursor(order?: number)"
 
@@ -150,6 +248,14 @@ The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and
 If you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.
 """
 
+[[tp.file.functions.cursor.examples]]
+name = "File cursor"
+example = "<% tp.file.cursor() %>"
+
+[[tp.file.functions.cursor.examples]]
+name = "File multi-cursor"
+example = "<% tp.file.cursor(1) %>Content<% tp.file.cursor(1) %>"
+
 [tp.file.functions.cursor_append]
 name = "cursor_append"
 description = "Appends some content after the active cursor in the file."
@@ -157,25 +263,41 @@ definition = "tp.file.cursor_append(content: string)"
 
 [[tp.file.functions.cursor_append.args]]
 name = "content"
-description = "The content to append after the active cursor"
+description = "The content to append after the active cursor."
+
+[[tp.file.functions.cursor_append.examples]]
+name = "File cursor append"
+example = """<% tp.file.cursor_append("Some text") %>"""
 
 [tp.file.functions.exists]
 name = "exists"
-description = "The filename of the file we want to check existence. The fullpath to the file, relative to the Vault and containing the extension, must be provided. e.g. MyFolder/SubFolder/MyFile."
+description = """The filename of the file we want to check existence. The fullpath to the file, relative to the Vault and containing the extension, must be provided. e.g. `"MyFolder/SubFolder/MyFile"`."""
 definition = "tp.file.exists(filename: string)"
 
 [[tp.file.functions.exists.args]]
 name = "filename"
-description = "The filename of the file we want to check existence, e.g. MyFile."
+description = "The filename of the file we want to check existence."
+
+[[tp.file.functions.exists.examples]]
+name = "File existence"
+example = """<% await tp.file.exists("MyFolder/MyFile.md") %>"""
+
+[[tp.file.functions.exists.examples]]
+name = "File existence of current file"
+example = """<% await tp.file.exists(tp.file.folder(true) + "/" + tp.file.title + ".md") %>"""
 
 [tp.file.functions.find_tfile]
 name = "find_tfile"
-description = "Search for a file and returns its `TFile` instance"
+description = "Search for a file and returns its `TFile` instance."
 definition = "tp.file.find_tfile(filename: string)"
 
 [[tp.file.functions.find_tfile.args]]
 name = "filename"
-description = "The filename we want to search and resolve as a `TFile`"
+description = "The filename we want to search and resolve as a `TFile`."
+
+[[tp.file.functions.find_tfile.examples]]
+name = "File find TFile"
+example = """<% tp.file.find_tfile("MyFile").basename %>"""
 
 [tp.file.functions.folder]
 name = "folder"
@@ -184,7 +306,15 @@ definition = "tp.file.folder(relative: boolean = false)"
 
 [[tp.file.functions.folder.args]]
 name = "relative"
-description = "If set to true, appends the vault relative path to the folder name."
+description = "If set to `true`, appends the vault relative path to the folder name. If `false`, only retrieves name of folder. Defaults to `false`."
+
+[[tp.file.functions.folder.examples]]
+name = "File folder (Folder)"
+example = "<% tp.file.folder() %>"
+
+[[tp.file.functions.folder.examples]]
+name = "File folder with relative path (Path/To/Folder)"
+example = "<% tp.file.folder(true) %>"
 
 [tp.file.functions.include]
 name = "include"
@@ -193,7 +323,23 @@ definition = "tp.file.include(include_link: string ⎮ TFile)"
 
 [[tp.file.functions.include.args]]
 name = "include_link"
-description = "The link to the file to include, e.g. [[MyFile]], or a TFile object. Also supports sections or blocks inclusions, e.g. [[MyFile#Section1]]"
+description = """The link to the file to include, e.g. `"[[MyFile]]"`, or a TFile object. Also supports sections or blocks inclusions."""
+
+[[tp.file.functions.include.examples]]
+name = "File include"
+example = """<% tp.file.include("[[Template1]]") %>"""
+
+[[tp.file.functions.include.examples]]
+name = "File include TFile"
+example = """<% tp.file.include(tp.file.find_tfile("MyFile")) %>"""
+
+[[tp.file.functions.include.examples]]
+name = "File include section"
+example = """<% tp.file.include("[[MyFile#Section1]]") %>"""
+
+[[tp.file.functions.include.examples]]
+name = "File include block"
+example = """<% tp.file.include("[[MyFile#^block1]]") %>"""
 
 [tp.file.functions.last_modified_date]
 name = "last_modified_date"
@@ -202,21 +348,36 @@ definition = "tp.file.last_modified_date(format: string = \"YYYY-MM-DD HH:mm\")"
 
 [[tp.file.functions.last_modified_date.args]]
 name = "format"
-description = "Format for the date, refer to format reference."
+description = """The format for the date. Defaults to `"YYYY-MM-DD HH:mm"`. Refer to [format reference](https://momentjs.com/docs/#/displaying/format/)."""
+
+[[tp.file.functions.last_modified_date.examples]]
+name = "File last modified date"
+example = "<% tp.file.last_modified_date() %>"
+
+[[tp.file.functions.last_modified_date.examples]]
+name = "File last modified date with format"
+example = """<% tp.file.last_modified_date("dddd Do MMMM YYYY HH:mm") %>"""
 
 [tp.file.functions.move]
 name = "functions.move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string, file_to_move?: TFile)"
-example = "<% tp.file.move(\"/Notes/MyNote\") %>"
 
 [[tp.file.functions.move.args]]
 name = "new_path"
-description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. `\"/Notes/MyNote\"`"
+description = "The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. `\"/Notes/MyNote\"`."
 
 [[tp.file.functions.move.args]]
 name = "file_to_move"
 description = "The file to move, defaults to the current file."
+
+[[tp.file.functions.move.examples]]
+name = "File move"
+example = """<% await tp.file.move("/A/B/" + tp.file.title) %>"""
+
+[[tp.file.functions.move.examples]]
+name = "File move and rename"
+example = """<% await tp.file.move("/A/B/NewTitle") %>"""
 
 [tp.file.functions.path]
 name = "path"
@@ -225,7 +386,15 @@ definition = "tp.file.path(relative: boolean = false)"
 
 [[tp.file.functions.path.args]]
 name = "relative"
-description = "If set to true, only retrieves the vault's relative path."
+description = "If set to `true`, only retrieves the vault's relative path."
+
+[[tp.file.functions.path.examples]]
+name = "File path"
+example = "<% tp.file.path() %>"
+
+[[tp.file.functions.path.examples]]
+name = "File relative path (relative to vault root)"
+example = "<% tp.file.path(true) %>"
 
 [tp.file.functions.rename]
 name = "rename"
@@ -236,20 +405,44 @@ definition = "tp.file.rename(new_title: string)"
 name = "new_title"
 description = "The new file title."
 
+[[tp.file.functions.rename.examples]]
+name = "File rename"
+example = """<% await tp.file.rename("MyNewName") %>"""
+
+[[tp.file.functions.rename.examples]]
+name = "File append a 2 to the file name"
+example = """<% await tp.file.rename(tp.file.title + "2") %>"""
+
 [tp.file.functions.selection]
 name = "selection"
 description = "Retrieves the active file's text selection."
 definition = "tp.file.selection()"
 
+[[tp.file.functions.selection.examples]]
+name = "File selection"
+example = "<% tp.file.selection() %>"
+
 [tp.file.functions.tags]
 name = "tags"
-description = "Retrieves the file's tags (array of string)"
+description = "Retrieves the file's tags (array of string)."
 definition = "tp.file.tags"
+
+[[tp.file.functions.tags.examples]]
+name = "File tags"
+example = "<% tp.file.tags %>"
 
 [tp.file.functions.title]
 name = "title"
 definition = "tp.file.title"
 description = "Retrieves the file's title."
+
+[[tp.file.functions.title.examples]]
+name = "File title"
+example = "<% tp.file.title %>"
+
+[[tp.file.functions.title.examples]]
+name = "Strip the Zettelkasten ID of title (if space separated)"
+example = """<% tp.file.title.split(" ")[1] %>"""
 
 
 
@@ -278,7 +471,7 @@ description = "Callback function that will be executed when all actively running
 
 [tp.obsidian]
 name = "obsidian"
-description = "This module exposes all the functions and classes from the obsidian API."
+description = "This module exposes all the functions and classes from the Obsidian API."
 
 
 [tp.system]
@@ -287,8 +480,12 @@ description = "This module contains system related functions."
 
 [tp.system.functions.clipboard]
 name = "clipboard"
-description = "Retrieves the clipboard's content"
+description = "Retrieves the clipboard's content."
 definition = "tp.system.clipboard()"
+
+[[tp.system.functions.clipboard.examples]]
+name = "Clipboard"
+example = "<% tp.system.clipboard() %>"
 
 [tp.system.functions.prompt]
 name = "prompt"
@@ -297,19 +494,27 @@ definition = "tp.system.prompt(prompt_text?: string, default_value?: string, thr
 
 [[tp.system.functions.prompt.args]]
 name = "prompt_text"
-description = "Text placed above the input field"
+description = "Text placed above the input field."
 
 [[tp.system.functions.prompt.args]]
 name = "default_value"
-description = "A default value for the input field"
+description = "A default value for the input field."
 
 [[tp.system.functions.prompt.args]]
 name = "throw_on_cancel"
-description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
+description = "Throws an error if the prompt is canceled, instead of returning a `null` value."
 
 [[tp.system.functions.prompt.args]]
 name = "multiline"
-description = "If set to true, the input field will be a multiline textarea"
+description = "If set to `true`, the input field will be a multiline textarea. Defaults to `false`."
+
+[[tp.system.functions.prompt.examples]]
+name = "Prompt"
+example = """<% tp.system.prompt("Please enter a value") %>"""
+
+[[tp.system.functions.prompt.examples]]
+name = "Prompt with default value"
+example = """<% tp.system.prompt("What is your mood today?", "happy") %>"""
 
 [tp.system.functions.suggester]
 name = "suggester"
@@ -326,15 +531,31 @@ description = "Array containing the values of each item in the correct order."
 
 [[tp.system.functions.suggester.args]]
 name = "throw_on_cancel"
-description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
+description = "Throws an error if the prompt is canceled, instead of returning a `null` value."
 
 [[tp.system.functions.suggester.args]]
 name = "placeholder"
-description = "Placeholder string of the prompt"
+description = "Placeholder string of the prompt."
 
 [[tp.system.functions.suggester.args]]
 name = "limit"
-description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)"
+description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)."
+
+[[tp.system.functions.suggester.examples]]
+name = "Suggester"
+example = """<% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>"""
+
+[[tp.system.functions.suggester.examples]]
+name = "Suggester with mapping function (same as above example)"
+example = """<% tp.system.suggester((item) => item, ["Happy", "Sad", "Confused"]) %>"""
+
+[[tp.system.functions.suggester.examples]]
+name = "Suggester for files"
+example = """[[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]"""
+
+[[tp.system.functions.suggester.examples]]
+name = "Suggester for tags"
+example = """<% tp.system.suggester(item => item, Object.keys(app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
 
 [tp.web]
 name = "web"
@@ -342,22 +563,40 @@ description = "This modules contains every internal function related to the web 
 
 [tp.web.functions.daily_quote]
 name = "daily_quote"
-description = "Retrieves and parses the daily quote from the API https://api.quotable.io"
+description = "Retrieves and parses the daily quote from the API `https://api.quotable.io` as a callout."
 definition = "tp.web.daily_quote()"
+
+[[tp.web.functions.daily_quote.examples]]
+name = "Daily quote"
+example = "<% tp.web.daily_quote() %>"
 
 [tp.web.functions.random_picture]
 name = "random_picture"
-description = "Gets a random image from https://unsplash.com/"
+description = "Gets a random image from `https://unsplash.com/`."
 definition = "tp.web.random_picture(size?: string, query?: string, include_size?: boolean)"
 
 [[tp.web.functions.random_picture.args]]
 name = "size"
-description = "Image size in the format `<width>x<height>`"
+description = "Image size in the format `<width>x<height>`."
 
 [[tp.web.functions.random_picture.args]]
 name = "query"
-description = "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma `,`"
+description = "Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma."
 
 [[tp.web.functions.random_picture.args]]
 name = "include_size"
-description = "Optional argument to include the specified size in the image link markdown. Defaults to false"
+description = "Optional argument to include the specified size in the image link markdown. Defaults to false."
+
+[[tp.web.functions.random_picture.examples]]
+name = "Random picture"
+example = "<% tp.web.random_picture() %>"
+
+[[tp.web.functions.random_picture.examples]]
+name = "Random picture with size"
+example = """<% tp.web.random_picture("200x200") %>"""
+
+[[tp.web.functions.random_picture.examples]]
+name = "Random picture with size and query"
+example = """<% tp.web.random_picture("200x200", "landscape,water") %>"""
+
+
