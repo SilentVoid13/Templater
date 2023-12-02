@@ -1,11 +1,11 @@
-import { UNSUPPORTED_MOBILE_TEMPLATE } from "utils/Constants";
-import { InternalModule } from "../InternalModule";
-import { Platform } from "obsidian";
-import { PromptModal } from "./PromptModal";
-import { SuggesterModal } from "./SuggesterModal";
-import { MultiSelectModal } from "./MultiSelectModal";
-import { TemplaterError } from "utils/Error";
-import { ModuleName } from "editor/TpDocumentation";
+import {UNSUPPORTED_MOBILE_TEMPLATE} from "utils/Constants";
+import {InternalModule} from "../InternalModule";
+import {Platform} from "obsidian";
+import {PromptModal} from "./PromptModal";
+import {SuggesterModal} from "./SuggesterModal";
+import {MultiSuggesterModal} from "./MultiSuggesterModal";
+import {TemplaterError} from "utils/Error";
+import {ModuleName} from "editor/TpDocumentation";
 
 export class InternalModuleSystem extends InternalModule {
     public name: ModuleName = "system";
@@ -13,11 +13,12 @@ export class InternalModuleSystem extends InternalModule {
     async create_static_templates(): Promise<void> {
         this.static_functions.set("clipboard", this.generate_clipboard());
         this.static_functions.set("prompt", this.generate_prompt());
-        this.static_functions.set("multiselect", this.generate_multiselect());
         this.static_functions.set("suggester", this.generate_suggester());
+        this.static_functions.set("multi_suggester", this.generate_multi_suggester());
     }
 
-    async create_dynamic_templates(): Promise<void> {}
+    async create_dynamic_templates(): Promise<void> {
+    }
 
     generate_clipboard(): () => Promise<string | null> {
         return async () => {
@@ -63,7 +64,7 @@ export class InternalModuleSystem extends InternalModule {
         };
     }
 
-    generate_multiselect(): <T>(
+    generate_multi_suggester(): <T>(
         text_items: string[] | ((item: T) => string),
         items: T[],
         unrestricted: boolean,
@@ -76,10 +77,10 @@ export class InternalModuleSystem extends InternalModule {
             items: T[],
             unrestricted = false,
             throw_on_cancel = false,
-            title = "Multiselect",
+            title = "Multi Suggester",
             limit?: number
         ): Promise<T[]> => {
-            const multiselect = new MultiSelectModal(
+            const multi_suggester = new MultiSuggesterModal(
                 text_items,
                 items,
                 unrestricted,
@@ -90,7 +91,7 @@ export class InternalModuleSystem extends InternalModule {
                 (
                     resolve: (values: T[]) => void,
                     reject: (reason?: TemplaterError) => void
-                ) => multiselect.openAndGetValues(resolve, reject)
+                ) => multi_suggester.openAndGetValues(resolve, reject)
             );
             try {
                 return await promise;

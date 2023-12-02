@@ -1,7 +1,7 @@
-import { Modal, TextComponent, fuzzySearch, prepareQuery } from "obsidian";
-import { TemplaterError } from "utils/Error";
+import {Modal, TextComponent, fuzzySearch, prepareQuery} from "obsidian";
+import {TemplaterError} from "utils/Error";
 
-export class MultiSelectModal<T> extends Modal {
+export class MultiSuggesterModal<T> extends Modal {
     private resolve: (values: T[]) => void;
     private reject: (reason?: TemplaterError) => void;
     private selectedItems = new Set<string>();
@@ -108,7 +108,7 @@ export class MultiSelectModal<T> extends Modal {
     }
 
     addChip(value: string) {
-        const chip = this.chipsContainer.createSpan({ text: value });
+        const chip = this.chipsContainer.createSpan({text: value});
         chip.addClass("templater-multiselect-chip");
         chip.onClickEvent(() => {
             this.selectedItems.delete(chip.textContent!);
@@ -153,7 +153,7 @@ export class MultiSelectModal<T> extends Modal {
     }
 
     renderSuggestion(value: string) {
-        const suggestion = this.suggestionsContainer.createDiv({ text: value });
+        const suggestion = this.suggestionsContainer.createDiv({text: value});
         suggestion.addClass("suggestion-item");
         suggestion.onClickEvent(() => {
             this.addChip(value);
