@@ -11,7 +11,6 @@ import {
 } from "obsidian";
 
 export default class EventHandler {
-    private syntax_highlighting_event: EventRef;
     private trigger_on_file_creation_event: EventRef | undefined;
 
     constructor(
@@ -21,7 +20,7 @@ export default class EventHandler {
     ) {}
 
     setup(): void {
-        app.workspace.onLayoutReady(() => {
+        this.plugin.app.workspace.onLayoutReady(() => {
             this.update_trigger_file_on_creation();
         });
         this.update_syntax_highlighting();
@@ -35,29 +34,15 @@ export default class EventHandler {
             this.plugin.editor_handler.mobileShouldHighlight();
 
         if (desktopShouldHighlight || mobileShouldHighlight) {
-            this.syntax_highlighting_event = app.workspace.on(
-                "codemirror",
-                (cm) => {
-                    cm.setOption("mode", "templater");
-                }
-            );
-            app.workspace.iterateCodeMirrors((cm) => {
-                cm.setOption("mode", "templater");
-            });
-            this.plugin.registerEvent(this.syntax_highlighting_event);
+            this.plugin.editor_handler.enable_highlighter();
         } else {
-            if (this.syntax_highlighting_event) {
-                app.vault.offref(this.syntax_highlighting_event);
-            }
-            app.workspace.iterateCodeMirrors((cm) => {
-                cm.setOption("mode", "hypermd");
-            });
+            this.plugin.editor_handler.disable_highlighter();
         }
     }
 
     update_trigger_file_on_creation(): void {
         if (this.settings.trigger_on_file_creation) {
-            this.trigger_on_file_creation_event = app.vault.on(
+            this.trigger_on_file_creation_event = this.plugin.app.vault.on(
                 "create",
                 (file: TAbstractFile) =>
                     Templater.on_file_creation(this.templater, file)
@@ -65,7 +50,7 @@ export default class EventHandler {
             this.plugin.registerEvent(this.trigger_on_file_creation_event);
         } else {
             if (this.trigger_on_file_creation_event) {
-                app.vault.offref(this.trigger_on_file_creation_event);
+                this.plugin.app.vault.offref(this.trigger_on_file_creation_event);
                 this.trigger_on_file_creation_event = undefined;
             }
         }
@@ -73,7 +58,7 @@ export default class EventHandler {
 
     update_file_menu(): void {
         this.plugin.registerEvent(
-            app.workspace.on("file-menu", (menu: Menu, file: TFile) => {
+            this.plugin.app.workspace.on("file-menu", (menu: Menu, file: TFile) => {
                 if (file instanceof TFolder) {
                     menu.addItem((item: MenuItem) => {
                         item.setTitle("Create new note from template")
