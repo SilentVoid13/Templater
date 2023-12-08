@@ -3,7 +3,7 @@
     "name": "Templater",
     "version": "1.18.3",
     "description": "Create and use templates",
-    "minAppVersion": "0.11.13",
+    "minAppVersion": "1.5.0",
     "author": "SilentVoid",
     "authorUrl": "https://github.com/SilentVoid13",
     "helpUrl": "https://silentvoid13.github.io/Templater/",
