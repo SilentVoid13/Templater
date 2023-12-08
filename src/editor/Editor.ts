@@ -10,6 +10,7 @@ import { Autocomplete } from "editor/Autocomplete";
 import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
 import { StreamLanguage } from "@codemirror/language";
+import { Prec } from "@codemirror/state";
 //import "editor/mode/show-hint";
 
 const TP_CMD_TOKEN_CLASS = "templater-command";
@@ -44,10 +45,8 @@ export class Editor {
 
         // Selectively enable syntax highlighting via per-platform preferences.
         if (this.desktopShouldHighlight() || this.mobileShouldHighlight()) {
-            this.plugin.registerEditorExtension(
-                StreamLanguage.define(
-                    window.CodeMirror.getMode({}, { name: "templater" }) as any
-                )
+            this.plugin.registerEditorExtension(Prec.high(
+                StreamLanguage.define(window.CodeMirror.getMode({}, "templater") as any))
             );
         }
     }
@@ -102,7 +101,7 @@ export class Editor {
         window.CodeMirror.defineMode("templater", function (config) {
             const templaterOverlay = {
                 startState: function () {
-                    const js_state = window.CodeMirror.startState(js_mode);
+                    const js_state = window.CodeMirror.startState(js_mode) as Object;
                     return {
                         ...js_state,
                         inCommand: false,
@@ -111,7 +110,7 @@ export class Editor {
                     };
                 },
                 copyState: function (state: any) {
-                    const js_state = window.CodeMirror.startState(js_mode);
+                    const js_state = window.CodeMirror.startState(js_mode) as Object;
                     const new_state = {
                         ...js_state,
                         inCommand: state.inCommand,
