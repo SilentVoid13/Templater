@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/SilentVoid13/Templater/compare/1.18.3...2.0.0) (2023-12-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Syntax highlighting will no longer work on older versions of Obsidian.
+
+### Bug Fixes
+
+* Fix syntax highlighting in Obsidian 1.5.x ([aaa2cc1](https://github.com/SilentVoid13/Templater/commit/aaa2cc109ddce6e127aeee787a1426799127fd3a))
+
 ### [1.18.3](https://github.com/SilentVoid13/Templater/compare/1.18.2...1.18.3) (2023-12-02)
 
 
