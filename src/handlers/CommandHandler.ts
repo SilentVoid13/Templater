@@ -87,6 +87,7 @@ export class CommandHandler {
             this.plugin.addCommand({
                 id: new_template,
                 name: `Insert ${new_template}`,
+                icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
                         () => resolve_tfile(new_template),
