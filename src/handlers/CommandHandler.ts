@@ -9,6 +9,7 @@ export class CommandHandler {
         this.plugin.addCommand({
             id: "insert-templater",
             name: "Open Insert Template modal",
+            icon: "templater-icon",
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -23,6 +24,7 @@ export class CommandHandler {
         this.plugin.addCommand({
             id: "replace-in-file-templater",
             name: "Replace templates in the active file",
+            icon: "templater-icon",
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -37,6 +39,7 @@ export class CommandHandler {
         this.plugin.addCommand({
             id: "jump-to-next-cursor-location",
             name: "Jump to next cursor location",
+            icon: "text-cursor",
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -51,6 +54,7 @@ export class CommandHandler {
         this.plugin.addCommand({
             id: "create-new-note-from-template",
             name: "Create new note from template",
+            icon: "templater-icon",
             hotkeys: [
                 {
                     modifiers: ["Alt"],
