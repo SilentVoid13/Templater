@@ -65,6 +65,9 @@ export class PromptModal extends Modal {
     }
 
     private enterCallback(evt: KeyboardEvent) {
+        // Fix for Korean inputs https://github.com/SilentVoid13/Templater/issues/1284
+        if (evt.isComposing || evt.keyCode === 229) return;
+
         if (this.multi_line) {
             if (Platform.isDesktop) {
                 // eslint-disable-next-line no-empty
