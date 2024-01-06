@@ -359,7 +359,7 @@ name = "File last modified date with format"
 example = """<% tp.file.last_modified_date("dddd Do MMMM YYYY HH:mm") %>"""
 
 [tp.file.functions.move]
-name = "functions.move"
+name = "move"
 description = "Moves the file to the desired vault location."
 definition = "tp.file.move(new_path: string, file_to_move?: TFile)"
 
