@@ -12,6 +12,8 @@ This is useful for internal functions like `tp.file.last_modified_date` for exam
 Last modified date: <%+ tp.file.last_modified_date() %>
 ```
 
+**Note**: Dynamic commands have known issues, and will likely not be maintained going forward (see [this issue](https://github.com/SilentVoid13/Templater/issues/913) for more details). In most cases the [Dataview](https://github.com/blacksmithgu/obsidian-dataview) plugin is the suggested alternative.
+
 ## Refresh problems
 
 One "downside" of the preview mode is that it puts the rendered note in cache, to speed things up.
