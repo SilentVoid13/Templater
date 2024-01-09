@@ -516,6 +516,10 @@ example = """<% tp.system.prompt("Please enter a value") %>"""
 name = "Prompt with default value"
 example = """<% tp.system.prompt("What is your mood today?", "happy") %>"""
 
+[[tp.system.functions.prompt.examples]]
+name = "Multiline prompt"
+example = """<% tp.system.prompt("What is your mood today?", null, false, true) %>"""
+
 [tp.system.functions.suggester]
 name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
