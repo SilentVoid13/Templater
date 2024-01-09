@@ -156,6 +156,18 @@ example = """<% tp.date.weekday("YYYY-MM-DD", 0, tp.file.title, "YYYY-MM-DD") %>
 name = "File's title previous Monday"
 example = """<% tp.date.weekday("YYYY-MM-DD", -7, tp.file.title, "YYYY-MM-DD") %>"""
 
+[[tp.date.momentjs.examples]]
+name = "Date now"
+example = """<% moment(tp.file.title, "YYYY-MM-DD").format("YYYY-MM-DD") %>"""
+
+[[tp.date.momentjs.examples]]
+name = "Get start of month from note title"
+example = """<% moment(tp.file.title, "YYYY-MM-DD").startOf("month").format("YYYY-MM-DD") %>"""
+
+[[tp.date.momentjs.examples]]
+name = "Get end of month from note title"
+example = """<% moment(tp.file.title, "YYYY-MM-DD").endOf("month").format("YYYY-MM-DD") %>"""
+
 
 [tp.file]
 name = "file"

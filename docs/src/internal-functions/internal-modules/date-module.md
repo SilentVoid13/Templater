@@ -39,6 +39,17 @@ Templater gives you access to the `moment` object, with all of its functionaliti
 
 More information on moment.js [here](https://momentjs.com/docs/#/displaying/).
 
+{% if tp.date.momentjs.examples %}
+##### Examples
+
+```javascript
+{% for example in tp.date.momentjs.examples -%}
+// {{ example.name}}
+{{ example.example }}
+{% endfor -%}
+```
+{% endif %}
+
 ## Examples
 
 ```javascript
