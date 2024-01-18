@@ -264,6 +264,7 @@ export class Templater {
     ): Promise<void> {
         this.start_templater_task();
         const active_editor = app.workspace.activeEditor;
+        const active_file = get_active_file(app);
         const running_config = this.create_running_config(
             template_file,
             file,
@@ -278,7 +279,9 @@ export class Templater {
             return;
         }
         await app.vault.modify(file, output_content);
-        if (active_editor && active_editor.editor) {
+        // Set cursor to first line of editor (below properties)
+        // https://github.com/SilentVoid13/Templater/issues/1231
+        if (active_file?.path !== file.path && active_editor && active_editor.editor) {
             const editor = active_editor.editor;
             editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
         }
