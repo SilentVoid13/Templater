@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/SilentVoid13/Templater/compare/2.1.0...2.1.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* cursor being set to top of current file when folder template was triggered ([10ab058](https://github.com/SilentVoid13/Templater/commit/10ab0586b9c96b7857716abaf6ef394474615a2d)), closes [#1297](https://github.com/SilentVoid13/Templater/issues/1297)
+
 ## [2.1.0](https://github.com/SilentVoid13/Templater/compare/2.0.0...2.1.0) (2024-01-06)
 
 
