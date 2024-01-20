@@ -1,4 +1,3 @@
-import { TemplaterError } from "utils/Error";
 import {
     ButtonComponent,
     Modal,
@@ -6,6 +5,7 @@ import {
     TextAreaComponent,
     TextComponent,
 } from "obsidian";
+import { TemplaterError } from "utils/Error";
 
 export class PromptModal extends Modal {
     private resolve: (value: string) => void;
@@ -29,9 +29,7 @@ export class PromptModal extends Modal {
     onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
-            // TOFIX: for some reason throwing TemplaterError on iOS causes the app to freeze.
-            // this.reject(new TemplaterError("Cancelled prompt"));
-            this.reject();
+            this.reject(new TemplaterError("Cancelled prompt"));
         }
     }
 
