@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
 ### [2.1.1](https://github.com/SilentVoid13/Templater/compare/2.1.0...2.1.1) (2024-01-18)
 
 
@@ -33,6 +34,13 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * Fix syntax highlighting in Obsidian 1.5.x ([aaa2cc1](https://github.com/SilentVoid13/Templater/commit/aaa2cc109ddce6e127aeee787a1426799127fd3a))
+
+### [1.18.4](https://github.com/SilentVoid13/Templater/compare/1.18.3...1.18.4) (2024-01-20)
+
+
+### Bug Fixes
+
+* uncaught exception when cancelling prompt when creating note from template and `throw_on_cancel` is true ([41e19ef](https://github.com/SilentVoid13/Templater/commit/41e19ef949f739bdb8e3593e108e9271fa1bbc10)), closes [#1294](https://github.com/SilentVoid13/Templater/issues/1294)
 
 ### [1.18.3](https://github.com/SilentVoid13/Templater/compare/1.18.2...1.18.3) (2023-12-02)
 
