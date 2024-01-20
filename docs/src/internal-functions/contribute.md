@@ -51,7 +51,7 @@ export class InternalModuleDate extends InternalModule {
 
 Every module extends the [InternalModule](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/InternalModule.ts) abstract class, which means they contain the following attributes and methods:
 
-- `this.app` attribute: the obsidian API `App` object.
+- `this.app` attribute: the Obsidian API `App` object.
 - `this.file` attribute: The destination file where the template will be inserted.
 - `this.plugin` attribute: The Templater plugin object.
 - `this.static_templates` attribute: A map containing all (name; variable/function) that are static. A static variable / function means that it doesn't depend on the file when executed. These type of variables / functions won't be updated each time we insert a new template, to save some overhead.

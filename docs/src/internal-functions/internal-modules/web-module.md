@@ -6,7 +6,7 @@
 
 ## Documentation
 
-Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax)
+Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax).
 
 {%- for key, fn in tp.web.functions %}
 ### `{{ fn.definition }}` 
@@ -21,11 +21,14 @@ Function documentation is using a specific syntax. More information [here](../..
 {% endfor %}
 {% endif %}
 
-{% if fn.example %}
-##### Example
+{% if fn.examples %}
+##### Examples
 
-```
-{{ fn.example }}
+```javascript
+{% for example in fn.examples -%}
+// {{ example.name}}
+{{ example.example }}
+{% endfor -%}
 ```
 {% endif %}
 {%- endfor %}
@@ -33,15 +36,10 @@ Function documentation is using a specific syntax. More information [here](../..
 ## Examples
 
 ```javascript
-Web Daily quote:  
-<% tp.web.daily_quote() %>
-
-Web Random picture: 
-<% tp.web.random_picture() %>
-
-Web Random picture with size: 
-<% tp.web.random_picture("200x200") %>
-
-Web random picture with size + query: 
-<% tp.web.random_picture("200x200", "landscape,water") %>
+{%- for key, fn in tp.web.functions %}
+{% for example in fn.examples -%}
+// {{ example.name}}
+{{ example.example }}
+{% endfor -%}
+{%- endfor %}
 ```

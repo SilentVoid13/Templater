@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+### [2.1.1](https://github.com/SilentVoid13/Templater/compare/2.1.0...2.1.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* cursor being set to top of current file when folder template was triggered ([10ab058](https://github.com/SilentVoid13/Templater/commit/10ab0586b9c96b7857716abaf6ef394474615a2d)), closes [#1297](https://github.com/SilentVoid13/Templater/issues/1297)
+
+## [2.1.0](https://github.com/SilentVoid13/Templater/compare/2.0.0...2.1.0) (2024-01-06)
+
+
+### Features
+
+* add icon for hotkey commands for mobile toolbar ([8806dab](https://github.com/SilentVoid13/Templater/commit/8806dabf5f33a55c7e6d0d7f208cc444d2925ce7))
+* add icons for commands for mobile toolbar ([9391ba9](https://github.com/SilentVoid13/Templater/commit/9391ba9a20ef92d85ab9bcf22ec07eda9f863eaa))
+
+
+### Bug Fixes
+
+* incorrect function name in popup for tp.file.move() ([b53e713](https://github.com/SilentVoid13/Templater/commit/b53e713a79f6c112d0c98737c5db8377c4b0decd)), closes [#1136](https://github.com/SilentVoid13/Templater/issues/1136)
+* multiple prompts being filled out with Korean inputs ([9fc284e](https://github.com/SilentVoid13/Templater/commit/9fc284ef6bfecc30d4d857fb090207355a59fc5f)), closes [#1284](https://github.com/SilentVoid13/Templater/issues/1284)
+
+## [2.0.0](https://github.com/SilentVoid13/Templater/compare/1.18.3...2.0.0) (2023-12-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Syntax highlighting will no longer work on older versions of Obsidian.
+
+### Bug Fixes
+
+* Fix syntax highlighting in Obsidian 1.5.x ([aaa2cc1](https://github.com/SilentVoid13/Templater/commit/aaa2cc109ddce6e127aeee787a1426799127fd3a))
+
 ### [1.18.4](https://github.com/SilentVoid13/Templater/compare/1.18.3...1.18.4) (2024-01-20)
 
 

@@ -127,9 +127,9 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_exists(): (filename: string) => Promise<boolean> {
-        return async (filename: string) => {
-            const path = normalizePath(filename);
+    generate_exists(): (filepath: string) => Promise<boolean> {
+        return async (filepath: string) => {
+            const path = normalizePath(filepath);
             return await app.vault.exists(path);
         };
     }

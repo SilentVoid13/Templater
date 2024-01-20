@@ -1,9 +1,9 @@
 {
     "id": "templater-obsidian",
     "name": "Templater",
-    "version": "2.1.1",
+    "version": "1.8.4",
     "description": "Create and use templates",
-    "minAppVersion": "1.5.0",
+    "minAppVersion": "1.4.16",
     "author": "SilentVoid",
     "authorUrl": "https://github.com/SilentVoid13",
     "helpUrl": "https://silentvoid13.github.io/Templater/",

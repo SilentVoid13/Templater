@@ -35,3 +35,17 @@ Then you can use the following template:
 File's metadata alias: <% tp.frontmatter.alias %>
 Note's type: <% tp.frontmatter["note type"] %>
 ````
+
+For lists in frontmatter, you can use JavaScript array prototype methods to manipulate how the data is displayed.
+
+```
+---
+categories:
+  - book
+  - movie
+---
+```
+
+```
+<% tp.frontmatter.categories.map(prop => `  - "${prop}"`).join("\n") %>
+```

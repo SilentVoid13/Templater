@@ -6,7 +6,7 @@
 
 ## Documentation
 
-Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax)
+Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax).
 
 
 {%- for key, fn in tp.hooks.functions %}
@@ -20,14 +20,6 @@ Function documentation is using a specific syntax. More information [here](../..
 {% for arg in fn.args %}
 - `{{ arg.name }}`: {{ arg.description }}
 {% endfor %}
-{% endif %}
-
-{% if fn.example %}
-##### Example
-
-```
-{{ fn.example }}
-```
 {% endif %}
 {%- endfor %}
 

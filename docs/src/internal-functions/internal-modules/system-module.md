@@ -6,7 +6,7 @@
 
 ## Documentation
 
-Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax)
+Function documentation is using a specific syntax. More information [here](../../syntax.md#function-documentation-syntax).
 
 {%- for key, fn in tp.system.functions %}
 ### `{{ fn.definition }}` 
@@ -21,11 +21,14 @@ Function documentation is using a specific syntax. More information [here](../..
 {% endfor %}
 {% endif %}
 
-{% if fn.example %}
-##### Example
+{% if fn.examples %}
+##### Examples
 
-```
-{{ fn.example }}
+```javascript
+{% for example in fn.examples -%}
+// {{ example.name}}
+{{ example.example }}
+{% endfor -%}
 ```
 {% endif %}
 {%- endfor %}
@@ -33,18 +36,10 @@ Function documentation is using a specific syntax. More information [here](../..
 ## Examples
 
 ```javascript
-Clipboard content: <% tp.system.clipboard() %>
-
-Entered value: <% tp.system.prompt("Please enter a value") %>
-Mood today: <% tp.system.prompt("What is your mood today ?", "happy") %>
-
-Mood today: <% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>
-Picked file: [[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]
-
-
-<%*
-const execution_value = await tp.system.suggester(["Yes", "No"], ["true", "false"])
-%>
-Are you using Execution Commands: <%*  tR += execution_value %>
-
+{%- for key, fn in tp.system.functions %}
+{% for example in fn.examples -%}
+// {{ example.name}}
+{{ example.example }}
+{% endfor -%}
+{%- endfor %}
 ```
