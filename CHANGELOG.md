@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.2](https://github.com/SilentVoid13/Templater/compare/1.18.4...2.1.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* syntax errors in user scripts not showing error message mentioning relevant user script ([6709df4](https://github.com/SilentVoid13/Templater/commit/6709df41cea175041f3dffab7713a00b0c0b0766)), closes [#1212](https://github.com/SilentVoid13/Templater/issues/1212) [#1286](https://github.com/SilentVoid13/Templater/issues/1286)
+* unable to add newline in multiline inputs on mobile ([5d3b2fc](https://github.com/SilentVoid13/Templater/commit/5d3b2fcab262c98483ee4f815bed4e283e74f4e8)), closes [#1303](https://github.com/SilentVoid13/Templater/issues/1303)
+* uncaught exception when cancelling prompt when creating note from template and throw_on_cancel is true ([8a27b33](https://github.com/SilentVoid13/Templater/commit/8a27b33309beb40966f0e09d49541b045f95482c)), closes [#1294](https://github.com/SilentVoid13/Templater/issues/1294)
 
 ### [2.1.1](https://github.com/SilentVoid13/Templater/compare/2.1.0...2.1.1) (2024-01-18)
 
