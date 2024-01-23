@@ -47,12 +47,12 @@ export class UserScriptFunctions implements IGenerateObject {
         };
 
         const file_content = await app.vault.read(file);
-        const wrapping_fn = window.eval(
-            "(function anonymous(require, module, exports){" +
-                file_content +
-                "\n})"
-        );
         try {
+            const wrapping_fn = window.eval(
+                "(function anonymous(require, module, exports){" +
+                    file_content +
+                    "\n})"
+            );
             wrapping_fn(req, mod, exp);
         } catch (err) {
             throw new TemplaterError(
