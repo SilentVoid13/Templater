@@ -67,17 +67,8 @@ export class PromptModal extends Modal {
         if (evt.isComposing || evt.keyCode === 229) return;
 
         if (this.multi_line) {
-            if (Platform.isDesktop) {
-                // eslint-disable-next-line no-empty
-                if (evt.shiftKey && evt.key === "Enter") {
-                } else if (evt.key === "Enter") {
-                    this.resolveAndClose(evt);
-                }
-            } else {
-                // allow pressing enter on mobile for multi-line input
-                if (evt.key === "Enter") {
-                    evt.preventDefault();
-                }
+            if (Platform.isDesktop && evt.key === "Enter" && !evt.shiftKey) {
+                this.resolveAndClose(evt);
             }
         } else {
             if (evt.key === "Enter") {
