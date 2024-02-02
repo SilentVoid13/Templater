@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.3](https://github.com/SilentVoid13/Templater/compare/2.1.2...2.1.3) (2024-02-02)
+
+
+### Bug Fixes
+
+* modifying current file immediately after inserting template causing file content conflicts ([b9112fa](https://github.com/SilentVoid13/Templater/commit/b9112fab0163041f710c6cb81349b54c4ec4c214)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
 ## [2.1.2](https://github.com/SilentVoid13/Templater/compare/1.18.4...2.1.2) (2024-01-23)
 
 
