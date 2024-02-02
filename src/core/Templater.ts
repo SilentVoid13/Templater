@@ -242,6 +242,7 @@ export class Templater {
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
+        active_view?.save();
 
         app.workspace.trigger("templater:template-appended", {
             view: active_view,
@@ -281,7 +282,11 @@ export class Templater {
         await app.vault.modify(file, output_content);
         // Set cursor to first line of editor (below properties)
         // https://github.com/SilentVoid13/Templater/issues/1231
-        if (active_file?.path !== file.path && active_editor && active_editor.editor) {
+        if (
+            active_file?.path !== file.path &&
+            active_editor &&
+            active_editor.editor
+        ) {
             const editor = active_editor.editor;
             editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
         }
