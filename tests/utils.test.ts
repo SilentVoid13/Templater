@@ -22,3 +22,9 @@ export function cache_update(t: TestTemplaterPlugin): Promise<void> {
         t.app.metadataCache.on("changed", resolve_promise);
     });
 }
+
+export function properties_are_visible(): boolean {
+    return !!document.querySelector(
+        ".workspace-leaf.mod-active .metadata-properties .metadata-property"
+    );
+}
