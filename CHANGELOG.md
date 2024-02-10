@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.4](https://github.com/SilentVoid13/Templater/compare/2.1.3...2.1.4) (2024-02-10)
+
+
+### Bug Fixes
+
+* properties not showing on file creation on template insert ([e9abe48](https://github.com/SilentVoid13/Templater/commit/e9abe48c8ee06005297a0af8a0a57652dd81cf27)), closes [#1253](https://github.com/SilentVoid13/Templater/issues/1253) [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
 ### [2.1.3](https://github.com/SilentVoid13/Templater/compare/2.1.2...2.1.3) (2024-02-02)
 
 
