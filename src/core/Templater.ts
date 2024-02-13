@@ -136,14 +136,19 @@ export class Templater {
             }
         }
 
-        // TODO: Change that, not stable atm
+        const extension =
+            template instanceof TFile ? template.extension || "md" : "md";
         const created_note = await errorWrapper(
             async () =>
-                app.fileManager.createNewMarkdownFile(
-                    folder,
-                    filename ?? "Untitled"
+                app.vault.create(
+                    normalizePath(
+                        `${folder?.path ?? ""}/${
+                            filename ?? "Untitled"
+                        }.${extension}`
+                    ),
+                    ""
                 ),
-            "Couldn't create markdown file."
+            `Couldn't create ${extension} file.`
         );
 
         if (created_note == null) {

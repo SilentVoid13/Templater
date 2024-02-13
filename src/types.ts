@@ -10,13 +10,6 @@ declare module "obsidian" {
         exists: (path: string) => Promise<boolean>;
     }
 
-    interface FileManager {
-        createNewMarkdownFile: (
-            folder: TFolder | undefined,
-            filename: string
-        ) => Promise<TFile>;
-    }
-
     interface DataAdapter {
         basePath: string;
         fs: {
