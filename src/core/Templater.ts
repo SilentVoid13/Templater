@@ -282,7 +282,7 @@ export class Templater {
         // Set cursor to first line of editor (below properties)
         // https://github.com/SilentVoid13/Templater/issues/1231
         if (
-            active_file?.path !== file.path &&
+            active_file?.path === file.path &&
             active_editor &&
             active_editor.editor
         ) {
