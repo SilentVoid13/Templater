@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/SilentVoid13/Templater/compare/2.1.4...2.2.0) (2024-02-13)
+
+
+### Features
+
+* add support for templates with non-markdown file extensions ([34837f6](https://github.com/SilentVoid13/Templater/commit/34837f6bb7ec6dab620805b0e28526824f5a859f)), closes [#1311](https://github.com/SilentVoid13/Templater/issues/1311) [#1300](https://github.com/SilentVoid13/Templater/issues/1300)
+
+
+### Bug Fixes
+
+* Templater resetting active document position when folder template is triggered in background ([4d766d8](https://github.com/SilentVoid13/Templater/commit/4d766d8697639e816484cdd198f533e1e73897e5)), closes [#1310](https://github.com/SilentVoid13/Templater/issues/1310)
+
 ### [2.1.4](https://github.com/SilentVoid13/Templater/compare/2.1.3...2.1.4) (2024-02-10)
 
 
