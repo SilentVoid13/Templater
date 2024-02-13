@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/SilentVoid13/Templater/compare/2.2.0...2.2.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* creating file from template not auto-incrementing file name if file already exists ([368e511](https://github.com/SilentVoid13/Templater/commit/368e511d096e71fe98e858f3541e360ef7fd4165))
+
 ## [2.2.0](https://github.com/SilentVoid13/Templater/compare/2.1.4...2.2.0) (2024-02-13)
 
 
