@@ -138,18 +138,15 @@ export class Templater {
 
         const extension =
             template instanceof TFile ? template.extension || "md" : "md";
-        const created_note = await errorWrapper(
-            async () =>
-                app.vault.create(
-                    normalizePath(
-                        `${folder?.path ?? ""}/${
-                            filename ?? "Untitled"
-                        }.${extension}`
-                    ),
-                    ""
+        const created_note = await errorWrapper(async () => {
+            const path = app.vault.getAvailablePath(
+                normalizePath(
+                    `${folder?.path ?? ""}/${filename ?? "Untitled"}`
                 ),
-            `Couldn't create ${extension} file.`
-        );
+                extension
+            );
+            return app.vault.create(path, "");
+        }, `Couldn't create ${extension} file.`);
 
         if (created_note == null) {
             await this.end_templater_task();

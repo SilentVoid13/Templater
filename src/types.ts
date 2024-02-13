@@ -8,6 +8,7 @@ declare module "obsidian" {
     interface Vault {
         getConfig: (key: string) => string;
         exists: (path: string) => Promise<boolean>;
+        getAvailablePath: (path: string, extension: string) => string;
     }
 
     interface DataAdapter {
