@@ -9,6 +9,7 @@ declare module "obsidian" {
         getConfig: (key: string) => string;
         exists: (path: string) => Promise<boolean>;
         getAvailablePath: (path: string, extension: string) => string;
+        getAbstractFileByPathInsensitive: (path: string) => string;
     }
 
     interface DataAdapter {

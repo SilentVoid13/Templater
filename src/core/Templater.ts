@@ -10,6 +10,7 @@ import {
     delay,
     generate_dynamic_command_regex,
     get_active_file,
+    get_folder_path_from_file_path,
     resolve_tfile,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
@@ -145,6 +146,13 @@ export class Templater {
                 ),
                 extension
             );
+            const folder_path = get_folder_path_from_file_path(path);
+            if (
+                folder_path &&
+                !app.vault.getAbstractFileByPathInsensitive(folder_path)
+            ) {
+                await app.vault.createFolder(folder_path);
+            }
             return app.vault.create(path, "");
         }, `Couldn't create ${extension} file.`);
 
