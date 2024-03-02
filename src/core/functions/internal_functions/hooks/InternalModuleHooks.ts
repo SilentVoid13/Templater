@@ -1,5 +1,6 @@
 import { EventRef } from "obsidian";
 import { ModuleName } from "editor/TpDocumentation";
+import { delay } from "utils/Utils";
 import { InternalModule } from "../InternalModule";
 
 export class InternalModuleHooks extends InternalModule {
@@ -28,7 +29,10 @@ export class InternalModuleHooks extends InternalModule {
         return (callback_function) => {
             const event_ref = app.workspace.on(
                 "templater:all-templates-executed",
-                () => callback_function()
+                async () => {
+                    await delay(1);
+                    callback_function();
+                }
             );
             if (event_ref) {
                 this.event_refs.push(event_ref);
