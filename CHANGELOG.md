@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/SilentVoid13/Templater/compare/2.2.1...2.2.2) (2024-03-02)
+
+
+### Bug Fixes
+
+* add 1ms delay to make it less likely to require a setTimeout when using `tp.hooks.on_all_templates_executed()` ([506e32d](https://github.com/SilentVoid13/Templater/commit/506e32d8784beb6cdc064fb78c76e121c6c52023)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+* re-add support for creating missing folders when using `tp.file.create_new()` ([cc85471](https://github.com/SilentVoid13/Templater/commit/cc8547168704ad356b6430c6621d5bfccb23440f)), closes [#1327](https://github.com/SilentVoid13/Templater/issues/1327)
+
 ### [2.2.1](https://github.com/SilentVoid13/Templater/compare/2.2.0...2.2.1) (2024-02-13)
 
 
