@@ -142,7 +142,7 @@ export class Templater {
         const created_note = await errorWrapper(async () => {
             const path = app.vault.getAvailablePath(
                 normalizePath(
-                    `${folder?.path ?? ""}/${filename ?? "Untitled"}`
+                    `${folder?.path ?? ""}/${filename || "Untitled"}`
                 ),
                 extension
             );
