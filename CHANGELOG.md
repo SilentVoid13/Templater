@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.3](https://github.com/SilentVoid13/Templater/compare/2.2.2...2.2.3) (2024-03-05)
+
+
+### Bug Fixes
+
+* fallback to "Untitled" as filename if empty string is passed as filename to `tp.file.create_new` ([efa2920](https://github.com/SilentVoid13/Templater/commit/efa2920d4a0d95c0dace8d899193f5a959b5218e)), closes [#1332](https://github.com/SilentVoid13/Templater/issues/1332)
+
 ### [2.2.2](https://github.com/SilentVoid13/Templater/compare/2.2.1...2.2.2) (2024-03-02)
 
 
