@@ -1,8 +1,10 @@
 # Introduction
 
-[Templater](https://github.com/SilentVoid13/Templater) is a template language that lets you insert **variables** and **functions** results into your notes. It will also let you execute JavaScript code manipulating those variables and functions.
+[Templater](https://github.com/SilentVoid13/Templater) is a template plugin for Obsidian that lets you define and use templates to quickly create (parts of) notes. 
 
-With [Templater](https://github.com/SilentVoid13/Templater), you will be able to create powerful templates to automate manual tasks.
+Templater's variables and functions allow you to insert and flexibly format all kinds of dynamic content into your notes. You can even write your own scripts to connect to external APIs on the web or your local computer.
+
+Templater is one of the [most popular](https://obsidian.md/plugins?search=templater) Obsidian plugins because it's extremely useful if you often create (parts of) notes that are similar.
 
 ## Quick Example
 
