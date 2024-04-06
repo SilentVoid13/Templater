@@ -74,7 +74,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_general_setting_header(): void {
-        this.containerEl.createEl("h2", { text: "General Settings" });
+        this.containerEl.createEl("h2", { text: "General settings" });
     }
 
     add_template_folder_setting(): void {
@@ -108,7 +108,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
-            .setName("Internal Variables and Functions")
+            .setName("Internal variables and functions")
             .setDesc(desc);
     }
 
@@ -126,7 +126,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
-            .setName("Syntax Highlighting on Desktop")
+            .setName("Syntax highlighting on desktop")
             .setDesc(desktopDesc)
             .addToggle((toggle) => {
                 toggle
@@ -140,7 +140,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
 
         new Setting(this.containerEl)
-            .setName("Syntax Highlighting on Mobile")
+            .setName("Syntax highlighting on mobile")
             .setDesc(mobileDesc)
             .addToggle((toggle) => {
                 toggle
@@ -246,11 +246,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_templates_hotkeys_setting(): void {
-        this.containerEl.createEl("h2", { text: "Template Hotkeys" });
+        this.containerEl.createEl("h2", { text: "Template hotkeys" });
 
         const desc = document.createDocumentFragment();
         desc.append(
-            "Template Hotkeys allows you to bind a template to a hotkey."
+            "Template hotkeys allows you to bind a template to a hotkey."
         );
 
         new Setting(this.containerEl).setDesc(desc);
@@ -518,15 +518,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_startup_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Startup Templates" });
+        this.containerEl.createEl("h2", { text: "Startup templates" });
 
         const desc = document.createDocumentFragment();
         desc.append(
-            "Startup Templates are templates that will get executed once when Templater starts.",
+            "Startup templates are templates that will get executed once when Templater starts.",
             desc.createEl("br"),
             "These templates won't output anything.",
             desc.createEl("br"),
-            "This can be useful to set up templates adding hooks to obsidian events for example."
+            "This can be useful to set up templates adding hooks to Obsidian events for example."
         );
 
         new Setting(this.containerEl).setDesc(desc);
@@ -591,7 +591,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_script_functions_setting(): void {
-        this.containerEl.createEl("h2", { text: "User Script Functions" });
+        this.containerEl.createEl("h2", { text: "User script functions" });
 
         let desc = document.createDocumentFragment();
         desc.append(
@@ -625,17 +625,17 @@ export class TemplaterSettingTab extends PluginSettingTab {
         desc = document.createDocumentFragment();
         let name: string;
         if (!this.plugin.settings.user_scripts_folder) {
-            name = "No User Scripts folder set";
+            name = "No user scripts folder set";
         } else {
             const files = errorWrapperSync(
                 () =>
                     get_tfiles_from_folder(
                         this.plugin.settings.user_scripts_folder
                     ),
-                `User Scripts folder doesn't exist`
+                `User scripts folder doesn't exist`
             );
             if (!files || files.length === 0) {
-                name = "No User Scripts detected";
+                name = "No user scripts detected";
             } else {
                 let count = 0;
                 for (const file of files) {
@@ -678,11 +678,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         this.containerEl.createEl("h2", {
-            text: "User System Command Functions",
+            text: "User system command functions",
         });
 
         new Setting(this.containerEl)
-            .setName("Enable User System Command Functions")
+            .setName("Enable user system command functions")
             .setDesc(desc)
             .addToggle((toggle) => {
                 toggle
