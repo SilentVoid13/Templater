@@ -35,7 +35,15 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     }
 
     getItemText(item: TFile): string {
-        return item.basename;
+         if (this.plugin.settings.display_full_paths) {
+            let relativePath = item.path
+            if(this.plugin.settings.templates_folder && item.path.startsWith(this.plugin.settings.templates_folder)) {
+                relativePath = item.path.slice(this.plugin.settings.templates_folder.length+1)
+            }
+            return relativePath.split(".").slice(0, -1).join(".");
+        } else {
+            return item.basename;
+        }
     }
 
     onChooseItem(item: TFile): void {

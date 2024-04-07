@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS: Settings = {
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
     enable_ribbon_icon: true,
+    display_full_paths: false,
 };
 
 export interface Settings {
@@ -46,6 +47,7 @@ export interface Settings {
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
     enable_ribbon_icon: boolean;
+    display_full_paths: boolean;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -71,6 +73,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
         this.add_donating_setting();
+        this.add_full_path_display_setting();
     }
 
     add_general_setting_header(): void {
@@ -92,6 +95,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 // @ts-ignore
                 cb.containerEl.addClass("templater_search");
             });
+    }
+
+    add_full_path_display_setting(): void {
+        new Setting(this.containerEl)
+            .setName("Display full path")
+            .setDesc("Toggle to display the full path of templates in the list instead of relative path")
+            .addToggle((toggle) =>
+                toggle
+                    .setValue(this.plugin.settings.display_full_paths)
+                    .onChange(async (value) => {
+                        this.plugin.settings.display_full_paths = value;
+                        await this.plugin.save_settings();
+                    })
+            );
     }
 
     add_internal_functions_setting(): void {
