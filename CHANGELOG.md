@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.4](https://github.com/SilentVoid13/Templater/compare/2.2.3...2.2.4) (2024-05-05)
+
+
+### Bug Fixes
+
+* template content being overridden when using `app.fileManager.processFrontMatter` on blank files ([cdc8815](https://github.com/SilentVoid13/Templater/commit/cdc8815e1e3a81a00488b256480b1ec4d4203123)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
 ### [2.2.3](https://github.com/SilentVoid13/Templater/compare/2.2.2...2.2.3) (2024-03-05)
 
 
