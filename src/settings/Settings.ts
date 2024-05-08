@@ -12,6 +12,11 @@ export interface FolderTemplate {
     template: string;
 }
 
+export interface FileTemplate {
+    regex: string;
+    template: string;
+}
+
 export const DEFAULT_SETTINGS: Settings = {
     command_timeout: 5,
     templates_folder: "",
@@ -22,7 +27,9 @@ export const DEFAULT_SETTINGS: Settings = {
     shell_path: "",
     user_scripts_folder: "",
     enable_folder_templates: true,
-    folder_templates: [{ folder: "", template: "" }],
+    folder_templates: [{ folder: "/", template: "" }],
+    enable_file_templates: false,
+    file_templates: [{ regex: ".*", template: "" }],
     syntax_highlighting: true,
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
@@ -41,6 +48,8 @@ export interface Settings {
     user_scripts_folder: string;
     enable_folder_templates: boolean;
     folder_templates: Array<FolderTemplate>;
+    enable_file_templates: boolean;
+    file_templates: Array<FileTemplate>;
     syntax_highlighting: boolean;
     syntax_highlighting_mobile: boolean;
     enabled_templates_hotkeys: Array<string>;
@@ -66,6 +75,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
+            this.add_file_templates_setting();
         }
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
@@ -121,8 +131,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const mobileDesc = document.createDocumentFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
-            "mobile. Use with caution: this may break live preview on mobile " +
-            "platforms."
+                "mobile. Use with caution: this may break live preview on mobile " +
+                "platforms."
         );
 
         new Setting(this.containerEl)
@@ -183,9 +193,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_trigger_on_new_file_creation_setting(): void {
         const desc = document.createDocumentFragment();
         desc.append(
-            "Templater will listen for the new file creation event, and replace every command it finds in the new file's content.",
+            "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
+            "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
             desc.createEl("br"),
-            "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...",
+            desc.createEl("br"),
+            "Make sure to set up rules under either Folder Templates or File Regex Template below.",
+            desc.createEl("br"),
             desc.createEl("br"),
             desc.createEl("b", {
                 text: "Warning: ",
@@ -373,21 +386,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const descHeading = document.createDocumentFragment();
         descHeading.append(
             "Folder Templates are triggered when a new ",
-            descHeading.createEl("strong", { text: "empty " }),
-            "file is created in a given folder.",
-            descHeading.createEl("br"),
-            "Templater will fill the empty file with the specified template.",
-            descHeading.createEl("br"),
-            "The deepest match is used. A global default template would be defined on the root ",
-            descHeading.createEl("code", { text: "/" }),
-            "."
+            descHeading.createEl("strong", { text: "empty" }),
+            " file is created in a given folder. Templater will fill the empty file with the specified template."
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
 
         const descUseNewFileTemplate = document.createDocumentFragment();
         descUseNewFileTemplate.append(
-            "When enabled Templater will make use of the folder templates defined below."
+            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with File Regex Templates below, so enabling one will disable the other."
         );
 
         new Setting(this.containerEl)
@@ -396,9 +403,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_folder_templates)
-                    .onChange((use_new_file_templates) => {
+                    .onChange((use_new_folder_templates) => {
                         this.plugin.settings.enable_folder_templates =
-                            use_new_file_templates;
+                            use_new_folder_templates;
+                        if (use_new_folder_templates) {
+                            this.plugin.settings.enable_file_templates = false;
+                        }
                         this.plugin.save_settings();
                         // Force refresh
                         this.display();
@@ -411,7 +421,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl)
             .setName("Add New")
-            .setDesc("Add new folder template")
+            .setDesc(
+                "Add new folder template. The deepest match is used, so the order of the rules here is irrelevant. A global default template would be defined on root (`/`)."
+            )
             .addButton((button: ButtonComponent) => {
                 button
                     .setTooltip("Add additional folder template")
@@ -515,6 +527,138 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 s.infoEl.remove();
             }
         );
+    }
+
+    add_file_templates_setting(): void {
+        this.containerEl.createEl("h2", { text: "File Regex Templates" });
+
+        const descHeading = document.createDocumentFragment();
+        descHeading.append(
+            "File Regex Templates are triggered when a new ",
+            descHeading.createEl("strong", { text: "empty" }),
+            " file is created that matches one of them. Templater will fill the empty file with the specified template."
+        );
+
+        new Setting(this.containerEl).setDesc(descHeading);
+
+        const descUseNewFileTemplate = document.createDocumentFragment();
+        descUseNewFileTemplate.append(
+            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with Folder Templates above, so enabling one will disable the other."
+        );
+
+        new Setting(this.containerEl)
+            .setName("Enable File Regex Templates")
+            .setDesc(descUseNewFileTemplate)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.enable_file_templates)
+                    .onChange((use_new_file_templates) => {
+                        this.plugin.settings.enable_file_templates =
+                            use_new_file_templates;
+                        if (use_new_file_templates) {
+                            this.plugin.settings.enable_folder_templates =
+                                false;
+                        }
+                        this.plugin.save_settings();
+                        // Force refresh
+                        this.display();
+                    });
+            });
+
+        if (!this.plugin.settings.enable_file_templates) {
+            return;
+        }
+
+        new Setting(this.containerEl)
+            .setName("Add New")
+            .setDesc(
+                "Add new file regex. The first match from the top is used, so the order of the rules is important. Use `.*` as a final catch-all, if you need it."
+            )
+            .addButton((button: ButtonComponent) => {
+                button
+                    .setTooltip("Add additional file regex")
+                    .setButtonText("+")
+                    .setCta()
+                    .onClick(() => {
+                        this.plugin.settings.file_templates.push({
+                            regex: "",
+                            template: "",
+                        });
+                        this.plugin.save_settings();
+                        this.display();
+                    });
+            });
+
+        this.plugin.settings.file_templates.forEach((file_template, index) => {
+            const s = new Setting(this.containerEl)
+                .addText((cb) => {
+                    cb.setPlaceholder("File Regex")
+                        .setValue(file_template.regex)
+                        .onChange((new_regex) => {
+                            this.plugin.settings.file_templates[index].regex =
+                                new_regex;
+                            this.plugin.save_settings();
+                        });
+                    // @ts-ignore
+                    cb.inputEl.addClass("templater_search");
+                })
+                .addSearch((cb) => {
+                    new FileSuggest(
+                        cb.inputEl,
+                        this.plugin,
+                        FileSuggestMode.TemplateFiles
+                    );
+                    cb.setPlaceholder("Template")
+                        .setValue(file_template.template)
+                        .onChange((new_template) => {
+                            this.plugin.settings.file_templates[
+                                index
+                            ].template = new_template;
+                            this.plugin.save_settings();
+                        });
+                    // @ts-ignore
+                    cb.containerEl.addClass("templater_search");
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon("up-chevron-glyph")
+                        .setTooltip("Move up")
+                        .onClick(() => {
+                            arraymove(
+                                this.plugin.settings.file_templates,
+                                index,
+                                index - 1
+                            );
+                            this.plugin.save_settings();
+                            this.display();
+                        });
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon("down-chevron-glyph")
+                        .setTooltip("Move down")
+                        .onClick(() => {
+                            arraymove(
+                                this.plugin.settings.file_templates,
+                                index,
+                                index + 1
+                            );
+                            this.plugin.save_settings();
+                            this.display();
+                        });
+                })
+                .addExtraButton((cb) => {
+                    cb.setIcon("cross")
+                        .setTooltip("Delete")
+                        .onClick(() => {
+                            this.plugin.settings.file_templates.splice(
+                                index,
+                                1
+                            );
+                            this.plugin.save_settings();
+                            this.display();
+                        });
+                });
+            s.infoEl.remove();
+        });
     }
 
     add_startup_templates_setting(): void {
@@ -849,21 +993,25 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Donate")
             .setDesc(
                 "If you like this Plugin, consider donating to support continued development."
-            )
-
+            );
 
         const a1 = document.createElement("a");
         a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
         a1.addClass("templater_donating");
         const img1 = document.createElement("img");
-        img1.src = "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
+        img1.src =
+            "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
         a1.appendChild(img1);
 
         const a2 = document.createElement("a");
-        a2.setAttribute("href", "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q");
+        a2.setAttribute(
+            "href",
+            "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
+        );
         a2.addClass("templater_donating");
         const img2 = document.createElement("img");
-        img2.src = "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
+        img2.src =
+            "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
         a2.appendChild(img2);
 
         s.settingEl.appendChild(a1);
