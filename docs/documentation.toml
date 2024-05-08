@@ -201,7 +201,7 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [[tp.file.functions.create_new.args]]
 name = "folder"
-description = "The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `"PATH/TO/FOLDERNAME"` or `app.vault.getAbstractFileByPath(\"PATH/TO/FOLDERNAME\")`."
+description = """The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `"PATH/TO/FOLDERNAME"` or `app.vault.getAbstractFileByPath(\"PATH/TO/FOLDERNAME\")`."""
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation"
