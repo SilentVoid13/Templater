@@ -110,7 +110,7 @@ export class Templater {
 
     async create_new_note_from_template(
         template: TFile | string,
-        folder?: TFolder,
+        folder?: TFolder | string,
         filename?: string,
         open_new_note = true
     ): Promise<TFile | undefined> {
@@ -140,10 +140,9 @@ export class Templater {
         const extension =
             template instanceof TFile ? template.extension || "md" : "md";
         const created_note = await errorWrapper(async () => {
+            const folderPath = folder instanceof TFolder ? folder.path : folder;
             const path = app.vault.getAvailablePath(
-                normalizePath(
-                    `${folder?.path ?? ""}/${filename || "Untitled"}`
-                ),
+                normalizePath(`${folderPath ?? ""}/${filename || "Untitled"}`),
                 extension
             );
             const folder_path = get_folder_path_from_file_path(path);

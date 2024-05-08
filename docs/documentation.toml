@@ -185,7 +185,7 @@ example = "<% tp.file.content %>"
 [tp.file.functions.create_new]
 name = "create_new"
 description = "Creates a new file using a specified template or with a specified content."
-definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder)"
+definition = "tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder | string)"
 
 [[tp.file.functions.create_new.args]]
 name = "template"
@@ -201,7 +201,7 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [[tp.file.functions.create_new.args]]
 name = "folder"
-description = "The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `app.vault.getAbstractFileByPath(\"FOLDERNAME\")`."
+description = "The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `"PATH/TO/FOLDERNAME"` or `app.vault.getAbstractFileByPath(\"PATH/TO/FOLDERNAME\")`."
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation"
@@ -217,10 +217,14 @@ example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", true) %
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation in current folder"
-example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, tp.file.folder()) %>"""
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, tp.file.folder(true)) %>"""
 
 [[tp.file.functions.create_new.examples]]
-name = "File creation in specified folder"
+name = "File creation in specified folder with string path"
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, "Path/To/MyFolder") %>"""
+
+[[tp.file.functions.create_new.examples]]
+name = "File creation in specified folder with TFolder"
 example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, app.vault.getAbstractFileByPath("MyFolder")) %>"""
 
 [[tp.file.functions.create_new.examples]]
