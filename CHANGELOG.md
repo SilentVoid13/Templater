@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/SilentVoid13/Templater/compare/2.2.4...2.3.0) (2024-05-08)
+
+
+### Features
+
+* Support string for folder argument for `tp.file.create_new()` ([df3709b](https://github.com/SilentVoid13/Templater/commit/df3709b6a24f360a7fc51915853fbd210a51e278))
+
+
+### Bug Fixes
+
+* Mitigate edge cases where a blank string is appending during transition between active editors ([b6dd0b1](https://github.com/SilentVoid13/Templater/commit/b6dd0b1ea46187952f4a0bf7e1954590d7ad1e48)), closes [#1369](https://github.com/SilentVoid13/Templater/issues/1369)
+* simplify fix for template content being overridden when using `app.fileManager.processFrontMatter` on blank files ([7378d7b](https://github.com/SilentVoid13/Templater/commit/7378d7bff55c5ab944e923b43469e69e27de47af)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
 ### [2.2.4](https://github.com/SilentVoid13/Templater/compare/2.2.3...2.2.4) (2024-05-05)
 
 
