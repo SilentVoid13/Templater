@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.1](https://github.com/SilentVoid13/Templater/compare/2.3.0...2.3.1) (2024-05-09)
+
+
+### Bug Fixes
+
+* Folder notes sometimes applying when creating a new note from template ([08bcfca](https://github.com/SilentVoid13/Templater/commit/08bcfca5b1a2833b6eaa892753270e4c888f84a8)), closes [#1370](https://github.com/SilentVoid13/Templater/issues/1370)
+
 ## [2.3.0](https://github.com/SilentVoid13/Templater/compare/2.2.4...2.3.0) (2024-05-08)
 
 
