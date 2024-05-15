@@ -18,7 +18,7 @@ export class FolderSuggest extends TextInputSuggest<TFolder> {
             }
         });
 
-        return folders;
+        return folders.slice(0, 1000);
     }
 
     renderSuggestion(file: TFolder, el: HTMLElement): void {
