@@ -26,7 +26,7 @@ module.exports = my_function;
 In this example, a complete command invocation would look like this: 
 
 ```javascript
-<% tp.user.my_script("Hello World!") %>
+<% tp.user.my_function("Hello World!") %>
 ```
 
 Which would output `Message from my script: Hello World!`.
