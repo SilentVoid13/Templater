@@ -253,7 +253,7 @@ export class Templater {
         doc.replaceSelection(output_content);
         // Refresh editor to ensure properties widget shows after inserting template in blank file
         if (active_editor.file) {
-            await app.vault.append(active_editor.file, "");
+            await app.vault.modify(active_editor.file, editor.getValue());
         }
         app.workspace.trigger("templater:template-appended", {
             view: active_view,
