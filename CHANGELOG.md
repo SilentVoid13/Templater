@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.2](https://github.com/SilentVoid13/Templater/compare/2.3.1...2.3.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* limit results for file/folder suggesters in Templater settings to 1000 for better performance ([1bc91c3](https://github.com/SilentVoid13/Templater/commit/1bc91c34dedcde831f651054b3b0059ab6ca6942)), closes [#1319](https://github.com/SilentVoid13/Templater/issues/1319)
+* revert change that broke template content being overridden ([2639196](https://github.com/SilentVoid13/Templater/commit/263919674a4186632651a7f7b4296b9c3b047f6e)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
 ### [2.3.1](https://github.com/SilentVoid13/Templater/compare/2.3.0...2.3.1) (2024-05-09)
 
 
