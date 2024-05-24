@@ -8,7 +8,7 @@ export class CommandHandler {
     setup(): void {
         this.plugin.addCommand({
             id: "insert-templater",
-            name: "Open Insert Template modal",
+            name: "Open insert template modal",
             icon: "templater-icon",
             hotkeys: [
                 {

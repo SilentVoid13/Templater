@@ -363,7 +363,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_folder_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Folder Templates" });
+        this.containerEl.createEl("h2", { text: "Folder templates" });
         new Setting(this.containerEl).setName("Folder templates").setHeading();
 
         const descHeading = document.createDocumentFragment();
@@ -387,7 +387,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
-            .setName("Enable Folder Templates")
+            .setName("Enable folder templates")
             .setDesc(descUseNewFileTemplate)
             .addToggle((toggle) => {
                 toggle
@@ -406,7 +406,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         }
 
         new Setting(this.containerEl)
-            .setName("Add New")
+            .setName("Add new")
             .setDesc("Add new folder template")
             .addButton((button: ButtonComponent) => {
                 button
@@ -739,7 +739,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 div.addClass("templater_div");
 
                 const title = this.containerEl.createEl("h4", {
-                    text: "User Function n°" + i,
+                    text: "User function n°" + i,
                 });
                 title.addClass("templater_title");
 
@@ -786,7 +786,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     })
                     .addTextArea((text) => {
                         const t = text
-                            .setPlaceholder("System Command")
+                            .setPlaceholder("System command")
                             .setValue(template_pair[1])
                             .onChange((new_cmd) => {
                                 const index =
@@ -821,7 +821,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             const setting = new Setting(this.containerEl).addButton(
                 (button) => {
                     button
-                        .setButtonText("Add New User Function")
+                        .setButtonText("Add new user function")
                         .setCta()
                         .onClick(() => {
                             this.plugin.settings.templates_pairs.push(["", ""]);
