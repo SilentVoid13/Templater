@@ -56,7 +56,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
     display(): void {
         this.containerEl.empty();
 
-        this.add_general_setting_header();
         this.add_template_folder_setting();
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_settings();
@@ -71,10 +70,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
         this.add_donating_setting();
-    }
-
-    add_general_setting_header(): void {
-        this.containerEl.createEl("h2", { text: "General settings" });
     }
 
     add_template_folder_setting(): void {
@@ -246,7 +241,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_templates_hotkeys_setting(): void {
-        this.containerEl.createEl("h2", { text: "Template hotkeys" });
+        new Setting(this.containerEl).setName("Template hotkeys").setHeading();
 
         const desc = document.createDocumentFragment();
         desc.append(
@@ -369,6 +364,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
     add_folder_templates_setting(): void {
         this.containerEl.createEl("h2", { text: "Folder Templates" });
+        new Setting(this.containerEl).setName("Folder templates").setHeading();
 
         const descHeading = document.createDocumentFragment();
         descHeading.append(
@@ -518,7 +514,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_startup_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Startup templates" });
+        new Setting(this.containerEl).setName("Startup templates").setHeading();
 
         const desc = document.createDocumentFragment();
         desc.append(
@@ -591,7 +587,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_script_functions_setting(): void {
-        this.containerEl.createEl("h2", { text: "User script functions" });
+        new Setting(this.containerEl).setName("User script functions").setHeading();
 
         let desc = document.createDocumentFragment();
         desc.append(
@@ -676,10 +672,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             }),
             "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources."
         );
-
-        this.containerEl.createEl("h2", {
-            text: "User system command functions",
-        });
+        new Setting(this.containerEl).setName("User system command functions").setHeading();
 
         new Setting(this.containerEl)
             .setName("Enable user system command functions")
