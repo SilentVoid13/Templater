@@ -26,8 +26,7 @@ export const DEFAULT_SETTINGS: Settings = {
     syntax_highlighting: true,
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
-    startup_templates: [""],
-    enable_ribbon_icon: true,
+    startup_templates: [""]
 };
 
 export interface Settings {
@@ -45,7 +44,6 @@ export interface Settings {
     syntax_highlighting_mobile: boolean;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
-    enable_ribbon_icon: boolean;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -56,13 +54,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
     display(): void {
         this.containerEl.empty();
 
-        this.add_general_setting_header();
         this.add_template_folder_setting();
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
-        this.add_ribbon_icon_setting();
         this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
@@ -71,10 +67,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
         this.add_donating_setting();
-    }
-
-    add_general_setting_header(): void {
-        this.containerEl.createEl("h2", { text: "General settings" });
     }
 
     add_template_folder_setting(): void {
@@ -210,43 +202,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_ribbon_icon_setting(): void {
-        const desc = document.createDocumentFragment();
-        desc.append(
-            "Show Templater icon in sidebar ribbon, allowing you to quickly use templates anywhere."
-        );
-
-        new Setting(this.containerEl)
-            .setName("Show icon in sidebar")
-            .setDesc(desc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.enable_ribbon_icon)
-                    .onChange((enable_ribbon_icon) => {
-                        this.plugin.settings.enable_ribbon_icon =
-                            enable_ribbon_icon;
-                        this.plugin.save_settings();
-                        if (this.plugin.settings.enable_ribbon_icon) {
-                            this.plugin
-                                .addRibbonIcon(
-                                    "templater-icon",
-                                    "Templater",
-                                    async () => {
-                                        this.plugin.fuzzy_suggester.insert_template();
-                                    }
-                                )
-                                .setAttribute("id", "rb-templater-icon");
-                        } else {
-                            document
-                                .getElementById("rb-templater-icon")
-                                ?.remove();
-                        }
-                    });
-            });
-    }
-
     add_templates_hotkeys_setting(): void {
-        this.containerEl.createEl("h2", { text: "Template hotkeys" });
+        new Setting(this.containerEl).setName("Template hotkeys").setHeading();
 
         const desc = document.createDocumentFragment();
         desc.append(
@@ -368,7 +325,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_folder_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Folder Templates" });
+        this.containerEl.createEl("h2", { text: "Folder templates" });
+        new Setting(this.containerEl).setName("Folder templates").setHeading();
 
         const descHeading = document.createDocumentFragment();
         descHeading.append(
@@ -391,7 +349,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
-            .setName("Enable Folder Templates")
+            .setName("Enable folder templates")
             .setDesc(descUseNewFileTemplate)
             .addToggle((toggle) => {
                 toggle
@@ -410,7 +368,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         }
 
         new Setting(this.containerEl)
-            .setName("Add New")
+            .setName("Add new")
             .setDesc("Add new folder template")
             .addButton((button: ButtonComponent) => {
                 button
@@ -518,7 +476,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_startup_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Startup templates" });
+        new Setting(this.containerEl).setName("Startup templates").setHeading();
 
         const desc = document.createDocumentFragment();
         desc.append(
@@ -591,7 +549,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_script_functions_setting(): void {
-        this.containerEl.createEl("h2", { text: "User script functions" });
+        new Setting(this.containerEl).setName("User script functions").setHeading();
 
         let desc = document.createDocumentFragment();
         desc.append(
@@ -676,10 +634,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             }),
             "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources."
         );
-
-        this.containerEl.createEl("h2", {
-            text: "User system command functions",
-        });
+        new Setting(this.containerEl).setName("User system command functions").setHeading();
 
         new Setting(this.containerEl)
             .setName("Enable user system command functions")
@@ -746,7 +701,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 div.addClass("templater_div");
 
                 const title = this.containerEl.createEl("h4", {
-                    text: "User Function n°" + i,
+                    text: "User function n°" + i,
                 });
                 title.addClass("templater_title");
 
@@ -793,7 +748,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     })
                     .addTextArea((text) => {
                         const t = text
-                            .setPlaceholder("System Command")
+                            .setPlaceholder("System command")
                             .setValue(template_pair[1])
                             .onChange((new_cmd) => {
                                 const index =
@@ -828,7 +783,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             const setting = new Setting(this.containerEl).addButton(
                 (button) => {
                     button
-                        .setButtonText("Add New User Function")
+                        .setButtonText("Add new user function")
                         .setCta()
                         .onClick(() => {
                             this.plugin.settings.templates_pairs.push(["", ""]);
