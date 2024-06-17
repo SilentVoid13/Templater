@@ -28,6 +28,8 @@ export class InternalModuleFile extends InternalModule {
             this.generate_creation_date()
         );
         this.static_functions.set("create_new", this.generate_create_new());
+        this.static_functions.set("copy_from_file", this.generate_copy_from_file());
+        this.static_functions.set("copy_from_folder", this.generate_copy_from_folder());
         this.static_functions.set("cursor", this.generate_cursor());
         this.static_functions.set(
             "cursor_append",
@@ -53,7 +55,7 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_functions.set("title", this.generate_title());
     }
 
-    async teardown(): Promise<void> {}
+    async teardown(): Promise<void> { }
 
     async generate_content(): Promise<string> {
         return await app.vault.read(this.config.target_file);
@@ -92,6 +94,80 @@ export class InternalModuleFile extends InternalModule {
             return new_file;
         };
     }
+
+    generate_copy_from_file(): (
+        copyfile: string,
+        destfolder: string,
+        filename: string,
+        open_new: boolean,
+    ) => Promise<TFile | undefined> {
+        return async (
+            copyfile: string,
+            destfolder: string,
+            filename: string,
+            open_new: boolean,
+        ) => {
+            console.log("Doing copy stuff in InternalModuleFile");
+            this.create_new_depth += 1;
+            if (this.create_new_depth > DEPTH_LIMIT) {
+                this.create_new_depth = 0;
+                throw new TemplaterError(
+                    "Reached create_new depth limit (max = 10)"
+                );
+            }
+
+            const new_file =
+                await this.plugin.templater.copy_note_from_file(
+                    copyfile,
+                    destfolder,
+                    filename,
+                    open_new
+                );
+
+            this.create_new_depth -= 1;
+
+            return new_file;
+        };
+    }
+
+    generate_copy_from_folder(): (
+        sourcefolder: string,
+        copystrategy: string,
+        destfolder: string,
+        filename: string,
+        open_new: boolean,
+    ) => Promise<TFile | undefined> {
+        return async (
+            sourcefolder: string,
+            copystrategy: string,
+            destfolder: string,
+            filename: string,
+            open_new: boolean,
+        ) => {
+            console.log("Doing copy stuff in InternalModuleFile");
+            this.create_new_depth += 1;
+            if (this.create_new_depth > DEPTH_LIMIT) {
+                this.create_new_depth = 0;
+                throw new TemplaterError(
+                    "Reached create_new depth limit (max = 10)"
+                );
+            }
+
+            const new_file =
+                await this.plugin.templater.copy_note_from_folder(
+                    sourcefolder,
+                    copystrategy,
+                    destfolder,
+                    filename,
+                    open_new,
+                );
+
+            this.create_new_depth -= 1;
+
+            return new_file;
+        };
+    }
+
 
     generate_creation_date(): (format?: string) => string {
         return (format = "YYYY-MM-DD HH:mm") => {
