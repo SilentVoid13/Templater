@@ -221,6 +221,195 @@ export class Templater {
         return created_note;
     }
 
+    async copy_note_from_file(
+        copyfile: string,
+        destfolder?: TFolder | string,
+        filename?: string,
+        open_new_note = true,
+    ): Promise<TFile | undefined> {
+        // TODO: Maybe there is an obsidian API function for that
+        if (!destfolder) {
+            const new_file_location = app.vault.getConfig("newFileLocation");
+            switch (new_file_location) {
+                case "current": {
+                    const active_file = get_active_file(app);
+                    if (active_file) {
+                        destfolder = active_file.parent;
+                    }
+                    break;
+                }
+                case "folder":
+                    destfolder = app.fileManager.getNewFileParent("");
+                    break;
+                case "root":
+                    destfolder = app.vault.getRoot();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // Copy file from copyfile to new file in folder with filename if exists
+        const created_note = await errorWrapper(async () => {
+            const copyfile_tfile = resolve_tfile(copyfile);
+            const folderPath = destfolder instanceof TFolder ? destfolder.path : destfolder;
+            const path = app.vault.getAvailablePath(
+                normalizePath(`${folderPath ?? ""}/${filename || copyfile_tfile.basename}`), copyfile_tfile.extension
+            );
+            const folder_path = get_folder_path_from_file_path(path);
+
+            if (
+                folder_path &&
+                !app.vault.getAbstractFileByPathInsensitive(folder_path)
+            ) {
+                await app.vault.createFolder(folder_path);
+            }
+            return app.vault.copy(copyfile_tfile, path);
+        }, `Couldn't copy file.`);
+
+        const { path } = created_note;
+
+        if (open_new_note) {
+            const active_leaf = app.workspace.getLeaf(false);
+            if (!active_leaf) {
+                log_error(new TemplaterError("No active leaf"));
+                return;
+            }
+            await active_leaf.openFile(created_note, {
+                state: { mode: "source" },
+            });
+
+            await this.plugin.editor_handler.jump_to_next_cursor_location(
+                created_note,
+                true
+            );
+
+            active_leaf.setEphemeralState({
+                rename: "all",
+            });
+        }
+
+        await this.end_templater_task(path);
+        return created_note;
+    }
+
+        async copy_note_from_folder(
+        sourcefolder: string,
+        copystrategy?: string,
+        destfolder?: TFolder | string,
+        filename?: string,
+        open_new_note = true,
+    ): Promise<TFile | undefined> {
+
+        let searchVariable: string = "mtime";
+        switch (copystrategy) {
+            case "lastModified": {
+                searchVariable = "mtime";
+                break;
+            }
+            case "lastCreated": {
+                searchVariable = "ctime";
+                break;
+            }
+        }
+
+        // TODO: Maybe there is an obsidian API function for that
+        if (!destfolder) {
+            const new_file_location = app.vault.getConfig("newFileLocation");
+            switch (new_file_location) {
+                case "current": {
+                    const active_file = get_active_file(app);
+                    if (active_file) {
+                        destfolder = active_file.parent;
+                    }
+                    break;
+                }
+                case "folder":
+                    destfolder = app.fileManager.getNewFileParent("");
+                    break;
+                case "root":
+                    destfolder = app.vault.getRoot();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        const copyfile = await errorWrapper(async () => {
+            if (!sourcefolder) {
+                return "";
+            }
+
+            const sourceFolderTFolder = app.vault.getFolderByPath(sourcefolder);
+            let chosenSearchFile: any = null;
+            let chosenSearchTime = 0;
+
+            type StatKeys = keyof TFile["stat"];
+            const chosenSearchVariable: StatKeys = searchVariable as StatKeys;
+
+            sourceFolderTFolder?.children.forEach((child) => {
+                if (child instanceof TFile) {
+                    const thisSearchTime = child.stat[chosenSearchVariable];
+                    if (thisSearchTime > chosenSearchTime) {
+                        chosenSearchTime = thisSearchTime;
+                        chosenSearchFile = child;
+                    }
+                }
+            });
+
+            // If latestFile is TFile
+            if (chosenSearchFile instanceof TFile) {
+                return chosenSearchFile.path;
+            } else {
+                return "";
+            }
+
+        }, "Couldn't get copy file.");
+
+        // Copy file from copyfile to new file in folder with filename if exists
+        const created_note = await errorWrapper(async () => {
+            const copyfile_tfile = resolve_tfile(copyfile);
+            const folderPath = destfolder instanceof TFolder ? destfolder.path : destfolder;
+            const path = app.vault.getAvailablePath(
+                normalizePath(`${folderPath ?? ""}/${filename || copyfile_tfile.basename}`), copyfile_tfile.extension
+            );
+            const folder_path = get_folder_path_from_file_path(path);
+
+            if (
+                folder_path &&
+                !app.vault.getAbstractFileByPathInsensitive(folder_path)
+            ) {
+                await app.vault.createFolder(folder_path);
+            }
+            return app.vault.copy(copyfile_tfile, path);
+        }, `Couldn't copy file.`);
+
+        const { path } = created_note;
+
+        if (open_new_note) {
+            const active_leaf = app.workspace.getLeaf(false);
+            if (!active_leaf) {
+                log_error(new TemplaterError("No active leaf"));
+                return;
+            }
+            await active_leaf.openFile(created_note, {
+                state: { mode: "source" },
+            });
+
+            await this.plugin.editor_handler.jump_to_next_cursor_location(
+                created_note,
+                true
+            );
+
+            active_leaf.setEphemeralState({
+                rename: "all",
+            });
+        }
+
+        await this.end_templater_task(path);
+        return created_note;
+    }
+
     async append_template_to_active_file(template_file: TFile): Promise<void> {
         const active_view = app.workspace.getActiveViewOfType(MarkdownView);
         const active_editor = app.workspace.activeEditor;
