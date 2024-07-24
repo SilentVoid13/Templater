@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/SilentVoid13/Templater/compare/2.3.3...2.4.0) (2024-07-24)
+
+
+### Features
+
+* Return Relative Paths of Templates in Fuzzy Suggester Prompt ([4910143](https://github.com/SilentVoid13/Templater/commit/49101435dca71b0260014cc3c0f3d05ce929b988)), closes [#1418](https://github.com/SilentVoid13/Templater/issues/1418) [#1418](https://github.com/SilentVoid13/Templater/issues/1418)
+
+
+### Bug Fixes
+
+* Follow UI design guidelines ([2abce98](https://github.com/SilentVoid13/Templater/commit/2abce98863bfad10c3f9ee6440f808f9ff9dbd10)), closes [#1383](https://github.com/SilentVoid13/Templater/issues/1383)
+
 ### [2.3.3](https://github.com/SilentVoid13/Templater/compare/2.3.2...2.3.3) (2024-05-26)
 
 ### [2.3.2](https://github.com/SilentVoid13/Templater/compare/2.3.1...2.3.2) (2024-05-21)
