@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.1](https://github.com/SilentVoid13/Templater/compare/2.4.0...2.4.1) (2024-07-24)
+
+
+### Bug Fixes
+
+* Sort files by path instead of by basename ([b3c5981](https://github.com/SilentVoid13/Templater/commit/b3c5981c5651408838c676eedf8a1708f7b56feb)), closes [#1420](https://github.com/SilentVoid13/Templater/issues/1420)
+
 ## [2.4.0](https://github.com/SilentVoid13/Templater/compare/2.3.3...2.4.0) (2024-07-24)
 
 
