@@ -1,0 +1,1275 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Templater</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="terminology.html"><strong aria-hidden="true">1.2.</strong> Terminology</a></li><li class="chapter-item expanded "><a href="syntax.html"><strong aria-hidden="true">1.3.</strong> Syntax</a></li><li class="chapter-item expanded "><a href="settings.html"><strong aria-hidden="true">1.4.</strong> Settings</a></li><li class="chapter-item expanded "><a href="faq.html"><strong aria-hidden="true">1.5.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="internal-functions/overview.html"><strong aria-hidden="true">2.</strong> Internal Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="internal-functions/internal-modules/config-module.html"><strong aria-hidden="true">2.1.</strong> tp.config</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/date-module.html"><strong aria-hidden="true">2.2.</strong> tp.date</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/file-module.html"><strong aria-hidden="true">2.3.</strong> tp.file</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/frontmatter-module.html"><strong aria-hidden="true">2.4.</strong> tp.frontmatter</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/hooks-module.html"><strong aria-hidden="true">2.5.</strong> tp.hooks</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/obsidian-module.html"><strong aria-hidden="true">2.6.</strong> tp.obsidian</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/system-module.html"><strong aria-hidden="true">2.7.</strong> tp.system</a></li><li class="chapter-item expanded "><a href="internal-functions/internal-modules/web-module.html"><strong aria-hidden="true">2.8.</strong> tp.web</a></li><li class="chapter-item expanded "><a href="internal-functions/contribute.html"><strong aria-hidden="true">2.9.</strong> Contributing</a></li></ol></li><li class="chapter-item expanded "><a href="user-functions/overview.html"><strong aria-hidden="true">3.</strong> User Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="user-functions/script-user-functions.html"><strong aria-hidden="true">3.1.</strong> User Scripts</a></li><li class="chapter-item expanded "><a href="user-functions/system-user-functions.html"><strong aria-hidden="true">3.2.</strong> System Commands</a></li></ol></li><li class="chapter-item expanded "><a href="commands/overview.html"><strong aria-hidden="true">4.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="commands/dynamic-command.html"><strong aria-hidden="true">4.1.</strong> Dynamic Commands</a></li><li class="chapter-item expanded "><a href="commands/execution-command.html"><strong aria-hidden="true">4.2.</strong> Execution Commands</a></li><li class="chapter-item expanded "><a href="commands/whitespace-control.html"><strong aria-hidden="true">4.3.</strong> Whitespace Control</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Templater</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p><a href="https://github.com/SilentVoid13/Templater">Templater</a> is a template language that lets you insert <strong>variables</strong> and <strong>functions</strong> results into your notes. It will also let you execute JavaScript code manipulating those variables and functions.</p>
+<p>With <a href="https://github.com/SilentVoid13/Templater">Templater</a>, you will be able to create powerful templates to automate manual tasks.</p>
+<h2 id="quick-example"><a class="header" href="#quick-example">Quick Example</a></h2>
+<p>The following template file, that is using <a href="https://github.com/SilentVoid13/Templater">Templater</a> syntax:</p>
+<pre><code class="language-javascript">---
+creation date: &lt;% tp.file.creation_date() %&gt;
+modification date: &lt;% tp.file.last_modified_date(&quot;dddd Do MMMM YYYY HH:mm:ss&quot;) %&gt;
+---
+
+&lt;&lt; [[&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, -1) %&gt;]] | [[&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 1) %&gt;]] &gt;&gt;
+
+# &lt;% tp.file.title %&gt;
+
+&lt;% tp.web.daily_quote() %&gt;
+</code></pre>
+<p>Will produce the following result when inserted:</p>
+<pre><code>---
+creation date: 2021-01-07 17:20
+modification date: Thursday 7th January 2021 17:20:43
+---
+
+&lt;&lt; [[2021-04-08]] | [[2021-04-10]] &gt;&gt;
+
+# Test Test
+
+&gt; Do the best you can until you know better. Then when you know better, do better.
+&gt; &amp;mdash; &lt;cite&gt;Maya Angelou&lt;/cite&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>You can install this plugin via the Community Plugins tab within Obsidian. Search for &quot;Templater&quot;.</p>
+<p>It's a good practice to restart the Obsidian app after the installation of <a href="https://github.com/SilentVoid13/Templater">Templater</a>, to make sure everything is working properly.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="terminology"><a class="header" href="#terminology">Terminology</a></h1>
+<p>To understand how <a href="https://github.com/SilentVoid13/Templater">Templater</a> works, let's define a few terms:</p>
+<ul>
+<li>A <strong>template</strong> is a file that contains <strong><a href="./commands/overview.html">commands</a></strong>.</li>
+<li>A text snippet that starts with an opening tag <code>&lt;%</code>, ends with a closing tag <code>%&gt;</code> is what we will call a <strong><a href="./commands/overview.html">command</a></strong>.</li>
+<li>A <strong>function</strong> is an object that we can invoke inside a <strong>command</strong> and that returns a value (the replacement string)</li>
+</ul>
+<p>There are two types of functions you can use:</p>
+<ul>
+<li><a href="./internal-functions/overview.html">Internal functions</a>. They are <strong>predefined</strong> functions that are built within the plugin. As an example, <code>tp.date.now</code> is an internal function that will return the current date.</li>
+<li><a href="./user-functions/overview.html">User functions</a>. Users can define their own functions. They are either <a href="./user-functions/system-user-functions.html">system command</a> or <a href="./user-functions/script-user-functions.html">user scripts</a>.</li>
+</ul>
+<h3 id="example"><a class="header" href="#example">Example</a></h3>
+<p>The following template contains 2 commands, calling 2 different internal functions:</p>
+<pre><code>Yesterday: &lt;% tp.date.yesterday(&quot;YYYY-MM-DD&quot;) %&gt;
+Tomorrow: &lt;% tp.date.tomorrow(&quot;YYYY-MM-DD&quot;) %&gt;
+</code></pre>
+<p>We'll see in the next part the syntax required to write some commands.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="syntax"><a class="header" href="#syntax">Syntax</a></h1>
+<p><a href="https://github.com/SilentVoid13/Templater">Templater</a> uses a custom templating engine (<a href="https://github.com/SilentVoid13/rusty_engine">rusty_engine</a>) syntax to declare a command. You may need a bit of time to get used to it, but once you get the idea, the syntax is not that hard.</p>
+<p>All of Templater's functions are JavaScript objects that are invoked using a <strong>command</strong>.</p>
+<h2 id="command-syntax"><a class="header" href="#command-syntax">Command syntax</a></h2>
+<p>A command <strong>must</strong> have both an opening tag <code>&lt;%</code> and a closing tag <code>%&gt;</code>. </p>
+<p>A complete command using the <code>tp.date.now</code> internal function would be: <code>&lt;% tp.date.now() %&gt;</code></p>
+<h2 id="function-syntax"><a class="header" href="#function-syntax">Function syntax</a></h2>
+<h3 id="objects-hierarchy"><a class="header" href="#objects-hierarchy">Objects hierarchy</a></h3>
+<p>All of Templater's functions, whether it's an internal function or a user function, are available under the <code>tp</code> object. You could say that all our functions are children of the <code>tp</code> object. To access the &quot;child&quot; of an object, we have to use the dot notation <code>.</code></p>
+<p>This means that a Templater function invocation will always start with <code>tp.&lt;something&gt;</code></p>
+<h4 id="function-invocation"><a class="header" href="#function-invocation">Function invocation</a></h4>
+<p>To invoke a function, we need to use a syntax specific to functions calls: appending an opening and a closing parenthesis after the function name. </p>
+<p>As an example, we would use <code>tp.date.now()</code> to invoke the <code>tp.date.now</code> internal function.</p>
+<p>A function can have arguments and optional arguments. They are placed between the opening and the closing parenthesis, like so:</p>
+<pre><code class="language-javascript">tp.date.now(arg1_value, arg2_value, arg3_value, ...)
+</code></pre>
+<p>All arguments must be passed in the correct order.</p>
+<p>The arguments of a function can have different <strong>types</strong>. Here is a non-exhaustive list of the possible types of a function:</p>
+<ul>
+<li>A <code>string</code> type means the value must be placed within simple or double quotes (<code>&quot;value&quot;</code> or <code>'value'</code>)</li>
+<li>A <code>number</code> type means the value must be an integer (<code>15</code>, <code>-5</code>, ...)</li>
+<li>A <code>boolean</code> type means the value must be either <code>true</code> or <code>false</code> (completely lower case), and nothing else.</li>
+</ul>
+<p>The type of an argument must be respected when calling a function, or it won't work.</p>
+<h3 id="function-documentation-syntax"><a class="header" href="#function-documentation-syntax">Function documentation syntax</a></h3>
+<p>The documentation for the internal functions of Templater are using the following syntax:</p>
+<pre><code class="language-javascript">tp.&lt;my_function&gt;(arg1_name: type, arg2_name?: type, arg3_name: type = &lt;default_value&gt;, arg4_name: type1|type2, ...)
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>arg_name</code> represents a <strong>symbolic</strong> name for the argument, to understand what it is.</li>
+<li><code>type</code> represents the expected type for the argument. This type must be respected when calling the internal function, or it will throw an error.</li>
+</ul>
+<p>If an argument is optional, it will be appended with a question mark <code>?</code>, e.g. <code>arg2_name?: type</code></p>
+<p>If an argument has a default value, it will be specified using an equal sign <code>=</code>, e.g. <code>arg3_name: type = &lt;default_value&gt;</code>.</p>
+<p>If an argument can have different types, it will be specified using a pipe <code>|</code>, e.g. <code>arg4_name: type1|type2</code></p>
+<h4 id="syntax-warning"><a class="header" href="#syntax-warning">Syntax warning</a></h4>
+<p>Please note that this syntax is for documentation purposes only, to be able to understand what arguments the function expects. </p>
+<p>You mustn't specify the name nor the type nor the default value of an argument when calling a function. Only the value of the arguments are required, as explained <a href="./syntax.html#function-invocation">here</a></p>
+<h5 id="example-1"><a class="header" href="#example-1">Example</a></h5>
+<p>Let's take the <code>tp.date.now</code> internal function documentation as an example: </p>
+<pre><code>tp.date.now(format: string = &quot;YYYY-MM-DD&quot;, offset?: number|string, reference?: string, reference_format?: string)
+</code></pre>
+<p>This internal function has 4 optional arguments: </p>
+<ul>
+<li>a format of type <code>string</code>, with a default value of <code>&quot;YYYY-MM-DD&quot;</code>.</li>
+<li>an offset of type <code>number</code> or of type <code>string</code>.</li>
+<li>a reference of type <code>string</code> .</li>
+<li>a reference_format of type <code>string</code> .</li>
+</ul>
+<p>That means that <strong>valid invocations</strong> for this internal function are:</p>
+<ul>
+<li><code>&lt;% tp.date.now() %&gt;</code></li>
+<li><code>&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 7) %&gt;</code></li>
+<li><code>&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 7, &quot;2021-04-09&quot;, &quot;YYYY-MM-DD&quot;) %&gt;</code></li>
+<li><code>&lt;% tp.date.now(&quot;dddd, MMMM Do YYYY&quot;, 0, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;</code> *Assuming the file name is of the format: &quot;YYYY-MM-DD&quot;</li>
+</ul>
+<p>On the other hand, <strong>invalid invocations</strong> are:</p>
+<ul>
+<li><code>tp.date.now(format: string = &quot;YYYY-MM-DD&quot;)</code></li>
+<li><code>tp.date.now(format: string = &quot;YYYY-MM-DD&quot;, offset?: 0)</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="settings"><a class="header" href="#settings">Settings</a></h1>
+<p>You can set a <code>Template folder location</code> to tell <a href="https://github.com/SilentVoid13/Templater">Templater</a> to only check this folder for templates.</p>
+<p>You can set a timeout for your system commands with the <code>Timeout</code> option. A system command that takes longer than what you defined will be canceled and considered as a failure.</p>
+<p>You can set <a href="https://github.com/SilentVoid13/Templater">Templater</a> to be triggered on new file creation. It will listen for the new file creation event and replace every command it finds in the new file's content.</p>
+<p>This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, ...</p>
+<h2 id="security-warning"><a class="header" href="#security-warning">Security Warning</a></h2>
+<p>It can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.</p>
+<h2 id="folder-templates"><a class="header" href="#folder-templates">Folder Templates</a></h2>
+<p>You can specify a template that will automatically be used on a selected folder and children using the <code>Folder Templates</code> functionality.</p>
+<p><strong>Note</strong>: This setting is hidden by default.  To view it first enable the <code>Trigger Template on new file creation</code> setting.</p>
+<h2 id="system-commands"><a class="header" href="#system-commands">System Commands</a></h2>
+<p>You can enable system commands. This allows you to create <a href="./user-functions/overview.html">user functions</a> linked to system commands.</p>
+<h3 id="arbitrary-system-commands"><a class="header" href="#arbitrary-system-commands">Arbitrary system commands</a></h3>
+<p>It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="frequently-asked-questions"><a class="header" href="#frequently-asked-questions">Frequently Asked Questions</a></h1>
+<h2 id="unicode-characters-emojis--are-not-working-on-windows-"><a class="header" href="#unicode-characters-emojis--are-not-working-on-windows-">Unicode characters (emojis, ...) are not working on Windows ?</a></h2>
+<p><code>cmd.exe</code> and <code>powershell</code> on Windows are known to have problems with unicode characters.</p>
+<p>You can check https://github.com/SilentVoid13/Templater/issues/15#issuecomment-824067020 for a solution.</p>
+<p>Another good solution (probably the best) is to use <a href="https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701">Windows Terminal</a> and set it as the default shell in Templater's setting.</p>
+<p>Another resource containing solutions that could work for you: <a href="https://stackoverflow.com/questions/49476326/displaying-unicode-in-powershell">https://stackoverflow.com/questions/49476326/displaying-unicode-in-powershell</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="internal-functions"><a class="header" href="#internal-functions">Internal Functions</a></h1>
+<p>The different internal variables and functions offered by <a href="https://github.com/SilentVoid13/Templater">Templater</a> are available under different <strong>modules</strong>, to sort them. The existing <strong>internal modules</strong> are:</p>
+<ul>
+<li><a href="internal-functions/./internal-modules/config-module.html">Config module</a>: <code>tp.config</code></li>
+<li><a href="internal-functions/./internal-modules/date-module.html">Date module</a>: <code>tp.date</code></li>
+<li><a href="internal-functions/./internal-modules/file-module.html">File module</a>: <code>tp.file</code></li>
+<li><a href="internal-functions/./internal-modules/frontmatter-module.html">Frontmatter module</a>: <code>tp.frontmatter</code></li>
+<li><a href="internal-functions/./internal-modules/hooks-module.html">Hooks module</a>: <code>tp.hooks</code></li>
+<li><a href="internal-functions/./internal-modules/obsidian-module.html">Obsidian module</a>: <code>tp.obsidian</code></li>
+<li><a href="internal-functions/./internal-modules/system-module.html">System module</a>: <code>tp.system</code></li>
+<li><a href="internal-functions/./internal-modules/web-module.html">Web module</a>: <code>tp.web</code></li>
+</ul>
+<p>If you understood the <a href="internal-functions/../syntax.html#objects-hierarchy">object hierarchy</a> correctly, this means that a typical internal function call looks like this: <code> &lt;% tp.&lt;module_name&gt;.&lt;internal_function_name&gt; %&gt;</code></p>
+<h2 id="contribution"><a class="header" href="#contribution">Contribution</a></h2>
+<p>I invite everyone to contribute to this plugin development by adding new internal functions. More information <a href="internal-functions/./contribute.html">here</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="config-module"><a class="header" href="#config-module">Config Module</a></h1>
+<p>This module exposes Templater's running configuration.</p>
+<p>This is mostly useful when writing scripts requiring some context information.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/config-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/config-module.html#tpconfigactive_file"><code>tp.config.active_file?</code></a></li>
+<li><a href="internal-functions/internal-modules/config-module.html#tpconfigrun_mode"><code>tp.config.run_mode</code></a></li>
+<li><a href="internal-functions/internal-modules/config-module.html#tpconfigtarget_file"><code>tp.config.target_file</code></a></li>
+<li><a href="internal-functions/internal-modules/config-module.html#tpconfigtemplate_file"><code>tp.config.template_file</code></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
+<h3 id="tpconfigactive_file"><a class="header" href="#tpconfigactive_file"><code>tp.config.active_file?</code></a></h3>
+<p>The active file (if existing) when launching Templater.</p>
+<h3 id="tpconfigrun_mode"><a class="header" href="#tpconfigrun_mode"><code>tp.config.run_mode</code></a></h3>
+<p>The <code>RunMode</code>, representing the way Templater was launched (Create new from template, Append to active file, ...).</p>
+<h3 id="tpconfigtarget_file"><a class="header" href="#tpconfigtarget_file"><code>tp.config.target_file</code></a></h3>
+<p>The <code>TFile</code> object representing the target file where the template will be inserted.</p>
+<h3 id="tpconfigtemplate_file"><a class="header" href="#tpconfigtemplate_file"><code>tp.config.template_file</code></a></h3>
+<p>The <code>TFile</code> object representing the template file.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="date-module"><a class="header" href="#date-module">Date Module</a></h1>
+<p>This module contains every internal function related to dates.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/date-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/date-module.html#tpdatenowformat-string--yyyy-mm-dd-offset-numberstring-reference-string-reference_format-string"><code>tp.date.now(format: string = &quot;YYYY-MM-DD&quot;, offset?: number⎮string, reference?: string, reference_format?: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/date-module.html#tpdatetomorrowformat-string--yyyy-mm-dd"><code>tp.date.tomorrow(format: string = &quot;YYYY-MM-DD&quot;)</code></a></li>
+<li><a href="internal-functions/internal-modules/date-module.html#tpdateweekdayformat-string--yyyy-mm-dd-weekday-number-reference-string-reference_format-string"><code>tp.date.weekday(format: string = &quot;YYYY-MM-DD&quot;, weekday: number, reference?: string, reference_format?: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/date-module.html#tpdateyesterdayformat-string--yyyy-mm-dd"><code>tp.date.yesterday(format: string = &quot;YYYY-MM-DD&quot;)</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/date-module.html#momentjs">Moment.js</a></li>
+<li><a href="internal-functions/internal-modules/date-module.html#examples-5">Examples</a></li>
+</ul>
+<h2 id="documentation-1"><a class="header" href="#documentation-1">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="internal-functions/internal-modules/../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpdatenowformat-string--yyyy-mm-dd-offset-numberstring-reference-string-reference_format-string"><a class="header" href="#tpdatenowformat-string--yyyy-mm-dd-offset-numberstring-reference-string-reference_format-string"><code>tp.date.now(format: string = &quot;YYYY-MM-DD&quot;, offset?: number⎮string, reference?: string, reference_format?: string)</code></a></h3>
+<p>Retrieves the date.</p>
+<h5 id="arguments"><a class="header" href="#arguments">Arguments</a></h5>
+<ul>
+<li>
+<p><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</p>
+</li>
+<li>
+<p><code>offset</code>: Duration to offset the date from. If a number is provided, duration will be added to the date in days. You can also specify the offset as a string using the ISO 8601 format.</p>
+</li>
+<li>
+<p><code>reference</code>: The date referential, e.g. set this to the note's title.</p>
+</li>
+<li>
+<p><code>reference_format</code>: The format for the reference date. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</p>
+</li>
+</ul>
+<h5 id="examples"><a class="header" href="#examples">Examples</a></h5>
+<pre><code class="language-javascript">// Date now
+&lt;% tp.date.now() %&gt;
+// Date now with format
+&lt;% tp.date.now(&quot;Do MMMM YYYY&quot;) %&gt;
+// Last week
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, -7) %&gt;
+// Next week
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 7) %&gt;
+// Last month
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, &quot;P-1M&quot;) %&gt;
+// Next year
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, &quot;P1Y&quot;) %&gt;
+// File's title date + 1 day (tomorrow)
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 1, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+// File's title date - 1 day (yesterday)
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, -1, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+</code></pre>
+<h3 id="tpdatetomorrowformat-string--yyyy-mm-dd"><a class="header" href="#tpdatetomorrowformat-string--yyyy-mm-dd"><code>tp.date.tomorrow(format: string = &quot;YYYY-MM-DD&quot;)</code></a></h3>
+<p>Retrieves tomorrow's date.</p>
+<h5 id="arguments-1"><a class="header" href="#arguments-1">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-1"><a class="header" href="#examples-1">Examples</a></h5>
+<pre><code class="language-javascript">// Date tomorrow
+&lt;% tp.date.tomorrow() %&gt;
+// Date tomorrow with format
+&lt;% tp.date.tomorrow(&quot;Do MMMM YYYY&quot;) %&gt;
+</code></pre>
+<h3 id="tpdateweekdayformat-string--yyyy-mm-dd-weekday-number-reference-string-reference_format-string"><a class="header" href="#tpdateweekdayformat-string--yyyy-mm-dd-weekday-number-reference-string-reference_format-string"><code>tp.date.weekday(format: string = &quot;YYYY-MM-DD&quot;, weekday: number, reference?: string, reference_format?: string)</code></a></h3>
+<h5 id="arguments-2"><a class="header" href="#arguments-2">Arguments</a></h5>
+<ul>
+<li>
+<p><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</p>
+</li>
+<li>
+<p><code>weekday</code>: Week day number. If the locale assigns Monday as the first day of the week, <code>0</code> will be Monday, <code>-7</code> will be last week's day.</p>
+</li>
+<li>
+<p><code>reference</code>: The date referential, e.g. set this to the note's title.</p>
+</li>
+<li>
+<p><code>reference_format</code>: The format for the reference date. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</p>
+</li>
+</ul>
+<h5 id="examples-2"><a class="header" href="#examples-2">Examples</a></h5>
+<pre><code class="language-javascript">// This week's Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 0) %&gt;
+// Next Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 7) %&gt;
+// File's title Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 0, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+// File's title previous Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, -7, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+</code></pre>
+<h3 id="tpdateyesterdayformat-string--yyyy-mm-dd"><a class="header" href="#tpdateyesterdayformat-string--yyyy-mm-dd"><code>tp.date.yesterday(format: string = &quot;YYYY-MM-DD&quot;)</code></a></h3>
+<p>Retrieves yesterday's date.</p>
+<h5 id="arguments-3"><a class="header" href="#arguments-3">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-3"><a class="header" href="#examples-3">Examples</a></h5>
+<pre><code class="language-javascript">// Date yesterday
+&lt;% tp.date.yesterday() %&gt;
+// Date yesterday with format
+&lt;% tp.date.yesterday(&quot;Do MMMM YYYY&quot;) %&gt;
+</code></pre>
+<h2 id="momentjs"><a class="header" href="#momentjs">Moment.js</a></h2>
+<p>Templater gives you access to the <code>moment</code> object, with all of its functionalities.</p>
+<p>More information on moment.js <a href="https://momentjs.com/docs/#/displaying/">here</a>.</p>
+<h5 id="examples-4"><a class="header" href="#examples-4">Examples</a></h5>
+<pre><code class="language-javascript">// Date now
+&lt;% moment(tp.file.title, &quot;YYYY-MM-DD&quot;).format(&quot;YYYY-MM-DD&quot;) %&gt;
+// Get start of month from note title
+&lt;% moment(tp.file.title, &quot;YYYY-MM-DD&quot;).startOf(&quot;month&quot;).format(&quot;YYYY-MM-DD&quot;) %&gt;
+// Get end of month from note title
+&lt;% moment(tp.file.title, &quot;YYYY-MM-DD&quot;).endOf(&quot;month&quot;).format(&quot;YYYY-MM-DD&quot;) %&gt;
+</code></pre>
+<h2 id="examples-5"><a class="header" href="#examples-5">Examples</a></h2>
+<pre><code class="language-javascript">// Date now
+&lt;% tp.date.now() %&gt;
+// Date now with format
+&lt;% tp.date.now(&quot;Do MMMM YYYY&quot;) %&gt;
+// Last week
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, -7) %&gt;
+// Next week
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 7) %&gt;
+// Last month
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, &quot;P-1M&quot;) %&gt;
+// Next year
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, &quot;P1Y&quot;) %&gt;
+// File's title date + 1 day (tomorrow)
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, 1, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+// File's title date - 1 day (yesterday)
+&lt;% tp.date.now(&quot;YYYY-MM-DD&quot;, -1, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+
+// Date tomorrow
+&lt;% tp.date.tomorrow() %&gt;
+// Date tomorrow with format
+&lt;% tp.date.tomorrow(&quot;Do MMMM YYYY&quot;) %&gt;
+
+// This week's Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 0) %&gt;
+// Next Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 7) %&gt;
+// File's title Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, 0, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+// File's title previous Monday
+&lt;% tp.date.weekday(&quot;YYYY-MM-DD&quot;, -7, tp.file.title, &quot;YYYY-MM-DD&quot;) %&gt;
+
+// Date yesterday
+&lt;% tp.date.yesterday() %&gt;
+// Date yesterday with format
+&lt;% tp.date.yesterday(&quot;Do MMMM YYYY&quot;) %&gt;
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="file-module"><a class="header" href="#file-module">File Module</a></h1>
+<p>This module contains every internal function related to files.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/file-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilecontent"><code>tp.file.content</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><code>tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder | string)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.creation_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilecursororder-number"><code>tp.file.cursor(order?: number)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilecursor_appendcontent-string"><code>tp.file.cursor_append(content: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfileexistsfilepath-string"><code>tp.file.exists(filepath: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilefind_tfilefilename-string"><code>tp.file.find_tfile(filename: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilefolderrelative-boolean--false"><code>tp.file.folder(relative: boolean = false)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfileincludeinclude_link-string--tfile"><code>tp.file.include(include_link: string ⎮ TFile)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.last_modified_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilemovenew_path-string-file_to_move-tfile"><code>tp.file.move(new_path: string, file_to_move?: TFile)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilepathrelative-boolean--false"><code>tp.file.path(relative: boolean = false)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfilerenamenew_title-string"><code>tp.file.rename(new_title: string)</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfileselection"><code>tp.file.selection()</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfiletags"><code>tp.file.tags</code></a></li>
+<li><a href="internal-functions/internal-modules/file-module.html#tpfiletitle"><code>tp.file.title</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/file-module.html#examples-16">Examples</a></li>
+</ul>
+<h2 id="documentation-2"><a class="header" href="#documentation-2">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="internal-functions/internal-modules/../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpfilecontent"><a class="header" href="#tpfilecontent"><code>tp.file.content</code></a></h3>
+<p>The string contents of the file at the time that Templater was executed. Manipulating this string will <em>not</em> update the current file.</p>
+<h5 id="examples-6"><a class="header" href="#examples-6">Examples</a></h5>
+<pre><code class="language-javascript">// Retrieve file content
+&lt;% tp.file.content %&gt;
+</code></pre>
+<h3 id="tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><a class="header" href="#tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><code>tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder | string)</code></a></h3>
+<p>Creates a new file using a specified template or with a specified content.</p>
+<h5 id="arguments-4"><a class="header" href="#arguments-4">Arguments</a></h5>
+<ul>
+<li>
+<p><code>template</code>: Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with <code>tp.file.find_tfile(TEMPLATENAME)</code>.</p>
+</li>
+<li>
+<p><code>filename</code>: The filename of the new file, defaults to &quot;Untitled&quot;.</p>
+</li>
+<li>
+<p><code>open_new</code>: Whether to open or not the newly created file. Warning: if you use this option, since commands are executed asynchronously, the file can be opened first and then other commands are appended to that new file and not the previous file.</p>
+</li>
+<li>
+<p><code>folder</code>: The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with <code>&quot;PATH/TO/FOLDERNAME&quot;</code> or <code>app.vault.getAbstractFileByPath(&quot;PATH/TO/FOLDERNAME&quot;)</code>.</p>
+</li>
+</ul>
+<h5 id="examples-7"><a class="header" href="#examples-7">Examples</a></h5>
+<pre><code class="language-javascript">// File creation
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;) %&gt;
+// File creation with template
+&lt;%* await tp.file.create_new(tp.file.find_tfile(&quot;MyTemplate&quot;), &quot;MyFilename&quot;) %&gt;
+// File creation and open created note
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, true) %&gt;
+// File creation in current folder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, tp.file.folder(true)) %&gt;
+// File creation in specified folder with string path
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, &quot;Path/To/MyFolder&quot;) %&gt;
+// File creation in specified folder with TFolder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, app.vault.getAbstractFileByPath(&quot;MyFolder&quot;)) %&gt;
+// File creation and append link to current note
+[[&lt;% (await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;)).basename %&gt;]]
+</code></pre>
+<h3 id="tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><a class="header" href="#tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.creation_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></h3>
+<p>Retrieves the file's creation date.</p>
+<h5 id="arguments-5"><a class="header" href="#arguments-5">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD HH:mm&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-8"><a class="header" href="#examples-8">Examples</a></h5>
+<pre><code class="language-javascript">// File creation date
+&lt;% tp.file.creation_date() %&gt;
+// File creation date with format
+&lt;% tp.file.creation_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilecursororder-number"><a class="header" href="#tpfilecursororder-number"><code>tp.file.cursor(order?: number)</code></a></h3>
+<p>Sets the cursor to this location after the template has been inserted. </p>
+<p>You can navigate between the different cursors using the configured hotkey in Obsidian settings.</p>
+<h5 id="arguments-6"><a class="header" href="#arguments-6">Arguments</a></h5>
+<ul>
+<li><code>order</code>: The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.
+If you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.</li>
+</ul>
+<h5 id="examples-9"><a class="header" href="#examples-9">Examples</a></h5>
+<pre><code class="language-javascript">// File cursor
+&lt;% tp.file.cursor() %&gt;
+// File multi-cursor
+&lt;% tp.file.cursor(1) %&gt;Content&lt;% tp.file.cursor(1) %&gt;
+</code></pre>
+<h3 id="tpfilecursor_appendcontent-string"><a class="header" href="#tpfilecursor_appendcontent-string"><code>tp.file.cursor_append(content: string)</code></a></h3>
+<p>Appends some content after the active cursor in the file.</p>
+<h5 id="arguments-7"><a class="header" href="#arguments-7">Arguments</a></h5>
+<ul>
+<li><code>content</code>: The content to append after the active cursor.</li>
+</ul>
+<h5 id="examples-10"><a class="header" href="#examples-10">Examples</a></h5>
+<pre><code class="language-javascript">// File cursor append
+&lt;% tp.file.cursor_append(&quot;Some text&quot;) %&gt;
+</code></pre>
+<h3 id="tpfileexistsfilepath-string"><a class="header" href="#tpfileexistsfilepath-string"><code>tp.file.exists(filepath: string)</code></a></h3>
+<p>Check to see if a file exists by it's file path. The full path to the file, relative to the Vault and containing the extension, must be provided.</p>
+<h5 id="arguments-8"><a class="header" href="#arguments-8">Arguments</a></h5>
+<ul>
+<li><code>filepath</code>: The full file path of the file we want to check existence for.</li>
+</ul>
+<h5 id="examples-11"><a class="header" href="#examples-11">Examples</a></h5>
+<pre><code class="language-javascript">// File existence
+&lt;% await tp.file.exists(&quot;MyFolder/MyFile.md&quot;) %&gt;
+// File existence of current file
+&lt;% await tp.file.exists(tp.file.folder(true) + &quot;/&quot; + tp.file.title + &quot;.md&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilefind_tfilefilename-string"><a class="header" href="#tpfilefind_tfilefilename-string"><code>tp.file.find_tfile(filename: string)</code></a></h3>
+<p>Search for a file and returns its <code>TFile</code> instance.</p>
+<h5 id="arguments-9"><a class="header" href="#arguments-9">Arguments</a></h5>
+<ul>
+<li><code>filename</code>: The filename we want to search and resolve as a <code>TFile</code>.</li>
+</ul>
+<h5 id="examples-12"><a class="header" href="#examples-12">Examples</a></h5>
+<pre><code class="language-javascript">// File find TFile
+&lt;% tp.file.find_tfile(&quot;MyFile&quot;).basename %&gt;
+</code></pre>
+<h3 id="tpfilefolderrelative-boolean--false"><a class="header" href="#tpfilefolderrelative-boolean--false"><code>tp.file.folder(relative: boolean = false)</code></a></h3>
+<p>Retrieves the file's folder name.</p>
+<h5 id="arguments-10"><a class="header" href="#arguments-10">Arguments</a></h5>
+<ul>
+<li><code>relative</code>: If set to <code>true</code>, appends the vault relative path to the folder name. If <code>false</code>, only retrieves name of folder. Defaults to <code>false</code>.</li>
+</ul>
+<h5 id="examples-13"><a class="header" href="#examples-13">Examples</a></h5>
+<pre><code class="language-javascript">// File folder (Folder)
+&lt;% tp.file.folder() %&gt;
+// File folder with relative path (Path/To/Folder)
+&lt;% tp.file.folder(true) %&gt;
+</code></pre>
+<h3 id="tpfileincludeinclude_link-string--tfile"><a class="header" href="#tpfileincludeinclude_link-string--tfile"><code>tp.file.include(include_link: string ⎮ TFile)</code></a></h3>
+<p>Includes the file's link content. Templates in the included content will be resolved.</p>
+<h5 id="arguments-11"><a class="header" href="#arguments-11">Arguments</a></h5>
+<ul>
+<li><code>include_link</code>: The link to the file to include, e.g. <code>&quot;[[MyFile]]&quot;</code>, or a TFile object. Also supports sections or blocks inclusions.</li>
+</ul>
+<h5 id="examples-14"><a class="header" href="#examples-14">Examples</a></h5>
+<pre><code class="language-javascript">// File include
+&lt;% tp.file.include(&quot;[[Template1]]&quot;) %&gt;
+// File include TFile
+&lt;% tp.file.include(tp.file.find_tfile(&quot;MyFile&quot;)) %&gt;
+// File include section
+&lt;% tp.file.include(&quot;[[MyFile#Section1]]&quot;) %&gt;
+// File include block
+&lt;% tp.file.include(&quot;[[MyFile#^block1]]&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><a class="header" href="#tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.last_modified_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></h3>
+<p>Retrieves the file's last modification date.</p>
+<h5 id="arguments-12"><a class="header" href="#arguments-12">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD HH:mm&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-15"><a class="header" href="#examples-15">Examples</a></h5>
+<pre><code class="language-javascript">// File last modified date
+&lt;% tp.file.last_modified_date() %&gt;
+// File last modified date with format
+&lt;% tp.file.last_modified_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilemovenew_path-string-file_to_move-tfile"><a class="header" href="#tpfilemovenew_path-string-file_to_move-tfile"><code>tp.file.move(new_path: string, file_to_move?: TFile)</code></a></h3>
+<p>Moves the file to the desired vault location.</p>
+<h5 id="arguments-13"><a class="header" href="#arguments-13">Arguments</a></h5>
+<ul>
+<li>
+<p><code>new_path</code>: The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. <code>&quot;/Notes/MyNote&quot;</code>.</p>
+</li>
+<li>
+<p><code>file_to_move</code>: The file to move, defaults to the current file.</p>
+</li>
+</ul>
+<h5 id="examples-16"><a class="header" href="#examples-16">Examples</a></h5>
+<pre><code class="language-javascript">// File move
+&lt;% await tp.file.move(&quot;/A/B/&quot; + tp.file.title) %&gt;
+// File move and rename
+&lt;% await tp.file.move(&quot;/A/B/NewTitle&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilepathrelative-boolean--false"><a class="header" href="#tpfilepathrelative-boolean--false"><code>tp.file.path(relative: boolean = false)</code></a></h3>
+<p>Retrieves the file's absolute path on the system.</p>
+<h5 id="arguments-14"><a class="header" href="#arguments-14">Arguments</a></h5>
+<ul>
+<li><code>relative</code>: If set to <code>true</code>, only retrieves the vault's relative path.</li>
+</ul>
+<h5 id="examples-17"><a class="header" href="#examples-17">Examples</a></h5>
+<pre><code class="language-javascript">// File path
+&lt;% tp.file.path() %&gt;
+// File relative path (relative to vault root)
+&lt;% tp.file.path(true) %&gt;
+</code></pre>
+<h3 id="tpfilerenamenew_title-string"><a class="header" href="#tpfilerenamenew_title-string"><code>tp.file.rename(new_title: string)</code></a></h3>
+<p>Renames the file (keeps the same file extension).</p>
+<h5 id="arguments-15"><a class="header" href="#arguments-15">Arguments</a></h5>
+<ul>
+<li><code>new_title</code>: The new file title.</li>
+</ul>
+<h5 id="examples-18"><a class="header" href="#examples-18">Examples</a></h5>
+<pre><code class="language-javascript">// File rename
+&lt;% await tp.file.rename(&quot;MyNewName&quot;) %&gt;
+// File append a 2 to the file name
+&lt;% await tp.file.rename(tp.file.title + &quot;2&quot;) %&gt;
+</code></pre>
+<h3 id="tpfileselection"><a class="header" href="#tpfileselection"><code>tp.file.selection()</code></a></h3>
+<p>Retrieves the active file's text selection.</p>
+<h5 id="examples-19"><a class="header" href="#examples-19">Examples</a></h5>
+<pre><code class="language-javascript">// File selection
+&lt;% tp.file.selection() %&gt;
+</code></pre>
+<h3 id="tpfiletags"><a class="header" href="#tpfiletags"><code>tp.file.tags</code></a></h3>
+<p>Retrieves the file's tags (array of string).</p>
+<h5 id="examples-20"><a class="header" href="#examples-20">Examples</a></h5>
+<pre><code class="language-javascript">// File tags
+&lt;% tp.file.tags %&gt;
+</code></pre>
+<h3 id="tpfiletitle"><a class="header" href="#tpfiletitle"><code>tp.file.title</code></a></h3>
+<p>Retrieves the file's title.</p>
+<h5 id="examples-21"><a class="header" href="#examples-21">Examples</a></h5>
+<pre><code class="language-javascript">// File title
+&lt;% tp.file.title %&gt;
+// Strip the Zettelkasten ID of title (if space separated)
+&lt;% tp.file.title.split(&quot; &quot;)[1] %&gt;
+</code></pre>
+<h2 id="examples-22"><a class="header" href="#examples-22">Examples</a></h2>
+<pre><code class="language-javascript">// Retrieve file content
+&lt;% tp.file.content %&gt;
+
+// File creation
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;) %&gt;
+// File creation with template
+&lt;%* await tp.file.create_new(tp.file.find_tfile(&quot;MyTemplate&quot;), &quot;MyFilename&quot;) %&gt;
+// File creation and open created note
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, true) %&gt;
+// File creation in current folder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, tp.file.folder(true)) %&gt;
+// File creation in specified folder with string path
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, &quot;Path/To/MyFolder&quot;) %&gt;
+// File creation in specified folder with TFolder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, app.vault.getAbstractFileByPath(&quot;MyFolder&quot;)) %&gt;
+// File creation and append link to current note
+[[&lt;% (await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;)).basename %&gt;]]
+
+// File creation date
+&lt;% tp.file.creation_date() %&gt;
+// File creation date with format
+&lt;% tp.file.creation_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+
+// File cursor
+&lt;% tp.file.cursor() %&gt;
+// File multi-cursor
+&lt;% tp.file.cursor(1) %&gt;Content&lt;% tp.file.cursor(1) %&gt;
+
+// File cursor append
+&lt;% tp.file.cursor_append(&quot;Some text&quot;) %&gt;
+
+// File existence
+&lt;% await tp.file.exists(&quot;MyFolder/MyFile.md&quot;) %&gt;
+// File existence of current file
+&lt;% await tp.file.exists(tp.file.folder(true) + &quot;/&quot; + tp.file.title + &quot;.md&quot;) %&gt;
+
+// File find TFile
+&lt;% tp.file.find_tfile(&quot;MyFile&quot;).basename %&gt;
+
+// File folder (Folder)
+&lt;% tp.file.folder() %&gt;
+// File folder with relative path (Path/To/Folder)
+&lt;% tp.file.folder(true) %&gt;
+
+// File include
+&lt;% tp.file.include(&quot;[[Template1]]&quot;) %&gt;
+// File include TFile
+&lt;% tp.file.include(tp.file.find_tfile(&quot;MyFile&quot;)) %&gt;
+// File include section
+&lt;% tp.file.include(&quot;[[MyFile#Section1]]&quot;) %&gt;
+// File include block
+&lt;% tp.file.include(&quot;[[MyFile#^block1]]&quot;) %&gt;
+
+// File last modified date
+&lt;% tp.file.last_modified_date() %&gt;
+// File last modified date with format
+&lt;% tp.file.last_modified_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+
+// File move
+&lt;% await tp.file.move(&quot;/A/B/&quot; + tp.file.title) %&gt;
+// File move and rename
+&lt;% await tp.file.move(&quot;/A/B/NewTitle&quot;) %&gt;
+
+// File path
+&lt;% tp.file.path() %&gt;
+// File relative path (relative to vault root)
+&lt;% tp.file.path(true) %&gt;
+
+// File rename
+&lt;% await tp.file.rename(&quot;MyNewName&quot;) %&gt;
+// File append a 2 to the file name
+&lt;% await tp.file.rename(tp.file.title + &quot;2&quot;) %&gt;
+
+// File selection
+&lt;% tp.file.selection() %&gt;
+
+// File tags
+&lt;% tp.file.tags %&gt;
+
+// File title
+&lt;% tp.file.title %&gt;
+// Strip the Zettelkasten ID of title (if space separated)
+&lt;% tp.file.title.split(&quot; &quot;)[1] %&gt;
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="frontmatter-module"><a class="header" href="#frontmatter-module">Frontmatter Module</a></h1>
+<p>This modules exposes all the frontmatter variables of a file as variables.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/frontmatter-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/frontmatter-module.html#tpfrontmatterfrontmatter_variable_name"><code>tp.frontmatter.&lt;frontmatter_variable_name&gt;</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/frontmatter-module.html#examples">Examples</a></li>
+</ul>
+<h2 id="documentation-3"><a class="header" href="#documentation-3">Documentation</a></h2>
+<h3 id="tpfrontmatterfrontmatter_variable_name"><a class="header" href="#tpfrontmatterfrontmatter_variable_name"><code>tp.frontmatter.&lt;frontmatter_variable_name&gt;</code></a></h3>
+<p>Retrieves the file's frontmatter variable value.</p>
+<p>If your frontmatter variable name contains spaces, you can reference it using the bracket notation like so: </p>
+<pre><code>&lt;% tp.frontmatter[&quot;variable name with spaces&quot;] %&gt;
+</code></pre>
+<h2 id="examples-23"><a class="header" href="#examples-23">Examples</a></h2>
+<p>Let's say you have the following file:</p>
+<pre><code>---
+alias: myfile
+note type: seedling
+---
+
+file content
+</code></pre>
+<p>Then you can use the following template:</p>
+<pre><code>File's metadata alias: &lt;% tp.frontmatter.alias %&gt;
+Note's type: &lt;% tp.frontmatter[&quot;note type&quot;] %&gt;
+</code></pre>
+<p>For lists in frontmatter, you can use JavaScript array prototype methods to manipulate how the data is displayed.</p>
+<pre><code>---
+categories:
+  - book
+  - movie
+---
+</code></pre>
+<pre><code>&lt;% tp.frontmatter.categories.map(prop =&gt; `  - &quot;${prop}&quot;`).join(&quot;\n&quot;) %&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hooks-module"><a class="header" href="#hooks-module">Hooks Module</a></h1>
+<p>This module exposes hooks that allow you to execute code when a Templater event occurs.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/hooks-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/hooks-module.html#tphookson_all_templates_executedcallback_function---any"><code>tp.hooks.on_all_templates_executed(callback_function: () =&gt; any)</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/hooks-module.html#examples">Examples</a></li>
+</ul>
+<h2 id="documentation-4"><a class="header" href="#documentation-4">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="internal-functions/internal-modules/../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tphookson_all_templates_executedcallback_function---any"><a class="header" href="#tphookson_all_templates_executedcallback_function---any"><code>tp.hooks.on_all_templates_executed(callback_function: () =&gt; any)</code></a></h3>
+<p>Hooks into when all actively running templates have finished executing. Most of the time this will be a single template, unless you are using <code>tp.file.include</code> or <code>tp.file.create_new</code>.</p>
+<p>Multiple invokations of this method will have their callback functions run in parallel.</p>
+<h5 id="arguments-16"><a class="header" href="#arguments-16">Arguments</a></h5>
+<ul>
+<li><code>callback_function</code>: Callback function that will be executed when all actively running templates have finished executing.</li>
+</ul>
+<h2 id="examples-24"><a class="header" href="#examples-24">Examples</a></h2>
+<pre><code class="language-javascript">// Update frontmatter after template finishes executing
+&lt;%*
+tp.hooks.on_all_templates_executed(async () =&gt; {
+  const file = tp.file.find_tfile(tp.file.path(true));
+  await app.fileManager.processFrontMatter(file, (frontmatter) =&gt; {
+    frontmatter[&quot;key&quot;] = &quot;value&quot;;
+  });
+});
+%&gt;
+// Run a command from another plugin that modifies the current file, after Templater has updated the file
+&lt;%*
+tp.hooks.on_all_templates_executed(() =&gt; {
+  app.commands.executeCommandById(&quot;obsidian-linter:lint-file&quot;);
+});
+-%&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="obsidian-module"><a class="header" href="#obsidian-module">Obsidian Module</a></h1>
+<p>This module exposes all the functions and classes from the Obsidian API.</p>
+<p>This is mostly useful when writing scripts. </p>
+<p>Refer to the Obsidian API <a href="https://github.com/obsidianmd/obsidian-api/blob/master/obsidian.d.ts">declaration file</a> for more information.</p>
+<h2 id="examples-25"><a class="header" href="#examples-25">Examples</a></h2>
+<pre><code class="language-javascript">// Get all folders
+&lt;%
+app.vault.getAllLoadedFiles()
+  .filter(x =&gt; x instanceof tp.obsidian.TFolder)
+  .map(x =&gt; x.name)
+%&gt;
+
+// Normalize path
+&lt;% tp.obsidian.normalizePath(&quot;Path/to/file.md&quot;) %&gt;
+
+// Html to markdown
+&lt;% tp.obsidian.htmlToMarkdown(&quot;\&lt;h1&gt;Heading\&lt;/h1&gt;\&lt;p&gt;Paragraph\&lt;/p&gt;&quot;) %&gt;
+
+// HTTP request
+&lt;%*
+const response = await tp.obsidian.requestUrl(&quot;https://jsonplaceholder.typicode.com/todos/1&quot;);
+tR += response.json.title;
+%&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="system-module"><a class="header" href="#system-module">System Module</a></h1>
+<p>This module contains system related functions.</p>
+<ul>
+<li><a href="internal-functions/internal-modules/system-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/system-module.html#tpsystemclipboard"><code>tp.system.clipboard()</code></a></li>
+<li><a href="internal-functions/internal-modules/system-module.html#tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><code>tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)</code></a></li>
+<li><a href="internal-functions/internal-modules/system-module.html#tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><code>tp.system.suggester(text_items: string[] ⎮ ((item: T) =&gt; string), items: T[], throw_on_cancel: boolean = false, placeholder: string = &quot;&quot;, limit?: number = undefined)</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/system-module.html#examples-3">Examples</a></li>
+</ul>
+<h2 id="documentation-5"><a class="header" href="#documentation-5">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="internal-functions/internal-modules/../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpsystemclipboard"><a class="header" href="#tpsystemclipboard"><code>tp.system.clipboard()</code></a></h3>
+<p>Retrieves the clipboard's content.</p>
+<h5 id="examples-26"><a class="header" href="#examples-26">Examples</a></h5>
+<pre><code class="language-javascript">// Clipboard
+&lt;% tp.system.clipboard() %&gt;
+</code></pre>
+<h3 id="tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><a class="header" href="#tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><code>tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)</code></a></h3>
+<p>Spawns a prompt modal and returns the user's input.</p>
+<h5 id="arguments-17"><a class="header" href="#arguments-17">Arguments</a></h5>
+<ul>
+<li>
+<p><code>prompt_text</code>: Text placed above the input field.</p>
+</li>
+<li>
+<p><code>default_value</code>: A default value for the input field.</p>
+</li>
+<li>
+<p><code>throw_on_cancel</code>: Throws an error if the prompt is canceled, instead of returning a <code>null</code> value.</p>
+</li>
+<li>
+<p><code>multiline</code>: If set to <code>true</code>, the input field will be a multiline textarea. Defaults to <code>false</code>.</p>
+</li>
+</ul>
+<h5 id="examples-27"><a class="header" href="#examples-27">Examples</a></h5>
+<pre><code class="language-javascript">// Prompt
+&lt;% tp.system.prompt(&quot;Please enter a value&quot;) %&gt;
+// Prompt with default value
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, &quot;happy&quot;) %&gt;
+// Multiline prompt
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, null, false, true) %&gt;
+</code></pre>
+<h3 id="tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><a class="header" href="#tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><code>tp.system.suggester(text_items: string[] ⎮ ((item: T) =&gt; string), items: T[], throw_on_cancel: boolean = false, placeholder: string = &quot;&quot;, limit?: number = undefined)</code></a></h3>
+<p>Spawns a suggester prompt and returns the user's chosen item.</p>
+<h5 id="arguments-18"><a class="header" href="#arguments-18">Arguments</a></h5>
+<ul>
+<li>
+<p><code>text_items</code>: Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation.</p>
+</li>
+<li>
+<p><code>items</code>: Array containing the values of each item in the correct order.</p>
+</li>
+<li>
+<p><code>throw_on_cancel</code>: Throws an error if the prompt is canceled, instead of returning a <code>null</code> value.</p>
+</li>
+<li>
+<p><code>placeholder</code>: Placeholder string of the prompt.</p>
+</li>
+<li>
+<p><code>limit</code>: Limit the number of items rendered at once (useful to improve performance when displaying large lists).</p>
+</li>
+</ul>
+<h5 id="examples-28"><a class="header" href="#examples-28">Examples</a></h5>
+<pre><code class="language-javascript">// Suggester
+&lt;% tp.system.suggester([&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;], [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester with mapping function (same as above example)
+&lt;% tp.system.suggester((item) =&gt; item, [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester for files
+[[&lt;% (await tp.system.suggester((item) =&gt; item.basename, app.vault.getMarkdownFiles())).basename %&gt;]]
+// Suggester for tags
+&lt;% tp.system.suggester(item =&gt; item, Object.keys(app.metadataCache.getTags()).map(x =&gt; x.replace(&quot;#&quot;, &quot;&quot;))) %&gt;
+</code></pre>
+<h2 id="examples-29"><a class="header" href="#examples-29">Examples</a></h2>
+<pre><code class="language-javascript">// Clipboard
+&lt;% tp.system.clipboard() %&gt;
+
+// Prompt
+&lt;% tp.system.prompt(&quot;Please enter a value&quot;) %&gt;
+// Prompt with default value
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, &quot;happy&quot;) %&gt;
+// Multiline prompt
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, null, false, true) %&gt;
+
+// Suggester
+&lt;% tp.system.suggester([&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;], [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester with mapping function (same as above example)
+&lt;% tp.system.suggester((item) =&gt; item, [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester for files
+[[&lt;% (await tp.system.suggester((item) =&gt; item.basename, app.vault.getMarkdownFiles())).basename %&gt;]]
+// Suggester for tags
+&lt;% tp.system.suggester(item =&gt; item, Object.keys(app.metadataCache.getTags()).map(x =&gt; x.replace(&quot;#&quot;, &quot;&quot;))) %&gt;
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="web-module"><a class="header" href="#web-module">Web Module</a></h1>
+<p>This modules contains every internal function related to the web (making web requests).</p>
+<ul>
+<li><a href="internal-functions/internal-modules/web-module.html#documentation">Documentation</a>
+<ul>
+<li><a href="internal-functions/internal-modules/web-module.html#tpwebdaily_quote"><code>tp.web.daily_quote()</code></a></li>
+<li><a href="internal-functions/internal-modules/web-module.html#tpwebrandom_picturesize-string-query-string-include_size-boolean"><code>tp.web.random_picture(size?: string, query?: string, include_size?: boolean)</code></a></li>
+</ul>
+</li>
+<li><a href="internal-functions/internal-modules/web-module.html#examples-2">Examples</a></li>
+</ul>
+<h2 id="documentation-6"><a class="header" href="#documentation-6">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="internal-functions/internal-modules/../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpwebdaily_quote"><a class="header" href="#tpwebdaily_quote"><code>tp.web.daily_quote()</code></a></h3>
+<p>Retrieves and parses the daily quote from the API <code>https://api.quotable.io</code> as a callout.</p>
+<h5 id="examples-30"><a class="header" href="#examples-30">Examples</a></h5>
+<pre><code class="language-javascript">// Daily quote
+&lt;% tp.web.daily_quote() %&gt;
+</code></pre>
+<h3 id="tpwebrandom_picturesize-string-query-string-include_size-boolean"><a class="header" href="#tpwebrandom_picturesize-string-query-string-include_size-boolean"><code>tp.web.random_picture(size?: string, query?: string, include_size?: boolean)</code></a></h3>
+<p>Gets a random image from <code>https://unsplash.com/</code>.</p>
+<h5 id="arguments-19"><a class="header" href="#arguments-19">Arguments</a></h5>
+<ul>
+<li>
+<p><code>size</code>: Image size in the format <code>&lt;width&gt;x&lt;height&gt;</code>.</p>
+</li>
+<li>
+<p><code>query</code>: Limits selection to photos matching a search term. Multiple search terms can be passed separated by a comma.</p>
+</li>
+<li>
+<p><code>include_size</code>: Optional argument to include the specified size in the image link markdown. Defaults to false.</p>
+</li>
+</ul>
+<h5 id="examples-31"><a class="header" href="#examples-31">Examples</a></h5>
+<pre><code class="language-javascript">// Random picture
+&lt;% tp.web.random_picture() %&gt;
+// Random picture with size
+&lt;% tp.web.random_picture(&quot;200x200&quot;) %&gt;
+// Random picture with size and query
+&lt;% tp.web.random_picture(&quot;200x200&quot;, &quot;landscape,water&quot;) %&gt;
+</code></pre>
+<h2 id="examples-32"><a class="header" href="#examples-32">Examples</a></h2>
+<pre><code class="language-javascript">// Daily quote
+&lt;% tp.web.daily_quote() %&gt;
+
+// Random picture
+&lt;% tp.web.random_picture() %&gt;
+// Random picture with size
+&lt;% tp.web.random_picture(&quot;200x200&quot;) %&gt;
+// Random picture with size and query
+&lt;% tp.web.random_picture(&quot;200x200&quot;, &quot;landscape,water&quot;) %&gt;
+
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
+<p>You can contribute to <a href="https://github.com/SilentVoid13/Templater">Templater</a> by developing a new internal function / variable.</p>
+<p>The process to develop a new one is really easy.</p>
+<p>Keep in mind that only pertinent submissions will be accepted, don't submit a very specific internal variable / function that you'll be the only one using.</p>
+<h2 id="layout"><a class="header" href="#layout">Layout</a></h2>
+<p>Internal variables / functions are sorted by modules. Each module has a dedicated folder under <a href="https://github.com/SilentVoid13/Templater/tree/master/src/InternalTemplates">src/InternalTemplates</a>. </p>
+<p>Let's take the <a href="https://github.com/SilentVoid13/Templater/tree/master/src/InternalTemplates/date">date module</a> as an example.</p>
+<p>It contains an <a href="https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/date/InternalModuleDate.ts">InternalModuleDate</a> file where all our internal date's related variables and functions are defined and registered:</p>
+<pre><code class="language-typescript">export class InternalModuleDate extends InternalModule {
+    name = &quot;date&quot;;
+
+    async createStaticTemplates() {
+        this.static_templates.set(&quot;now&quot;, this.generate_now());
+        this.static_templates.set(&quot;tomorrow&quot;, this.generate_tomorrow());
+        this.static_templates.set(&quot;yesterday&quot;, this.generate_yesterday());
+    }
+
+    async updateTemplates() {}
+
+    generate_now() {
+        return (format: string = &quot;YYYY-MM-DD&quot;, offset?: number, reference?: string, reference_format?: string) =&gt; {
+            if (reference &amp;&amp; !window.moment(reference, reference_format).isValid()) {
+                throw new Error(&quot;Invalid title date format, try specifying one with the argument 'reference'&quot;);
+            }
+            return get_date_string(format, offset, reference, reference_format);
+        }
+    }
+
+    generate_tomorrow() {
+        return (format: string = &quot;YYYY-MM-DD&quot;) =&gt; {
+            return get_date_string(format, 1);
+        }
+    }
+
+    generate_yesterday() {
+        return (format: string = &quot;YYYY-MM-DD&quot;) =&gt; {
+            return get_date_string(format, -1);
+        }
+    }
+}
+</code></pre>
+<p>Every module extends the <a href="https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/InternalModule.ts">InternalModule</a> abstract class, which means they contain the following attributes and methods:</p>
+<ul>
+<li><code>this.app</code> attribute: the Obsidian API <code>App</code> object.</li>
+<li><code>this.file</code> attribute: The destination file where the template will be inserted.</li>
+<li><code>this.plugin</code> attribute: The Templater plugin object.</li>
+<li><code>this.static_templates</code> attribute: A map containing all (name; variable/function) that are static. A static variable / function means that it doesn't depend on the file when executed. These type of variables / functions won't be updated each time we insert a new template, to save some overhead.</li>
+<li><code>this.dynamic_templates</code> attribute: Same as <code>static_templates</code> except  that it contains variables / functions dependent on the file when executed.</li>
+<li><code>this.createStaticTemplates()</code> method: Registers all static internal variable / function for that module.</li>
+<li><code>this.updateTemplates()</code> method: Registers every dynamic internal variable / function for that module.</li>
+</ul>
+<p>You can use these attributes in your new internal variable / function if you need them.</p>
+<h2 id="registering-a-new-internal-variable--function"><a class="header" href="#registering-a-new-internal-variable--function">Registering a new internal variable / function</a></h2>
+<p>Here are the different steps you need to follow, in order to register a new internal variable / function in a module.</p>
+<p><strong>1st step:</strong> Create a method inside the module called <code>generate_&lt;internal_variable_or_function_name&gt;()</code> that will generate your internal variable / function, that means it will return either a lambda function (representing the internal function) or directly the internal variable you want to expose.</p>
+<p>All generation methods are ordered by alphabetical order based on the internal variable / function name.</p>
+<p>Try to give a good, self-explanatory name for your variable / function.</p>
+<p><strong>2nd step:</strong> Register your internal variable / function in the <code>static_templates</code> or <code>dynamic_templates</code> map depending on whether your internal variable / function on the file when executed. The registration happens either in <code>createStaticTemplates</code> or <code>updateTemplates</code>.</p>
+<p>To register your variable / function, use your <code>this.generate_&lt;internal_variable_or_function_name&gt;()</code> method you defined earlier:</p>
+<pre><code class="language-typescript">this.static_templates.set(&lt;internal_variable_or_function_name&gt;, this.generate_&lt;internal_variable_or_function_name&gt;());
+OR
+this.dynamic_templates.set(&lt;internal_variable_or_function_name&gt;, this.generate_&lt;internal_variable_or_function_name&gt;());
+</code></pre>
+<p>Internal variable / function registrations are also ordered by alphabetical order based on the variable / function name.</p>
+<p><strong>3rd step:</strong> Add your internal variable / function documentation to Templater's <a href="https://github.com/SilentVoid13/Templater/tree/master/docs/docs/internal-variables-functions/internal-modules">documentation</a>.</p>
+<p>And you are done ! Thanks for contributing to <a href="https://github.com/SilentVoid13/Templater">Templater</a> !</p>
+<p>Now, just submit a <a href="https://github.com/SilentVoid13/Templater/pulls">pull request</a> on Github, I'll try to be as reactive as possible.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="user-functions"><a class="header" href="#user-functions">User Functions</a></h1>
+<p>You can define your own functions in Templater.</p>
+<p>There are two types of user functions you can use:</p>
+<ul>
+<li><a href="user-functions/./script-user-functions.html">Script User Functions</a></li>
+<li><a href="user-functions/./system-user-functions.html">System Command User Functions</a></li>
+</ul>
+<h2 id="invoking-user-functions"><a class="header" href="#invoking-user-functions">Invoking User Functions</a></h2>
+<p>You can call a user function using the usual function call syntax: <code>tp.user.&lt;user_function_name&gt;()</code>, where <code>&lt;user_function_name&gt;</code> is the function name you defined. </p>
+<p>For example, if you defined a system command user function named <code>echo</code>, a complete command invocation would look like this:</p>
+<pre><code class="language-js">&lt;% tp.user.echo() %&gt;
+</code></pre>
+<h2 id="no-mobile-support"><a class="header" href="#no-mobile-support">No mobile support</a></h2>
+<p>Currently user functions are unavailable on Obsidian for mobile.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="script-user-functions"><a class="header" href="#script-user-functions">Script User Functions</a></h1>
+<p>This type of user functions allows you to call JavaScript functions from JavaScript files and retrieve their output.</p>
+<p>To use script user functions, you need to specify a script folder in Templater's settings. This folder needs to be accessible from your vault. </p>
+<h2 id="define-a-script-user-function"><a class="header" href="#define-a-script-user-function">Define a Script User Function</a></h2>
+<p>Let's say you specified the <code>Scripts</code> folder as your script folder in Templater's settings.</p>
+<p>Templater will load all JavaScript (<code>.js</code> files) scripts in the <code>Scripts</code> folder.</p>
+<p>You can then create your script named <code>Scripts/my_script.js</code> (the <code>.js</code> extension is required) for example. You will likely have to create the file outside of Obsidian, as Obsidian only creates markdown files.</p>
+<p>You will then be able to call your scripts as user functions. The function name corresponds to the script file name.</p>
+<p>Scripts should follow the <a href="https://flaviocopes.com/commonjs/">CommonJS module specification</a>, and export a single function.</p>
+<pre><code class="language-javascript">function my_function (msg) {
+    return `Message from my script: ${msg}`;
+}
+module.exports = my_function;
+</code></pre>
+<p>In this example, a complete command invocation would look like this: </p>
+<pre><code class="language-javascript">&lt;% tp.user.my_script(&quot;Hello World!&quot;) %&gt;
+</code></pre>
+<p>Which would output <code>Message from my script: Hello World!</code>.</p>
+<h2 id="global-namespace"><a class="header" href="#global-namespace">Global namespace</a></h2>
+<p>In script user functions, you can still access global namespace variables like <code>app</code> or <code>moment</code>.</p>
+<p>However, you can't access the template engine scoped variables like <code>tp</code> or <code>tR</code>. If you want to use them, you must pass them as arguments for your function.</p>
+<h2 id="functions-arguments"><a class="header" href="#functions-arguments">Functions Arguments</a></h2>
+<p>You can pass as many arguments as you want to your function, depending on how you defined it.</p>
+<p>You can for example pass the <code>tp</code> object to your function, to be able to use all of the <a href="user-functions/../internal-variables-functions/overview.html">internal variables / functions</a> of Templater: <code>&lt;% tp.user.&lt;user_function_name&gt;(tp) %&gt;</code></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="system-command-user-functions"><a class="header" href="#system-command-user-functions">System Command User Functions</a></h1>
+<p>This type of user functions allows you to execute system commands and retrieve their output.</p>
+<p>System command user functions need to be enabled in Templater's settings.</p>
+<h2 id="define-a-system-command-user-function"><a class="header" href="#define-a-system-command-user-function">Define a System Command User Function</a></h2>
+<p>To define a new system command user function, you need to define a <strong>function name</strong>, associated with a <strong>system command</strong>.</p>
+<p>To do that, go to the plugin's settings and click <code>Add User Function</code>.</p>
+<p>Once this is done, <a href="https://github.com/SilentVoid13/Templater">Templater</a> will create a user function named after what you defined, that will execute your system command and return its output.</p>
+<p>Just like internal functions, user functions are available under the <code>tp</code> JavaScript object, and more specifically under the <code>tp.user</code> object.</p>
+<p><img src="user-functions/../imgs/templater_user_templates.png" alt="user_templates" /></p>
+<h2 id="functions-arguments-1"><a class="header" href="#functions-arguments-1">Functions Arguments</a></h2>
+<p>You can pass optional arguments to user functions. They must be passed as a single JavaScript object containing properties and their corresponding values: <code>{arg1: value1, arg2: value2, ...}</code>.</p>
+<p>These arguments will be made available for your programs / scripts in the form of <a href="https://en.wikipedia.org/wiki/Environment_variable">environment variables</a>.</p>
+<p>In our previous example, this would give the following command declaration: <code>&lt;% tp.user.echo({a: &quot;value 1&quot;, b: &quot;value 2&quot;})</code>. </p>
+<p>If our system command was calling a bash script, we would be able to access variables <code>a</code> and <code>b</code> using <code>$a</code> and <code>$b</code>.</p>
+<h2 id="internal-functions-in-system-commands"><a class="header" href="#internal-functions-in-system-commands">Internal functions in system commands</a></h2>
+<p>You can use internal functions inside your system command. The internal functions will be replaced before your system command gets executed.</p>
+<p>For example, if you configured the system command <code>cat &lt;% tp.file.path() %&gt;</code>, it would be replaced with <code>cat /path/to/file</code> before the system command gets executed.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="commands"><a class="header" href="#commands">Commands</a></h1>
+<h2 id="command-types"><a class="header" href="#command-types">Command Types</a></h2>
+<p><a href="https://github.com/SilentVoid13/Templater">Templater</a> defines 2 types of opening tags, that defines 2 types of <strong>commands</strong>:</p>
+<ul>
+<li><code>&lt;%</code>:  Interpolation command. It will output the result of the expression that's inside.</li>
+<li><code>&lt;%*</code>: <a href="commands/./execution-command.html">JavaScript execution command</a>. It will execute the JavaScript code that's inside. It does not output anything by default.</li>
+</ul>
+<p>The closing tag for a command is always the same: <code>%&gt;</code></p>
+<h2 id="command-utilities"><a class="header" href="#command-utilities">Command utilities</a></h2>
+<p>In addition to the different types of commands, you can also use command utilities. They are also declared in the opening tag of the command. All command utilities work with all command types. The available command utilities are:</p>
+<ul>
+<li><a href="commands/./whitespace-control.html">Whitespace Control</a></li>
+<li><a href="commands/./dynamic-command.html">Dynamic Commands</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dynamic-commands"><a class="header" href="#dynamic-commands">Dynamic Commands</a></h1>
+<p>With this command utility, you can declare a command as &quot;dynamic&quot;, which means that this command will be resolved when entering preview mode.</p>
+<p>To declare a dynamic command add a plus <code>+</code> sign after the command opening tag: <code>&lt;%+</code></p>
+<p>That's it, your command will now be executed only in preview mode.</p>
+<p>This is useful for internal functions like <code>tp.file.last_modified_date</code> for example:</p>
+<pre><code class="language-javascript">Last modified date: &lt;%+ tp.file.last_modified_date() %&gt;
+</code></pre>
+<p><strong>Note</strong>: Dynamic commands have known issues, and will likely not be maintained going forward (see <a href="https://github.com/SilentVoid13/Templater/issues/913">this issue</a> for more details). In most cases the <a href="https://github.com/blacksmithgu/obsidian-dataview">Dataview</a> plugin is the suggested alternative.</p>
+<h2 id="refresh-problems"><a class="header" href="#refresh-problems">Refresh problems</a></h2>
+<p>One &quot;downside&quot; of the preview mode is that it puts the rendered note in cache, to speed things up.</p>
+<p>This means that your dynamic command will be rendered only once, when you open the note, but won't be refreshed after.</p>
+<p>If you want to refresh it, you must close the note to clear the cache and open it again.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="javascript-execution-command"><a class="header" href="#javascript-execution-command">Javascript Execution Command</a></h1>
+<p>This type of command allows us to execute JavaScript code.</p>
+<p>With a JavaScript Execution command, we can pretty much do everything that JavaScript allows us to do. Some examples are given below.</p>
+<p>We can still access the <code>tp</code> object and all the internal variables / functions from this type of command.</p>
+<p>JavaScript Execution commands let you access global namespace variables. This means you can access things like <code>app</code> or <code>moment</code>.</p>
+<h2 id="asynchronous-functions"><a class="header" href="#asynchronous-functions">Asynchronous functions</a></h2>
+<p>Some internal functions are asynchronous. When calling such functions inside a JavaScript execution command, don't forget to use the <code>await</code> keyword if necessary.</p>
+<h2 id="how-to-output-a-value-from-a-javascript-execution-command-"><a class="header" href="#how-to-output-a-value-from-a-javascript-execution-command-">How to output a value from a JavaScript Execution Command ?</a></h2>
+<p>Sometimes, you may want to output something when using a JS execution command.</p>
+<p>When our templating engine generates a replacement string using all of our commands results, it is stored in a variable named <code>tR</code>. This is the string that will contain the processed file content. You are allowed to access that variable from a JS execution command.</p>
+<p>This means that, to output something from a JS execution command, you just need to append what you want to output to that <code>tR</code> string variable.</p>
+<p>For example, the following command: <code>&lt;%* tR += &quot;test&quot; %&gt;</code> will output <code>test</code>.</p>
+<h3 id="suggesters-and-prompts"><a class="header" href="#suggesters-and-prompts">Suggesters and Prompts</a></h3>
+<p>It is important to note that the <code>tp.system.prompt()</code> and <code>tp.system.suggester()</code> both require a <code>await</code> statement to save the value to a variable</p>
+<h2 id="examples-33"><a class="header" href="#examples-33">Examples</a></h2>
+<p>Here are some examples of things you can do using JavaScript Execution Commands:</p>
+<pre><code class="language-javascript">&lt;%* if (tp.file.title.startsWith(&quot;Hello&quot;)) { %&gt;
+This is a hello file !
+&lt;%* } else { %&gt;
+This is a normal file !
+&lt;%* } %&gt;
+    
+&lt;%* if (tp.frontmatter.type === &quot;seedling&quot;) { %&gt;
+This is a seedling file !
+&lt;%* } else { %&gt;
+This is a normal file !
+&lt;%* } %&gt;
+    
+&lt;%* if (tp.file.tags.contains(&quot;#todo&quot;)) { %&gt;
+This is a todo file !
+&lt;%* } else { %&gt;
+This is a finished file !
+&lt;%* } %&gt;
+
+&lt;%*
+function log(msg) {
+	console.log(msg);
+}
+%&gt;
+&lt;%* log(&quot;Title: &quot; + tp.file.title) %&gt;
+    
+&lt;%* tR += tp.file.content.replace(/stuff/, &quot;things&quot;); %&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="whitespace-control"><a class="header" href="#whitespace-control">Whitespace Control</a></h1>
+<p>By default, <strong>commands</strong> in Templater are not removing any newlines. Commands are replaced with their values and that's it.</p>
+<p>It can sometimes be useful to have some whitespace control after commands are inserted, which is exactly what this command utility offers.</p>
+<p>Let's have an example. The following template:</p>
+<pre><code>&lt;%* if (tp.file.title == &quot;MyFile&quot; ) { %&gt;
+This is my file!
+&lt;%* } else { %&gt;
+This isn't my file!
+&lt;%* } %&gt;
+Some content ...
+</code></pre>
+<p>Will produce the following output if the condition is false (the same happens when it's true), notice the blank lines:</p>
+<pre><code>
+This isn't my file!
+
+Some content ...
+</code></pre>
+<p>You may want to remove the blank lines produced by the <strong>execution commands</strong>, that do not produce any output.</p>
+<p>A specific syntax exists for whitespace control:</p>
+<ul>
+<li>An underscore <code>_</code> at the <strong>beginning</strong> of a tag (<code>&lt;%_</code>) will trim <strong>all</strong> whitespace <strong>before</strong> the command</li>
+<li>An underscore <code>_</code> at the <strong>end</strong> of a tag (<code>_%&gt;</code>) will trim <strong>all</strong> whitespace <strong>after</strong> the command</li>
+<li>A dash <code>-</code> at the <strong>beginning</strong> of a tag (<code>&lt;%-</code>) will trim <strong>one</strong> newline <strong>before</strong> the command</li>
+<li>A dash <code>-</code> at the <strong>end</strong> of a tag (<code>-%&gt;</code>) will trim <strong>one</strong> newline <strong>after</strong> the command.</li>
+</ul>
+<p>In our example, to fix our template to remove the blank lines, we would use the following template (notice the dashes <code>-</code> at the end of the tags), to remove the blank newlines <strong>after</strong> the execution commands:</p>
+<pre><code>&lt;%* if (tp.file.title == &quot;MyFile&quot; ) { -%&gt;
+This is my file!
+&lt;%* } else { -%&gt;
+This isn't my file!
+&lt;%* } -%&gt;
+Some content ...
+</code></pre>
+<p>Which would produce the following output:</p>
+<pre><code>This isn't my file!
+Some content ...
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>

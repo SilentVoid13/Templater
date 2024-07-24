@@ -1,0 +1,487 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>tp.file - Templater</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../installation.html"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../terminology.html"><strong aria-hidden="true">1.2.</strong> Terminology</a></li><li class="chapter-item expanded "><a href="../../syntax.html"><strong aria-hidden="true">1.3.</strong> Syntax</a></li><li class="chapter-item expanded "><a href="../../settings.html"><strong aria-hidden="true">1.4.</strong> Settings</a></li><li class="chapter-item expanded "><a href="../../faq.html"><strong aria-hidden="true">1.5.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../../internal-functions/overview.html"><strong aria-hidden="true">2.</strong> Internal Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/config-module.html"><strong aria-hidden="true">2.1.</strong> tp.config</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/date-module.html"><strong aria-hidden="true">2.2.</strong> tp.date</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/file-module.html" class="active"><strong aria-hidden="true">2.3.</strong> tp.file</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/frontmatter-module.html"><strong aria-hidden="true">2.4.</strong> tp.frontmatter</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/hooks-module.html"><strong aria-hidden="true">2.5.</strong> tp.hooks</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/obsidian-module.html"><strong aria-hidden="true">2.6.</strong> tp.obsidian</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/system-module.html"><strong aria-hidden="true">2.7.</strong> tp.system</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/web-module.html"><strong aria-hidden="true">2.8.</strong> tp.web</a></li><li class="chapter-item expanded "><a href="../../internal-functions/contribute.html"><strong aria-hidden="true">2.9.</strong> Contributing</a></li></ol></li><li class="chapter-item expanded "><a href="../../user-functions/overview.html"><strong aria-hidden="true">3.</strong> User Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../user-functions/script-user-functions.html"><strong aria-hidden="true">3.1.</strong> User Scripts</a></li><li class="chapter-item expanded "><a href="../../user-functions/system-user-functions.html"><strong aria-hidden="true">3.2.</strong> System Commands</a></li></ol></li><li class="chapter-item expanded "><a href="../../commands/overview.html"><strong aria-hidden="true">4.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../commands/dynamic-command.html"><strong aria-hidden="true">4.1.</strong> Dynamic Commands</a></li><li class="chapter-item expanded "><a href="../../commands/execution-command.html"><strong aria-hidden="true">4.2.</strong> Execution Commands</a></li><li class="chapter-item expanded "><a href="../../commands/whitespace-control.html"><strong aria-hidden="true">4.3.</strong> Whitespace Control</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Templater</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="file-module"><a class="header" href="#file-module">File Module</a></h1>
+<p>This module contains every internal function related to files.</p>
+<ul>
+<li><a href="#documentation">Documentation</a>
+<ul>
+<li><a href="#tpfilecontent"><code>tp.file.content</code></a></li>
+<li><a href="#tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><code>tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder | string)</code></a></li>
+<li><a href="#tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.creation_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></li>
+<li><a href="#tpfilecursororder-number"><code>tp.file.cursor(order?: number)</code></a></li>
+<li><a href="#tpfilecursor_appendcontent-string"><code>tp.file.cursor_append(content: string)</code></a></li>
+<li><a href="#tpfileexistsfilepath-string"><code>tp.file.exists(filepath: string)</code></a></li>
+<li><a href="#tpfilefind_tfilefilename-string"><code>tp.file.find_tfile(filename: string)</code></a></li>
+<li><a href="#tpfilefolderrelative-boolean--false"><code>tp.file.folder(relative: boolean = false)</code></a></li>
+<li><a href="#tpfileincludeinclude_link-string--tfile"><code>tp.file.include(include_link: string ⎮ TFile)</code></a></li>
+<li><a href="#tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.last_modified_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></li>
+<li><a href="#tpfilemovenew_path-string-file_to_move-tfile"><code>tp.file.move(new_path: string, file_to_move?: TFile)</code></a></li>
+<li><a href="#tpfilepathrelative-boolean--false"><code>tp.file.path(relative: boolean = false)</code></a></li>
+<li><a href="#tpfilerenamenew_title-string"><code>tp.file.rename(new_title: string)</code></a></li>
+<li><a href="#tpfileselection"><code>tp.file.selection()</code></a></li>
+<li><a href="#tpfiletags"><code>tp.file.tags</code></a></li>
+<li><a href="#tpfiletitle"><code>tp.file.title</code></a></li>
+</ul>
+</li>
+<li><a href="#examples-16">Examples</a></li>
+</ul>
+<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpfilecontent"><a class="header" href="#tpfilecontent"><code>tp.file.content</code></a></h3>
+<p>The string contents of the file at the time that Templater was executed. Manipulating this string will <em>not</em> update the current file.</p>
+<h5 id="examples"><a class="header" href="#examples">Examples</a></h5>
+<pre><code class="language-javascript">// Retrieve file content
+&lt;% tp.file.content %&gt;
+</code></pre>
+<h3 id="tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><a class="header" href="#tpfilecreate_newtemplate-tfile--string-filename-string-open_new-boolean--false-folder-tfolder--string"><code>tp.file.create_new(template: TFile ⎮ string, filename?: string, open_new: boolean = false, folder?: TFolder | string)</code></a></h3>
+<p>Creates a new file using a specified template or with a specified content.</p>
+<h5 id="arguments"><a class="header" href="#arguments">Arguments</a></h5>
+<ul>
+<li>
+<p><code>template</code>: Either the template used for the new file content, or the file content as a string. If it is the template to use, you retrieve it with <code>tp.file.find_tfile(TEMPLATENAME)</code>.</p>
+</li>
+<li>
+<p><code>filename</code>: The filename of the new file, defaults to &quot;Untitled&quot;.</p>
+</li>
+<li>
+<p><code>open_new</code>: Whether to open or not the newly created file. Warning: if you use this option, since commands are executed asynchronously, the file can be opened first and then other commands are appended to that new file and not the previous file.</p>
+</li>
+<li>
+<p><code>folder</code>: The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with <code>&quot;PATH/TO/FOLDERNAME&quot;</code> or <code>app.vault.getAbstractFileByPath(&quot;PATH/TO/FOLDERNAME&quot;)</code>.</p>
+</li>
+</ul>
+<h5 id="examples-1"><a class="header" href="#examples-1">Examples</a></h5>
+<pre><code class="language-javascript">// File creation
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;) %&gt;
+// File creation with template
+&lt;%* await tp.file.create_new(tp.file.find_tfile(&quot;MyTemplate&quot;), &quot;MyFilename&quot;) %&gt;
+// File creation and open created note
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, true) %&gt;
+// File creation in current folder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, tp.file.folder(true)) %&gt;
+// File creation in specified folder with string path
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, &quot;Path/To/MyFolder&quot;) %&gt;
+// File creation in specified folder with TFolder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, app.vault.getAbstractFileByPath(&quot;MyFolder&quot;)) %&gt;
+// File creation and append link to current note
+[[&lt;% (await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;)).basename %&gt;]]
+</code></pre>
+<h3 id="tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><a class="header" href="#tpfilecreation_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.creation_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></h3>
+<p>Retrieves the file's creation date.</p>
+<h5 id="arguments-1"><a class="header" href="#arguments-1">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD HH:mm&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-2"><a class="header" href="#examples-2">Examples</a></h5>
+<pre><code class="language-javascript">// File creation date
+&lt;% tp.file.creation_date() %&gt;
+// File creation date with format
+&lt;% tp.file.creation_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilecursororder-number"><a class="header" href="#tpfilecursororder-number"><code>tp.file.cursor(order?: number)</code></a></h3>
+<p>Sets the cursor to this location after the template has been inserted. </p>
+<p>You can navigate between the different cursors using the configured hotkey in Obsidian settings.</p>
+<h5 id="arguments-2"><a class="header" href="#arguments-2">Arguments</a></h5>
+<ul>
+<li><code>order</code>: The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.
+If you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.</li>
+</ul>
+<h5 id="examples-3"><a class="header" href="#examples-3">Examples</a></h5>
+<pre><code class="language-javascript">// File cursor
+&lt;% tp.file.cursor() %&gt;
+// File multi-cursor
+&lt;% tp.file.cursor(1) %&gt;Content&lt;% tp.file.cursor(1) %&gt;
+</code></pre>
+<h3 id="tpfilecursor_appendcontent-string"><a class="header" href="#tpfilecursor_appendcontent-string"><code>tp.file.cursor_append(content: string)</code></a></h3>
+<p>Appends some content after the active cursor in the file.</p>
+<h5 id="arguments-3"><a class="header" href="#arguments-3">Arguments</a></h5>
+<ul>
+<li><code>content</code>: The content to append after the active cursor.</li>
+</ul>
+<h5 id="examples-4"><a class="header" href="#examples-4">Examples</a></h5>
+<pre><code class="language-javascript">// File cursor append
+&lt;% tp.file.cursor_append(&quot;Some text&quot;) %&gt;
+</code></pre>
+<h3 id="tpfileexistsfilepath-string"><a class="header" href="#tpfileexistsfilepath-string"><code>tp.file.exists(filepath: string)</code></a></h3>
+<p>Check to see if a file exists by it's file path. The full path to the file, relative to the Vault and containing the extension, must be provided.</p>
+<h5 id="arguments-4"><a class="header" href="#arguments-4">Arguments</a></h5>
+<ul>
+<li><code>filepath</code>: The full file path of the file we want to check existence for.</li>
+</ul>
+<h5 id="examples-5"><a class="header" href="#examples-5">Examples</a></h5>
+<pre><code class="language-javascript">// File existence
+&lt;% await tp.file.exists(&quot;MyFolder/MyFile.md&quot;) %&gt;
+// File existence of current file
+&lt;% await tp.file.exists(tp.file.folder(true) + &quot;/&quot; + tp.file.title + &quot;.md&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilefind_tfilefilename-string"><a class="header" href="#tpfilefind_tfilefilename-string"><code>tp.file.find_tfile(filename: string)</code></a></h3>
+<p>Search for a file and returns its <code>TFile</code> instance.</p>
+<h5 id="arguments-5"><a class="header" href="#arguments-5">Arguments</a></h5>
+<ul>
+<li><code>filename</code>: The filename we want to search and resolve as a <code>TFile</code>.</li>
+</ul>
+<h5 id="examples-6"><a class="header" href="#examples-6">Examples</a></h5>
+<pre><code class="language-javascript">// File find TFile
+&lt;% tp.file.find_tfile(&quot;MyFile&quot;).basename %&gt;
+</code></pre>
+<h3 id="tpfilefolderrelative-boolean--false"><a class="header" href="#tpfilefolderrelative-boolean--false"><code>tp.file.folder(relative: boolean = false)</code></a></h3>
+<p>Retrieves the file's folder name.</p>
+<h5 id="arguments-6"><a class="header" href="#arguments-6">Arguments</a></h5>
+<ul>
+<li><code>relative</code>: If set to <code>true</code>, appends the vault relative path to the folder name. If <code>false</code>, only retrieves name of folder. Defaults to <code>false</code>.</li>
+</ul>
+<h5 id="examples-7"><a class="header" href="#examples-7">Examples</a></h5>
+<pre><code class="language-javascript">// File folder (Folder)
+&lt;% tp.file.folder() %&gt;
+// File folder with relative path (Path/To/Folder)
+&lt;% tp.file.folder(true) %&gt;
+</code></pre>
+<h3 id="tpfileincludeinclude_link-string--tfile"><a class="header" href="#tpfileincludeinclude_link-string--tfile"><code>tp.file.include(include_link: string ⎮ TFile)</code></a></h3>
+<p>Includes the file's link content. Templates in the included content will be resolved.</p>
+<h5 id="arguments-7"><a class="header" href="#arguments-7">Arguments</a></h5>
+<ul>
+<li><code>include_link</code>: The link to the file to include, e.g. <code>&quot;[[MyFile]]&quot;</code>, or a TFile object. Also supports sections or blocks inclusions.</li>
+</ul>
+<h5 id="examples-8"><a class="header" href="#examples-8">Examples</a></h5>
+<pre><code class="language-javascript">// File include
+&lt;% tp.file.include(&quot;[[Template1]]&quot;) %&gt;
+// File include TFile
+&lt;% tp.file.include(tp.file.find_tfile(&quot;MyFile&quot;)) %&gt;
+// File include section
+&lt;% tp.file.include(&quot;[[MyFile#Section1]]&quot;) %&gt;
+// File include block
+&lt;% tp.file.include(&quot;[[MyFile#^block1]]&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><a class="header" href="#tpfilelast_modified_dateformat-string--yyyy-mm-dd-hhmm"><code>tp.file.last_modified_date(format: string = &quot;YYYY-MM-DD HH:mm&quot;)</code></a></h3>
+<p>Retrieves the file's last modification date.</p>
+<h5 id="arguments-8"><a class="header" href="#arguments-8">Arguments</a></h5>
+<ul>
+<li><code>format</code>: The format for the date. Defaults to <code>&quot;YYYY-MM-DD HH:mm&quot;</code>. Refer to <a href="https://momentjs.com/docs/#/displaying/format/">format reference</a>.</li>
+</ul>
+<h5 id="examples-9"><a class="header" href="#examples-9">Examples</a></h5>
+<pre><code class="language-javascript">// File last modified date
+&lt;% tp.file.last_modified_date() %&gt;
+// File last modified date with format
+&lt;% tp.file.last_modified_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilemovenew_path-string-file_to_move-tfile"><a class="header" href="#tpfilemovenew_path-string-file_to_move-tfile"><code>tp.file.move(new_path: string, file_to_move?: TFile)</code></a></h3>
+<p>Moves the file to the desired vault location.</p>
+<h5 id="arguments-9"><a class="header" href="#arguments-9">Arguments</a></h5>
+<ul>
+<li>
+<p><code>new_path</code>: The new vault relative path of the file, without the file extension. Note: the new path needs to include the folder and the filename, e.g. <code>&quot;/Notes/MyNote&quot;</code>.</p>
+</li>
+<li>
+<p><code>file_to_move</code>: The file to move, defaults to the current file.</p>
+</li>
+</ul>
+<h5 id="examples-10"><a class="header" href="#examples-10">Examples</a></h5>
+<pre><code class="language-javascript">// File move
+&lt;% await tp.file.move(&quot;/A/B/&quot; + tp.file.title) %&gt;
+// File move and rename
+&lt;% await tp.file.move(&quot;/A/B/NewTitle&quot;) %&gt;
+</code></pre>
+<h3 id="tpfilepathrelative-boolean--false"><a class="header" href="#tpfilepathrelative-boolean--false"><code>tp.file.path(relative: boolean = false)</code></a></h3>
+<p>Retrieves the file's absolute path on the system.</p>
+<h5 id="arguments-10"><a class="header" href="#arguments-10">Arguments</a></h5>
+<ul>
+<li><code>relative</code>: If set to <code>true</code>, only retrieves the vault's relative path.</li>
+</ul>
+<h5 id="examples-11"><a class="header" href="#examples-11">Examples</a></h5>
+<pre><code class="language-javascript">// File path
+&lt;% tp.file.path() %&gt;
+// File relative path (relative to vault root)
+&lt;% tp.file.path(true) %&gt;
+</code></pre>
+<h3 id="tpfilerenamenew_title-string"><a class="header" href="#tpfilerenamenew_title-string"><code>tp.file.rename(new_title: string)</code></a></h3>
+<p>Renames the file (keeps the same file extension).</p>
+<h5 id="arguments-11"><a class="header" href="#arguments-11">Arguments</a></h5>
+<ul>
+<li><code>new_title</code>: The new file title.</li>
+</ul>
+<h5 id="examples-12"><a class="header" href="#examples-12">Examples</a></h5>
+<pre><code class="language-javascript">// File rename
+&lt;% await tp.file.rename(&quot;MyNewName&quot;) %&gt;
+// File append a 2 to the file name
+&lt;% await tp.file.rename(tp.file.title + &quot;2&quot;) %&gt;
+</code></pre>
+<h3 id="tpfileselection"><a class="header" href="#tpfileselection"><code>tp.file.selection()</code></a></h3>
+<p>Retrieves the active file's text selection.</p>
+<h5 id="examples-13"><a class="header" href="#examples-13">Examples</a></h5>
+<pre><code class="language-javascript">// File selection
+&lt;% tp.file.selection() %&gt;
+</code></pre>
+<h3 id="tpfiletags"><a class="header" href="#tpfiletags"><code>tp.file.tags</code></a></h3>
+<p>Retrieves the file's tags (array of string).</p>
+<h5 id="examples-14"><a class="header" href="#examples-14">Examples</a></h5>
+<pre><code class="language-javascript">// File tags
+&lt;% tp.file.tags %&gt;
+</code></pre>
+<h3 id="tpfiletitle"><a class="header" href="#tpfiletitle"><code>tp.file.title</code></a></h3>
+<p>Retrieves the file's title.</p>
+<h5 id="examples-15"><a class="header" href="#examples-15">Examples</a></h5>
+<pre><code class="language-javascript">// File title
+&lt;% tp.file.title %&gt;
+// Strip the Zettelkasten ID of title (if space separated)
+&lt;% tp.file.title.split(&quot; &quot;)[1] %&gt;
+</code></pre>
+<h2 id="examples-16"><a class="header" href="#examples-16">Examples</a></h2>
+<pre><code class="language-javascript">// Retrieve file content
+&lt;% tp.file.content %&gt;
+
+// File creation
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;) %&gt;
+// File creation with template
+&lt;%* await tp.file.create_new(tp.file.find_tfile(&quot;MyTemplate&quot;), &quot;MyFilename&quot;) %&gt;
+// File creation and open created note
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, true) %&gt;
+// File creation in current folder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, tp.file.folder(true)) %&gt;
+// File creation in specified folder with string path
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, &quot;Path/To/MyFolder&quot;) %&gt;
+// File creation in specified folder with TFolder
+&lt;%* await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;, false, app.vault.getAbstractFileByPath(&quot;MyFolder&quot;)) %&gt;
+// File creation and append link to current note
+[[&lt;% (await tp.file.create_new(&quot;MyFileContent&quot;, &quot;MyFilename&quot;)).basename %&gt;]]
+
+// File creation date
+&lt;% tp.file.creation_date() %&gt;
+// File creation date with format
+&lt;% tp.file.creation_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+
+// File cursor
+&lt;% tp.file.cursor() %&gt;
+// File multi-cursor
+&lt;% tp.file.cursor(1) %&gt;Content&lt;% tp.file.cursor(1) %&gt;
+
+// File cursor append
+&lt;% tp.file.cursor_append(&quot;Some text&quot;) %&gt;
+
+// File existence
+&lt;% await tp.file.exists(&quot;MyFolder/MyFile.md&quot;) %&gt;
+// File existence of current file
+&lt;% await tp.file.exists(tp.file.folder(true) + &quot;/&quot; + tp.file.title + &quot;.md&quot;) %&gt;
+
+// File find TFile
+&lt;% tp.file.find_tfile(&quot;MyFile&quot;).basename %&gt;
+
+// File folder (Folder)
+&lt;% tp.file.folder() %&gt;
+// File folder with relative path (Path/To/Folder)
+&lt;% tp.file.folder(true) %&gt;
+
+// File include
+&lt;% tp.file.include(&quot;[[Template1]]&quot;) %&gt;
+// File include TFile
+&lt;% tp.file.include(tp.file.find_tfile(&quot;MyFile&quot;)) %&gt;
+// File include section
+&lt;% tp.file.include(&quot;[[MyFile#Section1]]&quot;) %&gt;
+// File include block
+&lt;% tp.file.include(&quot;[[MyFile#^block1]]&quot;) %&gt;
+
+// File last modified date
+&lt;% tp.file.last_modified_date() %&gt;
+// File last modified date with format
+&lt;% tp.file.last_modified_date(&quot;dddd Do MMMM YYYY HH:mm&quot;) %&gt;
+
+// File move
+&lt;% await tp.file.move(&quot;/A/B/&quot; + tp.file.title) %&gt;
+// File move and rename
+&lt;% await tp.file.move(&quot;/A/B/NewTitle&quot;) %&gt;
+
+// File path
+&lt;% tp.file.path() %&gt;
+// File relative path (relative to vault root)
+&lt;% tp.file.path(true) %&gt;
+
+// File rename
+&lt;% await tp.file.rename(&quot;MyNewName&quot;) %&gt;
+// File append a 2 to the file name
+&lt;% await tp.file.rename(tp.file.title + &quot;2&quot;) %&gt;
+
+// File selection
+&lt;% tp.file.selection() %&gt;
+
+// File tags
+&lt;% tp.file.tags %&gt;
+
+// File title
+&lt;% tp.file.title %&gt;
+// Strip the Zettelkasten ID of title (if space separated)
+&lt;% tp.file.title.split(&quot; &quot;)[1] %&gt;
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../internal-functions/internal-modules/date-module.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../../internal-functions/internal-modules/frontmatter-module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../internal-functions/internal-modules/date-module.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../internal-functions/internal-modules/frontmatter-module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
