@@ -63,7 +63,7 @@ export function get_tfiles_from_folder(folder_str: string): Array<TFile> {
     });
 
     files.sort((a, b) => {
-        return a.basename.localeCompare(b.basename);
+        return a.path.localeCompare(b.path);
     });
 
     return files;
