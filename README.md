@@ -46,7 +46,7 @@ You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to r
 
 You can make a [pull request](https://github.com/SilentVoid13/Templater/pulls) to contribute to this plugin development.
 
-Check [this](https://silentvoid13.github.io/Templater/docs/internal-variables-functions/contribute) to get more information on how to develop a new internal variable / function.
+Check [this](https://silentvoid13.github.io/Templater/internal-functions/contribute.html) to get more information on how to develop a new internal variable / function.
 
 ## License
 
