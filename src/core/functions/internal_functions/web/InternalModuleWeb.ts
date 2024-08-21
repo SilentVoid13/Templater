@@ -57,7 +57,7 @@ export class InternalModuleWeb extends InternalModule {
         return async (size: string, query?: string, include_size = false) => {
             try {
                 const response = await this.getRequest(
-                    `https://templater-unsplash.fly.dev/${
+                    `https://templater-unsplash-2.fly.dev/${
                         query ? "?q=" + query : ""
                     }`
                 ).then((res) => res.json());
