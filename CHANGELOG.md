@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/SilentVoid13/Templater/compare/2.4.2...2.6.0) (2024-09-02)
+
+
+### Features
+
+* minify production builds to speed up loading time ([4f64ff9](https://github.com/SilentVoid13/Templater/commit/4f64ff90690361b0694086318ad4e297d77c6cb1)), closes [#1437](https://github.com/SilentVoid13/Templater/issues/1437)
+
+## [2.5.0](https://github.com/SilentVoid13/Templater/compare/2.4.2...2.5.0) (2024-09-02)
+
+
+### Features
+
+* minify production builds to speed up loading time ([4f64ff9](https://github.com/SilentVoid13/Templater/commit/4f64ff90690361b0694086318ad4e297d77c6cb1)), closes [#1437](https://github.com/SilentVoid13/Templater/issues/1437)
+
 ### [2.4.2](https://github.com/SilentVoid13/Templater/compare/2.4.1...2.4.2) (2024-08-21)
 
 
