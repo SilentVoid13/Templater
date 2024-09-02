@@ -97,6 +97,7 @@ esbuild
         logLevel: "info",
         sourcemap: prod ? false : "inline",
         treeShaking: true,
+        minify: prod,
         plugins: [toml(), wasmPlugin({ mode: "embed" })],
         outfile: outfile,
     })
