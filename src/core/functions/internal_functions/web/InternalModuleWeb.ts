@@ -7,7 +7,7 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("daily_quote", this.generate_daily_quote());
-        this.static_functions.set("request", this.make_request());
+        this.static_functions.set("request", this.generate_request());
         this.static_functions.set(
             "random_picture",
             this.generate_random_picture()
@@ -83,7 +83,7 @@ export class InternalModuleWeb extends InternalModule {
         };
     }
 
-    make_request(): (
+    generate_request(): (
         url: string,
         path?: string,
     ) => Promise<string> {
@@ -102,7 +102,7 @@ export class InternalModuleWeb extends InternalModule {
                     }, jsonData);
                 }
 
-                return JSON.stringify(jsonData, null, 2);
+                return jsonData;
             } catch (error) {
                 console.error(error);
                 throw new TemplaterError("Error fetching and extracting value");
