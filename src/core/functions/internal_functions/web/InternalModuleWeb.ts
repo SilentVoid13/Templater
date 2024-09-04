@@ -12,7 +12,6 @@ export class InternalModuleWeb extends InternalModule {
             "random_picture",
             this.generate_random_picture()
         );
-
     }
 
     async create_dynamic_templates(): Promise<void> {}
@@ -73,9 +72,9 @@ export class InternalModuleWeb extends InternalModule {
                     }
                 }
                 if (include_size) {
-                    return `![photo by ${response.photog} on Unsplash|${size}](${url})`;
+                    return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash|${size}](${url})`;
                 }
-                return `![photo by ${response.photog} on Unsplash](${url})`;
+                return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
@@ -83,21 +82,20 @@ export class InternalModuleWeb extends InternalModule {
         };
     }
 
-    generate_request(): (
-        url: string,
-        path?: string,
-    ) => Promise<string> {
+    generate_request(): (url: string, path?: string) => Promise<string> {
         return async (url: string, path?: string) => {
             try {
                 const response = await this.getRequest(url);
                 const jsonData = await response.json();
 
                 if (path && jsonData) {
-                    return path.split('.').reduce((obj, key) => {
+                    return path.split(".").reduce((obj, key) => {
                         if (obj && obj.hasOwnProperty(key)) {
                             return obj[key];
                         } else {
-                            throw new Error(`Path ${path} not found in the JSON response`);
+                            throw new Error(
+                                `Path ${path} not found in the JSON response`
+                            );
                         }
                     }, jsonData);
                 }
