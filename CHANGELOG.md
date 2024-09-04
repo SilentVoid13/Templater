@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/SilentVoid13/Templater/compare/2.6.0...2.7.0) (2024-09-04)
+
+
+### Features
+
+* new web function to make http requests ([56a6478](https://github.com/SilentVoid13/Templater/commit/56a64783fc9b351aa94484eb64e0c1378b4bc40d))
+
 ## [2.6.0](https://github.com/SilentVoid13/Templater/compare/2.4.2...2.6.0) (2024-09-02)
 
 
