@@ -619,4 +619,25 @@ example = """<% tp.web.random_picture("200x200") %>"""
 name = "Random picture with size and query"
 example = """<% tp.web.random_picture("200x200", "landscape,water") %>"""
 
+[tp.web.functions.request]
+name = "request"
+description = "Makes a HTTP request to the specified URL. Optionally, you can specify a path to extract specific data from the response."
+definition = "tp.web.request(url: string, path?: string)"
+
+[[tp.web.functions.request.args]]
+name = "url"
+description = "The URL to which the HTTP request will be made."
+
+[[tp.web.functions.request.args]]
+name = "path"
+description = "A path within the response JSON to extract specific data."
+
+[[tp.web.functions.request.examples]]
+name = "Simple request"
+example = """<% tp.web.request("https://jsonplaceholder.typicode.com/todos/1") %>"""
+
+[[tp.web.functions.request.examples]]
+name = "Request with path"
+example = """<% tp.web.request("https://jsonplaceholder.typicode.com/todos", "0.title") %>"""
+
 

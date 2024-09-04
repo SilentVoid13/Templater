@@ -7,10 +7,12 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("daily_quote", this.generate_daily_quote());
+        this.static_functions.set("request", this.generate_request());
         this.static_functions.set(
             "random_picture",
             this.generate_random_picture()
         );
+
     }
 
     async create_dynamic_templates(): Promise<void> {}
@@ -77,6 +79,33 @@ export class InternalModuleWeb extends InternalModule {
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
+            }
+        };
+    }
+
+    generate_request(): (
+        url: string,
+        path?: string,
+    ) => Promise<string> {
+        return async (url: string, path?: string) => {
+            try {
+                const response = await this.getRequest(url);
+                const jsonData = await response.json();
+
+                if (path && jsonData) {
+                    return path.split('.').reduce((obj, key) => {
+                        if (obj && obj.hasOwnProperty(key)) {
+                            return obj[key];
+                        } else {
+                            throw new Error(`Path ${path} not found in the JSON response`);
+                        }
+                    }, jsonData);
+                }
+
+                return jsonData;
+            } catch (error) {
+                console.error(error);
+                throw new TemplaterError("Error fetching and extracting value");
             }
         };
     }
