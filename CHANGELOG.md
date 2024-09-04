@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://github.com/SilentVoid13/Templater/compare/2.7.0...2.7.1) (2024-09-04)
+
+
+### Bug Fixes
+
+* Include link to photographer in random image ([c81bc7d](https://github.com/SilentVoid13/Templater/commit/c81bc7d5cd61e4f393bf44f7c298a3b2e972fe14)), closes [#1435](https://github.com/SilentVoid13/Templater/issues/1435)
+
 ## [2.7.0](https://github.com/SilentVoid13/Templater/compare/2.6.0...2.7.0) (2024-09-04)
 
 
