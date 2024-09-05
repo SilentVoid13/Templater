@@ -141,12 +141,12 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_folder(): (relative?: boolean) => string {
-        return (relative = false) => {
+    generate_folder(): (absolute?: boolean) => string {
+        return (absolute = false) => {
             const parent = this.config.target_file.parent;
             let folder;
 
-            if (relative) {
+            if (absolute) {
                 folder = parent.path;
             } else {
                 folder = parent.name;
