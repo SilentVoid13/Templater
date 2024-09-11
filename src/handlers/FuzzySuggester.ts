@@ -1,4 +1,4 @@
-import { FuzzySuggestModal, TFile, TFolder } from "obsidian";
+import { FuzzySuggestModal, TFile, TFolder, normalizePath } from "obsidian";
 import { get_tfiles_from_folder } from "utils/Utils";
 import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
@@ -36,7 +36,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
 
     getItemText(item: TFile): string {
         let relativePath = item.path;
-        if (item.path.startsWith(this.plugin.settings.templates_folder)) {
+        if (item.path.startsWith(this.plugin.settings.templates_folder) && normalizePath(this.plugin.settings.templates_folder) != '/') {
             relativePath = item.path.slice(
                 this.plugin.settings.templates_folder.length + 1
             );
