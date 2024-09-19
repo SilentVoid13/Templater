@@ -34,12 +34,12 @@ export class InternalModuleWeb extends InternalModule {
         return async () => {
             try {
                 const response = await this.getRequest(
-                    "https://api.quotable.io/random"
+                    "https://zenquotes.io/api/today"
                 );
                 const json = await response.json();
 
-                const author = json.author;
-                const quote = json.content;
+                const author = json.a;
+                const quote = json.q;
                 const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
