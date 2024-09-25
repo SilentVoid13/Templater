@@ -318,18 +318,18 @@ example = """<% tp.file.find_tfile("MyFile").basename %>"""
 [tp.file.functions.folder]
 name = "folder"
 description = "Retrieves the file's folder name."
-definition = "tp.file.folder(relative: boolean = false)"
+definition = "tp.file.folder(absolute: boolean = false)"
 
 [[tp.file.functions.folder.args]]
-name = "relative"
-description = "If set to `true`, appends the vault relative path to the folder name. If `false`, only retrieves name of folder. Defaults to `false`."
+name = "absolute"
+description = "If set to `true`, returns the vault-absolute path of the folder. If `false`, only returns the basename of the folder (the last part). Defaults to `false`."
 
 [[tp.file.functions.folder.examples]]
 name = "File folder (Folder)"
 example = "<% tp.file.folder() %>"
 
 [[tp.file.functions.folder.examples]]
-name = "File folder with relative path (Path/To/Folder)"
+name = "File folder with vault-absolute path (Path/To/Folder)"
 example = "<% tp.file.folder(true) %>"
 
 [tp.file.functions.include]
