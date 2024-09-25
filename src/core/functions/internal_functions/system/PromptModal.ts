@@ -57,6 +57,7 @@ export class PromptModal extends Modal {
         textInput.setPlaceholder("Type text here");
         textInput.setValue(this.value);
         textInput.onChange((value) => (this.value = value));
+        textInput.inputEl.focus();
         textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
             this.enterCallback(evt)
         );
