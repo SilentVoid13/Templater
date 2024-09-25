@@ -1,3 +1,4 @@
+import { requestUrl, RequestUrlResponse } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { InternalModule } from "../InternalModule";
 import { ModuleName } from "editor/TpDocumentation";
@@ -18,10 +19,10 @@ export class InternalModuleWeb extends InternalModule {
 
     async teardown(): Promise<void> {}
 
-    async getRequest(url: string): Promise<Response> {
+    async getRequest(url: string): Promise<RequestUrlResponse> {
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
+            const response = await requestUrl(url);
+            if (response.status < 200 && response.status >= 300) {
                 throw new TemplaterError("Error performing GET request");
             }
             return response;
@@ -36,7 +37,7 @@ export class InternalModuleWeb extends InternalModule {
                 const response = await this.getRequest(
                     "https://api.quotable.io/random"
                 );
-                const json = await response.json();
+                const json = response.json;
 
                 const author = json.author;
                 const quote = json.content;
@@ -61,7 +62,7 @@ export class InternalModuleWeb extends InternalModule {
                     `https://templater-unsplash-2.fly.dev/${
                         query ? "?q=" + query : ""
                     }`
-                ).then((res) => res.json());
+                ).then((res) => res.json);
                 let url = response.full;
                 if (size && !include_size) {
                     if (size.includes("x")) {
@@ -86,7 +87,7 @@ export class InternalModuleWeb extends InternalModule {
         return async (url: string, path?: string) => {
             try {
                 const response = await this.getRequest(url);
-                const jsonData = await response.json();
+                const jsonData = await response.json;
 
                 if (path && jsonData) {
                     return path.split(".").reduce((obj, key) => {
