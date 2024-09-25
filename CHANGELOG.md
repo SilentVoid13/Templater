@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.2](https://github.com/SilentVoid13/Templater/compare/2.7.1...2.7.2) (2024-09-25)
+
+
+### Bug Fixes
+
+* **1446:** updates docs to match _actual_ behaviour of tp.file.folder() ([8d4f402](https://github.com/SilentVoid13/Templater/commit/8d4f4023e5adb7e85ada0c5c58bf583e27e1c190))
+* Fix first letter of suggest modal being cut off ([0f07a0d](https://github.com/SilentVoid13/Templater/commit/0f07a0d884d9a70d2c4bf2084eafb9047ca13b9d)), closes [#1454](https://github.com/SilentVoid13/Templater/issues/1454) [#1436](https://github.com/SilentVoid13/Templater/issues/1436)
+* Prompt Autofocus Input ([a4eca81](https://github.com/SilentVoid13/Templater/commit/a4eca812c5f55b93f7986998dceab3f92370fdb2)), closes [#1457](https://github.com/SilentVoid13/Templater/issues/1457) [#1120](https://github.com/SilentVoid13/Templater/issues/1120)
+* Use requestUrl instead of fetch to fix CORS errors when using `tp.web.request` ([bfbb474](https://github.com/SilentVoid13/Templater/commit/bfbb474180193e2c1c484f34e6acf1d2f76425f0)), closes [#1455](https://github.com/SilentVoid13/Templater/issues/1455)
+
 ### [2.7.1](https://github.com/SilentVoid13/Templater/compare/2.7.0...2.7.1) (2024-09-04)
 
 
