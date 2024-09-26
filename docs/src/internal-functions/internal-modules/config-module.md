@@ -14,7 +14,7 @@
 {% if fn.args %}
 ##### Arguments
 
-{% for key, arg in fn.args %}
+{% for arg in fn.args %}
 - `{{ arg.name }}`: {{ arg.description }}
 {% endfor %}
 {% endif %}

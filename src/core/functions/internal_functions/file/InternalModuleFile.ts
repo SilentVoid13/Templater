@@ -4,7 +4,6 @@ import { log_error } from "utils/Log";
 import {
     FileSystemAdapter,
     getAllTags,
-    MarkdownView,
     normalizePath,
     parseLinktext,
     Platform,
@@ -54,6 +53,8 @@ export class InternalModuleFile extends InternalModule {
         this.dynamic_functions.set("title", this.generate_title());
     }
 
+    async teardown(): Promise<void> {}
+
     async generate_content(): Promise<string> {
         return await app.vault.read(this.config.target_file);
     }
@@ -62,13 +63,13 @@ export class InternalModuleFile extends InternalModule {
         template: TFile | string,
         filename: string,
         open_new: boolean,
-        folder?: TFolder
+        folder?: TFolder | string
     ) => Promise<TFile | undefined> {
         return async (
             template: TFile | string,
             filename: string,
             open_new = false,
-            folder?: TFolder
+            folder?: TFolder | string
         ) => {
             this.create_new_depth += 1;
             if (this.create_new_depth > DEPTH_LIMIT) {
@@ -109,26 +110,26 @@ export class InternalModuleFile extends InternalModule {
 
     generate_cursor_append(): (content: string) => void {
         return (content: string): string | undefined => {
-            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-            if (active_view === null) {
+            const active_editor = app.workspace.activeEditor;
+            if (!active_editor || !active_editor.editor) {
                 log_error(
                     new TemplaterError(
-                        "No active view, can't append to cursor."
+                        "No active editor, can't append to cursor."
                     )
                 );
                 return;
             }
 
-            const editor = active_view.editor;
+            const editor = active_editor.editor;
             const doc = editor.getDoc();
             doc.replaceSelection(content);
             return "";
         };
     }
 
-    generate_exists(): (filename: string) => Promise<boolean> {
-        return async (filename: string) => {
-            const path = normalizePath(filename);
+    generate_exists(): (filepath: string) => Promise<boolean> {
+        return async (filepath: string) => {
+            const path = normalizePath(filepath);
             return await app.vault.exists(path);
         };
     }
@@ -140,12 +141,12 @@ export class InternalModuleFile extends InternalModule {
         };
     }
 
-    generate_folder(): (relative?: boolean) => string {
-        return (relative = false) => {
+    generate_folder(): (absolute?: boolean) => string {
+        return (absolute = false) => {
             const parent = this.config.target_file.parent;
             let folder;
 
-            if (relative) {
+            if (absolute) {
                 folder = parent.path;
             } else {
                 folder = parent.name;
@@ -289,14 +290,14 @@ export class InternalModuleFile extends InternalModule {
 
     generate_selection(): () => string {
         return () => {
-            const active_view = app.workspace.getActiveViewOfType(MarkdownView);
-            if (active_view == null) {
+            const active_editor = app.workspace.activeEditor;
+            if (!active_editor || !active_editor.editor) {
                 throw new TemplaterError(
-                    "Active view is null, can't read selection."
+                    "Active editor is null, can't read selection."
                 );
             }
 
-            const editor = active_view.editor;
+            const editor = active_editor.editor;
             return editor.getSelection();
         };
     }

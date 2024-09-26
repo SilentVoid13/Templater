@@ -1,3 +1,4 @@
+import { requestUrl, RequestUrlResponse } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { InternalModule } from "../InternalModule";
 import { ModuleName } from "editor/TpDocumentation";
@@ -7,6 +8,7 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_static_templates(): Promise<void> {
         this.static_functions.set("daily_quote", this.generate_daily_quote());
+        this.static_functions.set("request", this.generate_request());
         this.static_functions.set(
             "random_picture",
             this.generate_random_picture()
@@ -15,10 +17,12 @@ export class InternalModuleWeb extends InternalModule {
 
     async create_dynamic_templates(): Promise<void> {}
 
-    async getRequest(url: string): Promise<Response> {
+    async teardown(): Promise<void> {}
+
+    async getRequest(url: string): Promise<RequestUrlResponse> {
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
+            const response = await requestUrl(url);
+            if (response.status < 200 && response.status >= 300) {
                 throw new TemplaterError("Error performing GET request");
             }
             return response;
@@ -33,11 +37,11 @@ export class InternalModuleWeb extends InternalModule {
                 const response = await this.getRequest(
                     "https://api.quotable.io/random"
                 );
-                const json = await response.json();
+                const json = response.json;
 
                 const author = json.author;
                 const quote = json.content;
-                const new_content = `> ${quote}\n> — <cite>${author}</cite>`;
+                const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
             } catch (error) {
@@ -55,10 +59,10 @@ export class InternalModuleWeb extends InternalModule {
         return async (size: string, query?: string, include_size = false) => {
             try {
                 const response = await this.getRequest(
-                    `https://templater-unsplash.fly.dev/${
+                    `https://templater-unsplash-2.fly.dev/${
                         query ? "?q=" + query : ""
                     }`
-                ).then((res) => res.json());
+                ).then((res) => res.json);
                 let url = response.full;
                 if (size && !include_size) {
                     if (size.includes("x")) {
@@ -69,12 +73,38 @@ export class InternalModuleWeb extends InternalModule {
                     }
                 }
                 if (include_size) {
-                    return `![photo by ${response.photog} on Unsplash|${size}](${url})`;
+                    return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash|${size}](${url})`;
                 }
-                return `![photo by ${response.photog} on Unsplash](${url})`;
+                return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash](${url})`;
             } catch (error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
+            }
+        };
+    }
+
+    generate_request(): (url: string, path?: string) => Promise<string> {
+        return async (url: string, path?: string) => {
+            try {
+                const response = await this.getRequest(url);
+                const jsonData = await response.json;
+
+                if (path && jsonData) {
+                    return path.split(".").reduce((obj, key) => {
+                        if (obj && obj.hasOwnProperty(key)) {
+                            return obj[key];
+                        } else {
+                            throw new Error(
+                                `Path ${path} not found in the JSON response`
+                            );
+                        }
+                    }, jsonData);
+                }
+
+                return jsonData;
+            } catch (error) {
+                console.error(error);
+                throw new TemplaterError("Error fetching and extracting value");
             }
         };
     }

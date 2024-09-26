@@ -42,11 +42,10 @@ export default class TemplaterPlugin extends Plugin {
         this.command_handler.setup();
 
         addIcon("templater-icon", ICON_DATA);
-        if (this.settings.enable_ribbon_icon) {
-            this.addRibbonIcon("templater-icon", "Templater", async () => {
-                this.fuzzy_suggester.insert_template();
-            }).setAttribute("id", "rb-templater-icon");
-        }
+        this.addRibbonIcon("templater-icon", "Templater", async () => {
+            this.fuzzy_suggester.insert_template();
+        }).setAttribute("id", "rb-templater-icon");
+    
 
         this.addSettingTab(new TemplaterSettingTab(this));
 
@@ -54,6 +53,11 @@ export default class TemplaterPlugin extends Plugin {
         app.workspace.onLayoutReady(() => {
             this.templater.execute_startup_scripts();
         });
+    }
+
+    onunload(): void {
+        // Failsafe in case teardown doesn't happen immediately after template execution
+        this.templater.functions_generator.teardown();
     }
 
     async save_settings(): Promise<void> {

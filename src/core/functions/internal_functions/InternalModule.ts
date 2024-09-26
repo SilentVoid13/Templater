@@ -18,6 +18,7 @@ export abstract class InternalModule implements IGenerateObject {
 
     abstract create_static_templates(): Promise<void>;
     abstract create_dynamic_templates(): Promise<void>;
+    abstract teardown(): Promise<void>;
 
     async init(): Promise<void> {
         await this.create_static_templates();

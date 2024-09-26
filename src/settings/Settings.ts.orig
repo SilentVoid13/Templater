@@ -27,7 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
     shell_path: "",
     user_scripts_folder: "",
     enable_folder_templates: true,
-    folder_templates: [{ folder: "", template: "" }],
+    folder_templates: [{ folder: "/", template: "" }],
     enable_file_templates: false,
     file_templates: [{ regex: ".*", template: "" }],
     syntax_highlighting: true,
@@ -123,8 +123,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const mobileDesc = document.createDocumentFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
-            "mobile. Use with caution: this may break live preview on mobile " +
-            "platforms."
+                "mobile. Use with caution: this may break live preview on mobile " +
+                "platforms."
         );
 
         new Setting(this.containerEl)
@@ -344,14 +344,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const descHeading = document.createDocumentFragment();
         descHeading.append(
             "Folder Templates are triggered when a new ",
-            descHeading.createEl("strong", { text: "empty " }),
-            "file is created in a given folder.",
-            descHeading.createEl("br"),
-            "Templater will fill the empty file with the specified template.",
-            descHeading.createEl("br"),
-            "The deepest match is used. A global default template would be defined on the root ",
-            descHeading.createEl("code", { text: "/" }),
-            "."
+            descHeading.createEl("strong", { text: "empty" }),
+            " file is created in a given folder. Templater will fill the empty file with the specified template."
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
@@ -384,8 +378,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
         }
 
         new Setting(this.containerEl)
+<<<<<<< HEAD
+            .setName("Add New")
+            .setDesc(
+                "Add new folder template. The deepest match is used, so the order of the rules here is irrelevant. A global default template would be defined on root (`/`)."
+            )
+=======
             .setName("Add new")
             .setDesc("Add new folder template")
+>>>>>>> b7b03cf41b9b3353dc57930a4d3bbbf1a53b1caf
             .addButton((button: ButtonComponent) => {
                 button
                     .setTooltip("Add additional folder template")
@@ -952,21 +953,25 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Donate")
             .setDesc(
                 "If you like this Plugin, consider donating to support continued development."
-            )
-
+            );
 
         const a1 = document.createElement("a");
         a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
         a1.addClass("templater_donating");
         const img1 = document.createElement("img");
-        img1.src = "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
+        img1.src =
+            "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
         a1.appendChild(img1);
 
         const a2 = document.createElement("a");
-        a2.setAttribute("href", "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q");
+        a2.setAttribute(
+            "href",
+            "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
+        );
         a2.addClass("templater_donating");
         const img2 = document.createElement("img");
-        img2.src = "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
+        img2.src =
+            "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
         a2.appendChild(img2);
 
         s.settingEl.appendChild(a1);

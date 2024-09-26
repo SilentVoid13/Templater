@@ -473,12 +473,15 @@ export class Templater {
         // TODO: find a better way to do this
         // Currently, I have to wait for the note extractor plugin to add the file content before replacing
         await delay(300);
+<<<<<<< HEAD
+=======
 
         // Avoids template replacement when creating file from template without content before delay
         if (templater.files_with_pending_templates.has(file.path)) {
             return;
         }
 
+>>>>>>> b7b03cf41b9b3353dc57930a4d3bbbf1a53b1caf
         if (
             file.stat.size == 0 &&
             templater.plugin.settings.enable_folder_templates

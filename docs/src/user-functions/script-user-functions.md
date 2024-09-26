@@ -10,15 +10,11 @@ Let's say you specified the `Scripts` folder as your script folder in Templater'
 
 Templater will load all JavaScript (`.js` files) scripts in the `Scripts` folder.
 
-You can then create your script named `Scripts/my_script.js` (The `.js` extension is required) for example.
+You can then create your script named `Scripts/my_script.js` (the `.js` extension is required) for example. You will likely have to create the file outside of Obsidian, as Obsidian only creates markdown files.
 
 You will then be able to call your scripts as user functions. The function name corresponds to the script file name.
 
 Scripts should follow the [CommonJS module specification](https://flaviocopes.com/commonjs/), and export a single function.
-
-Let's have an example with our previous script `my_script.js`.
-
-Note that instead of outputting directly to the console, as we did earlier, a user script needs to `return` its output:
 
 ```javascript
 function my_function (msg) {
@@ -27,14 +23,13 @@ function my_function (msg) {
 module.exports = my_function;
 ```
 
-
-In our previous example, a complete command invocation would look like this: 
+In this example, a complete command invocation would look like this: 
 
 ```javascript
 <% tp.user.my_script("Hello World!") %>
 ```
 
-Which would print `Message from my script: Hello World!` in the console.
+Which would output `Message from my script: Hello World!`.
 
 ## Global namespace
 

@@ -1,3 +1,4 @@
+const fs = require("fs");
 const stringifyPackage = require("stringify-package");
 const detectIndent = require("detect-indent");
 const detectNewline = require("detect-newline");
@@ -11,11 +12,12 @@ module.exports.writeVersion = function (contents, version) {
     let indent = detectIndent(contents).indent;
     let newline = detectNewline(contents);
 
-    let obs_version = json[Object.keys(json)[0]];
+    const manifest = JSON.parse(fs.readFileSync("./manifest.json"));
+    const { minAppVersion } = manifest;
 
     // Trick to make it appear on top of JSON object
     let tmp = {};
-    tmp[version] = obs_version;
+    tmp[version] = minAppVersion;
     json = Object.assign(tmp, json);
 
     return stringifyPackage(json, indent, newline);

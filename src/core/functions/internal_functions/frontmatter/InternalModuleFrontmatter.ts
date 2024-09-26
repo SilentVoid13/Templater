@@ -12,4 +12,6 @@ export class InternalModuleFrontmatter extends InternalModule {
             Object.entries(cache?.frontmatter || {})
         );
     }
+
+    async teardown(): Promise<void> {}
 }

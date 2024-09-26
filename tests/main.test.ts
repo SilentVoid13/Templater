@@ -14,8 +14,10 @@ import {
 import { InternalModuleFileTests } from "./InternalTemplates/InternalModuleFile.test";
 import { InternalModuleDateTests } from "./InternalTemplates/InternalModuleDate.test";
 import { InternalModuleFrontmatterTests } from "./InternalTemplates/InternalModuleFrontmatter.test";
+import { InternalModuleHooksTests } from "./InternalTemplates/InternalModuleHooks.test";
 import { InternalModuleSystemTests } from "./InternalTemplates/InternalModuleSystem.test";
 import { InternalModuleConfigTests } from "./InternalTemplates/InternalModuleConfig.test";
+import { TemplaterTests } from "./Templater.test";
 
 chai.use(chaiAsPromised);
 
@@ -106,8 +108,10 @@ export default class TestTemplaterPlugin extends Plugin {
         InternalModuleFileTests(this);
         InternalModuleDateTests(this);
         InternalModuleFrontmatterTests(this);
+        InternalModuleHooksTests(this);
         InternalModuleSystemTests(this);
         InternalModuleConfigTests(this);
+        TemplaterTests(this);
     }
 
     test(name: string, fn: () => Promise<void>) {
@@ -195,5 +199,43 @@ export default class TestTemplaterPlugin extends Plugin {
             running_config
         );
         return content;
+    }
+
+    async create_new_note_from_template_and_get_output(
+        template_content: string,
+        delay_ms = 300
+    ): Promise<string | undefined> {
+        const file = await this.plugin.templater.create_new_note_from_template(
+            template_content
+        );
+        if (file) {
+            this.active_files.push(file);
+            await delay(delay_ms);
+            const content = await this.app.vault.read(file);
+            return content;
+        }
+    }
+
+    async run_in_new_leaf(
+        template_content: string,
+        target_content = "",
+        waitCache = false,
+        skip_modify = false
+    ): Promise<void> {
+        await this.app.vault.modify(this.template_file, template_content);
+        if (!skip_modify) {
+            await this.app.vault.modify(this.target_file, target_content);
+        }
+        if (waitCache) {
+            await cache_update(this);
+        }
+
+        await this.app.workspace.getLeaf(true).openFile(this.target_file);
+
+        await this.plugin.templater.append_template_to_active_file(
+            this.template_file
+        );
+
+        await delay(300);
     }
 }

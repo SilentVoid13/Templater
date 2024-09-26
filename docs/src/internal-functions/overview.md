@@ -6,6 +6,7 @@ The different internal variables and functions offered by [Templater](https://gi
 - [Date module](./internal-modules/date-module.md): `tp.date`
 - [File module](./internal-modules/file-module.md): `tp.file`
 - [Frontmatter module](./internal-modules/frontmatter-module.md): `tp.frontmatter`
+- [Hooks module](./internal-modules/hooks-module.md): `tp.hooks`
 - [Obsidian module](./internal-modules/obsidian-module.md): `tp.obsidian`
 - [System module](./internal-modules/system-module.md): `tp.system`
 - [Web module](./internal-modules/web-module.md): `tp.web`

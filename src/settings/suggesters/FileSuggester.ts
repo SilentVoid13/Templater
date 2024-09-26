@@ -60,7 +60,7 @@ export class FileSuggest extends TextInputSuggest<TFile> {
             }
         });
 
-        return files;
+        return files.slice(0, 1000);
     }
 
     renderSuggestion(file: TFile, el: HTMLElement): void {

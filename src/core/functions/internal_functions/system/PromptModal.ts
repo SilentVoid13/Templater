@@ -1,4 +1,3 @@
-import { TemplaterError } from "utils/Error";
 import {
     ButtonComponent,
     Modal,
@@ -6,6 +5,7 @@ import {
     TextAreaComponent,
     TextComponent,
 } from "obsidian";
+import { TemplaterError } from "utils/Error";
 
 export class PromptModal extends Modal {
     private resolve: (value: string) => void;
@@ -29,9 +29,7 @@ export class PromptModal extends Modal {
     onClose(): void {
         this.contentEl.empty();
         if (!this.submitted) {
-            // TOFIX: for some reason throwing TemplaterError on iOS causes the app to freeze.
-            // this.reject(new TemplaterError("Cancelled prompt"));
-            this.reject();
+            this.reject(new TemplaterError("Cancelled prompt"));
         }
     }
 
@@ -59,24 +57,19 @@ export class PromptModal extends Modal {
         textInput.setPlaceholder("Type text here");
         textInput.setValue(this.value);
         textInput.onChange((value) => (this.value = value));
+        textInput.inputEl.focus();
         textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
             this.enterCallback(evt)
         );
     }
 
     private enterCallback(evt: KeyboardEvent) {
+        // Fix for Korean inputs https://github.com/SilentVoid13/Templater/issues/1284
+        if (evt.isComposing || evt.keyCode === 229) return;
+
         if (this.multi_line) {
-            if (Platform.isDesktop) {
-                // eslint-disable-next-line no-empty
-                if (evt.shiftKey && evt.key === "Enter") {
-                } else if (evt.key === "Enter") {
-                    this.resolveAndClose(evt);
-                }
-            } else {
-                // allow pressing enter on mobile for multi-line input
-                if (evt.key === "Enter") {
-                    evt.preventDefault();
-                }
+            if (Platform.isDesktop && evt.key === "Enter" && !evt.shiftKey) {
+                this.resolveAndClose(evt);
             }
         } else {
             if (evt.key === "Enter") {

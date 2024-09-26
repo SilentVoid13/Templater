@@ -2,6 +2,277 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.2](https://github.com/SilentVoid13/Templater/compare/2.7.1...2.7.2) (2024-09-25)
+
+
+### Bug Fixes
+
+* **1446:** updates docs to match _actual_ behaviour of tp.file.folder() ([8d4f402](https://github.com/SilentVoid13/Templater/commit/8d4f4023e5adb7e85ada0c5c58bf583e27e1c190))
+* Fix first letter of suggest modal being cut off ([0f07a0d](https://github.com/SilentVoid13/Templater/commit/0f07a0d884d9a70d2c4bf2084eafb9047ca13b9d)), closes [#1454](https://github.com/SilentVoid13/Templater/issues/1454) [#1436](https://github.com/SilentVoid13/Templater/issues/1436)
+* Prompt Autofocus Input ([a4eca81](https://github.com/SilentVoid13/Templater/commit/a4eca812c5f55b93f7986998dceab3f92370fdb2)), closes [#1457](https://github.com/SilentVoid13/Templater/issues/1457) [#1120](https://github.com/SilentVoid13/Templater/issues/1120)
+* Use requestUrl instead of fetch to fix CORS errors when using `tp.web.request` ([bfbb474](https://github.com/SilentVoid13/Templater/commit/bfbb474180193e2c1c484f34e6acf1d2f76425f0)), closes [#1455](https://github.com/SilentVoid13/Templater/issues/1455)
+
+### [2.7.1](https://github.com/SilentVoid13/Templater/compare/2.7.0...2.7.1) (2024-09-04)
+
+
+### Bug Fixes
+
+* Include link to photographer in random image ([c81bc7d](https://github.com/SilentVoid13/Templater/commit/c81bc7d5cd61e4f393bf44f7c298a3b2e972fe14)), closes [#1435](https://github.com/SilentVoid13/Templater/issues/1435)
+
+## [2.7.0](https://github.com/SilentVoid13/Templater/compare/2.6.0...2.7.0) (2024-09-04)
+
+
+### Features
+
+* new web function to make http requests ([56a6478](https://github.com/SilentVoid13/Templater/commit/56a64783fc9b351aa94484eb64e0c1378b4bc40d))
+
+## [2.6.0](https://github.com/SilentVoid13/Templater/compare/2.4.2...2.6.0) (2024-09-02)
+
+
+### Features
+
+* minify production builds to speed up loading time ([4f64ff9](https://github.com/SilentVoid13/Templater/commit/4f64ff90690361b0694086318ad4e297d77c6cb1)), closes [#1437](https://github.com/SilentVoid13/Templater/issues/1437)
+
+## [2.5.0](https://github.com/SilentVoid13/Templater/compare/2.4.2...2.5.0) (2024-09-02)
+
+
+### Features
+
+* minify production builds to speed up loading time ([4f64ff9](https://github.com/SilentVoid13/Templater/commit/4f64ff90690361b0694086318ad4e297d77c6cb1)), closes [#1437](https://github.com/SilentVoid13/Templater/issues/1437)
+
+### [2.4.2](https://github.com/SilentVoid13/Templater/compare/2.4.1...2.4.2) (2024-08-21)
+
+
+### Bug Fixes
+
+* use new unsplash api to fix random_picture not working ([0621def](https://github.com/SilentVoid13/Templater/commit/0621defa6054544762226099e33def3861b9a51d)), closes [#1435](https://github.com/SilentVoid13/Templater/issues/1435)
+
+### [2.4.1](https://github.com/SilentVoid13/Templater/compare/2.4.0...2.4.1) (2024-07-24)
+
+
+### Bug Fixes
+
+* Sort files by path instead of by basename ([b3c5981](https://github.com/SilentVoid13/Templater/commit/b3c5981c5651408838c676eedf8a1708f7b56feb)), closes [#1420](https://github.com/SilentVoid13/Templater/issues/1420)
+
+## [2.4.0](https://github.com/SilentVoid13/Templater/compare/2.3.3...2.4.0) (2024-07-24)
+
+
+### Features
+
+* Return Relative Paths of Templates in Fuzzy Suggester Prompt ([4910143](https://github.com/SilentVoid13/Templater/commit/49101435dca71b0260014cc3c0f3d05ce929b988)), closes [#1418](https://github.com/SilentVoid13/Templater/issues/1418) [#1418](https://github.com/SilentVoid13/Templater/issues/1418)
+
+
+### Bug Fixes
+
+* Follow UI design guidelines ([2abce98](https://github.com/SilentVoid13/Templater/commit/2abce98863bfad10c3f9ee6440f808f9ff9dbd10)), closes [#1383](https://github.com/SilentVoid13/Templater/issues/1383)
+
+### [2.3.3](https://github.com/SilentVoid13/Templater/compare/2.3.2...2.3.3) (2024-05-26)
+
+### [2.3.2](https://github.com/SilentVoid13/Templater/compare/2.3.1...2.3.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* limit results for file/folder suggesters in Templater settings to 1000 for better performance ([1bc91c3](https://github.com/SilentVoid13/Templater/commit/1bc91c34dedcde831f651054b3b0059ab6ca6942)), closes [#1319](https://github.com/SilentVoid13/Templater/issues/1319)
+* revert change that broke template content being overridden ([2639196](https://github.com/SilentVoid13/Templater/commit/263919674a4186632651a7f7b4296b9c3b047f6e)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
+### [2.3.1](https://github.com/SilentVoid13/Templater/compare/2.3.0...2.3.1) (2024-05-09)
+
+
+### Bug Fixes
+
+* Folder notes sometimes applying when creating a new note from template ([08bcfca](https://github.com/SilentVoid13/Templater/commit/08bcfca5b1a2833b6eaa892753270e4c888f84a8)), closes [#1370](https://github.com/SilentVoid13/Templater/issues/1370)
+
+## [2.3.0](https://github.com/SilentVoid13/Templater/compare/2.2.4...2.3.0) (2024-05-08)
+
+
+### Features
+
+* Support string for folder argument for `tp.file.create_new()` ([df3709b](https://github.com/SilentVoid13/Templater/commit/df3709b6a24f360a7fc51915853fbd210a51e278))
+
+
+### Bug Fixes
+
+* Mitigate edge cases where a blank string is appending during transition between active editors ([b6dd0b1](https://github.com/SilentVoid13/Templater/commit/b6dd0b1ea46187952f4a0bf7e1954590d7ad1e48)), closes [#1369](https://github.com/SilentVoid13/Templater/issues/1369)
+* simplify fix for template content being overridden when using `app.fileManager.processFrontMatter` on blank files ([7378d7b](https://github.com/SilentVoid13/Templater/commit/7378d7bff55c5ab944e923b43469e69e27de47af)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
+### [2.2.4](https://github.com/SilentVoid13/Templater/compare/2.2.3...2.2.4) (2024-05-05)
+
+
+### Bug Fixes
+
+* template content being overridden when using `app.fileManager.processFrontMatter` on blank files ([cdc8815](https://github.com/SilentVoid13/Templater/commit/cdc8815e1e3a81a00488b256480b1ec4d4203123)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
+### [2.2.3](https://github.com/SilentVoid13/Templater/compare/2.2.2...2.2.3) (2024-03-05)
+
+
+### Bug Fixes
+
+* fallback to "Untitled" as filename if empty string is passed as filename to `tp.file.create_new` ([efa2920](https://github.com/SilentVoid13/Templater/commit/efa2920d4a0d95c0dace8d899193f5a959b5218e)), closes [#1332](https://github.com/SilentVoid13/Templater/issues/1332)
+
+### [2.2.2](https://github.com/SilentVoid13/Templater/compare/2.2.1...2.2.2) (2024-03-02)
+
+
+### Bug Fixes
+
+* add 1ms delay to make it less likely to require a setTimeout when using `tp.hooks.on_all_templates_executed()` ([506e32d](https://github.com/SilentVoid13/Templater/commit/506e32d8784beb6cdc064fb78c76e121c6c52023)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+* re-add support for creating missing folders when using `tp.file.create_new()` ([cc85471](https://github.com/SilentVoid13/Templater/commit/cc8547168704ad356b6430c6621d5bfccb23440f)), closes [#1327](https://github.com/SilentVoid13/Templater/issues/1327)
+
+### [2.2.1](https://github.com/SilentVoid13/Templater/compare/2.2.0...2.2.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* creating file from template not auto-incrementing file name if file already exists ([368e511](https://github.com/SilentVoid13/Templater/commit/368e511d096e71fe98e858f3541e360ef7fd4165))
+
+## [2.2.0](https://github.com/SilentVoid13/Templater/compare/2.1.4...2.2.0) (2024-02-13)
+
+
+### Features
+
+* add support for templates with non-markdown file extensions ([34837f6](https://github.com/SilentVoid13/Templater/commit/34837f6bb7ec6dab620805b0e28526824f5a859f)), closes [#1311](https://github.com/SilentVoid13/Templater/issues/1311) [#1300](https://github.com/SilentVoid13/Templater/issues/1300)
+
+
+### Bug Fixes
+
+* Templater resetting active document position when folder template is triggered in background ([4d766d8](https://github.com/SilentVoid13/Templater/commit/4d766d8697639e816484cdd198f533e1e73897e5)), closes [#1310](https://github.com/SilentVoid13/Templater/issues/1310)
+
+### [2.1.4](https://github.com/SilentVoid13/Templater/compare/2.1.3...2.1.4) (2024-02-10)
+
+
+### Bug Fixes
+
+* properties not showing on file creation on template insert ([e9abe48](https://github.com/SilentVoid13/Templater/commit/e9abe48c8ee06005297a0af8a0a57652dd81cf27)), closes [#1253](https://github.com/SilentVoid13/Templater/issues/1253) [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
+### [2.1.3](https://github.com/SilentVoid13/Templater/compare/2.1.2...2.1.3) (2024-02-02)
+
+
+### Bug Fixes
+
+* modifying current file immediately after inserting template causing file content conflicts ([b9112fa](https://github.com/SilentVoid13/Templater/commit/b9112fab0163041f710c6cb81349b54c4ec4c214)), closes [#1309](https://github.com/SilentVoid13/Templater/issues/1309)
+
+## [2.1.2](https://github.com/SilentVoid13/Templater/compare/1.18.4...2.1.2) (2024-01-23)
+
+
+### Bug Fixes
+
+* syntax errors in user scripts not showing error message mentioning relevant user script ([6709df4](https://github.com/SilentVoid13/Templater/commit/6709df41cea175041f3dffab7713a00b0c0b0766)), closes [#1212](https://github.com/SilentVoid13/Templater/issues/1212) [#1286](https://github.com/SilentVoid13/Templater/issues/1286)
+* unable to add newline in multiline inputs on mobile ([5d3b2fc](https://github.com/SilentVoid13/Templater/commit/5d3b2fcab262c98483ee4f815bed4e283e74f4e8)), closes [#1303](https://github.com/SilentVoid13/Templater/issues/1303)
+* uncaught exception when cancelling prompt when creating note from template and throw_on_cancel is true ([8a27b33](https://github.com/SilentVoid13/Templater/commit/8a27b33309beb40966f0e09d49541b045f95482c)), closes [#1294](https://github.com/SilentVoid13/Templater/issues/1294)
+
+### [2.1.1](https://github.com/SilentVoid13/Templater/compare/2.1.0...2.1.1) (2024-01-18)
+
+
+### Bug Fixes
+
+* cursor being set to top of current file when folder template was triggered ([10ab058](https://github.com/SilentVoid13/Templater/commit/10ab0586b9c96b7857716abaf6ef394474615a2d)), closes [#1297](https://github.com/SilentVoid13/Templater/issues/1297)
+
+## [2.1.0](https://github.com/SilentVoid13/Templater/compare/2.0.0...2.1.0) (2024-01-06)
+
+
+### Features
+
+* add icon for hotkey commands for mobile toolbar ([8806dab](https://github.com/SilentVoid13/Templater/commit/8806dabf5f33a55c7e6d0d7f208cc444d2925ce7))
+* add icons for commands for mobile toolbar ([9391ba9](https://github.com/SilentVoid13/Templater/commit/9391ba9a20ef92d85ab9bcf22ec07eda9f863eaa))
+
+
+### Bug Fixes
+
+* incorrect function name in popup for tp.file.move() ([b53e713](https://github.com/SilentVoid13/Templater/commit/b53e713a79f6c112d0c98737c5db8377c4b0decd)), closes [#1136](https://github.com/SilentVoid13/Templater/issues/1136)
+* multiple prompts being filled out with Korean inputs ([9fc284e](https://github.com/SilentVoid13/Templater/commit/9fc284ef6bfecc30d4d857fb090207355a59fc5f)), closes [#1284](https://github.com/SilentVoid13/Templater/issues/1284)
+
+## [2.0.0](https://github.com/SilentVoid13/Templater/compare/1.18.3...2.0.0) (2023-12-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* Syntax highlighting will no longer work on older versions of Obsidian.
+
+### Bug Fixes
+
+* Fix syntax highlighting in Obsidian 1.5.x ([aaa2cc1](https://github.com/SilentVoid13/Templater/commit/aaa2cc109ddce6e127aeee787a1426799127fd3a))
+
+### [1.18.4](https://github.com/SilentVoid13/Templater/compare/1.18.3...1.18.4) (2024-01-20)
+
+
+### Bug Fixes
+
+* uncaught exception when cancelling prompt when creating note from template and `throw_on_cancel` is true ([41e19ef](https://github.com/SilentVoid13/Templater/commit/41e19ef949f739bdb8e3593e108e9271fa1bbc10)), closes [#1294](https://github.com/SilentVoid13/Templater/issues/1294)
+
+### [1.18.3](https://github.com/SilentVoid13/Templater/compare/1.18.2...1.18.3) (2023-12-02)
+
+
+### Bug Fixes
+
+* do not stack trace using Error.captureStackTrace in environments that don't support it (iOS) ([de54d0c](https://github.com/SilentVoid13/Templater/commit/de54d0cbc30e63a4434d914160ffabe26d7f5474))
+
+### [1.18.2](https://github.com/SilentVoid13/Templater/compare/1.18.1...1.18.2) (2023-12-01)
+
+
+### Bug Fixes
+
+* plugin not unloading properly when disabled ([3cd000a](https://github.com/SilentVoid13/Templater/commit/3cd000ad6c49e4b16316ee7ebb0d40666c726665))
+* properties from template not showing in note until editor change ([b349aff](https://github.com/SilentVoid13/Templater/commit/b349affc83193f69be81ac4f63e7568d326a0302)), closes [#1253](https://github.com/SilentVoid13/Templater/issues/1253)
+
+### [1.18.1](https://github.com/SilentVoid13/Templater/compare/1.18.0...1.18.1) (2023-11-17)
+
+
+### Bug Fixes
+
+* frontmatter updates not persisting when using app.vault.processFrontMatter outside of a tp.hooks module ([21aa13e](https://github.com/SilentVoid13/Templater/commit/21aa13eedc42eb966dd0810b2d551c14b5621901)), closes [#1245](https://github.com/SilentVoid13/Templater/issues/1245)
+
+## [1.18.0](https://github.com/SilentVoid13/Templater/compare/1.17.0...1.18.0) (2023-11-13)
+
+
+### Features
+
+* add hooks module ([e5d1aa8](https://github.com/SilentVoid13/Templater/commit/e5d1aa874fd67378fce238c1443763b8dd093434))
+
+## [1.17.0](https://github.com/SilentVoid13/Templater/compare/1.16.5...1.17.0) (2023-11-08)
+
+
+### Features
+
+* jump to next cursor will only expand folds if cursor jump position is within fold bounds ([b1729e3](https://github.com/SilentVoid13/Templater/commit/b1729e335c9cca7902c16551fe779bfbf3dcfec7)), closes [#1222](https://github.com/SilentVoid13/Templater/issues/1222)
+* support tp.system.clipboard on mobile ([5c6744d](https://github.com/SilentVoid13/Templater/commit/5c6744d50b562ac76b3465decd18cdb348edf338)), closes [#589](https://github.com/SilentVoid13/Templater/issues/589)
+
+### [1.16.5](https://github.com/SilentVoid13/Templater/compare/1.16.4...1.16.5) (2023-11-07)
+
+
+### Bug Fixes
+
+* place cursor after frontmatter ([a65bc08](https://github.com/SilentVoid13/Templater/commit/a65bc0890cdf684e1afa0a7ab40b1cc6d8d1d09c)), closes [#1231](https://github.com/SilentVoid13/Templater/issues/1231)
+
+### [1.16.4](https://github.com/SilentVoid13/Templater/compare/1.16.3...1.16.4) (2023-10-11)
+
+
+### Bug Fixes
+
+* add missing `=` in docs example for `tp.system.suggester` ([ea6d2c4](https://github.com/SilentVoid13/Templater/commit/ea6d2c4f26d596eef6480b696d1fbb51639e21a3)), closes [#995](https://github.com/SilentVoid13/Templater/issues/995)
+* define app.dom ([7557939](https://github.com/SilentVoid13/Templater/commit/755793979b49c2166da790eb34f339f41fd87fa4))
+* re-add delay on triggering templates on file creation to account for note extractor core plugin ([59603e5](https://github.com/SilentVoid13/Templater/commit/59603e5c535bb38f5cfdafff41e258974b1025eb)), closes [#1219](https://github.com/SilentVoid13/Templater/issues/1219)
+
+### [1.16.3](https://github.com/SilentVoid13/Templater/compare/1.16.2...1.16.3) (2023-10-03)
+
+
+### Bug Fixes
+
+* clearer error message when user scripts are preventing templates from executing ([0cb0202](https://github.com/SilentVoid13/Templater/commit/0cb02026f9b0c3b98f8caef9f3e5c72bcdf765c4)), closes [#1212](https://github.com/SilentVoid13/Templater/issues/1212)
+
+### [1.16.2](https://github.com/SilentVoid13/Templater/compare/1.16.1...1.16.2) (2023-10-02)
+
+
+### Bug Fixes
+
+* active file is undefined in binary files ([27af7a3](https://github.com/SilentVoid13/Templater/commit/27af7a3f9c7a78a477f31f11c709137d2834e528)), closes [#1210](https://github.com/SilentVoid13/Templater/issues/1210)
+
+### [1.16.1](https://github.com/SilentVoid13/Templater/compare/1.16.0...1.16.1) (2023-09-29)
+
+
+### Bug Fixes
+
+* fixing merge conflict ([1e2fdda](https://github.com/SilentVoid13/Templater/commit/1e2fdda82f5335bb43b98534698a8c19fea1eba4))
+
 ## [1.16.0](https://github.com/SilentVoid13/Templater/compare/1.15.3...1.16.0) (2022-11-08)
 
 
