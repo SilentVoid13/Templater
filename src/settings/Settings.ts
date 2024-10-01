@@ -1,11 +1,10 @@
+import TemplaterPlugin from "main";
 import { ButtonComponent, PluginSettingTab, Setting } from "obsidian";
 import { errorWrapperSync, TemplaterError } from "utils/Error";
-import { FolderSuggest } from "./suggesters/FolderSuggester";
-import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
-import TemplaterPlugin from "main";
-import { arraymove, get_tfiles_from_folder } from "utils/Utils";
 import { log_error } from "utils/Log";
-import { HEART, PAYPAL } from "utils/Constants";
+import { arraymove, get_tfiles_from_folder } from "utils/Utils";
+import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
+import { FolderSuggest } from "./suggesters/FolderSuggester";
 
 export interface FolderTemplate {
     folder: string;
@@ -59,10 +58,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
-        this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
         }
+        this.add_templates_hotkeys_setting();
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
@@ -325,7 +324,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_folder_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Folder templates" });
         new Setting(this.containerEl).setName("Folder templates").setHeading();
 
         const descHeading = document.createDocumentFragment();
@@ -366,24 +364,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         if (!this.plugin.settings.enable_folder_templates) {
             return;
         }
-
-        new Setting(this.containerEl)
-            .setName("Add new")
-            .setDesc("Add new folder template")
-            .addButton((button: ButtonComponent) => {
-                button
-                    .setTooltip("Add additional folder template")
-                    .setButtonText("+")
-                    .setCta()
-                    .onClick(() => {
-                        this.plugin.settings.folder_templates.push({
-                            folder: "",
-                            template: "",
-                        });
-                        this.plugin.save_settings();
-                        this.display();
-                    });
-            });
 
         this.plugin.settings.folder_templates.forEach(
             (folder_template, index) => {
@@ -473,6 +453,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 s.infoEl.remove();
             }
         );
+
+        new Setting(this.containerEl).addButton((button: ButtonComponent) => {
+            button.setButtonText("Add new folder template")
+                .setTooltip("Add additional folder template")
+                .setCta()
+                .onClick(() => {
+                    this.plugin.settings.folder_templates.push({
+                        folder: "",
+                        template: "",
+                    });
+                    this.plugin.save_settings();
+                    this.display();
+                });
+        });
     }
 
     add_startup_templates_setting(): void {
