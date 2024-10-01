@@ -324,7 +324,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_folder_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "Folder templates" });
         new Setting(this.containerEl).setName("Folder templates").setHeading();
 
         const descHeading = document.createDocumentFragment();
