@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
     syntax_highlighting: true,
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
-    startup_templates: [""]
+    startup_templates: [""],
 };
 
 export interface Settings {
@@ -122,8 +122,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const mobileDesc = document.createDocumentFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
-            "mobile. Use with caution: this may break live preview on mobile " +
-            "platforms."
+                "mobile. Use with caution: this may break live preview on mobile " +
+                "platforms."
         );
 
         new Setting(this.containerEl)
@@ -471,7 +471,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl).addButton((button: ButtonComponent) => {
-            button.setButtonText("Add new folder template")
+            button
+                .setButtonText("Add new folder template")
                 .setTooltip("Add additional folder template")
                 .setCta()
                 .onClick(() => {
@@ -486,13 +487,21 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_file_templates_setting(): void {
-        this.containerEl.createEl("h2", { text: "File Regex Templates" });
+        new Setting(this.containerEl)
+            .setName("File Regex Templates")
+            .setHeading();
 
         const descHeading = document.createDocumentFragment();
         descHeading.append(
             "File Regex Templates are triggered when a new ",
             descHeading.createEl("strong", { text: "empty" }),
-            " file is created that matches one of them. Templater will fill the empty file with the specified template."
+            " file is created that matches one of them. Templater will fill the empty file with the specified template.",
+            descHeading.createEl("br"),
+            "The first match from the top is used, so the order of the rules is important.",
+            descHeading.createEl("br"),
+            "Use ",
+            descHeading.createEl("code", { text: ".*" }),
+            " as a final catch-all, if you need it."
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
@@ -524,26 +533,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         if (!this.plugin.settings.enable_file_templates) {
             return;
         }
-
-        new Setting(this.containerEl)
-            .setName("Add New")
-            .setDesc(
-                "Add new file regex. The first match from the top is used, so the order of the rules is important. Use `.*` as a final catch-all, if you need it."
-            )
-            .addButton((button: ButtonComponent) => {
-                button
-                    .setTooltip("Add additional file regex")
-                    .setButtonText("+")
-                    .setCta()
-                    .onClick(() => {
-                        this.plugin.settings.file_templates.push({
-                            regex: "",
-                            template: "",
-                        });
-                        this.plugin.save_settings();
-                        this.display();
-                    });
-            });
 
         this.plugin.settings.file_templates.forEach((file_template, index) => {
             const s = new Setting(this.containerEl)
@@ -614,6 +603,21 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         });
                 });
             s.infoEl.remove();
+        });
+
+        new Setting(this.containerEl).addButton((button: ButtonComponent) => {
+            button
+                .setButtonText("Add new file regex")
+                .setTooltip("Add additional file regex")
+                .setCta()
+                .onClick(() => {
+                    this.plugin.settings.file_templates.push({
+                        regex: "",
+                        template: "",
+                    });
+                    this.plugin.save_settings();
+                    this.display();
+                });
         });
     }
 
@@ -691,7 +695,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_script_functions_setting(): void {
-        new Setting(this.containerEl).setName("User script functions").setHeading();
+        new Setting(this.containerEl)
+            .setName("User script functions")
+            .setHeading();
 
         let desc = document.createDocumentFragment();
         desc.append(
@@ -776,7 +782,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
             }),
             "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources."
         );
-        new Setting(this.containerEl).setName("User system command functions").setHeading();
+        new Setting(this.containerEl)
+            .setName("User system command functions")
+            .setHeading();
 
         new Setting(this.containerEl)
             .setName("Enable user system command functions")
@@ -946,21 +954,25 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Donate")
             .setDesc(
                 "If you like this Plugin, consider donating to support continued development."
-            )
-
+            );
 
         const a1 = document.createElement("a");
         a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
         a1.addClass("templater_donating");
         const img1 = document.createElement("img");
-        img1.src = "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
+        img1.src =
+            "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
         a1.appendChild(img1);
 
         const a2 = document.createElement("a");
-        a2.setAttribute("href", "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q");
+        a2.setAttribute(
+            "href",
+            "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
+        );
         a2.addClass("templater_donating");
         const img2 = document.createElement("img");
-        img2.src = "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
+        img2.src =
+            "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
         a2.appendChild(img2);
 
         s.settingEl.appendChild(a1);
