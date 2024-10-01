@@ -58,10 +58,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
-        this.add_templates_hotkeys_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
         }
+        this.add_templates_hotkeys_setting();
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
