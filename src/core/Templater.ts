@@ -443,6 +443,17 @@ export class Templater {
         } while (folder);
     }
 
+    get_new_file_template_for_file(file: TFile): string | undefined {
+        const match = this.plugin.settings.file_templates.find((e) => {
+            const eRegex = new RegExp(e.regex);
+            return eRegex.test(file.path);
+        });
+
+        if (match && match.template) {
+            return match.template;
+        }
+    }
+
     static async on_file_creation(
         templater: Templater,
         file: TAbstractFile
@@ -482,6 +493,26 @@ export class Templater {
                     return resolve_tfile(folder_template_match);
                 },
                 `Couldn't find template ${folder_template_match}`
+            );
+            // errorWrapper failed
+            if (template_file == null) {
+                return;
+            }
+            await templater.write_template_to_file(template_file, file);
+        } else if (
+            file.stat.size == 0 &&
+            templater.plugin.settings.enable_file_templates
+        ) {
+            const file_template_match =
+                templater.get_new_file_template_for_file(file);
+            if (!file_template_match) {
+                return;
+            }
+            const template_file: TFile = await errorWrapper(
+                async (): Promise<TFile> => {
+                    return resolve_tfile(file_template_match);
+                },
+                `Couldn't find template ${file_template_match}`
             );
             // errorWrapper failed
             if (template_file == null) {
