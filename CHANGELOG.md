@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.3](https://github.com/SilentVoid13/Templater/compare/2.7.2...2.7.3) (2024-10-01)
+
+
+### Bug Fixes
+
+* Fix UX conflicts between changes for better folder templates UX and file regex templates ([cc95dea](https://github.com/SilentVoid13/Templater/commit/cc95dea9cc185a93d0ce557f3faba8e20bfed244)), closes [#1428](https://github.com/SilentVoid13/Templater/issues/1428) [#975](https://github.com/SilentVoid13/Templater/issues/975) [#471](https://github.com/SilentVoid13/Templater/issues/471)
+* Streamline folder template UX ([78d9484](https://github.com/SilentVoid13/Templater/commit/78d9484882befd18983b5ddd8447abfc67f9e2ba)), closes [#1468](https://github.com/SilentVoid13/Templater/issues/1468)
+
 ### [2.7.2](https://github.com/SilentVoid13/Templater/compare/2.7.1...2.7.2) (2024-09-25)
 
 
