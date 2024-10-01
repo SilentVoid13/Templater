@@ -12,7 +12,7 @@ Internal variables / functions are sorted by modules. Each module has a dedicate
 
 Let's take the [date module](https://github.com/SilentVoid13/Templater/tree/master/src/InternalTemplates/date) as an example.
 
-It contains an [InternalModuleDate](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/date/InternalModuleDate.ts) file where all our internal date's related variables and functions are defined and registered:
+It contains an [InternalModuleDate](https://github.com/SilentVoid13/Templater/blob/master/src/core/functions/internal_functions/date/InternalModuleDate.ts) file where all our internal date's related variables and functions are defined and registered:
 
 ```typescript
 export class InternalModuleDate extends InternalModule {
@@ -49,7 +49,7 @@ export class InternalModuleDate extends InternalModule {
 }
 ```
 
-Every module extends the [InternalModule](https://github.com/SilentVoid13/Templater/blob/master/src/InternalTemplates/InternalModule.ts) abstract class, which means they contain the following attributes and methods:
+Every module extends the [InternalModule](https://github.com/SilentVoid13/Templater/blob/master/src/core/functions/internal_functions/InternalModule.ts) abstract class, which means they contain the following attributes and methods:
 
 - `this.app` attribute: the Obsidian API `App` object.
 - `this.file` attribute: The destination file where the template will be inserted.
