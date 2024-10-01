@@ -9,7 +9,6 @@
 - `Trigger Templater on new file creation`: [Templater](https://github.com/SilentVoid13/Templater) will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. This makes [Templater](https://github.com/SilentVoid13/Templater) compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc.
   - Make sure to set up rules under either Folder Templates or File Regex Template below.
   - **Warning:** This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation."
-- `Show icon in sidebar`: Show [Templater](https://github.com/SilentVoid13/Templater) icon in sidebar ribbon, allowing you to quickly use templates anywhere.
 
 ## Template Hotkeys
 
