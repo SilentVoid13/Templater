@@ -33,6 +33,7 @@ export const DEFAULT_SETTINGS: Settings = {
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
+    enable_ribbon_icon: true,
 };
 
 export interface Settings {
@@ -52,6 +53,7 @@ export interface Settings {
     syntax_highlighting_mobile: boolean;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
+    enable_ribbon_icon: boolean;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -67,6 +69,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
         this.add_trigger_on_new_file_creation_setting();
+        this.add_ribbon_icon_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
             this.add_file_templates_setting();
@@ -334,6 +337,34 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     this.display();
                 });
         });
+    }
+
+    add_ribbon_icon_setting(): void {
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Show Templater icon in sidebar ribbon, allowing you to quickly use templates anywhere."
+        );
+
+        new Setting(this.containerEl)
+            .setName("Show icon in sidebar")
+            .setDesc(desc)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.enable_ribbon_icon)
+                    .onChange((enable_ribbon_icon) => {
+                        this.plugin.settings.enable_ribbon_icon =
+                            enable_ribbon_icon;
+                        this.plugin.save_settings();
+                        if(this.plugin.settings.enable_ribbon_icon) {
+                            this.plugin.addRibbonIcon("templater-icon", "Templater", async () => {
+                                this.fuzzy_suggester.insert_template();
+                            }).setAttribute("id", "rb-templater-icon");
+                        }
+                        else {
+                            document.getElementById("rb-templater-icon")?.remove();
+                        }
+                    });
+            });
     }
 
     add_folder_templates_setting(): void {
