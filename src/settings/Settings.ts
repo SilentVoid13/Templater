@@ -271,7 +271,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 app.setting.openTabById("hotkeys");
                                 // @ts-ignore
                                 const tab = app.setting.activeTab;
-                                tab.searchInputEl.value = "Templater: Insert";
+                                tab.searchComponent.inputEl.value = "Templater: Insert";
                                 tab.updateHotkeyVisibility();
                             });
                     })
