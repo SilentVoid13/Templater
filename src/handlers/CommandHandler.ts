@@ -1,6 +1,6 @@
 import TemplaterPlugin from "main";
-import { resolve_tfile } from "utils/Utils";
 import { errorWrapperSync } from "utils/Error";
+import { resolve_tfile } from "utils/Utils";
 
 export class CommandHandler {
     constructor(private plugin: TemplaterPlugin) {}
@@ -79,13 +79,14 @@ export class CommandHandler {
 
     add_template_hotkey(
         old_template: string | null,
-        new_template: string
+        new_template: string,
+        mode: string
     ): void {
         this.remove_template_hotkey(old_template);
 
         if (new_template) {
             this.plugin.addCommand({
-                id: new_template,
+                id: `insert-${new_template}`,
                 name: `Insert ${new_template}`,
                 icon: "templater-icon",
                 callback: () => {
@@ -101,6 +102,23 @@ export class CommandHandler {
                     );
                 },
             });
+            this.plugin.addCommand({
+                id: `create-${new_template}`,
+                name: `Create ${new_template}`,
+                icon: "templater-icon",
+                callback: () => {
+                    const template = errorWrapperSync(
+                        () => resolve_tfile(new_template),
+                        `Couldn't find the template file associated with this hotkey`
+                    );
+                    if (!template) {
+                        return;
+                    }
+                    this.plugin.templater.create_new_note_from_template(
+                        template
+                    );
+                }
+            })
         }
     }
 
@@ -109,7 +127,10 @@ export class CommandHandler {
             // TODO: Find official way to do this
             // @ts-ignore
             app.commands.removeCommand(
-                `${this.plugin.manifest.id}:${template}`
+                `${this.plugin.manifest.id}:create-${template}`
+            );
+            app.commands.removeCommand(
+                `${this.plugin.manifest.id}:insert-${template}`
             );
         }
     }
