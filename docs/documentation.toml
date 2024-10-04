@@ -536,6 +536,35 @@ example = """<% tp.system.prompt("What is your mood today?", "happy") %>"""
 name = "Multiline prompt"
 example = """<% tp.system.prompt("What is your mood today?", null, false, true) %>"""
 
+[tp.system.functions.multi_suggester]
+name = "multi_suggester"
+description = "Spawns a multi_suggester prompt and returns the user's chosen items."
+definition = "tp.system.multi_suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], unrestricted: boolean = false, throw_on_cancel: boolean = false, title: string = \"multi_suggester\", limit?: number = undefined)"
+
+[tp.system.functions.multi_suggester.args.text_items]
+name = "text_items"
+description = "Array of strings representing the text that will be displayed for each item in the multi_suggester prompt. This can also be a function that maps an item to its text representation."
+
+[tp.system.functions.multi_suggester.args.items]
+name = "items"
+description = "Array containing the values of each item in the correct order."
+
+[tp.system.functions.multi_suggester.args.unrestricted]
+name = "unrestricted"
+description = "A boolean which represents whether the values outside suggestions can be selected or not"
+
+[tp.system.functions.multi_suggester.args.throw_on_cancel]
+name = "throw_on_cancel"
+description = "Throws an error if the prompt is canceled, instead of returning a `null` value"
+
+[tp.system.functions.multi_suggester.args.title]
+name = "title"
+description = "Title of multi_suggester prompt"
+
+[tp.system.functions.multi_suggester.args.limit]
+name = "limit"
+description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)"
+
 [tp.system.functions.suggester]
 name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
