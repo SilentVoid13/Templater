@@ -79,8 +79,7 @@ export class CommandHandler {
 
     add_template_hotkey(
         old_template: string | null,
-        new_template: string,
-        mode: string
+        new_template: string
     ): void {
         this.remove_template_hotkey(old_template);
 
@@ -117,8 +116,8 @@ export class CommandHandler {
                     this.plugin.templater.create_new_note_from_template(
                         template
                     );
-                }
-            })
+                },
+            });
         }
     }
 
