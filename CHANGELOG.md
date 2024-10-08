@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/SilentVoid13/Templater/compare/2.7.3...2.8.0) (2024-10-08)
+
+
+### Features
+
+* Add insert hotkey setting ([4f51027](https://github.com/SilentVoid13/Templater/commit/4f510277ed9dfa09570acd44076acab08afea5e0)), closes [#1475](https://github.com/SilentVoid13/Templater/issues/1475) [#1361](https://github.com/SilentVoid13/Templater/issues/1361)
+
+
+### Bug Fixes
+
+* remove unused internal parameter `mode`, breaking change from previous commit where hotkey command IDs are now prefixed with `insert-` ([281aaf7](https://github.com/SilentVoid13/Templater/commit/281aaf787ee21efc0f902ebcec5226b017135a08)), closes [#1361](https://github.com/SilentVoid13/Templater/issues/1361)
+
 ### [2.7.3](https://github.com/SilentVoid13/Templater/compare/2.7.2...2.7.3) (2024-10-01)
 
 
