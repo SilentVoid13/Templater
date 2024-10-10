@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://github.com/SilentVoid13/Templater/compare/2.8.0...2.8.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* Hotkeys being unset from 2.8.0 release, you will need to set them up again if you set them up again while having 2.8.0 installed ([39fd26d](https://github.com/SilentVoid13/Templater/commit/39fd26d6439e958f7c19073a060d70b8ac0d522e)), closes [#1480](https://github.com/SilentVoid13/Templater/issues/1480)
+
 ## [2.8.0](https://github.com/SilentVoid13/Templater/compare/2.7.3...2.8.0) (2024-10-08)
 
 
