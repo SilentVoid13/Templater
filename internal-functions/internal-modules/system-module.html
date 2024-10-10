@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>tp.system - Templater</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../installation.html"><strong aria-hidden="true">1.1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../../terminology.html"><strong aria-hidden="true">1.2.</strong> Terminology</a></li><li class="chapter-item expanded "><a href="../../syntax.html"><strong aria-hidden="true">1.3.</strong> Syntax</a></li><li class="chapter-item expanded "><a href="../../settings.html"><strong aria-hidden="true">1.4.</strong> Settings</a></li><li class="chapter-item expanded "><a href="../../faq.html"><strong aria-hidden="true">1.5.</strong> FAQ</a></li></ol></li><li class="chapter-item expanded "><a href="../../internal-functions/overview.html"><strong aria-hidden="true">2.</strong> Internal Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/config-module.html"><strong aria-hidden="true">2.1.</strong> tp.config</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/date-module.html"><strong aria-hidden="true">2.2.</strong> tp.date</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/file-module.html"><strong aria-hidden="true">2.3.</strong> tp.file</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/frontmatter-module.html"><strong aria-hidden="true">2.4.</strong> tp.frontmatter</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/hooks-module.html"><strong aria-hidden="true">2.5.</strong> tp.hooks</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/obsidian-module.html"><strong aria-hidden="true">2.6.</strong> tp.obsidian</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/system-module.html" class="active"><strong aria-hidden="true">2.7.</strong> tp.system</a></li><li class="chapter-item expanded "><a href="../../internal-functions/internal-modules/web-module.html"><strong aria-hidden="true">2.8.</strong> tp.web</a></li><li class="chapter-item expanded "><a href="../../internal-functions/contribute.html"><strong aria-hidden="true">2.9.</strong> Contributing</a></li></ol></li><li class="chapter-item expanded "><a href="../../user-functions/overview.html"><strong aria-hidden="true">3.</strong> User Functions</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../user-functions/script-user-functions.html"><strong aria-hidden="true">3.1.</strong> User Scripts</a></li><li class="chapter-item expanded "><a href="../../user-functions/system-user-functions.html"><strong aria-hidden="true">3.2.</strong> System Commands</a></li></ol></li><li class="chapter-item expanded "><a href="../../commands/overview.html"><strong aria-hidden="true">4.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../commands/dynamic-command.html"><strong aria-hidden="true">4.1.</strong> Dynamic Commands</a></li><li class="chapter-item expanded "><a href="../../commands/execution-command.html"><strong aria-hidden="true">4.2.</strong> Execution Commands</a></li><li class="chapter-item expanded "><a href="../../commands/whitespace-control.html"><strong aria-hidden="true">4.3.</strong> Whitespace Control</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Templater</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="system-module"><a class="header" href="#system-module">System Module</a></h1>
+<p>This module contains system related functions.</p>
+<ul>
+<li><a href="#documentation">Documentation</a>
+<ul>
+<li><a href="#tpsystemclipboard"><code>tp.system.clipboard()</code></a></li>
+<li><a href="#tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><code>tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)</code></a></li>
+<li><a href="#tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><code>tp.system.suggester(text_items: string[] ⎮ ((item: T) =&gt; string), items: T[], throw_on_cancel: boolean = false, placeholder: string = &quot;&quot;, limit?: number = undefined)</code></a></li>
+</ul>
+</li>
+<li><a href="#examples-3">Examples</a></li>
+</ul>
+<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
+<p>Function documentation is using a specific syntax. More information <a href="../../syntax.html#function-documentation-syntax">here</a>.</p>
+<h3 id="tpsystemclipboard"><a class="header" href="#tpsystemclipboard"><code>tp.system.clipboard()</code></a></h3>
+<p>Retrieves the clipboard's content.</p>
+<h5 id="examples"><a class="header" href="#examples">Examples</a></h5>
+<pre><code class="language-javascript">// Clipboard
+&lt;% tp.system.clipboard() %&gt;
+</code></pre>
+<h3 id="tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><a class="header" href="#tpsystempromptprompt_text-string-default_value-string-throw_on_cancel-boolean--false-multiline-boolean--false"><code>tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)</code></a></h3>
+<p>Spawns a prompt modal and returns the user's input.</p>
+<h5 id="arguments"><a class="header" href="#arguments">Arguments</a></h5>
+<ul>
+<li>
+<p><code>prompt_text</code>: Text placed above the input field.</p>
+</li>
+<li>
+<p><code>default_value</code>: A default value for the input field.</p>
+</li>
+<li>
+<p><code>throw_on_cancel</code>: Throws an error if the prompt is canceled, instead of returning a <code>null</code> value.</p>
+</li>
+<li>
+<p><code>multiline</code>: If set to <code>true</code>, the input field will be a multiline textarea. Defaults to <code>false</code>.</p>
+</li>
+</ul>
+<h5 id="examples-1"><a class="header" href="#examples-1">Examples</a></h5>
+<pre><code class="language-javascript">// Prompt
+&lt;% tp.system.prompt(&quot;Please enter a value&quot;) %&gt;
+// Prompt with default value
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, &quot;happy&quot;) %&gt;
+// Multiline prompt
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, null, false, true) %&gt;
+</code></pre>
+<h3 id="tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><a class="header" href="#tpsystemsuggestertext_items-string--item-t--string-items-t-throw_on_cancel-boolean--false-placeholder-string---limit-number--undefined"><code>tp.system.suggester(text_items: string[] ⎮ ((item: T) =&gt; string), items: T[], throw_on_cancel: boolean = false, placeholder: string = &quot;&quot;, limit?: number = undefined)</code></a></h3>
+<p>Spawns a suggester prompt and returns the user's chosen item.</p>
+<h5 id="arguments-1"><a class="header" href="#arguments-1">Arguments</a></h5>
+<ul>
+<li>
+<p><code>text_items</code>: Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation.</p>
+</li>
+<li>
+<p><code>items</code>: Array containing the values of each item in the correct order.</p>
+</li>
+<li>
+<p><code>throw_on_cancel</code>: Throws an error if the prompt is canceled, instead of returning a <code>null</code> value.</p>
+</li>
+<li>
+<p><code>placeholder</code>: Placeholder string of the prompt.</p>
+</li>
+<li>
+<p><code>limit</code>: Limit the number of items rendered at once (useful to improve performance when displaying large lists).</p>
+</li>
+</ul>
+<h5 id="examples-2"><a class="header" href="#examples-2">Examples</a></h5>
+<pre><code class="language-javascript">// Suggester
+&lt;% tp.system.suggester([&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;], [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester with mapping function (same as above example)
+&lt;% tp.system.suggester((item) =&gt; item, [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester for files
+[[&lt;% (await tp.system.suggester((item) =&gt; item.basename, app.vault.getMarkdownFiles())).basename %&gt;]]
+// Suggester for tags
+&lt;% tp.system.suggester(item =&gt; item, Object.keys(app.metadataCache.getTags()).map(x =&gt; x.replace(&quot;#&quot;, &quot;&quot;))) %&gt;
+</code></pre>
+<h2 id="examples-3"><a class="header" href="#examples-3">Examples</a></h2>
+<pre><code class="language-javascript">// Clipboard
+&lt;% tp.system.clipboard() %&gt;
+
+// Prompt
+&lt;% tp.system.prompt(&quot;Please enter a value&quot;) %&gt;
+// Prompt with default value
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, &quot;happy&quot;) %&gt;
+// Multiline prompt
+&lt;% tp.system.prompt(&quot;What is your mood today?&quot;, null, false, true) %&gt;
+
+// Suggester
+&lt;% tp.system.suggester([&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;], [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester with mapping function (same as above example)
+&lt;% tp.system.suggester((item) =&gt; item, [&quot;Happy&quot;, &quot;Sad&quot;, &quot;Confused&quot;]) %&gt;
+// Suggester for files
+[[&lt;% (await tp.system.suggester((item) =&gt; item.basename, app.vault.getMarkdownFiles())).basename %&gt;]]
+// Suggester for tags
+&lt;% tp.system.suggester(item =&gt; item, Object.keys(app.metadataCache.getTags()).map(x =&gt; x.replace(&quot;#&quot;, &quot;&quot;))) %&gt;
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../internal-functions/internal-modules/obsidian-module.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../../internal-functions/internal-modules/web-module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../internal-functions/internal-modules/obsidian-module.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../../internal-functions/internal-modules/web-module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
