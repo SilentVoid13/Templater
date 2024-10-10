@@ -112,7 +112,8 @@ export class Templater {
         template: TFile | string,
         folder?: TFolder | string,
         filename?: string,
-        open_new_note = true
+        open_new_note = true,
+        extension?: string
     ): Promise<TFile | undefined> {
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
@@ -136,8 +137,8 @@ export class Templater {
             }
         }
 
-        const extension =
-            template instanceof TFile ? template.extension || "md" : "md";
+        extension = extension ||
+            (template instanceof TFile ? template.extension || "md" : "md");
         const created_note = await errorWrapper(async () => {
             const folderPath = folder instanceof TFolder ? folder.path : folder;
             const path = app.vault.getAvailablePath(
