@@ -85,7 +85,7 @@ export class CommandHandler {
 
         if (new_template) {
             this.plugin.addCommand({
-                id: `insert-${new_template}`,
+                id: new_template,
                 name: `Insert ${new_template}`,
                 icon: "templater-icon",
                 callback: () => {
