@@ -10,7 +10,8 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         private text_items: string[] | ((item: T) => string),
         private items: T[],
         placeholder: string,
-        limit?: number
+        limit?: number,
+        private initial_query?: string
     ) {
         super(app);
         this.setPlaceholder(placeholder);
@@ -19,6 +20,13 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
 
     getItems(): T[] {
         return this.items;
+    }
+
+    onOpen(): void {
+        if (this.initial_query) {
+            this.inputEl.value = this.initial_query;
+            this.inputEl.dispatchEvent(new InputEvent("input"));
+        }
     }
 
     onClose(): void {
