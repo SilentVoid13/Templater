@@ -129,7 +129,7 @@ export class CommandHandler {
                 `${this.plugin.manifest.id}:create-${template}`
             );
             app.commands.removeCommand(
-                `${this.plugin.manifest.id}:insert-${template}`
+                `${this.plugin.manifest.id}:${template}`
             );
         }
     }
