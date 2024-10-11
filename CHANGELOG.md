@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.2](https://github.com/SilentVoid13/Templater/compare/2.8.1...2.8.2) (2024-10-11)
+
+
+### Bug Fixes
+
+* Fix insert command removal ([13c28eb](https://github.com/SilentVoid13/Templater/commit/13c28eb79c29b8bea6291a2cc3f5e7e249c4dea8)), closes [#1482](https://github.com/SilentVoid13/Templater/issues/1482)
+
 ### [2.8.1](https://github.com/SilentVoid13/Templater/compare/2.8.0...2.8.1) (2024-10-10)
 
 
