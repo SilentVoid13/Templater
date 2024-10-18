@@ -188,7 +188,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
             desc.createEl("br"),
             desc.createEl("br"),
-            "Make sure to set up rules under either Folder Templates or File Regex Template below.",
+            "Make sure to set up rules under either folder templates or file regex template below.",
             desc.createEl("br"),
             desc.createEl("br"),
             desc.createEl("b", {
@@ -341,7 +341,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         const descHeading = document.createDocumentFragment();
         descHeading.append(
-            "Folder Templates are triggered when a new ",
+            "Folder templates are triggered when a new ",
             descHeading.createEl("strong", { text: "empty " }),
             "file is created in a given folder.",
             descHeading.createEl("br"),
@@ -356,7 +356,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         const descUseNewFileTemplate = document.createDocumentFragment();
         descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with File Regex Templates below, so enabling one will disable the other."
+            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other."
         );
 
         new Setting(this.containerEl)
@@ -488,12 +488,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
     add_file_templates_setting(): void {
         new Setting(this.containerEl)
-            .setName("File Regex Templates")
+            .setName("File regex templates")
             .setHeading();
 
         const descHeading = document.createDocumentFragment();
         descHeading.append(
-            "File Regex Templates are triggered when a new ",
+            "File regex templates are triggered when a new ",
             descHeading.createEl("strong", { text: "empty" }),
             " file is created that matches one of them. Templater will fill the empty file with the specified template.",
             descHeading.createEl("br"),
@@ -508,11 +508,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         const descUseNewFileTemplate = document.createDocumentFragment();
         descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with Folder Templates above, so enabling one will disable the other."
+            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other."
         );
 
         new Setting(this.containerEl)
-            .setName("Enable File Regex Templates")
+            .setName("Enable file regex templates")
             .setDesc(descUseNewFileTemplate)
             .addToggle((toggle) => {
                 toggle
@@ -537,7 +537,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.plugin.settings.file_templates.forEach((file_template, index) => {
             const s = new Setting(this.containerEl)
                 .addText((cb) => {
-                    cb.setPlaceholder("File Regex")
+                    cb.setPlaceholder("File regex")
                         .setValue(file_template.regex)
                         .onChange((new_regex) => {
                             this.plugin.settings.file_templates[index].regex =
