@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.3](https://github.com/SilentVoid13/Templater/compare/2.8.2...2.8.3) (2024-10-18)
+
+
+### Bug Fixes
+
+* Import `moment` from obsidian instead of using `window.moment` ([8d446c9](https://github.com/SilentVoid13/Templater/commit/8d446c97b7e9dc391a93f738e5389ce89ec26de4))
+* Remove all references to global `app` instance ([5580544](https://github.com/SilentVoid13/Templater/commit/55805447401a4e9025b1e3b5cfff42a816940408))
+* Use new quotes repo for daily quotes to fix errors with getting daily quotes ([fac9009](https://github.com/SilentVoid13/Templater/commit/fac900990f44f1d3ba71197b56fe3957fa2f52d3)), closes [#1407](https://github.com/SilentVoid13/Templater/issues/1407)
+* Use sentence case in plugin settings ([922f111](https://github.com/SilentVoid13/Templater/commit/922f111392e309737fc7fe8a69de29b76ba653e7))
+
 ### [2.8.2](https://github.com/SilentVoid13/Templater/compare/2.8.1...2.8.2) (2024-10-11)
 
 
