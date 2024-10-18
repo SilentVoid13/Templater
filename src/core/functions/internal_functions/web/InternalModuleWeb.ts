@@ -35,12 +35,13 @@ export class InternalModuleWeb extends InternalModule {
         return async () => {
             try {
                 const response = await this.getRequest(
-                    "https://api.quotable.io/random"
+                    "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json"
                 );
-                const json = response.json;
+                const quotes = response.json;
+                const random_quote =
+                    quotes[Math.floor(Math.random() * quotes.length)];
 
-                const author = json.author;
-                const quote = json.content;
+                const { quote, author } = random_quote;
                 const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
