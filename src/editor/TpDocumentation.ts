@@ -1,4 +1,4 @@
-import { Settings } from "settings/Settings";
+import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
 import { get_tfiles_from_folder } from "utils/Utils";
 import documentation from "../../docs/documentation.toml";
@@ -66,7 +66,7 @@ export function is_function_documentation(
 export class Documentation {
     public documentation: TpDocumentation = documentation;
 
-    constructor(private settings: Settings) {}
+    constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
         return Object.values(this.documentation.tp);
@@ -76,9 +76,17 @@ export class Documentation {
         module_name: ModuleName
     ): TpFunctionDocumentation[] | undefined {
         if (module_name === "user") {
-            if (!this.settings || !this.settings.user_scripts_folder) return;
+            if (
+                !this.plugin.settings ||
+                !this.plugin.settings.user_scripts_folder
+            )
+                return;
             const files = errorWrapperSync(
-                () => get_tfiles_from_folder(this.settings.user_scripts_folder),
+                () =>
+                    get_tfiles_from_folder(
+                        this.plugin.app,
+                        this.plugin.settings.user_scripts_folder
+                    ),
                 `User Scripts folder doesn't exist`
             );
             if (!files || files.length === 0) return;

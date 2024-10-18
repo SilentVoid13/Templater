@@ -15,6 +15,7 @@ export class UserScriptFunctions implements IGenerateObject {
         const files = errorWrapperSync(
             () =>
                 get_tfiles_from_folder(
+                    this.plugin.app,
                     this.plugin.settings.user_scripts_folder
                 ),
             `Couldn't find user script folder "${this.plugin.settings.user_scripts_folder}"`
@@ -46,7 +47,7 @@ export class UserScriptFunctions implements IGenerateObject {
             exports: exp,
         };
 
-        const file_content = await app.vault.read(file);
+        const file_content = await this.plugin.app.vault.read(file);
         try {
             const wrapping_fn = window.eval(
                 "(function anonymous(require, module, exports){" +

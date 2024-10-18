@@ -17,7 +17,7 @@ export class FileSuggest extends TextInputSuggest<TFile> {
         private plugin: TemplaterPlugin,
         private mode: FileSuggestMode
     ) {
-        super(inputEl);
+        super(plugin.app, inputEl);
     }
 
     get_folder(mode: FileSuggestMode): string {
@@ -40,7 +40,11 @@ export class FileSuggest extends TextInputSuggest<TFile> {
 
     getSuggestions(input_str: string): TFile[] {
         const all_files = errorWrapperSync(
-            () => get_tfiles_from_folder(this.get_folder(this.mode)),
+            () =>
+                get_tfiles_from_folder(
+                    this.plugin.app,
+                    this.get_folder(this.mode)
+                ),
             this.get_error_msg(this.mode)
         );
         if (!all_files) {

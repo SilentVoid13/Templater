@@ -15,17 +15,21 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     private creation_folder: TFolder | undefined;
 
     constructor(plugin: TemplaterPlugin) {
-        super(app);
+        super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder("Type name of a template...");
     }
 
     getItems(): TFile[] {
         if (!this.plugin.settings.templates_folder) {
-            return app.vault.getMarkdownFiles();
+            return this.app.vault.getMarkdownFiles();
         }
         const files = errorWrapperSync(
-            () => get_tfiles_from_folder(this.plugin.settings.templates_folder),
+            () =>
+                get_tfiles_from_folder(
+                    this.plugin.app,
+                    this.plugin.settings.templates_folder
+                ),
             `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`
         );
         if (!files) {
@@ -36,7 +40,10 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
 
     getItemText(item: TFile): string {
         let relativePath = item.path;
-        if (item.path.startsWith(this.plugin.settings.templates_folder) && normalizePath(this.plugin.settings.templates_folder) != '/') {
+        if (
+            item.path.startsWith(this.plugin.settings.templates_folder) &&
+            normalizePath(this.plugin.settings.templates_folder) != "/"
+        ) {
             relativePath = item.path.slice(
                 this.plugin.settings.templates_folder.length + 1
             );

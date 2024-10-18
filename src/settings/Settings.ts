@@ -56,7 +56,7 @@ export interface Settings {
 
 export class TemplaterSettingTab extends PluginSettingTab {
     constructor(private plugin: TemplaterPlugin) {
-        super(app, plugin);
+        super(plugin.app, plugin);
     }
 
     display(): void {
@@ -83,7 +83,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Template folder location")
             .setDesc("Files in this folder will be available as templates.")
             .addSearch((cb) => {
-                new FolderSuggest(cb.inputEl);
+                new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.templates_folder)
                     .onChange((new_folder) => {
@@ -268,9 +268,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(() => {
                                 // TODO: Replace with future "official" way to do this
                                 // @ts-ignore
-                                app.setting.openTabById("hotkeys");
+                                this.app.setting.openTabById("hotkeys");
                                 // @ts-ignore
-                                const tab = app.setting.activeTab;
+                                const tab = this.app.setting.activeTab;
                                 tab.searchComponent.inputEl.value = template;
                                 tab.updateHotkeyVisibility();
                             });
@@ -385,7 +385,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             (folder_template, index) => {
                 const s = new Setting(this.containerEl)
                     .addSearch((cb) => {
-                        new FolderSuggest(cb.inputEl);
+                        new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(folder_template.folder)
                             .onChange((new_folder) => {
@@ -717,7 +717,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Script files folder location")
             .setDesc(desc)
             .addSearch((cb) => {
-                new FolderSuggest(cb.inputEl);
+                new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.user_scripts_folder)
                     .onChange((new_folder) => {
@@ -736,6 +736,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             const files = errorWrapperSync(
                 () =>
                     get_tfiles_from_folder(
+                        this.app,
                         this.plugin.settings.user_scripts_folder
                     ),
                 `User scripts folder doesn't exist`

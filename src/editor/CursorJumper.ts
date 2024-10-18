@@ -1,4 +1,5 @@
 import {
+    App,
     EditorPosition,
     EditorRangeOrCaret,
     EditorTransaction,
@@ -7,10 +8,10 @@ import {
 import { escape_RegExp } from "utils/Utils";
 
 export class CursorJumper {
-    constructor() {}
+    constructor(private app: App) {}
 
     async jump_to_next_cursor_location(): Promise<void> {
-        const active_editor = app.workspace.activeEditor;
+        const active_editor = this.app.workspace.activeEditor;
         if (!active_editor || !active_editor.editor) {
             return;
         }
@@ -40,7 +41,7 @@ export class CursorJumper {
         }
 
         // enter insert mode for vim users
-        if (app.vault.getConfig("vimMode")) {
+        if (this.app.vault.getConfig("vimMode")) {
             // @ts-ignore
             const cm = active_editor.editor.cm.cm;
             // @ts-ignore
@@ -114,7 +115,7 @@ export class CursorJumper {
     }
 
     set_cursor_location(positions: EditorPosition[]): void {
-        const active_editor = app.workspace.activeEditor;
+        const active_editor = this.app.workspace.activeEditor;
         if (!active_editor || !active_editor.editor) {
             return;
         }

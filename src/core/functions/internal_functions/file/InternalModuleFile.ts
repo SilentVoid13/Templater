@@ -56,7 +56,7 @@ export class InternalModuleFile extends InternalModule {
     async teardown(): Promise<void> {}
 
     async generate_content(): Promise<string> {
-        return await app.vault.read(this.config.target_file);
+        return await this.plugin.app.vault.read(this.config.target_file);
     }
 
     generate_create_new(): (
@@ -108,7 +108,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_cursor_append(): (content: string) => void {
         return (content: string): string | undefined => {
-            const active_editor = app.workspace.activeEditor;
+            const active_editor = this.plugin.app.workspace.activeEditor;
             if (!active_editor || !active_editor.editor) {
                 log_error(
                     new TemplaterError(
@@ -128,14 +128,14 @@ export class InternalModuleFile extends InternalModule {
     generate_exists(): (filepath: string) => Promise<boolean> {
         return async (filepath: string) => {
             const path = normalizePath(filepath);
-            return await app.vault.exists(path);
+            return await this.plugin.app.vault.exists(path);
         };
     }
 
     generate_find_tfile(): (filename: string) => TFile | null {
         return (filename: string) => {
             const path = normalizePath(filename);
-            return app.metadataCache.getFirstLinkpathDest(path, "");
+            return this.plugin.app.metadataCache.getFirstLinkpathDest(path, "");
         };
     }
 
@@ -169,7 +169,9 @@ export class InternalModuleFile extends InternalModule {
             let inc_file_content: string;
 
             if (include_link instanceof TFile) {
-                inc_file_content = await app.vault.read(include_link);
+                inc_file_content = await this.plugin.app.vault.read(
+                    include_link
+                );
             } else {
                 let match;
                 if ((match = this.linkpath_regex.exec(include_link)) === null) {
@@ -180,20 +182,22 @@ export class InternalModuleFile extends InternalModule {
                 }
                 const { path, subpath } = parseLinktext(match[1]);
 
-                const inc_file = app.metadataCache.getFirstLinkpathDest(
-                    path,
-                    ""
-                );
+                const inc_file =
+                    this.plugin.app.metadataCache.getFirstLinkpathDest(
+                        path,
+                        ""
+                    );
                 if (!inc_file) {
                     this.include_depth -= 1;
                     throw new TemplaterError(
                         `File ${include_link} doesn't exist`
                     );
                 }
-                inc_file_content = await app.vault.read(inc_file);
+                inc_file_content = await this.plugin.app.vault.read(inc_file);
 
                 if (subpath) {
-                    const cache = app.metadataCache.getFileCache(inc_file);
+                    const cache =
+                        this.plugin.app.metadataCache.getFileCache(inc_file);
                     if (cache) {
                         const result = resolveSubpath(cache, subpath);
                         if (result) {
@@ -235,11 +239,11 @@ export class InternalModuleFile extends InternalModule {
             dirs.pop(); // remove basename
             if (dirs.length) {
                 const dir = dirs.join("/");
-                if (!window.app.vault.getAbstractFileByPath(dir)) {
-                    await window.app.vault.createFolder(dir);
+                if (!this.plugin.app.vault.getAbstractFileByPath(dir)) {
+                    await this.plugin.app.vault.createFolder(dir);
                 }
             }
-            await app.fileManager.renameFile(file, new_path);
+            await this.plugin.app.fileManager.renameFile(file, new_path);
             return "";
         };
     }
@@ -248,12 +252,14 @@ export class InternalModuleFile extends InternalModule {
         return (relative = false) => {
             let vault_path = "";
             if (Platform.isMobileApp) {
-                const vault_adapter = app.vault.adapter.fs.uri;
-                const vault_base = app.vault.adapter.basePath;
+                const vault_adapter = this.plugin.app.vault.adapter.fs.uri;
+                const vault_base = this.plugin.app.vault.adapter.basePath;
                 vault_path = `${vault_adapter}/${vault_base}`;
             } else {
-                if (app.vault.adapter instanceof FileSystemAdapter) {
-                    vault_path = app.vault.adapter.getBasePath();
+                if (
+                    this.plugin.app.vault.adapter instanceof FileSystemAdapter
+                ) {
+                    vault_path = this.plugin.app.vault.adapter.getBasePath();
                 } else {
                     throw new TemplaterError(
                         "app.vault is not a FileSystemAdapter instance"
@@ -279,14 +285,17 @@ export class InternalModuleFile extends InternalModule {
             const new_path = normalizePath(
                 `${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`
             );
-            await app.fileManager.renameFile(this.config.target_file, new_path);
+            await this.plugin.app.fileManager.renameFile(
+                this.config.target_file,
+                new_path
+            );
             return "";
         };
     }
 
     generate_selection(): () => string {
         return () => {
-            const active_editor = app.workspace.activeEditor;
+            const active_editor = this.plugin.app.workspace.activeEditor;
             if (!active_editor || !active_editor.editor) {
                 throw new TemplaterError(
                     "Active editor is null, can't read selection."
@@ -300,7 +309,9 @@ export class InternalModuleFile extends InternalModule {
 
     // TODO: Turn this into a function
     generate_tags(): string[] | null {
-        const cache = app.metadataCache.getFileCache(this.config.target_file);
+        const cache = this.plugin.app.metadataCache.getFileCache(
+            this.config.target_file
+        );
 
         if (cache) {
             return getAllTags(cache);

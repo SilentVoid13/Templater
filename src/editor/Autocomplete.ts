@@ -6,7 +6,6 @@ import {
     EditorSuggestTriggerInfo,
     TFile,
 } from "obsidian";
-import { Settings } from "settings/Settings";
 
 import {
     Documentation,
@@ -16,6 +15,7 @@ import {
     TpFunctionDocumentation,
     TpSuggestDocumentation,
 } from "./TpDocumentation";
+import TemplaterPlugin from "main";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
@@ -28,9 +28,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private function_trigger: boolean;
     private function_name: string;
 
-    constructor(settings: Settings) {
-        super(app);
-        this.documentation = new Documentation(settings);
+    constructor(plugin: TemplaterPlugin) {
+        super(plugin.app);
+        this.documentation = new Documentation(plugin);
     }
 
     onTrigger(
@@ -102,7 +102,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         value: TpSuggestDocumentation,
         _evt: MouseEvent | KeyboardEvent
     ): void {
-        const active_editor = app.workspace.activeEditor;
+        const active_editor = this.app.workspace.activeEditor;
         if (!active_editor || !active_editor.editor) {
             // TODO: Error msg
             return;

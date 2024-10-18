@@ -1,6 +1,6 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 
-import { ISuggestOwner, Scope } from "obsidian";
+import { App, ISuggestOwner, Scope } from "obsidian";
 import { createPopper, Instance as PopperInstance } from "@popperjs/core";
 
 const wrapAround = (value: number, size: number): number => {
@@ -110,6 +110,7 @@ class Suggest<T> {
 }
 
 export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
+    protected app: App;
     protected inputEl: HTMLInputElement | HTMLTextAreaElement;
 
     private popper: PopperInstance;
@@ -117,7 +118,8 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
     private suggestEl: HTMLElement;
     private suggest: Suggest<T>;
 
-    constructor(inputEl: HTMLInputElement | HTMLTextAreaElement) {
+    constructor(app: App, inputEl: HTMLInputElement | HTMLTextAreaElement) {
+        this.app = app;
         this.inputEl = inputEl;
         this.scope = new Scope();
 
@@ -150,15 +152,14 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
 
         if (suggestions.length > 0) {
             this.suggest.setSuggestions(suggestions);
-            this.open(app.dom.appContainerEl, this.inputEl);
+            this.open(this.app.dom.appContainerEl, this.inputEl);
         } else {
             this.close();
         }
     }
 
     open(container: HTMLElement, inputEl: HTMLElement): void {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        app.keymap.pushScope(this.scope);
+        this.app.keymap.pushScope(this.scope);
 
         container.appendChild(this.suggestEl);
         this.popper = createPopper(inputEl, this.suggestEl, {
@@ -187,7 +188,7 @@ export abstract class TextInputSuggest<T> implements ISuggestOwner<T> {
     }
 
     close(): void {
-        app.keymap.popScope(this.scope);
+        this.app.keymap.popScope(this.scope);
 
         this.suggest.setSuggestions([]);
         if (this.popper) this.popper.destroy();

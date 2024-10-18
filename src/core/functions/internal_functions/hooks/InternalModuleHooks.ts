@@ -27,7 +27,7 @@ export class InternalModuleHooks extends InternalModule {
         callback_function: () => unknown
     ) => void {
         return (callback_function) => {
-            const event_ref = app.workspace.on(
+            const event_ref = this.plugin.app.workspace.on(
                 "templater:all-templates-executed",
                 async () => {
                     await delay(1);

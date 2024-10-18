@@ -19,11 +19,11 @@ export class UserSystemFunctions implements IGenerateObject {
     constructor(private plugin: TemplaterPlugin) {
         if (
             Platform.isMobileApp ||
-            !(app.vault.adapter instanceof FileSystemAdapter)
+            !(this.plugin.app.vault.adapter instanceof FileSystemAdapter)
         ) {
             this.cwd = "";
         } else {
-            this.cwd = app.vault.adapter.getBasePath();
+            this.cwd = this.plugin.app.vault.adapter.getBasePath();
             this.exec_promise = promisify(exec);
         }
     }

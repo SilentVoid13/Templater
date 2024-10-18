@@ -32,35 +32,40 @@ export class Editor {
     private templaterLanguage: Extension | undefined;
 
     public constructor(private plugin: TemplaterPlugin) {
-        this.cursor_jumper = new CursorJumper();
+        this.cursor_jumper = new CursorJumper(plugin.app);
         this.activeEditorExtensions = [];
     }
 
     desktopShouldHighlight(): boolean {
-        return Platform.isDesktopApp
-            && this.plugin.settings.syntax_highlighting;
+        return (
+            Platform.isDesktopApp && this.plugin.settings.syntax_highlighting
+        );
     }
 
     mobileShouldHighlight(): boolean {
-        return Platform.isMobileApp
-            && this.plugin.settings.syntax_highlighting_mobile;
+        return (
+            Platform.isMobileApp &&
+            this.plugin.settings.syntax_highlighting_mobile
+        );
     }
 
     async setup(): Promise<void> {
-        this.plugin.registerEditorSuggest(new Autocomplete(this.plugin.settings));
+        this.plugin.registerEditorSuggest(new Autocomplete(this.plugin));
 
         // We define our overlay as a stand-alone extension and keep a reference
         // to it around. This lets us dynamically turn it on and off as needed.
         await this.registerCodeMirrorMode();
         this.templaterLanguage = Prec.high(
-            StreamLanguage.define(window.CodeMirror.getMode({}, TEMPLATER_MODE_NAME) as any)
+            StreamLanguage.define(
+                window.CodeMirror.getMode({}, TEMPLATER_MODE_NAME) as any
+            )
         );
         if (this.templaterLanguage === undefined) {
             log_error(
                 new TemplaterError(
                     "Unable to enable syntax highlighting. Could not define language."
                 )
-            )
+            );
         }
 
         // Dynamic reconfiguration is now done by passing an array. If we modify
@@ -76,7 +81,10 @@ export class Editor {
 
     async enable_highlighter(): Promise<void> {
         // Make sure it is idempotent
-        if (this.activeEditorExtensions.length === 0 && this.templaterLanguage) {
+        if (
+            this.activeEditorExtensions.length === 0 &&
+            this.templaterLanguage
+        ) {
             // There should only ever be this one extension if the array is not
             // empty.
             this.activeEditorExtensions.push(this.templaterLanguage);
@@ -89,7 +97,7 @@ export class Editor {
         // Make sure that it is idempotent.
         if (this.activeEditorExtensions.length > 0) {
             // There should only ever be one extension if the array is not empty.
-            this.activeEditorExtensions.pop()
+            this.activeEditorExtensions.pop();
             // This is expensive
             this.plugin.app.workspace.updateOptions();
         }
@@ -145,7 +153,9 @@ export class Editor {
         window.CodeMirror.defineMode(TEMPLATER_MODE_NAME, function (config) {
             const templaterOverlay = {
                 startState: function () {
-                    const js_state = window.CodeMirror.startState(js_mode) as Object;
+                    const js_state = window.CodeMirror.startState(
+                        js_mode
+                    ) as Object;
                     return {
                         ...js_state,
                         inCommand: false,
@@ -154,7 +164,9 @@ export class Editor {
                     };
                 },
                 copyState: function (state: any) {
-                    const js_state = window.CodeMirror.startState(js_mode) as Object;
+                    const js_state = window.CodeMirror.startState(
+                        js_mode
+                    ) as Object;
                     const new_state = {
                         ...js_state,
                         inCommand: state.inCommand,

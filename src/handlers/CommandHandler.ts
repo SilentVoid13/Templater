@@ -90,7 +90,7 @@ export class CommandHandler {
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
-                        () => resolve_tfile(new_template),
+                        () => resolve_tfile(this.plugin.app, new_template),
                         `Couldn't find the template file associated with this hotkey`
                     );
                     if (!template) {
@@ -107,7 +107,7 @@ export class CommandHandler {
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
-                        () => resolve_tfile(new_template),
+                        () => resolve_tfile(this.plugin.app, new_template),
                         `Couldn't find the template file associated with this hotkey`
                     );
                     if (!template) {
@@ -123,14 +123,10 @@ export class CommandHandler {
 
     remove_template_hotkey(template: string | null): void {
         if (template) {
-            // TODO: Find official way to do this
-            // @ts-ignore
-            app.commands.removeCommand(
+            this.plugin.removeCommand(
                 `${this.plugin.manifest.id}:create-${template}`
             );
-            app.commands.removeCommand(
-                `${this.plugin.manifest.id}:${template}`
-            );
+            this.plugin.removeCommand(`${this.plugin.manifest.id}:${template}`);
         }
     }
 }

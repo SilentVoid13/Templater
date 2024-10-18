@@ -45,12 +45,11 @@ export default class TemplaterPlugin extends Plugin {
         this.addRibbonIcon("templater-icon", "Templater", async () => {
             this.fuzzy_suggester.insert_template();
         }).setAttribute("id", "rb-templater-icon");
-    
 
         this.addSettingTab(new TemplaterSettingTab(this));
 
         // Files might not be created yet
-        app.workspace.onLayoutReady(() => {
+        this.app.workspace.onLayoutReady(() => {
             this.templater.execute_startup_scripts();
         });
     }
