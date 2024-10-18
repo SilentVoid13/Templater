@@ -583,7 +583,7 @@ description = "This modules contains every internal function related to the web 
 
 [tp.web.functions.daily_quote]
 name = "daily_quote"
-description = "Retrieves and parses the daily quote from the API `https://api.quotable.io` as a callout."
+description = "Retrieves and parses the daily quote from `https://github.com/Zachatoo/quotes-database` as a callout."
 definition = "tp.web.daily_quote()"
 
 [[tp.web.functions.daily_quote.examples]]
