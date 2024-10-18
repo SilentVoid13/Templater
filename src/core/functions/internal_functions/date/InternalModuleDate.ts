@@ -1,3 +1,4 @@
+import { moment } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { InternalModule } from "../InternalModule";
 import { ModuleName } from "editor/TpDocumentation";
@@ -28,23 +29,19 @@ export class InternalModuleDate extends InternalModule {
             reference?: string,
             reference_format?: string
         ) => {
-            if (
-                reference &&
-                !window.moment(reference, reference_format).isValid()
-            ) {
+            if (reference && !moment(reference, reference_format).isValid()) {
                 throw new TemplaterError(
                     "Invalid reference date format, try specifying one with the argument 'reference_format'"
                 );
             }
             let duration;
             if (typeof offset === "string") {
-                duration = window.moment.duration(offset);
+                duration = moment.duration(offset);
             } else if (typeof offset === "number") {
-                duration = window.moment.duration(offset, "days");
+                duration = moment.duration(offset, "days");
             }
 
-            return window
-                .moment(reference, reference_format)
+            return moment(reference, reference_format)
                 .add(duration)
                 .format(format);
         };
@@ -52,7 +49,7 @@ export class InternalModuleDate extends InternalModule {
 
     generate_tomorrow(): (format?: string) => string {
         return (format = "YYYY-MM-DD") => {
-            return window.moment().add(1, "days").format(format);
+            return moment().add(1, "days").format(format);
         };
     }
 
@@ -68,16 +65,12 @@ export class InternalModuleDate extends InternalModule {
             reference?: string,
             reference_format?: string
         ) => {
-            if (
-                reference &&
-                !window.moment(reference, reference_format).isValid()
-            ) {
+            if (reference && !moment(reference, reference_format).isValid()) {
                 throw new TemplaterError(
                     "Invalid reference date format, try specifying one with the argument 'reference_format'"
                 );
             }
-            return window
-                .moment(reference, reference_format)
+            return moment(reference, reference_format)
                 .weekday(weekday)
                 .format(format);
         };
@@ -85,7 +78,7 @@ export class InternalModuleDate extends InternalModule {
 
     generate_yesterday(): (format?: string) => string {
         return (format = "YYYY-MM-DD") => {
-            return window.moment().add(-1, "days").format(format);
+            return moment().add(-1, "days").format(format);
         };
     }
 }

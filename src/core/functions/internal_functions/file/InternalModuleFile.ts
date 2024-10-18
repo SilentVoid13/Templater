@@ -1,9 +1,9 @@
 import { InternalModule } from "../InternalModule";
 import { log_error } from "utils/Log";
-
 import {
     FileSystemAdapter,
     getAllTags,
+    moment,
     normalizePath,
     parseLinktext,
     Platform,
@@ -95,9 +95,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_creation_date(): (format?: string) => string {
         return (format = "YYYY-MM-DD HH:mm") => {
-            return window
-                .moment(this.config.target_file.stat.ctime)
-                .format(format);
+            return moment(this.config.target_file.stat.ctime).format(format);
         };
     }
 
@@ -225,9 +223,7 @@ export class InternalModuleFile extends InternalModule {
 
     generate_last_modified_date(): (format?: string) => string {
         return (format = "YYYY-MM-DD HH:mm"): string => {
-            return window
-                .moment(this.config.target_file.stat.mtime)
-                .format(format);
+            return moment(this.config.target_file.stat.mtime).format(format);
         };
     }
 
