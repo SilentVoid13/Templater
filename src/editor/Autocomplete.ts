@@ -21,7 +21,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
     // https://regex101.com/r/ocmHzR/1
     private tp_keyword_regex =
-        /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-z_]*)?)?$/;
+        /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-zA-Z_.]*)?)?$/;
     private documentation: Documentation;
     private latest_trigger_info: EditorSuggestTriggerInfo;
     private module_name: ModuleName | string;
@@ -76,7 +76,8 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
             suggestions = this.documentation.get_all_functions_documentation(
-                this.module_name as ModuleName
+                this.module_name as ModuleName,
+                this.function_name
             ) as TpFunctionDocumentation[];
         } else {
             suggestions = this.documentation.get_all_modules_documentation();
@@ -84,7 +85,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         if (!suggestions) {
             return [];
         }
-        return suggestions.filter((s) => s.name.startsWith(context.query));
+        return suggestions.filter((s) => s.queryKey.startsWith(context.query));
     }
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
@@ -108,7 +109,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             return;
         }
         active_editor.editor.replaceRange(
-            value.name,
+            value.queryKey,
             this.latest_trigger_info.start,
             this.latest_trigger_info.end
         );
@@ -119,7 +120,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             // beginning of the word after completion,
             // Not sure what's the cause of this bug.
             const cursor_pos = this.latest_trigger_info.end;
-            cursor_pos.ch += value.name.length;
+            cursor_pos.ch += value.queryKey.length;
             active_editor.editor.setCursor(cursor_pos);
         }
     }

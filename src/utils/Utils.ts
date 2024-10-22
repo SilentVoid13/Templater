@@ -100,3 +100,16 @@ export function get_folder_path_from_file_path(path: string) {
     if (path_separator !== -1) return path.slice(0, path_separator);
     return "";
 }
+
+export function is_object(obj: unknown): obj is Record<string, unknown> {
+    return obj !== null && typeof obj === "object";
+}
+
+export function get_fn_params(func: (...args: unknown[]) => unknown) {
+    const str = func.toString();
+    const len = str.indexOf("(");
+    return str
+        .substring(len + 1, str.indexOf(")"))
+        .replace(/ /g, "")
+        .split(",");
+}

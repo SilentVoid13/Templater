@@ -29,6 +29,7 @@ export class FunctionsGenerator implements IGenerateObject {
 
     additional_functions(): Record<string, unknown> {
         return {
+            app: this.plugin.app,
             obsidian: obsidian_module,
         };
     }

@@ -7,6 +7,7 @@
     - [Settings](./settings.md)
     - [FAQ](./faq.md)
 - [Internal Functions](./internal-functions/overview.md)
+    - [tp.app](./internal-functions/internal-modules/app-module.md)
     - [tp.config](./internal-functions/internal-modules/config-module.md)
     - [tp.date](./internal-functions/internal-modules/date-module.md)
     - [tp.file](./internal-functions/internal-modules/file-module.md)

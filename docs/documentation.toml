@@ -1,3 +1,8 @@
+[tp.app]
+name = "app"
+description = "This module exposes the app instance. Prefer to use this over the global app instance."
+
+
 [tp.config]
 name = "config"
 description = """This module exposes Templater's running configuration.

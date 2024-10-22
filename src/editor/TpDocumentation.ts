@@ -1,9 +1,10 @@
 import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
-import { get_tfiles_from_folder } from "utils/Utils";
+import { get_fn_params, get_tfiles_from_folder, is_object } from "utils/Utils";
 import documentation from "../../docs/documentation.toml";
 
 const module_names = [
+    "app",
     "config",
     "date",
     "file",
@@ -29,6 +30,7 @@ export type TpDocumentation = {
 
 export type TpModuleDocumentation = {
     name: string;
+    queryKey: string;
     description: string;
     functions: {
         [key: string]: TpFunctionDocumentation;
@@ -37,6 +39,7 @@ export type TpModuleDocumentation = {
 
 export type TpFunctionDocumentation = {
     name: string;
+    queryKey: string;
     definition: string;
     description: string;
     example: string;
@@ -69,12 +72,22 @@ export class Documentation {
     constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
-        return Object.values(this.documentation.tp);
+        return Object.values(this.documentation.tp).map((mod) => {
+            mod.queryKey = mod.name;
+            return mod;
+        });
     }
 
     get_all_functions_documentation(
-        module_name: ModuleName
+        module_name: ModuleName,
+        function_name: string
     ): TpFunctionDocumentation[] | undefined {
+        if (module_name === "app") {
+            return this.get_app_functions_documentation(
+                this.plugin.app,
+                function_name
+            );
+        }
         if (module_name === "user") {
             if (
                 !this.plugin.settings ||
@@ -97,6 +110,7 @@ export class Documentation {
                         ...processedFiles,
                         {
                             name: file.basename,
+                            queryKey: file.basename,
                             definition: "",
                             description: "",
                             example: "",
@@ -109,7 +123,62 @@ export class Documentation {
         if (!this.documentation.tp[module_name].functions) {
             return;
         }
-        return Object.values(this.documentation.tp[module_name].functions);
+        return Object.values(this.documentation.tp[module_name].functions).map(
+            (mod) => {
+                mod.queryKey = mod.name;
+                return mod;
+            }
+        );
+    }
+
+    private get_app_functions_documentation(
+        obj: unknown,
+        path: string
+    ): TpFunctionDocumentation[] {
+        if (!is_object(obj)) {
+            return [];
+        }
+        const parts = path.split(".");
+        if (parts.length === 0) {
+            return [];
+        }
+
+        let currentObj = obj;
+        for (let index = 0; index < parts.length - 1; index++) {
+            const part = parts[index];
+            if (part in currentObj) {
+                if (!is_object(currentObj[part])) {
+                    return [];
+                }
+                currentObj = currentObj[part];
+            }
+        }
+
+        const definitionPrefix = [
+            "tp",
+            "app",
+            ...parts.slice(0, parts.length - 1),
+        ].join(".");
+        const queryKeyPrefix = parts.slice(0, parts.length - 1).join(".");
+        const docs: TpFunctionDocumentation[] = [];
+        for (const key in currentObj) {
+            const definition = `${definitionPrefix}.${key}`;
+            const queryKey = queryKeyPrefix ? `${queryKeyPrefix}.${key}` : key;
+            docs.push({
+                name: key,
+                queryKey,
+                definition:
+                    typeof currentObj[key] === "function"
+                        ? `${definition}(${get_fn_params(
+                              currentObj[key] as (...args: unknown[]) => unknown
+                          )})`
+                        : definition,
+                description: "",
+                example: "",
+            });
+        }
+
+        return docs;
     }
 
     get_module_documentation(module_name: ModuleName): TpModuleDocumentation {

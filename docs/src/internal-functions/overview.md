@@ -2,6 +2,7 @@
 
 The different internal variables and functions offered by [Templater](https://github.com/SilentVoid13/Templater) are available under different **modules**, to sort them. The existing **internal modules** are:
 
+- [App module](./internal-modules/app-module.md): `tp.app`
 - [Config module](./internal-modules/config-module.md): `tp.config`
 - [Date module](./internal-modules/date-module.md): `tp.date`
 - [File module](./internal-modules/file-module.md): `tp.file`

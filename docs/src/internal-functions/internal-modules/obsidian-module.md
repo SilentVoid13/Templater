@@ -11,7 +11,7 @@ Refer to the Obsidian API [declaration file](https://github.com/obsidianmd/obsid
 ```javascript
 // Get all folders
 <%
-app.vault.getAllLoadedFiles()
+tp.app.vault.getAllLoadedFiles()
   .filter(x => x instanceof tp.obsidian.TFolder)
   .map(x => x.name)
 %>
