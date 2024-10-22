@@ -85,7 +85,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         if (!suggestions) {
             return [];
         }
-        return suggestions.filter((s) => s.queryKey.startsWith(context.query));
+        return suggestions.filter((s) =>
+            s.queryKey.toLowerCase().startsWith(context.query.toLowerCase())
+        );
     }
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
