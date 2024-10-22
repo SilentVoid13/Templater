@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/SilentVoid13/Templater/compare/2.8.3...2.9.0) (2024-10-22)
+
+
+### Features
+
+* Add `tp.app` module with autocompletions ([f8e3f65](https://github.com/SilentVoid13/Templater/commit/f8e3f65488d61092aa70df14a6571fadd0de349c))
+* Ignore casing for autocompletions ([5fadbd5](https://github.com/SilentVoid13/Templater/commit/5fadbd5201587f733b060881cb471ce196fdd11f))
+
 ### [2.8.3](https://github.com/SilentVoid13/Templater/compare/2.8.2...2.8.3) (2024-10-18)
 
 
