@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.1](https://github.com/SilentVoid13/Templater/compare/2.9.0...2.9.1) (2024-10-30)
+
+
+### Bug Fixes
+
+* Switch `isMobileApp` checks to `isMobile` and dynamically require node core packages to prevent plugin failure when emulating mobile on desktop ([3f8f764](https://github.com/SilentVoid13/Templater/commit/3f8f764ca313080457976c3498cda25605a95fd4))
+
 ## [2.9.0](https://github.com/SilentVoid13/Templater/compare/2.8.3...2.9.0) (2024-10-22)
 
 
