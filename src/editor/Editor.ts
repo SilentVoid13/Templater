@@ -44,8 +44,7 @@ export class Editor {
 
     mobileShouldHighlight(): boolean {
         return (
-            Platform.isMobileApp &&
-            this.plugin.settings.syntax_highlighting_mobile
+            Platform.isMobile && this.plugin.settings.syntax_highlighting_mobile
         );
     }
 

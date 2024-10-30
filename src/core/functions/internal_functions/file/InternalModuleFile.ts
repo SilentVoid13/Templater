@@ -251,7 +251,7 @@ export class InternalModuleFile extends InternalModule {
     generate_path(): (relative: boolean) => string {
         return (relative = false) => {
             let vault_path = "";
-            if (Platform.isMobileApp) {
+            if (Platform.isMobile) {
                 const vault_adapter = this.plugin.app.vault.adapter.fs.uri;
                 const vault_base = this.plugin.app.vault.adapter.basePath;
                 vault_path = `${vault_adapter}/${vault_base}`;

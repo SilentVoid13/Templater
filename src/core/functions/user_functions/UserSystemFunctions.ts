@@ -1,7 +1,4 @@
-import { exec } from "child_process";
-import { promisify } from "util";
 import { FileSystemAdapter, Platform } from "obsidian";
-
 import TemplaterPlugin from "main";
 import { IGenerateObject } from "../IGenerateObject";
 import { RunningConfig } from "core/Templater";
@@ -18,12 +15,17 @@ export class UserSystemFunctions implements IGenerateObject {
 
     constructor(private plugin: TemplaterPlugin) {
         if (
-            Platform.isMobileApp ||
+            Platform.isMobile ||
             !(this.plugin.app.vault.adapter instanceof FileSystemAdapter)
         ) {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const { promisify } = require("util") as typeof import("util");
+            const { exec } =
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                require("child_process") as typeof import("child_process");
             this.exec_promise = promisify(exec);
         }
     }
@@ -51,7 +53,7 @@ export class UserSystemFunctions implements IGenerateObject {
                 continue;
             }
 
-            if (Platform.isMobileApp) {
+            if (Platform.isMobile) {
                 user_system_functions.set(template, (): Promise<string> => {
                     return new Promise((resolve) =>
                         resolve(UNSUPPORTED_MOBILE_TEMPLATE)
