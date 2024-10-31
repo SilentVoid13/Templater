@@ -218,9 +218,11 @@ export class Templater {
                 true
             );
 
-            active_leaf.setEphemeralState({
-                rename: "all",
-            });
+            if (this.plugin.settings.prompt_rename_on_creation) {
+                active_leaf.setEphemeralState({
+                    rename: "all",
+                });
+            }
         }
 
         await this.end_templater_task(path);
