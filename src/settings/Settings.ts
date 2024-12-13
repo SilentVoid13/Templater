@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS: Settings = {
     templates_pairs: [["", ""]],
     trigger_on_file_creation: false,
     auto_jump_to_cursor: false,
-    prompt_rename_on_creation: true,
+    prompt_to_rename_note_on_creation: false,
     enable_system_commands: false,
     shell_path: "",
     user_scripts_folder: "",
@@ -42,7 +42,7 @@ export interface Settings {
     templates_pairs: Array<[string, string]>;
     trigger_on_file_creation: boolean;
     auto_jump_to_cursor: boolean;
-    prompt_rename_on_creation: boolean;
+    prompt_to_rename_note_on_creation: boolean;
     enable_system_commands: boolean;
     shell_path: string;
     user_scripts_folder: string;
@@ -68,7 +68,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
-        this.add_prompt_rename_on_creation_setting();
+        this.add_prompt_to_rename_on_new_file_creation_setting();
         this.add_trigger_on_new_file_creation_setting();
         if (this.plugin.settings.trigger_on_file_creation) {
             this.add_folder_templates_setting();
@@ -184,20 +184,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
     }
 
-    add_prompt_rename_on_creation_setting():void {
+    add_prompt_to_rename_on_new_file_creation_setting():void {
         const desc = document.createDocumentFragment();
         desc.append(
-            "Templater will automatically prompt you to rename the file after creating it. Useful to turn this off if your template already prompts you."
+            "Templater will automatically prompt you to rename the new note after creating it. Useful to turn this off if your template already handles this."
         );
 
         new Setting(this.containerEl)
-            .setName("Automatically prompt you to rename file on creation")
+            .setName("Prompt to rename on create new note from template")
             .setDesc(desc)
             .addToggle((toggle) => {
                 toggle
-                    .setValue(this.plugin.settings.prompt_rename_on_creation)
+                    .setValue(this.plugin.settings.prompt_to_rename_note_on_creation)
                     .onChange((prompt_rename_on_creation) => {
-                        this.plugin.settings.prompt_rename_on_creation = prompt_rename_on_creation;
+                        this.plugin.settings.prompt_to_rename_note_on_creation = prompt_rename_on_creation;
                         this.plugin.save_settings();
                     });
             });

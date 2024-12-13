@@ -218,7 +218,7 @@ export class Templater {
                 true
             );
 
-            if (this.plugin.settings.prompt_rename_on_creation) {
+            if (this.plugin.settings.prompt_to_rename_note_on_creation) {
                 active_leaf.setEphemeralState({
                     rename: "all",
                 });
