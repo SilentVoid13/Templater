@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.2](https://github.com/SilentVoid13/Templater/compare/2.9.1...2.9.2) (2025-01-28)
+
+
+### Bug Fixes
+
+* Duplicate hotkeys being created when updating template hotkeys ([4e8a892](https://github.com/SilentVoid13/Templater/commit/4e8a892a17d33ffcb664c746a5b153230aecb341)), closes [#1515](https://github.com/SilentVoid13/Templater/issues/1515)
+
 ### [2.9.1](https://github.com/SilentVoid13/Templater/compare/2.9.0...2.9.1) (2024-10-30)
 
 
