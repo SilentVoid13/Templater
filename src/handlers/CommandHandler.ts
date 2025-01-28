@@ -123,10 +123,8 @@ export class CommandHandler {
 
     remove_template_hotkey(template: string | null): void {
         if (template) {
-            this.plugin.removeCommand(
-                `${this.plugin.manifest.id}:create-${template}`
-            );
-            this.plugin.removeCommand(`${this.plugin.manifest.id}:${template}`);
+            this.plugin.removeCommand(`${template}`);
+            this.plugin.removeCommand(`create-${template}`);
         }
     }
 }
