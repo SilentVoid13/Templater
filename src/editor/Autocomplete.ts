@@ -72,10 +72,10 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         return trigger_info;
     }
 
-    getSuggestions(context: EditorSuggestContext): TpSuggestDocumentation[] {
+    async getSuggestions(context: EditorSuggestContext): Promise<TpSuggestDocumentation[]> {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
-            suggestions = this.documentation.get_all_functions_documentation(
+            suggestions = await this.documentation.get_all_functions_documentation(
                 this.module_name as ModuleName,
                 this.function_name
             ) as TpFunctionDocumentation[];

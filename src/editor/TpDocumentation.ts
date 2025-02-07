@@ -1,6 +1,6 @@
 import TemplaterPlugin from "main";
 import { errorWrapperSync } from "utils/Error";
-import { get_fn_params, get_tfiles_from_folder, is_object } from "utils/Utils";
+import { get_fn_params, get_tfiles_from_folder, is_object, populate_docs_from_user_scripts } from "utils/Utils";
 import documentation from "../../docs/documentation.toml";
 
 const module_names = [
@@ -86,10 +86,10 @@ export class Documentation {
         });
     }
 
-    get_all_functions_documentation(
+    async get_all_functions_documentation(
         module_name: ModuleName,
         function_name: string
-    ): TpFunctionDocumentation[] | undefined {
+    ): Promise<TpFunctionDocumentation[] | undefined> {
         if (module_name === "app") {
             return this.get_app_functions_documentation(
                 this.plugin.app,
@@ -102,12 +102,18 @@ export class Documentation {
                 !this.plugin.settings.user_scripts_folder
             )
                 return;
-            const files = errorWrapperSync(
-                () =>
-                    get_tfiles_from_folder(
+            const files = await errorWrapperSync(
+                async () => {
+                    const files = get_tfiles_from_folder(
                         this.plugin.app,
                         this.plugin.settings.user_scripts_folder
-                    ),
+                    ).filter(x => x.extension == "js")
+                    const docFiles = await populate_docs_from_user_scripts(
+                        this.plugin.app,
+                        files
+                    )
+                    return docFiles;
+                },
                 `User Scripts folder doesn't exist`
             );
             if (!files || files.length === 0) return;
@@ -120,7 +126,7 @@ export class Documentation {
                             name: file.basename,
                             queryKey: file.basename,
                             definition: "",
-                            description: "",
+                            description: file.description,
                             example: "",
                         },
                     ];

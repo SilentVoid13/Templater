@@ -1,3 +1,7 @@
+const doctrine = require('doctrine')
+
+import { TJDocFile } from "./TJDocFile";
+
 import { TemplaterError } from "./Error";
 import {
     App,
@@ -70,6 +74,26 @@ export function get_tfiles_from_folder(
     });
 
     return files;
+}
+
+export async function populate_docs_from_user_scripts(
+    app: App,
+    files: Array<TFile>
+): Promise<TJDocFile[]> {
+    const docFiles = await Promise.all(files.map(async file => {
+            // Get file contents
+            const content = await app.vault.read(file)
+            if (!content.startsWith("/**")) return new TJDocFile(file);
+
+            const parsed = doctrine.parse(content,  {unwrap: true, sloppy: true})
+            const newDocFile = new TJDocFile(file);
+            newDocFile.description = parsed.description;
+
+            return newDocFile;
+        }
+    ));
+
+    return docFiles;
 }
 
 export function arraymove<T>(
