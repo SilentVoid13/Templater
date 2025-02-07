@@ -72,7 +72,15 @@ export class Documentation {
     constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
-        return Object.values(this.documentation.tp).map((mod) => {
+        let tp = this.documentation.tp
+
+        // Remove 'user' if no user scripts found
+        if (!this.plugin.settings ||
+            !this.plugin.settings.user_scripts_folder) {
+            tp = Object.values(tp).filter((x) => x.name !== 'user')
+        }
+
+        return Object.values(tp).map((mod) => {
             mod.queryKey = mod.name;
             return mod;
         });
