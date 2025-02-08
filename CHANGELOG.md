@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.3](https://github.com/SilentVoid13/Templater/compare/2.9.2...2.9.3) (2025-02-08)
+
+
+### Bug Fixes
+
+* missing character on open template modal ([d691904](https://github.com/SilentVoid13/Templater/commit/d691904c1b13ca208751e3fe8c317f97877561f3)), closes [#1497](https://github.com/SilentVoid13/Templater/issues/1497)
+
 ### [2.9.2](https://github.com/SilentVoid13/Templater/compare/2.9.1...2.9.2) (2025-01-28)
 
 
