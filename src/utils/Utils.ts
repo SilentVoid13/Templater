@@ -1,4 +1,4 @@
-const doctrine = require('doctrine')
+import { DocNode, DocPlainText, DocSection, TSDocParser } from "@microsoft/tsdoc";
 
 import { TJDocFile } from "./TJDocFile";
 
@@ -83,17 +83,38 @@ export async function populate_docs_from_user_scripts(
     const docFiles = await Promise.all(files.map(async file => {
             // Get file contents
             const content = await app.vault.read(file)
-            if (!content.startsWith("/**")) return new TJDocFile(file);
 
-            const parsed = doctrine.parse(content,  {unwrap: true, sloppy: true})
+            // Parse the content
+            const tsdocParser = new TSDocParser();
+            const parsedDoc = tsdocParser.parseString(content);
+
+            // Copy and extract information into the TJDocFile
             const newDocFile = new TJDocFile(file);
-            newDocFile.description = parsed.description;
+            newDocFile.description = generate_jsdoc_description(parsedDoc.docComment.summarySection);
 
             return newDocFile;
         }
     ));
 
     return docFiles;
+}
+
+function generate_jsdoc_description(
+    summarySection: DocSection
+) : string {
+    try {
+        const description = summarySection.nodes.map((node: DocNode) => 
+            node.getChildNodes()
+                .filter((node: DocNode) => node instanceof DocPlainText)
+                .map((x: DocPlainText) => x.text)
+                .join("\n")
+        );
+    
+        return description.join("\n");   
+    } catch (error) {
+        console.error('Failed to parse sumamry section');
+        throw error;
+    }
 }
 
 export function arraymove<T>(
