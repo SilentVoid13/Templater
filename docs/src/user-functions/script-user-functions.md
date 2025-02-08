@@ -46,7 +46,7 @@ You can for example pass the `tp` object to your function, to be able to use all
 
 ## User Script Documentation
 
-Optionally you can document what a script does using the [TSDoc Standard](https://tsdoc.org/pages/spec/overview/) at the **top** of your method file. If provided, this will provide an intellisense-like experience for your user scripts similar to the experience of the other templater functions.
+Optionally you can document what a script does using the [TSDoc Standard](https://tsdoc.org/) at the **top** of your method file. If provided, this will provide an intellisense-like experience for your user scripts similar to the experience of the other templater functions.
 
 Note: Currently, only **function summaries** are supported.
 
