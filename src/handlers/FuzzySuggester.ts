@@ -44,8 +44,11 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
             item.path.startsWith(this.plugin.settings.templates_folder) &&
             normalizePath(this.plugin.settings.templates_folder) != "/"
         ) {
+            // Modify splice position if folder has a trailing slash
+            const folderLength = this.plugin.settings.templates_folder.length
+            const position = this.plugin.settings.templates_folder.endsWith('/') ? folderLength : folderLength + 1
             relativePath = item.path.slice(
-                this.plugin.settings.templates_folder.length + 1
+                position
             );
         }
         return relativePath.split(".").slice(0, -1).join(".");

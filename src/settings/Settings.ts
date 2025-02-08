@@ -87,6 +87,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.templates_folder)
                     .onChange((new_folder) => {
+                        // Trim folder and Strip ending slash if there
+                        new_folder = new_folder.trim()
+                        new_folder = new_folder.replace(/\/$/, "");
+
                         this.plugin.settings.templates_folder = new_folder;
                         this.plugin.save_settings();
                     });
