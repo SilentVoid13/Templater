@@ -92,7 +92,23 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
         el.createEl("b", { text: value.name });
-        el.createEl("br");
+        if (is_function_documentation(value))
+        {
+            if (value.args &&
+                this.getNumberOfArguments(value.args) > 0
+            ) {
+                el.createEl('p', {text: "Parameter List:"})
+                const list = el.createEl("ol");
+                for (const [key, val] of Object.entries(value.args)) {
+                    const li = list.createEl("li");
+                    li.innerHTML = `<b>${key}: </b>${val.description}`
+                }
+            }
+            if (value.returns) {
+                const returnEl = el.createEl("p")
+                returnEl.innerHTML = `<b>Returns</b>: ${value.returns}`;
+            }
+        }
         if (this.function_trigger && is_function_documentation(value)) {
             el.createEl("code", { text: value.definition });
         }
@@ -124,6 +140,16 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             const cursor_pos = this.latest_trigger_info.end;
             cursor_pos.ch += value.queryKey.length;
             active_editor.editor.setCursor(cursor_pos);
+        }
+    }
+
+    getNumberOfArguments(
+        args: object
+    ): number {
+        try {
+            return new Map(Object.entries(args)).size;
+        } catch (error) {
+            return 0;
         }
     }
 }

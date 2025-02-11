@@ -42,6 +42,7 @@ export type TpFunctionDocumentation = {
     queryKey: string;
     definition: string;
     description: string;
+    returns: string;
     example: string;
     args?: {
         [key: string]: TpArgumentDocumentation;
@@ -55,12 +56,15 @@ export type TpArgumentDocumentation = {
 
 export type TpSuggestDocumentation =
     | TpModuleDocumentation
-    | TpFunctionDocumentation;
+    | TpFunctionDocumentation
+    | TpArgumentDocumentation;
 
 export function is_function_documentation(
     x: TpSuggestDocumentation
 ): x is TpFunctionDocumentation {
-    if ((x as TpFunctionDocumentation).definition) {
+    if ((x as TpFunctionDocumentation).definition ||
+        (x as TpFunctionDocumentation).returns ||
+        (x as TpFunctionDocumentation).args) {
         return true;
     }
     return false;
@@ -120,16 +124,25 @@ export class Documentation {
             return files.reduce<TpFunctionDocumentation[]>(
                 (processedFiles, file) => {
                     if (file.extension !== "js") return processedFiles;
-                    return [
+                    const values = [
                         ...processedFiles,
                         {
                             name: file.basename,
                             queryKey: file.basename,
                             definition: "",
                             description: file.description,
+                            returns: file.returns,
+                            args: file.arguments.reduce<{[key: string]: TpArgumentDocumentation}>((acc, arg) => {
+                                acc[arg.name] = {
+                                    name: arg.name,
+                                    description: arg.description
+                                };
+                                return acc;
+                            }, {}),
                             example: "",
                         },
                     ];
+                    return values;
                 },
                 []
             );
@@ -188,6 +201,7 @@ export class Documentation {
                           )})`
                         : definition,
                 description: "",
+                returns: "",
                 example: "",
             });
         }

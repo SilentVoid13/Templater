@@ -1,6 +1,6 @@
-import { DocNode, DocPlainText, DocSection, TSDocParser } from "@microsoft/tsdoc";
+import { DocBlock, DocNode, DocParamBlock, DocParamCollection, DocPlainText, DocSection, ParserContext, TSDocParser } from "@microsoft/tsdoc";
 
-import { TJDocFile } from "./TJDocFile";
+import { TJDocFile, TJDocFileArgument } from "./TJDocFile";
 
 import { TemplaterError } from "./Error";
 import {
@@ -83,20 +83,32 @@ export async function populate_docs_from_user_scripts(
     const docFiles = await Promise.all(files.map(async file => {
             // Get file contents
             const content = await app.vault.read(file)
-
-            // Parse the content
-            const tsdocParser = new TSDocParser();
-            const parsedDoc = tsdocParser.parseString(content);
-
-            // Copy and extract information into the TJDocFile
-            const newDocFile = new TJDocFile(file);
-            newDocFile.description = generate_jsdoc_description(parsedDoc.docComment.summarySection);
-
+            
+            const newDocFile = generate_jsdoc(file, content);
+            
             return newDocFile;
         }
     ));
 
     return docFiles;
+}
+
+function generate_jsdoc(
+    file: TFile,
+    content: string
+): TJDocFile{
+    // Parse the content
+    const tsdocParser = new TSDocParser();
+    const parsedDoc = tsdocParser.parseString(content);
+
+    // Copy and extract information into the TJDocFile
+    const newDocFile = new TJDocFile(file);
+
+    newDocFile.description = generate_jsdoc_description(parsedDoc.docComment.summarySection);
+    newDocFile.returns = generate_jsdoc_return(parsedDoc.docComment.returnsBlock);
+    newDocFile.arguments = generate_jsdoc_arguments(parsedDoc.docComment.params);
+
+    return newDocFile
 }
 
 function generate_jsdoc_description(
@@ -114,6 +126,38 @@ function generate_jsdoc_description(
     } catch (error) {
         console.error('Failed to parse sumamry section');
         throw error;
+    }
+}
+
+function generate_jsdoc_return(
+    returnSection : DocBlock | undefined
+): string {
+    if (!returnSection) return "";
+
+    try {
+        const returnValue = returnSection.content.nodes[0].getChildNodes()[0].text.trim();
+        return returnValue;   
+    } catch (error) {
+        return "";
+    }
+}
+
+function generate_jsdoc_arguments(
+    paramSection: DocParamCollection
+) : TJDocFileArgument[] {
+    try {
+        const blocks = paramSection.blocks;
+        const args = blocks.map((block) => {
+                const name = block.parameterName;
+                const description = block.content.getChildNodes()[0].getChildNodes()
+                                                    .filter(x => x instanceof DocPlainText)
+                                                    .map(x => x.text).join(" ")
+                return new TJDocFileArgument(name, description);
+            })
+
+        return args;   
+    } catch (error) {
+        return [];
     }
 }
 
