@@ -202,3 +202,27 @@ export function get_fn_params(func: (...args: unknown[]) => unknown) {
         .replace(/ /g, "")
         .split(",");
 }
+
+/**
+ * Use a parent HtmlElement to create a label with a value
+ * @param parent The parent HtmlElement; Use HtmlOListElement to return a `li` element
+ * @param title The title for the label which will be bolded
+ * @param value The value of the label
+ * @returns A label HtmlElement (p | li)
+ */
+export function append_bolded_label_with_value_to_parent(
+    parent: HTMLElement,
+     title: string,
+     value: string
+): HTMLElement{
+    const tag = parent instanceof HTMLOListElement ? "li" : "p";  
+
+    const para = parent.createEl(tag);
+    const bold = parent.createEl('b', {text: title});
+    para.appendChild(bold);
+    para.appendChild(document.createTextNode(`: ${value}`))
+
+    // Returns a p or li element
+    // Resulting in <b>Title</b>: value
+    return para;
+}

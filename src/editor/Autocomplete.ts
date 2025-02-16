@@ -16,6 +16,7 @@ import {
     TpSuggestDocumentation,
 } from "./TpDocumentation";
 import TemplaterPlugin from "main";
+import { append_bolded_label_with_value_to_parent } from "utils/Utils";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
@@ -100,13 +101,11 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
                 el.createEl('p', {text: "Parameter list:"})
                 const list = el.createEl("ol");
                 for (const [key, val] of Object.entries(value.args)) {
-                    const li = list.createEl("li");
-                    li.innerHTML = `<b>${key}: </b>${val.description}`
+                    append_bolded_label_with_value_to_parent(list, key, val.description)
                 }
             }
             if (value.returns) {
-                const returnEl = el.createEl("p")
-                returnEl.innerHTML = `<b>Returns</b>: ${value.returns}`;
+                append_bolded_label_with_value_to_parent(el, 'Returns', value.returns)
             }
         }
         if (this.function_trigger && is_function_documentation(value)) {
