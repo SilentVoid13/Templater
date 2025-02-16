@@ -82,7 +82,7 @@ export async function populate_docs_from_user_scripts(
 ): Promise<TJDocFile[]> {
     const docFiles = await Promise.all(files.map(async file => {
             // Get file contents
-            const content = await app.vault.read(file)
+            const content = await app.vault.cachedRead(file)
             
             const newDocFile = generate_jsdoc(file, content);
             

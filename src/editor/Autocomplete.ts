@@ -97,7 +97,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             if (value.args &&
                 this.getNumberOfArguments(value.args) > 0
             ) {
-                el.createEl('p', {text: "Parameter List:"})
+                el.createEl('p', {text: "Parameter list:"})
                 const list = el.createEl("ol");
                 for (const [key, val] of Object.entries(value.args)) {
                     const li = list.createEl("li");

@@ -1,5 +1,5 @@
 import TemplaterPlugin from "main";
-import { errorWrapperSync } from "utils/Error";
+import { errorWrapper } from "utils/Error";
 import { get_fn_params, get_tfiles_from_folder, is_object, populate_docs_from_user_scripts } from "utils/Utils";
 import documentation from "../../docs/documentation.toml";
 
@@ -106,7 +106,7 @@ export class Documentation {
                 !this.plugin.settings.user_scripts_folder
             )
                 return;
-            const files = await errorWrapperSync(
+            const files = await errorWrapper(
                 async () => {
                     const files = get_tfiles_from_folder(
                         this.plugin.app,
