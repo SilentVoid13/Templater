@@ -1,6 +1,6 @@
 import TemplaterPlugin from "main";
-import { errorWrapperSync } from "utils/Error";
-import { get_fn_params, get_tfiles_from_folder, is_object } from "utils/Utils";
+import { errorWrapper } from "utils/Error";
+import { get_fn_params, get_tfiles_from_folder, is_object, populate_docs_from_user_scripts } from "utils/Utils";
 import documentation from "../../docs/documentation.toml";
 
 const module_names = [
@@ -42,6 +42,7 @@ export type TpFunctionDocumentation = {
     queryKey: string;
     definition: string;
     description: string;
+    returns: string;
     example: string;
     args?: {
         [key: string]: TpArgumentDocumentation;
@@ -55,12 +56,15 @@ export type TpArgumentDocumentation = {
 
 export type TpSuggestDocumentation =
     | TpModuleDocumentation
-    | TpFunctionDocumentation;
+    | TpFunctionDocumentation
+    | TpArgumentDocumentation;
 
 export function is_function_documentation(
     x: TpSuggestDocumentation
 ): x is TpFunctionDocumentation {
-    if ((x as TpFunctionDocumentation).definition) {
+    if ((x as TpFunctionDocumentation).definition ||
+        (x as TpFunctionDocumentation).returns ||
+        (x as TpFunctionDocumentation).args) {
         return true;
     }
     return false;
@@ -72,16 +76,24 @@ export class Documentation {
     constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
-        return Object.values(this.documentation.tp).map((mod) => {
+        let tp = this.documentation.tp
+
+        // Remove 'user' if no user scripts found
+        if (!this.plugin.settings ||
+            !this.plugin.settings.user_scripts_folder) {
+            tp = Object.values(tp).filter((x) => x.name !== 'user')
+        }
+
+        return Object.values(tp).map((mod) => {
             mod.queryKey = mod.name;
             return mod;
         });
     }
 
-    get_all_functions_documentation(
+    async get_all_functions_documentation(
         module_name: ModuleName,
         function_name: string
-    ): TpFunctionDocumentation[] | undefined {
+    ): Promise<TpFunctionDocumentation[] | undefined> {
         if (module_name === "app") {
             return this.get_app_functions_documentation(
                 this.plugin.app,
@@ -94,28 +106,43 @@ export class Documentation {
                 !this.plugin.settings.user_scripts_folder
             )
                 return;
-            const files = errorWrapperSync(
-                () =>
-                    get_tfiles_from_folder(
+            const files = await errorWrapper(
+                async () => {
+                    const files = get_tfiles_from_folder(
                         this.plugin.app,
                         this.plugin.settings.user_scripts_folder
-                    ),
+                    ).filter(x => x.extension == "js")
+                    const docFiles = await populate_docs_from_user_scripts(
+                        this.plugin.app,
+                        files
+                    )
+                    return docFiles;
+                },
                 `User Scripts folder doesn't exist`
             );
             if (!files || files.length === 0) return;
             return files.reduce<TpFunctionDocumentation[]>(
                 (processedFiles, file) => {
                     if (file.extension !== "js") return processedFiles;
-                    return [
+                    const values = [
                         ...processedFiles,
                         {
                             name: file.basename,
                             queryKey: file.basename,
                             definition: "",
-                            description: "",
+                            description: file.description,
+                            returns: file.returns,
+                            args: file.arguments.reduce<{[key: string]: TpArgumentDocumentation}>((acc, arg) => {
+                                acc[arg.name] = {
+                                    name: arg.name,
+                                    description: arg.description
+                                };
+                                return acc;
+                            }, {}),
                             example: "",
                         },
                     ];
+                    return values;
                 },
                 []
             );
@@ -174,6 +201,7 @@ export class Documentation {
                           )})`
                         : definition,
                 description: "",
+                returns: "",
                 example: "",
             });
         }

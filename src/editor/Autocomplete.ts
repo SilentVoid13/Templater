@@ -16,6 +16,7 @@ import {
     TpSuggestDocumentation,
 } from "./TpDocumentation";
 import TemplaterPlugin from "main";
+import { append_bolded_label_with_value_to_parent } from "utils/Utils";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
@@ -72,10 +73,10 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         return trigger_info;
     }
 
-    getSuggestions(context: EditorSuggestContext): TpSuggestDocumentation[] {
+    async getSuggestions(context: EditorSuggestContext): Promise<TpSuggestDocumentation[]> {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
-            suggestions = this.documentation.get_all_functions_documentation(
+            suggestions = await this.documentation.get_all_functions_documentation(
                 this.module_name as ModuleName,
                 this.function_name
             ) as TpFunctionDocumentation[];
@@ -92,7 +93,21 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
     renderSuggestion(value: TpSuggestDocumentation, el: HTMLElement): void {
         el.createEl("b", { text: value.name });
-        el.createEl("br");
+        if (is_function_documentation(value))
+        {
+            if (value.args &&
+                this.getNumberOfArguments(value.args) > 0
+            ) {
+                el.createEl('p', {text: "Parameter list:"})
+                const list = el.createEl("ol");
+                for (const [key, val] of Object.entries(value.args)) {
+                    append_bolded_label_with_value_to_parent(list, key, val.description)
+                }
+            }
+            if (value.returns) {
+                append_bolded_label_with_value_to_parent(el, 'Returns', value.returns)
+            }
+        }
         if (this.function_trigger && is_function_documentation(value)) {
             el.createEl("code", { text: value.definition });
         }
@@ -124,6 +139,16 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             const cursor_pos = this.latest_trigger_info.end;
             cursor_pos.ch += value.queryKey.length;
             active_editor.editor.setCursor(cursor_pos);
+        }
+    }
+
+    getNumberOfArguments(
+        args: object
+    ): number {
+        try {
+            return new Map(Object.entries(args)).size;
+        } catch (error) {
+            return 0;
         }
     }
 }

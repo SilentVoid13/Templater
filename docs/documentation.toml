@@ -2,6 +2,9 @@
 name = "app"
 description = "This module exposes the app instance. Prefer to use this over the global app instance."
 
+[tp.user]
+name = "user"
+description = "This module exposes custom made scripts, written by yourself within the script file folder location"
 
 [tp.config]
 name = "config"
