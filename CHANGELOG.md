@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/SilentVoid13/Templater/compare/2.9.3...2.10.0) (2025-02-28)
+
+
+### Features
+
+* Add 'intellisense' like support for user scripts ([4281da9](https://github.com/SilentVoid13/Templater/commit/4281da96d90d5e1624ad5a60e9176645067d882c)), closes [#1539](https://github.com/SilentVoid13/Templater/issues/1539)
+
+
+### Bug Fixes
+
+* **docs:** Format argument as optional parameter ([70d94bf](https://github.com/SilentVoid13/Templater/commit/70d94bffd87217220039081962fab12fba45d3f8))
+
 ### [2.9.3](https://github.com/SilentVoid13/Templater/compare/2.9.2...2.9.3) (2025-02-08)
 
 
