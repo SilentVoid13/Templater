@@ -43,3 +43,20 @@ However, you can't access the template engine scoped variables like `tp` or `tR`
 You can pass as many arguments as you want to your function, depending on how you defined it.
 
 You can for example pass the `tp` object to your function, to be able to use all of the [internal variables / functions](../internal-variables-functions/overview.md) of Templater: `<% tp.user.<user_function_name>(tp) %>`
+
+## User Script Documentation
+
+Optionally you can document what a script does using the [TSDoc Standard](https://tsdoc.org/) at the **top** of your method file. If provided, this will provide an intellisense-like experience for your user scripts similar to the experience of the other templater functions.
+
+### Example of User Script with Documentation
+
+```javascript
+/**
+ * This does something cool
+ */
+function doSomething() {
+    console.log('Something was done')
+}
+
+module.exports = doSomething;
+```
