@@ -70,7 +70,7 @@ You mustn't specify the name nor the type nor the default value of an argument w
 Let's take the `tp.date.now` internal function documentation as an example: 
 
 ```
-tp.date.now(format: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string)
+tp.date.now(format?: string = "YYYY-MM-DD", offset?: number|string, reference?: string, reference_format?: string)
 ```
 
 This internal function has 4 optional arguments: 
