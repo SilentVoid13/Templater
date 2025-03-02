@@ -1,4 +1,5 @@
 import TemplaterPlugin from "main";
+import { Platform } from "obsidian";
 import { errorWrapperSync } from "utils/Error";
 import { resolve_tfile } from "utils/Utils";
 
@@ -10,12 +11,14 @@ export class CommandHandler {
             id: "insert-templater",
             name: "Open insert template modal",
             icon: "templater-icon",
-            hotkeys: [
-                {
-                    modifiers: ["Alt"],
-                    key: "e",
-                },
-            ],
+            hotkeys: Platform.isMacOS
+                ? undefined
+                : [
+                      {
+                          modifiers: ["Alt"],
+                          key: "e",
+                      },
+                  ],
             callback: () => {
                 this.plugin.fuzzy_suggester.insert_template();
             },
@@ -25,12 +28,14 @@ export class CommandHandler {
             id: "replace-in-file-templater",
             name: "Replace templates in the active file",
             icon: "templater-icon",
-            hotkeys: [
-                {
-                    modifiers: ["Alt"],
-                    key: "r",
-                },
-            ],
+            hotkeys: Platform.isMacOS
+                ? undefined
+                : [
+                      {
+                          modifiers: ["Alt"],
+                          key: "r",
+                      },
+                  ],
             callback: () => {
                 this.plugin.templater.overwrite_active_file_commands();
             },
@@ -55,12 +60,14 @@ export class CommandHandler {
             id: "create-new-note-from-template",
             name: "Create new note from template",
             icon: "templater-icon",
-            hotkeys: [
-                {
-                    modifiers: ["Alt"],
-                    key: "n",
-                },
-            ],
+            hotkeys: Platform.isMacOS
+                ? undefined
+                : [
+                      {
+                          modifiers: ["Alt"],
+                          key: "n",
+                      },
+                  ],
             callback: () => {
                 this.plugin.fuzzy_suggester.create_new_note_from_template();
             },
