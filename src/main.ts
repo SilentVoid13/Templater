@@ -61,6 +61,7 @@ export default class TemplaterPlugin extends Plugin {
 
     async save_settings(): Promise<void> {
         await this.saveData(this.settings);
+        this.editor_handler.updateEditorIntellisenseSetting(this.settings.intellisense_render);
     }
 
     async load_settings(): Promise<void> {

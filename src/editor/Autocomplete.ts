@@ -165,4 +165,8 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             return 0;
         }
     }
+
+    updateAutocompleteIntellisenseSetting(value: IntellisenseRenderOption){
+        this.intellisense_render_setting = value;
+    }
 }
