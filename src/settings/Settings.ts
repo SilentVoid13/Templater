@@ -133,12 +133,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 new_folder = new_folder.trim()
                                 new_folder = new_folder.replace(/\/$/, "");
 
-                                console.log(this.plugin.settings.templates_folders);
-                                console.log(new_folder);
+                                const new_folders = [...this.plugin.settings.templates_folders];
+                                new_folders.splice(index, 1);
 
                                 if (
                                     new_folder && 
-                                    this.plugin.settings.templates_folders.contains(new_folder)
+                                    new_folders.contains(new_folder)
                                 ) {
                                     log_error(
                                         new TemplaterError(
@@ -153,7 +153,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
                                 if (
                                     new_folder && 
-                                    this.plugin.settings.templates_folders
+                                    new_folders
                                         .filter((folder: string) => folder !== "")
                                         .some((folder: string) => 
                                         new_folder.startsWith(folder + "/") || folder.startsWith(new_folder + "/"))
