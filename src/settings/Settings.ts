@@ -18,7 +18,9 @@ export interface FileTemplate {
 
 export const DEFAULT_SETTINGS: Settings = {
     command_timeout: 5,
+    enable_multiple_template_folders: false,
     templates_folder: "",
+    templates_folders: [""],
     templates_pairs: [["", ""]],
     trigger_on_file_creation: false,
     auto_jump_to_cursor: false,
@@ -37,7 +39,9 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export interface Settings {
     command_timeout: number;
+    enable_multiple_template_folders: boolean;
     templates_folder: string;
+    templates_folders: Array<string>;
     templates_pairs: Array<[string, string]>;
     trigger_on_file_creation: boolean;
     auto_jump_to_cursor: boolean;
@@ -62,7 +66,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
     display(): void {
         this.containerEl.empty();
 
-        this.add_template_folder_setting();
+        if(this.plugin.settings.enable_multiple_template_folders) {
+            this.add_multiple_template_folder_setting();
+        } else {
+            this.add_template_folder_setting();
+        }
+        this.add_toggle_allow_multiple_template_folders();
         this.add_internal_functions_setting();
         this.add_syntax_highlighting_settings();
         this.add_auto_jump_to_cursor();
@@ -77,6 +86,139 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_user_system_command_functions_setting();
         this.add_donating_setting();
     }
+
+    add_toggle_allow_multiple_template_folders(): void {
+
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Adds support for having multiple distinct template folders"
+        );
+
+        new Setting(this.containerEl)
+            .setName("Multiple Template Folders")
+            .setDesc(desc)
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.enable_multiple_template_folders)
+                    .onChange((allow_multiple_template_folders) => {
+                        this.plugin.settings.enable_multiple_template_folders =
+                            allow_multiple_template_folders;
+                        this.plugin.save_settings();
+                        // Force refresh
+                        this.display();
+                    });
+            });
+
+    }
+
+    add_multiple_template_folder_setting(): void {
+        new Setting(this.containerEl).setName("Template Folders").setHeading();
+
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Files in these folders will be available as templates."
+        );
+
+        new Setting(this.containerEl).setDesc(desc);
+
+        this.plugin.settings.templates_folders.forEach(
+            (template_folder, index) => {
+                const s = new Setting(this.containerEl)
+                    .addSearch((cb) => {
+                        new FolderSuggest(this.app, cb.inputEl);
+                        cb.setPlaceholder("Example: folder1/folder2")
+                            .setValue(template_folder)
+                            .onChange((new_folder) => {
+                                // Trim folder and Strip ending slash if there
+                                new_folder = new_folder.trim()
+                                new_folder = new_folder.replace(/\/$/, "");
+
+                                console.log(this.plugin.settings.templates_folders);
+                                console.log(new_folder);
+
+                                if (
+                                    new_folder && 
+                                    this.plugin.settings.templates_folders.contains(
+                                        new_folder
+                                    )
+                                ) {
+                                    log_error(
+                                        new TemplaterError(
+                                            "This folder is already a template folder"
+                                        )
+                                    );
+                                    // Force refresh so you don't see "ghost"
+                                    // folder selection.
+                                    this.display();
+                                    return;
+                                }
+
+                                this.plugin.settings.templates_folders[
+                                    index
+                                ] = new_folder;
+                                this.plugin.save_settings();
+                            });
+                        // @ts-ignore
+                        cb.containerEl.addClass("templater_search");
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("up-chevron-glyph")
+                            .setTooltip("Move up")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings
+                                        .templates_folders,
+                                    index,
+                                    index - 1
+                                );
+                                this.plugin.save_settings();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("down-chevron-glyph")
+                            .setTooltip("Move down")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings
+                                        .templates_folders,
+                                    index,
+                                    index + 1
+                                );
+                                this.plugin.save_settings();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("cross")
+                            .setTooltip("Delete")
+                            .onClick(() => {
+                                this.plugin.settings.templates_folders.splice(
+                                    index,
+                                    1
+                                );
+                                this.plugin.save_settings();
+                                // Force refresh
+                                this.display();
+                            });
+                    });
+                s.infoEl.remove();
+            }
+        );
+
+        new Setting(this.containerEl).addButton((cb) => {
+            cb.setButtonText("Add new folder for templates")
+                .setCta()
+                .onClick(() => {
+                    this.plugin.settings.templates_folders.push("");
+                    this.plugin.save_settings();
+                    // Force refresh
+                    this.display();
+                });
+        });
+    }
+
+
 
     add_template_folder_setting(): void {
         new Setting(this.containerEl)
