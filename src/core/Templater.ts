@@ -506,10 +506,11 @@ export class Templater {
         }
 
         // Avoids template replacement when syncing template files
-        const template_folder = normalizePath(
-            templater.plugin.settings.templates_folder
-        );
-        if (file.path.includes(template_folder) && template_folder !== "/") {
+        if(templater.get_templates_folders()
+            .map(normalizePath)
+            .some((template_folder: string) => 
+                file.path.includes(template_folder) && template_folder !== "/"
+        )) {
             return;
         }
 
