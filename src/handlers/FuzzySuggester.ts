@@ -21,32 +21,37 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     }
 
     getItems(): TFile[] {
-        if (!this.plugin.settings.templates_folder) {
+        if (this.plugin.templater.get_templates_folders().length === 0) {
             return this.app.vault.getMarkdownFiles();
         }
-        const files = errorWrapperSync(
-            () =>
-                get_tfiles_from_folder(
-                    this.plugin.app,
-                    this.plugin.settings.templates_folder
-                ),
-            `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`
-        );
-        if (!files) {
-            return [];
-        }
+
+        const files = 
+            this.plugin.templater.get_templates_folders()
+                .map((folder: string) => {
+                    return errorWrapperSync(
+                        () =>
+                            get_tfiles_from_folder(
+                                this.plugin.app,
+                                folder
+                            ),
+                        `Couldn't retrieve template files from templates folder ${folder}`
+                    );
+                })
+                .flat();
+
         return files;
     }
 
     getItemText(item: TFile): string {
+        const templates_folders_shared_path = this.plugin.templater.get_templates_folders_shared_path()
         let relativePath = item.path;
         if (
-            item.path.startsWith(this.plugin.settings.templates_folder) &&
-            normalizePath(this.plugin.settings.templates_folder) != "/"
+            item.path.startsWith(templates_folders_shared_path) &&
+            normalizePath(templates_folders_shared_path) != "/"
         ) {
             // Modify splice position if folder has a trailing slash
-            const folderLength = this.plugin.settings.templates_folder.length
-            const position = this.plugin.settings.templates_folder.endsWith('/') ? folderLength : folderLength + 1
+            const folderLength = templates_folders_shared_path.length
+            const position = templates_folders_shared_path.endsWith('/') ? folderLength : folderLength + 1
             relativePath = item.path.slice(
                 position
             );
