@@ -463,8 +463,8 @@ export class Templater {
     }
 
     get_templates_folders(): Array<string> {
-        let template_folders: Array<string>
-        if(this.plugin.settings.enable_multiple_template_folders) {
+        let template_folders: Array<string>;
+        if (this.plugin.settings.enable_multiple_template_folders) {
             template_folders = this.plugin.settings.templates_folders;
         } else {
             template_folders = [this.plugin.settings.templates_folder];
@@ -474,15 +474,16 @@ export class Templater {
     }
 
     get_templates_folders_shared_path(): string {
-        if(this.plugin.templater.get_templates_folders().length === 0) {
-            return ""
+        if (this.plugin.templater.get_templates_folders().length === 0) {
+            return "";
         }
 
-        let common_template_folder_path = this.plugin.templater.get_templates_folders()
+        let common_template_folder_path = this.plugin.templater
+            .get_templates_folders()
             .reduce((shared_path: string, folder: string) => {
                 let i = 0;
-                while(i < Math.min(shared_path.length, folder.length)) {
-                    if(shared_path[i] != folder[i]) {
+                while (i < Math.min(shared_path.length, folder.length)) {
+                    if (shared_path[i] != folder[i]) {
                         break;
                     }
                     i++;
@@ -506,11 +507,16 @@ export class Templater {
         }
 
         // Avoids template replacement when syncing template files
-        if(templater.get_templates_folders()
-            .map(normalizePath)
-            .some((template_folder: string) => 
-                file.path.includes(template_folder) && template_folder !== "/"
-        )) {
+        if (
+            templater
+                .get_templates_folders()
+                .map(normalizePath)
+                .some(
+                    (template_folder: string) =>
+                        file.path.includes(template_folder) &&
+                        template_folder !== "/"
+                )
+        ) {
             return;
         }
 

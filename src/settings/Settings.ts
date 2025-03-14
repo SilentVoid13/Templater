@@ -66,7 +66,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     display(): void {
         this.containerEl.empty();
 
-        if(this.plugin.settings.enable_multiple_template_folders) {
+        if (this.plugin.settings.enable_multiple_template_folders) {
             this.add_multiple_template_folder_setting();
         } else {
             this.add_template_folder_setting();
@@ -88,7 +88,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_toggle_allow_multiple_template_folders(): void {
-
         const desc = document.createDocumentFragment();
         desc.append(
             "Adds support for having multiple distinct template folders"
@@ -99,7 +98,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setDesc(desc)
             .addToggle((toggle) => {
                 toggle
-                    .setValue(this.plugin.settings.enable_multiple_template_folders)
+                    .setValue(
+                        this.plugin.settings.enable_multiple_template_folders
+                    )
                     .onChange((allow_multiple_template_folders) => {
                         this.plugin.settings.enable_multiple_template_folders =
                             allow_multiple_template_folders;
@@ -108,16 +109,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.display();
                     });
             });
-
     }
 
     add_multiple_template_folder_setting(): void {
         new Setting(this.containerEl).setName("Template Folders").setHeading();
 
         const desc = document.createDocumentFragment();
-        desc.append(
-            "Files in these folders will be available as templates."
-        );
+        desc.append("Files in these folders will be available as templates.");
 
         new Setting(this.containerEl).setDesc(desc);
 
@@ -130,14 +128,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setValue(template_folder)
                             .onChange((new_folder) => {
                                 // Trim folder and Strip ending slash if there
-                                new_folder = new_folder.trim()
+                                new_folder = new_folder.trim();
                                 new_folder = new_folder.replace(/\/$/, "");
 
-                                const new_folders = [...this.plugin.settings.templates_folders];
+                                const new_folders = [
+                                    ...this.plugin.settings.templates_folders,
+                                ];
                                 new_folders.splice(index, 1);
 
                                 if (
-                                    new_folder && 
+                                    new_folder &&
                                     new_folders.contains(new_folder)
                                 ) {
                                     log_error(
@@ -152,11 +152,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 }
 
                                 if (
-                                    new_folder && 
+                                    new_folder &&
                                     new_folders
-                                        .filter((folder: string) => folder !== "")
-                                        .some((folder: string) => 
-                                        new_folder.startsWith(folder + "/") || folder.startsWith(new_folder + "/"))
+                                        .filter(
+                                            (folder: string) => folder !== ""
+                                        )
+                                        .some(
+                                            (folder: string) =>
+                                                new_folder.startsWith(
+                                                    folder + "/"
+                                                ) ||
+                                                folder.startsWith(
+                                                    new_folder + "/"
+                                                )
+                                        )
                                 ) {
                                     log_error(
                                         new TemplaterError(
@@ -167,9 +176,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     return;
                                 }
 
-                                this.plugin.settings.templates_folders[
-                                    index
-                                ] = new_folder;
+                                this.plugin.settings.templates_folders[index] =
+                                    new_folder;
                                 this.plugin.save_settings();
                             });
                         // @ts-ignore
@@ -180,8 +188,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setTooltip("Move up")
                             .onClick(() => {
                                 arraymove(
-                                    this.plugin.settings
-                                        .templates_folders,
+                                    this.plugin.settings.templates_folders,
                                     index,
                                     index - 1
                                 );
@@ -194,8 +201,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setTooltip("Move down")
                             .onClick(() => {
                                 arraymove(
-                                    this.plugin.settings
-                                        .templates_folders,
+                                    this.plugin.settings.templates_folders,
                                     index,
                                     index + 1
                                 );
@@ -232,8 +238,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         });
     }
 
-
-
     add_template_folder_setting(): void {
         new Setting(this.containerEl)
             .setName("Template folder location")
@@ -244,7 +248,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.templates_folder)
                     .onChange((new_folder) => {
                         // Trim folder and Strip ending slash if there
-                        new_folder = new_folder.trim()
+                        new_folder = new_folder.trim();
                         new_folder = new_folder.replace(/\/$/, "");
 
                         this.plugin.settings.templates_folder = new_folder;
