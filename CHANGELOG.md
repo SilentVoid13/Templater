@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.11.0](https://github.com/SilentVoid13/Templater/compare/2.10.0...2.11.0) (2025-03-21)
+
+
+### Features
+
+* Add intellisense render settings ([0acc23b](https://github.com/SilentVoid13/Templater/commit/0acc23b5114d485ee0b6b347e7ffd7ad9c2ebe19)), closes [#1551](https://github.com/SilentVoid13/Templater/issues/1551)
+
+
+### Bug Fixes
+
+* Remove default hotkeys for "Open insert template modal", "Replace templates in the active file", and "Create new note from template" commands on MacOS since they don't work ([bf6187c](https://github.com/SilentVoid13/Templater/commit/bf6187c13a3499add6aaa09e0f48d59151d07f1b)), closes [#1491](https://github.com/SilentVoid13/Templater/issues/1491)
+
 ## [2.10.0](https://github.com/SilentVoid13/Templater/compare/2.9.3...2.10.0) (2025-02-28)
 
 
