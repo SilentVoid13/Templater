@@ -31,6 +31,8 @@ export class Editor {
     // Note that this is `undefined` until `setup` has run.
     private templaterLanguage: Extension | undefined;
 
+    private autocomplete: Autocomplete;
+
     public constructor(private plugin: TemplaterPlugin) {
         this.cursor_jumper = new CursorJumper(plugin.app);
         this.activeEditorExtensions = [];
@@ -49,7 +51,8 @@ export class Editor {
     }
 
     async setup(): Promise<void> {
-        this.plugin.registerEditorSuggest(new Autocomplete(this.plugin));
+        this.autocomplete = new Autocomplete(this.plugin);
+        this.plugin.registerEditorSuggest(this.autocomplete);
 
         // We define our overlay as a stand-alone extension and keep a reference
         // to it around. This lets us dynamically turn it on and off as needed.
@@ -235,5 +238,9 @@ export class Editor {
                 templaterOverlay
             );
         });
+    }
+
+    updateEditorIntellisenseSetting(value: any){
+        this.autocomplete.updateAutocompleteIntellisenseSetting(value)
     }
 }

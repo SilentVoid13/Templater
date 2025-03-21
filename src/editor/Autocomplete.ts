@@ -15,6 +15,14 @@ import {
     TpFunctionDocumentation,
     TpSuggestDocumentation,
 } from "./TpDocumentation";
+
+import {
+    IntellisenseRenderOption,
+    shouldRenderDescription,
+    shouldRenderParameters,
+    shouldRenderReturns
+} from "../settings/RenderSettings/IntellisenseRenderOption"
+
 import TemplaterPlugin from "main";
 import { append_bolded_label_with_value_to_parent } from "utils/Utils";
 
@@ -28,10 +36,12 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private module_name: ModuleName | string;
     private function_trigger: boolean;
     private function_name: string;
+    private intellisense_render_setting: IntellisenseRenderOption
 
     constructor(plugin: TemplaterPlugin) {
         super(plugin.app);
         this.documentation = new Documentation(plugin);
+        this.intellisense_render_setting = plugin.settings.intellisense_render
     }
 
     onTrigger(
@@ -96,7 +106,8 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         if (is_function_documentation(value))
         {
             if (value.args &&
-                this.getNumberOfArguments(value.args) > 0
+                this.getNumberOfArguments(value.args) > 0 &&
+                shouldRenderParameters(this.intellisense_render_setting)
             ) {
                 el.createEl('p', {text: "Parameter list:"})
                 const list = el.createEl("ol");
@@ -104,14 +115,17 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
                     append_bolded_label_with_value_to_parent(list, key, val.description)
                 }
             }
-            if (value.returns) {
+            if (value.returns &&
+                shouldRenderReturns(this.intellisense_render_setting)
+            ) {
                 append_bolded_label_with_value_to_parent(el, 'Returns', value.returns)
             }
         }
         if (this.function_trigger && is_function_documentation(value)) {
             el.createEl("code", { text: value.definition });
         }
-        if (value.description) {
+        if (value.description
+            && shouldRenderDescription(this.intellisense_render_setting)) {
             el.createEl("div", { text: value.description });
         }
     }
@@ -150,5 +164,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         } catch (error) {
             return 0;
         }
+    }
+
+    updateAutocompleteIntellisenseSetting(value: IntellisenseRenderOption){
+        this.intellisense_render_setting = value;
     }
 }
