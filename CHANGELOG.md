@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.1](https://github.com/SilentVoid13/Templater/compare/2.11.0...2.11.1) (2025-03-22)
+
+
+### Bug Fixes
+
+* Fix race condition with "Trigger Templater on new file creation" and daily notes "Open daily note on startup" ([6e5e26f](https://github.com/SilentVoid13/Templater/commit/6e5e26f61e65763a5847c7050dba240392e595dd)), closes [#1549](https://github.com/SilentVoid13/Templater/issues/1549)
+
 ## [2.11.0](https://github.com/SilentVoid13/Templater/compare/2.10.0...2.11.0) (2025-03-21)
 
 
