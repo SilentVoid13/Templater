@@ -24,6 +24,10 @@ declare module "obsidian" {
             name: "templater:all-templates-executed",
             callback: () => unknown
         ): EventRef;
+        onLayoutReadyCallbacks?: {
+            pluginId: string;
+            callback: () => void;
+        }[];
     }
 
     interface EventRef {

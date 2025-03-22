@@ -20,9 +20,21 @@ export default class EventHandler {
     ) {}
 
     setup(): void {
-        this.plugin.app.workspace.onLayoutReady(() => {
-            this.update_trigger_file_on_creation();
-        });
+        if (Array.isArray(this.plugin.app.workspace.onLayoutReadyCallbacks)) {
+            // Use onLayoutReadyCallbacks instead of onLayoutReady
+            // to ensure that the event is registered before core plugin events (e.g. daily notes autorun)
+            this.plugin.app.workspace.onLayoutReadyCallbacks.push({
+                pluginId: this.plugin.manifest.id,
+                callback: () => {
+                    this.update_trigger_file_on_creation();
+                },
+            });
+        } else {
+            // Fallback to onLayoutReady if onLayoutReadyCallbacks is not available
+            this.plugin.app.workspace.onLayoutReady(() => {
+                this.update_trigger_file_on_creation();
+            });
+        }
         this.update_syntax_highlighting();
         this.update_file_menu();
     }
