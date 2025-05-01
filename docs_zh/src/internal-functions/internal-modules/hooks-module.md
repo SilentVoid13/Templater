@@ -8,20 +8,13 @@ Hooks模块允许您在特定事件发生时注册回调函数。
 
 函数文档使用特定语法。更多信息[在此](../../syntax.md#函数文档语法)。
 
+### `tp.hooks.on_all_templates_executed(callback)` 
 
-{%- for key, fn in tp.hooks.functions %}
-### `{{ fn.definition }}` 
+当当前活动文件中的所有模板都已执行完毕时调用。
 
-{{ fn.description }}
-
-{% if fn.args %}
 ##### 参数
 
-{% for arg in fn.args %}
-- `{{ arg.name }}`: {{ arg.description }}
-{% endfor %}
-{% endif %}
-{%- endfor %}
+- `callback`: 在所有模板执行完毕后要调用的回调函数。
 
 ## 示例
 

@@ -2,8 +2,6 @@
 
 这个模块允许您访问当前文件的frontmatter变量。
 
-{{ tp.frontmatter.description }}
-
 <!-- toc -->
 
 ## 文档
@@ -51,3 +49,4 @@ categories:
 ```
 <% tp.frontmatter.categories.map(prop => `  - "${prop}"`).join("\n") %>
 ```
+`

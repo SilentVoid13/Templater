@@ -1,6 +1,6 @@
 # App模块
 
-{{ tp.app.description }}
+App模块提供对Obsidian App对象的访问，允许您使用Obsidian的核心功能。
 
 这主要在编写脚本时有用。
 

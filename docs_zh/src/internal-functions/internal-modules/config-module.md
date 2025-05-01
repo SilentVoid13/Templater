@@ -6,24 +6,18 @@ Config模块允许您访问和更新Templater的配置设置。
 
 ## 文档
 
-{%- for key, fn in tp.config.functions %}
-### `{{ fn.definition }}` 
+### `tp.config.active_file_template` 
 
-{{ fn.description }}
+获取当前活动文件模板的相对路径。
 
-{% if fn.args %}
-##### 参数
+### `tp.config.template_file` 
 
-{% for arg in fn.args %}
-- `{{ arg.name }}`: {{ arg.description }}
-{% endfor %}
-{% endif %}
+获取当前执行模板文件的相对路径。
 
-{% if fn.example %}
-##### 示例
+### `tp.config.target_file` 
 
-```
-{{ fn.example }}
-```
-{% endif %}
-{%- endfor %}
+获取目标文件的相对路径（模板将应用到该文件）。
+
+### `tp.config.tR` 
+
+检索与当前上下文相关的模板结果对象（tR）。
