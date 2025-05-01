@@ -8,7 +8,7 @@
 
 ## 文档
 
-查看完整的[文档](https://silentvoid13.github.io/Templater/)（[中文版](https://templater.sskao.cn)）开始使用 [Templater](https://github.com/SilentVoid13/Templater)。
+查看完整的[文档](https://silentvoid13.github.io/Templater/)（[中文版](./docs_zh/src/introduction.md)）开始使用 [Templater](https://github.com/SilentVoid13/Templater)。
 
 ## 警告
 
