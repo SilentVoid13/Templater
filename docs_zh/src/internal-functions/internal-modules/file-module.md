@@ -1,6 +1,6 @@
 # File模块
 
-{{ tp.file.description }}
+File模块包含与当前文件和文件系统相关的函数和属性。
 
 <!-- toc -->
 

@@ -1,6 +1,6 @@
 # Date模块
 
-{{ tp.date.description }}
+日期模块包含与日期和时间相关的函数。
 
 <!-- toc -->
 

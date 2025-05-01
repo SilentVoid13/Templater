@@ -1,6 +1,6 @@
 # Obsidian模块
 
-{{ tp.obsidian.description }}
+Obsidian模块提供对Obsidian API的访问，允许您使用Obsidian的内部功能。
 
 这主要在编写脚本时有用。
 

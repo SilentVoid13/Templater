@@ -91,3 +91,6 @@ tp.date.now(format?: string = "YYYY-MM-DD", offset?: number|string, reference?: 
 
 - `tp.date.now(format: string = "YYYY-MM-DD")`
 - `tp.date.now(format: string = "YYYY-MM-DD", offset?: 0)`
+- `tp.date.now(format = "YYYY-MM-DD")`
+- `tp.date.now(offset: 7)`
+- `tp.date.now(tp.file.title)`

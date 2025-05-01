@@ -1,6 +1,6 @@
 # Web模块
 
-{{ tp.web.description }}
+Web模块提供与网络资源交互的功能，允许您获取网页内容或生成URL。
 
 <!-- toc -->
 

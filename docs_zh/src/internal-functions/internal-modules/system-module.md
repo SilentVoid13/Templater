@@ -1,6 +1,6 @@
 # System模块
 
-{{ tp.system.description }}
+System模块包含与系统交互相关的函数，例如复制到剪贴板、显示提示或创建建议器。
 
 <!-- toc -->
 

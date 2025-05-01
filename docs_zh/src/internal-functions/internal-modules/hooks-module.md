@@ -1,6 +1,6 @@
 # Hooks模块
 
-{{ tp.hooks.description }}
+Hooks模块允许您在特定事件发生时注册回调函数。
 
 <!-- toc -->
 

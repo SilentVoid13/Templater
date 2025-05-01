@@ -1,6 +1,6 @@
 # Config模块
 
-{{ tp.config.description }}
+Config模块允许您访问和更新Templater的配置设置。
 
 <!-- toc -->
 
