@@ -262,6 +262,10 @@ export class Templater {
         if (active_editor.file) {
             await this.plugin.app.vault.append(active_editor.file, "");
         }
+        // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+        if (active_view) {
+            await active_view.save();
+        }
         this.plugin.app.workspace.trigger("templater:template-appended", {
             view: active_view,
             editor: active_editor,
