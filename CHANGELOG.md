@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.3](https://github.com/SilentVoid13/Templater/compare/2.11.2...2.11.3) (2025-05-31)
+
+
+### Bug Fixes
+
+* Properties not rendering when inserted into active file ([ada5321](https://github.com/SilentVoid13/Templater/commit/ada53215ae4610b290516a534c301428778b8b38)), closes [#1569](https://github.com/SilentVoid13/Templater/issues/1569)
+
 ### [2.11.2](https://github.com/SilentVoid13/Templater/compare/2.11.1...2.11.2) (2025-05-31)
 
 
