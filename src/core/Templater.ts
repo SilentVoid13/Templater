@@ -258,12 +258,11 @@ export class Templater {
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
         doc.replaceSelection(output_content);
-        // Refresh editor to ensure properties widget shows after inserting template in blank file
-        if (active_editor.file) {
-            await this.plugin.app.vault.append(active_editor.file, "");
-        }
-        // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
         if (active_view) {
+            // Wait for view to finish rendering properties widget
+            await delay(100);
+            // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+            // https://github.com/SilentVoid13/Templater/issues/1569
             await active_view.save();
         }
         this.plugin.app.workspace.trigger("templater:template-appended", {

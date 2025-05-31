@@ -216,12 +216,12 @@ export default class TestTemplaterPlugin extends Plugin {
         }
     }
 
-    async run_in_new_leaf(
+    async run_in_new_leaf_and_get_output(
         template_content: string,
         target_content = "",
         waitCache = false,
         skip_modify = false
-    ): Promise<void> {
+    ): Promise<string> {
         await this.app.vault.modify(this.template_file, template_content);
         if (!skip_modify) {
             await this.app.vault.modify(this.target_file, target_content);
@@ -237,5 +237,8 @@ export default class TestTemplaterPlugin extends Plugin {
         );
 
         await delay(300);
+
+        const content = await this.app.vault.read(this.target_file);
+        return content;
     }
 }

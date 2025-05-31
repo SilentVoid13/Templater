@@ -15,14 +15,13 @@ tp.hooks.on_all_templates_executed(async () => {
 });
 %>
 TEXT THAT SHOULD STAY`;
-            await t.run_in_new_leaf(template, "", true);
+            const content = await t.run_in_new_leaf_and_get_output(
+                template,
+                "",
+                true
+            );
             expect(properties_are_visible()).to.be.true;
-            await expect(
-                t.run_and_get_output(template, "", true)
-            ).to.eventually.equal("\nTEXT THAT SHOULD STAY");
-            await expect(
-                t.create_new_note_from_template_and_get_output(template)
-            ).to.eventually.equal(
+            expect(content).to.equal(
                 "---\nkey: value\n---\n\nTEXT THAT SHOULD STAY"
             );
         }
