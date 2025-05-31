@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.11.2](https://github.com/SilentVoid13/Templater/compare/2.11.1...2.11.2) (2025-05-31)
+
+
+### Bug Fixes
+
+* Unexpected behavior when using hooks.on_all_templates_executed to edit front matter on a blank file ([817b223](https://github.com/SilentVoid13/Templater/commit/817b223c35d923ec043250334252b01e37f141d8)), closes [#1569](https://github.com/SilentVoid13/Templater/issues/1569)
+
 ### [2.11.1](https://github.com/SilentVoid13/Templater/compare/2.11.0...2.11.1) (2025-03-22)
 
 
