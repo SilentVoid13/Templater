@@ -63,13 +63,15 @@ export class InternalModuleFile extends InternalModule {
         template: TFile | string,
         filename: string,
         open_new: boolean,
-        folder?: TFolder | string
+        folder?: TFolder | string,
+        extension?: string
     ) => Promise<TFile | undefined> {
         return async (
             template: TFile | string,
             filename: string,
             open_new = false,
-            folder?: TFolder | string
+            folder?: TFolder | string,
+            extension?: string
         ) => {
             this.create_new_depth += 1;
             if (this.create_new_depth > DEPTH_LIMIT) {
@@ -84,7 +86,8 @@ export class InternalModuleFile extends InternalModule {
                     template,
                     folder,
                     filename,
-                    open_new
+                    open_new,
+                    extension
                 );
 
             this.create_new_depth -= 1;
