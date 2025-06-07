@@ -54,6 +54,10 @@ export default class TemplaterPlugin extends Plugin {
         });
     }
 
+    async onExternalSettingsChange() {
+        await this.load_settings();
+    }
+
     onunload(): void {
         // Failsafe in case teardown doesn't happen immediately after template execution
         this.templater.functions_generator.teardown();
