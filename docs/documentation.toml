@@ -209,7 +209,7 @@ description = "Whether to open or not the newly created file. Warning: if you us
 
 [[tp.file.functions.create_new.args]]
 name = "folder"
-description = """The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `"PATH/TO/FOLDERNAME"` or `app.vault.getAbstractFileByPath(\"PATH/TO/FOLDERNAME\")`."""
+description = """The folder to put the new file in, defaults to Obsidian's default location. If you want the file to appear in a different folder, specify it with `"PATH/TO/FOLDERNAME"` or `tp.app.vault.getAbstractFileByPath(\"PATH/TO/FOLDERNAME\")`."""
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation"
@@ -233,7 +233,7 @@ example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, 
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation in specified folder with TFolder"
-example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, app.vault.getAbstractFileByPath("MyFolder")) %>"""
+example = """<%* await tp.file.create_new("MyFileContent", "MyFilename", false, tp.app.vault.getAbstractFileByPath("MyFolder")) %>"""
 
 [[tp.file.functions.create_new.examples]]
 name = "File creation and append link to current note"
@@ -587,11 +587,11 @@ example = """<% await tp.system.suggester((item) => item, ["Happy", "Sad", "Conf
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester for files"
-example = """[[<% (await tp.system.suggester((item) => item.basename, app.vault.getMarkdownFiles())).basename %>]]"""
+example = """[[<% (await tp.system.suggester((item) => item.basename, tp.app.vault.getMarkdownFiles())).basename %>]]"""
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester for tags"
-example = """<% await tp.system.suggester(item => item, Object.keys(app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
+example = """<% await tp.system.suggester(item => item, Object.keys(tp.app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
 
 [[tp.system.functions.suggester.examples]]
 name = "Reuse value from suggester"
