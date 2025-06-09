@@ -397,11 +397,11 @@ description = "The file to move, defaults to the current file."
 
 [[tp.file.functions.move.examples]]
 name = "File move"
-example = """<% await tp.file.move("/A/B/" + tp.file.title) %>"""
+example = """<%* await tp.file.move("/A/B/" + tp.file.title) %>"""
 
 [[tp.file.functions.move.examples]]
 name = "File move and rename"
-example = """<% await tp.file.move("/A/B/NewTitle") %>"""
+example = """<%* await tp.file.move("/A/B/NewTitle") %>"""
 
 [tp.file.functions.path]
 name = "path"
@@ -431,11 +431,11 @@ description = "The new file title."
 
 [[tp.file.functions.rename.examples]]
 name = "File rename"
-example = """<% await tp.file.rename("MyNewName") %>"""
+example = """<%* await tp.file.rename("MyNewName") %>"""
 
 [[tp.file.functions.rename.examples]]
 name = "File append a 2 to the file name"
-example = """<% await tp.file.rename(tp.file.title + "2") %>"""
+example = """<%* await tp.file.rename(tp.file.title + "2") %>"""
 
 [tp.file.functions.selection]
 name = "selection"
