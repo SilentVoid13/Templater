@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.12.0](https://github.com/SilentVoid13/Templater/compare/2.11.3...2.12.0) (2025-06-09)
+
+
+### Features
+
+* Reload plugin settings when data.json modified externally ([0189777](https://github.com/SilentVoid13/Templater/commit/0189777ffd6018a25e2b3f1e94c494c847855c25)), closes [#1585](https://github.com/SilentVoid13/Templater/issues/1585)
+
 ### [2.11.3](https://github.com/SilentVoid13/Templater/compare/2.11.2...2.11.3) (2025-05-31)
 
 
