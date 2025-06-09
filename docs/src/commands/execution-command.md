@@ -22,6 +22,32 @@ This means that, to output something from a JS execution command, you just need 
 
 For example, the following command: `<%* tR += "test" %>` will output `test`.
 
+You can also overwrite `tR` to ignore everything our templating engine has generated up to that point. This can be useful if you want to have frontmatter or other information in your template that you don't want to be inserted when your template is applied.
+
+For example, the following template:
+
+```
+---
+type: template
+---
+This is a person template.
+
+<%* tR = "" -%>
+---
+type: person
+---
+# <% tp.file.cursor() %>
+```
+
+will output:
+
+```
+---
+type: person
+---
+# 
+```
+
 ### Suggesters and Prompts
 
 It is important to note that the `tp.system.prompt()` and `tp.system.suggester()` both require a `await` statement to save the value to a variable
