@@ -351,19 +351,19 @@ description = """The link to the file to include, e.g. `"[[MyFile]]"`, or a TFil
 
 [[tp.file.functions.include.examples]]
 name = "File include"
-example = """<% tp.file.include("[[Template1]]") %>"""
+example = """<% await tp.file.include("[[Template1]]") %>"""
 
 [[tp.file.functions.include.examples]]
 name = "File include TFile"
-example = """<% tp.file.include(tp.file.find_tfile("MyFile")) %>"""
+example = """<% await tp.file.include(tp.file.find_tfile("MyFile")) %>"""
 
 [[tp.file.functions.include.examples]]
 name = "File include section"
-example = """<% tp.file.include("[[MyFile#Section1]]") %>"""
+example = """<% await tp.file.include("[[MyFile#Section1]]") %>"""
 
 [[tp.file.functions.include.examples]]
 name = "File include block"
-example = """<% tp.file.include("[[MyFile#^block1]]") %>"""
+example = """<% await tp.file.include("[[MyFile#^block1]]") %>"""
 
 [tp.file.functions.last_modified_date]
 name = "last_modified_date"
@@ -534,15 +534,23 @@ description = "If set to `true`, the input field will be a multiline textarea. D
 
 [[tp.system.functions.prompt.examples]]
 name = "Prompt"
-example = """<% tp.system.prompt("Please enter a value") %>"""
+example = """<% await tp.system.prompt("Please enter a value") %>"""
 
 [[tp.system.functions.prompt.examples]]
 name = "Prompt with default value"
-example = """<% tp.system.prompt("What is your mood today?", "happy") %>"""
+example = """<% await tp.system.prompt("What is your mood today?", "happy") %>"""
 
 [[tp.system.functions.prompt.examples]]
 name = "Multiline prompt"
-example = """<% tp.system.prompt("What is your mood today?", null, false, true) %>"""
+example = """<% await tp.system.prompt("What is your mood today?", null, false, true) %>"""
+
+[[tp.system.functions.prompt.examples]]
+name = "Reuse output from prompt"
+example = """<%*
+let value = await tp.system.prompt("Please enter a value");
+%>
+# <% value %>
+selected value: <% value %>"""
 
 [tp.system.functions.suggester]
 name = "suggester"
@@ -571,11 +579,11 @@ description = "Limit the number of items rendered at once (useful to improve per
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester"
-example = """<% tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>"""
+example = """<% await tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>"""
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester with mapping function (same as above example)"
-example = """<% tp.system.suggester((item) => item, ["Happy", "Sad", "Confused"]) %>"""
+example = """<% await tp.system.suggester((item) => item, ["Happy", "Sad", "Confused"]) %>"""
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester for files"
@@ -583,7 +591,15 @@ example = """[[<% (await tp.system.suggester((item) => item.basename, app.vault.
 
 [[tp.system.functions.suggester.examples]]
 name = "Suggester for tags"
-example = """<% tp.system.suggester(item => item, Object.keys(app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
+example = """<% await tp.system.suggester(item => item, Object.keys(app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
+
+[[tp.system.functions.suggester.examples]]
+name = "Reuse value from suggester"
+example = """<%*
+let selectedValue = await tp.system.suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]);
+%>
+# <% selectedValue %>
+selected value: <% selectedValue %>"""
 
 [tp.web]
 name = "web"
@@ -596,7 +612,7 @@ definition = "tp.web.daily_quote()"
 
 [[tp.web.functions.daily_quote.examples]]
 name = "Daily quote"
-example = "<% tp.web.daily_quote() %>"
+example = "<% await tp.web.daily_quote() %>"
 
 [tp.web.functions.random_picture]
 name = "random_picture"
@@ -617,15 +633,15 @@ description = "Optional argument to include the specified size in the image link
 
 [[tp.web.functions.random_picture.examples]]
 name = "Random picture"
-example = "<% tp.web.random_picture() %>"
+example = "<% await tp.web.random_picture() %>"
 
 [[tp.web.functions.random_picture.examples]]
 name = "Random picture with size"
-example = """<% tp.web.random_picture("200x200") %>"""
+example = """<% await tp.web.random_picture("200x200") %>"""
 
 [[tp.web.functions.random_picture.examples]]
 name = "Random picture with size and query"
-example = """<% tp.web.random_picture("200x200", "landscape,water") %>"""
+example = """<% await tp.web.random_picture("200x200", "landscape,water") %>"""
 
 [tp.web.functions.request]
 name = "request"
@@ -642,10 +658,10 @@ description = "A path within the response JSON to extract specific data."
 
 [[tp.web.functions.request.examples]]
 name = "Simple request"
-example = """<% tp.web.request("https://jsonplaceholder.typicode.com/todos/1") %>"""
+example = """<% await tp.web.request("https://jsonplaceholder.typicode.com/todos/1") %>"""
 
 [[tp.web.functions.request.examples]]
 name = "Request with path"
-example = """<% tp.web.request("https://jsonplaceholder.typicode.com/todos", "0.title") %>"""
+example = """<% await tp.web.request("https://jsonplaceholder.typicode.com/todos", "0.title") %>"""
 
 
