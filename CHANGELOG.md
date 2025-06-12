@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.12.1](https://github.com/SilentVoid13/Templater/compare/2.12.0...2.12.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* Templater not triggering on daily note creation on startup ([63cc859](https://github.com/SilentVoid13/Templater/commit/63cc859e50f4e6cba26489bf7e401762a4b1b7f0)), closes [#1588](https://github.com/SilentVoid13/Templater/issues/1588)
+
 ## [2.12.0](https://github.com/SilentVoid13/Templater/compare/2.11.3...2.12.0) (2025-06-09)
 
 
