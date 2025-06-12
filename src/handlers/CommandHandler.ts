@@ -93,7 +93,7 @@ export class CommandHandler {
         if (new_template) {
             this.plugin.addCommand({
                 id: new_template,
-                name: `Insert ${new_template}`,
+                name: `Insert ${new_template.split(/\/|\./).slice(-2,-1)}`,
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
@@ -110,7 +110,7 @@ export class CommandHandler {
             });
             this.plugin.addCommand({
                 id: `create-${new_template}`,
-                name: `Create ${new_template}`,
+                name: `Create ${new_template.split(/\/|\./).slice(-2,-1)}`,
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
