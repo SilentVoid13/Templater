@@ -23,7 +23,7 @@ export default class EventHandler {
         if (Array.isArray(this.plugin.app.workspace.onLayoutReadyCallbacks)) {
             // Use onLayoutReadyCallbacks instead of onLayoutReady
             // to ensure that the event is registered before core plugin events (e.g. daily notes autorun)
-            this.plugin.app.workspace.onLayoutReadyCallbacks.push({
+            this.plugin.app.workspace.onLayoutReadyCallbacks.unshift({
                 pluginId: this.plugin.manifest.id,
                 callback: () => {
                     this.update_trigger_file_on_creation();
