@@ -2,6 +2,7 @@ import TemplaterPlugin from "main";
 import { Platform } from "obsidian";
 import { errorWrapperSync } from "utils/Error";
 import { resolve_tfile } from "utils/Utils";
+import { Settings } from "settings/Settings";
 
 export class CommandHandler {
     constructor(private plugin: TemplaterPlugin) {}
@@ -93,7 +94,7 @@ export class CommandHandler {
         if (new_template) {
             this.plugin.addCommand({
                 id: new_template,
-                name: `Insert ${new_template.split(/\/|\./).slice(-2,-1)}`,
+                name: `Insert ${new_template.slice(Settings.templates_folder.length,-3)}`,
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
@@ -110,7 +111,7 @@ export class CommandHandler {
             });
             this.plugin.addCommand({
                 id: `create-${new_template}`,
-                name: `Create ${new_template.split(/\/|\./).slice(-2,-1)}`,
+                name: `Create ${new_template.slice(Settings.templates_folder.length,-3)}`,
                 icon: "templater-icon",
                 callback: () => {
                     const template = errorWrapperSync(
