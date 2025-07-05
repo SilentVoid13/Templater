@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.13.0](https://github.com/SilentVoid13/Templater/compare/2.12.1...2.13.0) (2025-07-05)
+
+
+### Features
+
+* Cleaner display of custom hot key in command palette ([09a85a6](https://github.com/SilentVoid13/Templater/commit/09a85a69b55d2f688a65607c9e03fd29d4031812)), closes [#1589](https://github.com/SilentVoid13/Templater/issues/1589)
+
 ### [2.12.1](https://github.com/SilentVoid13/Templater/compare/2.12.0...2.12.1) (2025-06-12)
 
 
