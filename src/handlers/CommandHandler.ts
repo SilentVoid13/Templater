@@ -96,7 +96,7 @@ export class CommandHandler {
                 -3
             );
             this.plugin.addCommand({
-                id: new_template_name,
+                id: new_template,
                 name: `Insert ${new_template_name}`,
                 icon: "templater-icon",
                 callback: () => {
@@ -113,7 +113,7 @@ export class CommandHandler {
                 },
             });
             this.plugin.addCommand({
-                id: `create-${new_template_name}`,
+                id: `create-${new_template}`,
                 name: `Create ${new_template_name}`,
                 icon: "templater-icon",
                 callback: () => {
