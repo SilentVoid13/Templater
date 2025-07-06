@@ -223,7 +223,7 @@ export class InternalModuleFile extends InternalModule {
                     );
                 const front_matter_info = getFrontMatterInfo(parsed_content);
                 const frontmatter = yaml.load(front_matter_info.frontmatter);
-                merge_front_matter(this.plugin.app, active_file, frontmatter);
+                await merge_front_matter(this.plugin.app, active_file, frontmatter);
 
                 this.include_depth -= 1;
                 return parsed_content.slice(front_matter_info.contentStart);
