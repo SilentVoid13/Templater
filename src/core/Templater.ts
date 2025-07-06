@@ -257,10 +257,20 @@ export class Templater {
             return;
         }
 
+        const front_matter_info = getFrontMatterInfo(output_content);
+        const frontmatter = yaml.load(front_matter_info.frontmatter);
+        await merge_front_matter(
+            this.plugin.app,
+            active_editor.file,
+            frontmatter
+        );
+
         const editor = active_editor.editor;
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
-        doc.replaceSelection(output_content);
+        doc.replaceSelection(
+            output_content.slice(front_matter_info.contentStart)
+        );
         if (active_view) {
             // Wait for view to finish rendering properties widget
             await delay(100);
