@@ -491,10 +491,7 @@ export class Templater {
             return;
         }
 
-        if (
-            file.stat.size == 0 &&
-            templater.plugin.settings.enable_folder_templates
-        ) {
+        if (templater.plugin.settings.enable_folder_templates) {
             const folder_template_match =
                 templater.get_new_file_template_for_folder(file.parent);
             if (!folder_template_match) {
@@ -511,10 +508,7 @@ export class Templater {
                 return;
             }
             await templater.write_template_to_file(template_file, file);
-        } else if (
-            file.stat.size == 0 &&
-            templater.plugin.settings.enable_file_templates
-        ) {
+        } else if (templater.plugin.settings.enable_file_templates) {
             const file_template_match =
                 templater.get_new_file_template_for_file(file);
             if (!file_template_match) {
