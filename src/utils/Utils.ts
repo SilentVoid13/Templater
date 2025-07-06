@@ -5,6 +5,7 @@ import { TJDocFile, TJDocFileArgument } from "./TJDocFile";
 import { TemplaterError } from "./Error";
 import {
     App,
+    FrontMatterInfo,
     normalizePath,
     TAbstractFile,
     TFile,
@@ -80,23 +81,21 @@ export async function populate_docs_from_user_scripts(
     app: App,
     files: Array<TFile>
 ): Promise<TJDocFile[]> {
-    const docFiles = await Promise.all(files.map(async file => {
+    const docFiles = await Promise.all(
+        files.map(async (file) => {
             // Get file contents
-            const content = await app.vault.cachedRead(file)
-            
+            const content = await app.vault.cachedRead(file);
+
             const newDocFile = generate_jsdoc(file, content);
-            
+
             return newDocFile;
-        }
-    ));
+        })
+    );
 
     return docFiles;
 }
 
-function generate_jsdoc(
-    file: TFile,
-    content: string
-): TJDocFile{
+function generate_jsdoc(file: TFile, content: string): TJDocFile {
     // Parse the content
     const tsdocParser = new TSDocParser();
     const parsedDoc = tsdocParser.parseString(content);
@@ -104,39 +103,44 @@ function generate_jsdoc(
     // Copy and extract information into the TJDocFile
     const newDocFile = new TJDocFile(file);
 
-    newDocFile.description = generate_jsdoc_description(parsedDoc.docComment.summarySection);
-    newDocFile.returns = generate_jsdoc_return(parsedDoc.docComment.returnsBlock);
-    newDocFile.arguments = generate_jsdoc_arguments(parsedDoc.docComment.params);
+    newDocFile.description = generate_jsdoc_description(
+        parsedDoc.docComment.summarySection
+    );
+    newDocFile.returns = generate_jsdoc_return(
+        parsedDoc.docComment.returnsBlock
+    );
+    newDocFile.arguments = generate_jsdoc_arguments(
+        parsedDoc.docComment.params
+    );
 
-    return newDocFile
+    return newDocFile;
 }
 
-function generate_jsdoc_description(
-    summarySection: DocSection
-) : string {
+function generate_jsdoc_description(summarySection: DocSection): string {
     try {
-        const description = summarySection.nodes.map((node: DocNode) => 
-            node.getChildNodes()
+        const description = summarySection.nodes.map((node: DocNode) =>
+            node
+                .getChildNodes()
                 .filter((node: DocNode) => node instanceof DocPlainText)
                 .map((x: DocPlainText) => x.text)
                 .join("\n")
         );
-    
-        return description.join("\n");   
+
+        return description.join("\n");
     } catch (error) {
-        console.error('Failed to parse sumamry section');
+        console.error("Failed to parse sumamry section");
         throw error;
     }
 }
 
-function generate_jsdoc_return(
-    returnSection : DocBlock | undefined
-): string {
+function generate_jsdoc_return(returnSection: DocBlock | undefined): string {
     if (!returnSection) return "";
 
     try {
-        const returnValue = returnSection.content.nodes[0].getChildNodes()[0].text.trim();
-        return returnValue;   
+        const returnValue = returnSection.content.nodes[0]
+            .getChildNodes()[0]
+            .text.trim();
+        return returnValue;
     } catch (error) {
         return "";
     }
@@ -144,18 +148,21 @@ function generate_jsdoc_return(
 
 function generate_jsdoc_arguments(
     paramSection: DocParamCollection
-) : TJDocFileArgument[] {
+): TJDocFileArgument[] {
     try {
         const blocks = paramSection.blocks;
         const args = blocks.map((block) => {
-                const name = block.parameterName;
-                const description = block.content.getChildNodes()[0].getChildNodes()
-                                                    .filter(x => x instanceof DocPlainText)
-                                                    .map(x => x.text).join(" ")
-                return new TJDocFileArgument(name, description);
-            })
+            const name = block.parameterName;
+            const description = block.content
+                .getChildNodes()[0]
+                .getChildNodes()
+                .filter((x) => x instanceof DocPlainText)
+                .map((x) => x.text)
+                .join(" ");
+            return new TJDocFileArgument(name, description);
+        });
 
-        return args;   
+        return args;
     } catch (error) {
         return [];
     }
@@ -212,17 +219,109 @@ export function get_fn_params(func: (...args: unknown[]) => unknown) {
  */
 export function append_bolded_label_with_value_to_parent(
     parent: HTMLElement,
-     title: string,
-     value: string
-): HTMLElement{
-    const tag = parent instanceof HTMLOListElement ? "li" : "p";  
+    title: string,
+    value: string
+): HTMLElement {
+    const tag = parent instanceof HTMLOListElement ? "li" : "p";
 
     const para = parent.createEl(tag);
-    const bold = parent.createEl('b', {text: title});
+    const bold = parent.createEl("b", { text: title });
     para.appendChild(bold);
-    para.appendChild(document.createTextNode(`: ${value}`))
+    para.appendChild(document.createTextNode(`: ${value}`));
 
     // Returns a p or li element
     // Resulting in <b>Title</b>: value
     return para;
 }
+
+export async function merge_front_matter(
+    app: App,
+    file: TFile | null,
+    properties: Record<string, unknown>
+): Promise<void> {
+    if (!file) {
+        return;
+    }
+    try {
+        await Promise.all(
+            Object.keys(properties).map(async (prop) => {
+                const value = properties[prop];
+                if (app.metadataCache.getFileCache(file)?.frontmatter == null) {
+                    console.log("Frontmatter is empty");
+                    await app.fileManager.processFrontMatter(
+                        file,
+                        (frontmatter) => {
+                            console.log(
+                                `adding new property: ${prop} to ${file.basename} with value: ${value}`
+                            );
+                            frontmatter[prop] = value;
+                        }
+                    );
+                } else if (
+                    app.metadataCache
+                        .getFileCache(file)
+                        ?.frontmatter?.hasOwnProperty(prop)
+                ) {
+                    console.log(`${file.basename} contains property: ${prop}`);
+                    const originalValue = app.metadataCache.getFileCache(file)
+                        ?.frontmatter
+                        ? [prop]
+                        : null;
+                    if (Array.isArray(originalValue) && value != null) {
+                        console.log(`${prop} is an array`);
+                        await app.fileManager.processFrontMatter(
+                            file,
+                            (frontmatter) => {
+                                if (Array.isArray(value)) {
+                                    for (let i = 0; i < value.length; i++) {
+                                        console.log(
+                                            `adding ${value[i]} to ${prop} in ${file.basename}`
+                                        );
+                                        if (
+                                            !frontmatter[prop].includes(
+                                                value[i]
+                                            )
+                                        ) {
+                                            frontmatter[prop].push(value[i]);
+                                        }
+                                    }
+                                } else {
+                                    console.log(
+                                        `adding ${value} to ${prop} in ${file.basename}`
+                                    );
+                                    if (!frontmatter[prop].includes(value)) {
+                                        frontmatter[prop].push(value);
+                                    }
+                                }
+                            }
+                        );
+                    } else if (originalValue !== value && value != null) {
+                        console.log(
+                            `updating property: ${prop} in ${file.basename} from ${originalValue} to ${value}`
+                        );
+                        await app.fileManager.processFrontMatter(
+                            file,
+                            (frontmatter) => {
+                                frontmatter[prop] = value;
+                            }
+                        );
+                    }
+                } else {
+                    console.log(`${file.basename} doesn't contain ${prop}`);
+                    console.log(
+                        `adding property: ${prop} to ${file.basename} with value: ${value}`
+                    );
+                    await app.fileManager.processFrontMatter(
+                        file,
+                        (frontmatter) => {
+                            frontmatter[prop] = value;
+                        }
+                    );
+                }
+            })
+        );
+    } catch (error) {
+        console.error("Error in processing frontmatter: ", error);
+    }
+}
+  
