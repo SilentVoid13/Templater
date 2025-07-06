@@ -14,6 +14,7 @@ import {
     get_active_file,
     get_folder_path_from_file_path,
     resolve_tfile,
+    merge_front_matter,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
 import {
@@ -23,6 +24,7 @@ import {
 import { errorWrapper, errorWrapperSync, TemplaterError } from "utils/Error";
 import { Parser } from "./parser/Parser";
 import { log_error } from "utils/Log";
+import * as yaml from "js-yaml";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -294,7 +296,7 @@ export class Templater {
             file,
             RunMode.OverwriteFile
         );
-        const output_content = await errorWrapper(
+        let output_content = await errorWrapper(
             async () => this.read_and_parse_template(running_config),
             "Template parsing error, aborting."
         );
@@ -303,7 +305,29 @@ export class Templater {
             await this.end_templater_task(path);
             return;
         }
-        await this.plugin.app.vault.modify(file, output_content);
+
+        let existing_front_matter = null;
+        await this.plugin.app.fileManager.processFrontMatter(
+            file,
+            (front_matter) => {
+                existing_front_matter = front_matter;
+            }
+        );
+
+        const front_matter_info = getFrontMatterInfo(output_content);
+        const frontmatter = yaml.load(front_matter_info.frontmatter);
+
+        if (existing_front_matter) {
+            // Bases can create frontmatter, merge this into the template frontmatter
+            await merge_front_matter(this.plugin.app, file, frontmatter);
+            await this.plugin.app.vault.append(
+                file,
+                output_content.slice(front_matter_info.contentStart)
+            );
+            output_content = await this.plugin.app.vault.read(file);
+        } else {
+            await this.plugin.app.vault.modify(file, output_content);
+        }
         // Set cursor to first line of editor (below properties)
         // https://github.com/SilentVoid13/Templater/issues/1231
         if (
