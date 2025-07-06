@@ -214,16 +214,6 @@ export class InternalModuleFile extends InternalModule {
             }
 
             const active_file = this.plugin.app.workspace.getActiveFile();
-            let existing_front_matter = null;
-            if (active_file) {
-                await this.plugin.app.fileManager.processFrontMatter(
-                    active_file,
-                    (front_matter) => {
-                        existing_front_matter = front_matter;
-                    }
-                );
-            }
-            console.log(existing_front_matter);
 
             try {
                 const parsed_content =

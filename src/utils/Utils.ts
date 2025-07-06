@@ -263,15 +263,24 @@ export async function merge_front_matter(
                         ?.frontmatter?.hasOwnProperty(prop)
                 ) {
                     console.log(`${file.basename} contains property: ${prop}`);
-                    const originalValue = app.metadataCache.getFileCache(file)
-                        ?.frontmatter
-                        ? [prop]
-                        : null;
-                    if (Array.isArray(originalValue) && value != null) {
+                    const originalValue =
+                        app.metadataCache.getFileCache(file)?.frontmatter?.[
+                            prop
+                        ];
+                    if (
+                        value != null &&
+                        (Array.isArray(originalValue) || Array.isArray(value))
+                    ) {
                         console.log(`${prop} is an array`);
                         await app.fileManager.processFrontMatter(
                             file,
                             (frontmatter) => {
+                                if (!Array.isArray(originalValue)) {
+                                    console.log(
+                                        `converting ${prop} to an array in ${file.basename}`
+                                    );
+                                    frontmatter[prop] = [originalValue];
+                                }
                                 if (Array.isArray(value)) {
                                     for (let i = 0; i < value.length; i++) {
                                         console.log(
