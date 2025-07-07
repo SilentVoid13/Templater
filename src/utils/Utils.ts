@@ -246,68 +246,87 @@ export async function merge_front_matter(
     file: TFile | null,
     properties: Record<string, unknown>
 ): Promise<void> {
-    if (!file) {
+    if (!file || !is_object(properties)) {
         return;
     }
     try {
-        for (const prop of Object.keys(properties)) {
-            const value = properties[prop];
-            if (app.metadataCache.getFileCache(file)?.frontmatter == null) {
-                console.log("Frontmatter is empty");
-                await app.fileManager.processFrontMatter(
-                    file,
-                    (frontmatter) => {
-                        console.log(
-                            `adding new property: ${prop} to ${file.basename} with value: ${value}`
-                        );
-                        frontmatter[prop] = value;
-                    }
-                );
-            } else if (
-                app.metadataCache
-                    .getFileCache(file)
-                    ?.frontmatter?.hasOwnProperty(prop)
-            ) {
-                console.log(`${file.basename} contains property: ${prop}`);
-                const originalValue =
-                    app.metadataCache.getFileCache(file)?.frontmatter?.[prop];
-                if (
-                    value != null &&
-                    (Array.isArray(originalValue) || Array.isArray(value))
-                ) {
-                    console.log(`${prop} is an array`);
+        await Promise.all(
+            Object.keys(properties).map(async (prop) => {
+                const value = properties[prop];
+                if (app.metadataCache.getFileCache(file)?.frontmatter == null) {
+                    // console.log("Frontmatter is empty");
                     await app.fileManager.processFrontMatter(
                         file,
                         (frontmatter) => {
-                            if (!Array.isArray(originalValue)) {
-                                console.log(
-                                    `converting ${prop} to an array in ${file.basename}`
-                                );
-                                frontmatter[prop] = [originalValue];
-                            }
-                            if (Array.isArray(value)) {
-                                for (let i = 0; i < value.length; i++) {
-                                    console.log(
-                                        `adding ${value[i]} to ${prop} in ${file.basename}`
-                                    );
-                                    if (!frontmatter[prop].includes(value[i])) {
-                                        frontmatter[prop].push(value[i]);
-                                    }
-                                }
-                            } else {
-                                console.log(
-                                    `adding ${value} to ${prop} in ${file.basename}`
-                                );
-                                if (!frontmatter[prop].includes(value)) {
-                                    frontmatter[prop].push(value);
-                                }
-                            }
+                            // console.log(
+                            //     `adding new property: ${prop} to ${file.basename} with value: ${value}`
+                            // );
+                            frontmatter[prop] = value;
                         }
                     );
-                } else if (originalValue !== value && value != null) {
-                    console.log(
-                        `updating property: ${prop} in ${file.basename} from ${originalValue} to ${value}`
-                    );
+                } else if (
+                    app.metadataCache
+                        .getFileCache(file)
+                        ?.frontmatter?.hasOwnProperty(prop)
+                ) {
+                    // console.log(`${file.basename} contains property: ${prop}`);
+                    const originalValue =
+                        app.metadataCache.getFileCache(file)?.frontmatter?.[
+                            prop
+                        ];
+                    if (
+                        value != null &&
+                        (Array.isArray(originalValue) || Array.isArray(value))
+                    ) {
+                        // console.log(`${prop} is an array`);
+                        await app.fileManager.processFrontMatter(
+                            file,
+                            (frontmatter) => {
+                                if (!Array.isArray(originalValue)) {
+                                    // console.log(
+                                    //     `converting ${prop} to an array in ${file.basename}`
+                                    // );
+                                    frontmatter[prop] = [originalValue];
+                                }
+                                if (Array.isArray(value)) {
+                                    for (let i = 0; i < value.length; i++) {
+                                        // console.log(
+                                        //     `adding ${value[i]} to ${prop} in ${file.basename}`
+                                        // );
+                                        if (
+                                            !frontmatter[prop].includes(
+                                                value[i]
+                                            )
+                                        ) {
+                                            frontmatter[prop].push(value[i]);
+                                        }
+                                    }
+                                } else {
+                                    // console.log(
+                                    //     `adding ${value} to ${prop} in ${file.basename}`
+                                    // );
+                                    if (!frontmatter[prop].includes(value)) {
+                                        frontmatter[prop].push(value);
+                                    }
+                                }
+                            }
+                        );
+                    } else if (originalValue !== value && value != null) {
+                        // console.log(
+                        //     `updating property: ${prop} in ${file.basename} from ${originalValue} to ${value}`
+                        // );
+                        await app.fileManager.processFrontMatter(
+                            file,
+                            (frontmatter) => {
+                                frontmatter[prop] = value;
+                            }
+                        );
+                    }
+                } else {
+                    // console.log(`${file.basename} doesn't contain ${prop}`);
+                    // console.log(
+                    //     `adding property: ${prop} to ${file.basename} with value: ${value}`
+                    // );
                     await app.fileManager.processFrontMatter(
                         file,
                         (frontmatter) => {
@@ -315,19 +334,8 @@ export async function merge_front_matter(
                         }
                     );
                 }
-            } else {
-                console.log(`${file.basename} doesn't contain ${prop}`);
-                console.log(
-                    `adding property: ${prop} to ${file.basename} with value: ${value}`
-                );
-                await app.fileManager.processFrontMatter(
-                    file,
-                    (frontmatter) => {
-                        frontmatter[prop] = value;
-                    }
-                );
-            }
-        }
+            })
+        );
     } catch (error) {
         console.error("Error in processing frontmatter: ", error);
     }
