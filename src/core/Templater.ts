@@ -317,6 +317,7 @@ export class Templater {
         }
 
         let existing_front_matter = null;
+        await delay(100); // Sometimes the front matter is not yet available if the file was just created
         await this.plugin.app.fileManager.processFrontMatter(
             file,
             (front_matter) => {
