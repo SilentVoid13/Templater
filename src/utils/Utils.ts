@@ -1,4 +1,13 @@
-import { DocBlock, DocNode, DocParamBlock, DocParamCollection, DocPlainText, DocSection, ParserContext, TSDocParser } from "@microsoft/tsdoc";
+import {
+    DocBlock,
+    DocNode,
+    DocParamBlock,
+    DocParamCollection,
+    DocPlainText,
+    DocSection,
+    ParserContext,
+    TSDocParser,
+} from "@microsoft/tsdoc";
 
 import { TJDocFile, TJDocFileArgument } from "./TJDocFile";
 
@@ -261,9 +270,7 @@ export async function merge_front_matter(
             ) {
                 console.log(`${file.basename} contains property: ${prop}`);
                 const originalValue =
-                    app.metadataCache.getFileCache(file)?.frontmatter?.[
-                        prop
-                    ];
+                    app.metadataCache.getFileCache(file)?.frontmatter?.[prop];
                 if (
                     value != null &&
                     (Array.isArray(originalValue) || Array.isArray(value))
@@ -283,11 +290,7 @@ export async function merge_front_matter(
                                     console.log(
                                         `adding ${value[i]} to ${prop} in ${file.basename}`
                                     );
-                                    if (
-                                        !frontmatter[prop].includes(
-                                            value[i]
-                                        )
-                                    ) {
+                                    if (!frontmatter[prop].includes(value[i])) {
                                         frontmatter[prop].push(value[i]);
                                     }
                                 }
@@ -313,21 +316,19 @@ export async function merge_front_matter(
                     );
                 }
             } else {
-                    console.log(`${file.basename} doesn't contain ${prop}`);
-                    console.log(
-                        `adding property: ${prop} to ${file.basename} with value: ${value}`
-                    );
-                    await app.fileManager.processFrontMatter(
-                        file,
-                        (frontmatter) => {
-                            frontmatter[prop] = value;
-                        }
-                    );
-                }
-            })
-        );
+                console.log(`${file.basename} doesn't contain ${prop}`);
+                console.log(
+                    `adding property: ${prop} to ${file.basename} with value: ${value}`
+                );
+                await app.fileManager.processFrontMatter(
+                    file,
+                    (frontmatter) => {
+                        frontmatter[prop] = value;
+                    }
+                );
+            }
+        }
     } catch (error) {
         console.error("Error in processing frontmatter: ", error);
     }
 }
-  
