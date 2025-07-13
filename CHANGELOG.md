@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.13.1](https://github.com/SilentVoid13/Templater/compare/2.13.0...2.13.1) (2025-07-13)
+
+
+### Bug Fixes
+
+* Failure to enter vim insert mode causing Templater to stop working ([61d0b9e](https://github.com/SilentVoid13/Templater/commit/61d0b9e026d3506c17c6adeac9777af2b0ccbb9d)), closes [#1598](https://github.com/SilentVoid13/Templater/issues/1598)
+* Security issue with using innerHTML ([4646c97](https://github.com/SilentVoid13/Templater/commit/4646c973e23ec3b99f63c908c663c8348a7e754a))
+
 ## [2.13.0](https://github.com/SilentVoid13/Templater/compare/2.12.1...2.13.0) (2025-07-05)
 
 
