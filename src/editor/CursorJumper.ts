@@ -40,12 +40,19 @@ export class CursorJumper {
             this.set_cursor_location(positions);
         }
 
-        // enter insert mode for vim users
-        if (this.app.vault.getConfig("vimMode")) {
-            // @ts-ignore
-            const cm = active_editor.editor.cm.cm;
-            // @ts-ignore
-            window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
+        try {
+            // enter insert mode for vim users
+            if (this.app.vault.getConfig("vimMode")) {
+                // @ts-ignore
+                const cm = active_editor.editor.cm.cm;
+                // @ts-ignore
+                window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
+            }
+        } catch (error) {
+            console.warn(
+                "Templater: Failed to enter insert mode for vim users.",
+                error
+            );
         }
     }
 
