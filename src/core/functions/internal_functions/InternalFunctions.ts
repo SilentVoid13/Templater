@@ -23,6 +23,10 @@ export class InternalFunctions implements IGenerateObject {
         this.modules_array.push(new InternalModuleConfig(this.plugin));
     }
 
+    get_config(): RunningConfig {
+        return this.modules_array[0].get_config();
+    }
+
     async init(): Promise<void> {
         for (const mod of this.modules_array) {
             await mod.init();
