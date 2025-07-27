@@ -4,6 +4,7 @@ import {
     MarkdownPostProcessorContext,
     MarkdownView,
     normalizePath,
+    stringifyYaml,
     TAbstractFile,
     TFile,
     TFolder,
@@ -14,7 +15,8 @@ import {
     get_active_file,
     get_folder_path_from_file_path,
     resolve_tfile,
-    merge_front_matter,
+    get_frontmatter_and_content,
+    merge_objects,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
 import {
@@ -24,7 +26,6 @@ import {
 import { errorWrapper, errorWrapperSync, TemplaterError } from "utils/Error";
 import { Parser } from "./parser/Parser";
 import { log_error } from "utils/Log";
-import * as yaml from "js-yaml";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -257,21 +258,23 @@ export class Templater {
             return;
         }
 
-        const front_matter_info = getFrontMatterInfo(output_content);
-        const frontmatter = yaml.load(front_matter_info.frontmatter);
-        await merge_front_matter(
-            this.plugin.app,
-            active_editor.file,
-            frontmatter
-        );
+        const { content, frontmatter } =
+            get_frontmatter_and_content(output_content);
 
         const editor = active_editor.editor;
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
-        doc.replaceSelection(
-            output_content.slice(front_matter_info.contentStart)
-        );
+        doc.replaceSelection(content);
         if (active_view) {
+            // Merge frontmatter
+            if (
+                Object.keys(frontmatter).length > 0 &&
+                active_view instanceof MarkdownView &&
+                typeof active_view.metadataEditor?.insertProperties ===
+                    "function"
+            ) {
+                active_view.metadataEditor.insertProperties(frontmatter);
+            }
             // Wait for view to finish rendering properties widget
             await delay(100);
             // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
@@ -316,29 +319,22 @@ export class Templater {
             return;
         }
 
-        let existing_front_matter = null;
-        await delay(100); // Sometimes the front matter is not yet available if the file was just created
-        await this.plugin.app.fileManager.processFrontMatter(
-            file,
-            (front_matter) => {
-                existing_front_matter = front_matter;
+        const {
+            content: output_content_body,
+            frontmatter: output_frontmatter,
+        } = get_frontmatter_and_content(output_content);
+
+        await this.plugin.app.vault.process(file, (data) => {
+            let result = "";
+            const { content, frontmatter } = get_frontmatter_and_content(data);
+            merge_objects(frontmatter, output_frontmatter);
+            if (Object.keys(frontmatter).length > 0) {
+                result += `---\n${stringifyYaml(frontmatter)}---\n`;
             }
-        );
-
-        const front_matter_info = getFrontMatterInfo(output_content);
-        const frontmatter = yaml.load(front_matter_info.frontmatter);
-
-        if (existing_front_matter) {
-            // Bases can create frontmatter, merge this into the template frontmatter
-            await merge_front_matter(this.plugin.app, file, frontmatter);
-            await this.plugin.app.vault.append(
-                file,
-                output_content.slice(front_matter_info.contentStart)
-            );
-            output_content = await this.plugin.app.vault.read(file);
-        } else {
-            await this.plugin.app.vault.modify(file, output_content);
-        }
+            result += content + output_content_body;
+            output_content = result;
+            return result;
+        });
         // Set cursor to first line of editor (below properties)
         // https://github.com/SilentVoid13/Templater/issues/1231
         if (

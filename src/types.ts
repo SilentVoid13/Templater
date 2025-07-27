@@ -48,6 +48,12 @@ declare module "obsidian" {
         from: number;
         to: number;
     }
+
+    interface MarkdownView {
+        metadataEditor?: {
+            insertProperties?: (properties: Record<string, unknown>) => void;
+        };
+    }
 }
 
 export {};

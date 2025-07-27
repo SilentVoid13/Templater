@@ -1,11 +1,9 @@
 import {
     DocBlock,
     DocNode,
-    DocParamBlock,
     DocParamCollection,
     DocPlainText,
     DocSection,
-    ParserContext,
     TSDocParser,
 } from "@microsoft/tsdoc";
 
@@ -14,7 +12,9 @@ import { TJDocFile, TJDocFileArgument } from "./TJDocFile";
 import { TemplaterError } from "./Error";
 import {
     App,
+    getFrontMatterInfo,
     normalizePath,
+    parseYaml,
     TAbstractFile,
     TFile,
     TFolder,
@@ -241,49 +241,43 @@ export function append_bolded_label_with_value_to_parent(
     return para;
 }
 
-export async function merge_front_matter(
-    app: App,
-    file: TFile | null,
-    properties: Record<string, unknown>
-): Promise<void> {
-    if (!file || !is_object(properties)) {
-        return;
-    }
-    try {
-        await app.fileManager.processFrontMatter(file, (frontmatter) => {
-            for (const prop in properties) {
-                const currentValue = frontmatter[prop];
-                const newValue = properties[prop];
-
-                if (currentValue === undefined) {
-                    // If the property doesn't exist, add it
-                    frontmatter[prop] = newValue;
-                } else if (
-                    Array.isArray(currentValue) ||
-                    Array.isArray(newValue)
-                ) {
-                    // If either is an array, merge them
-                    frontmatter[prop] = Array.from(
-                        new Set([
-                            ...(currentValue
-                                ? Array.isArray(currentValue)
-                                    ? currentValue
-                                    : [currentValue]
-                                : []),
-                            ...(newValue
-                                ? Array.isArray(newValue)
-                                    ? newValue
-                                    : [newValue]
-                                : []),
-                        ])
-                    );
-                } else if (newValue !== currentValue && newValue != null) {
-                    // If they are different, update the value
-                    frontmatter[prop] = newValue;
+/**
+ * Merges two objects recursively. Target object will be modified.
+ * @param target The target object to merge into.
+ * @param source The source object to merge from.
+ */
+export function merge_objects(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>
+) {
+    if (Object.keys(source).length === 0) return;
+    for (const key in source) {
+        if (source.hasOwnProperty(key)) {
+            if (target.hasOwnProperty(key)) {
+                const targetValue = target[key];
+                const sourceValue = source[key];
+                if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+                    target[key] = targetValue.concat(sourceValue).unique();
+                } else if (is_object(targetValue) && is_object(sourceValue)) {
+                    merge_objects(targetValue, sourceValue);
+                } else {
+                    target[key] = sourceValue;
                 }
+            } else {
+                target[key] = source[key];
             }
-        });
-    } catch (error) {
-        console.error("Error in processing frontmatter: ", error);
+        }
     }
+}
+
+export function get_frontmatter_and_content(content: string) {
+    let frontmatter: Record<string, unknown> = {};
+    const front_matter_info = getFrontMatterInfo(content);
+    if (front_matter_info.frontmatter) {
+        frontmatter = parseYaml(front_matter_info.frontmatter);
+    }
+    return {
+        frontmatter,
+        content: content.slice(front_matter_info.contentStart),
+    };
 }

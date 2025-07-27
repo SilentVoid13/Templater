@@ -1,10 +1,8 @@
 import { InternalModule } from "../InternalModule";
 import { log_error } from "utils/Log";
-import * as yaml from "js-yaml";
 import {
     FileSystemAdapter,
     getAllTags,
-    getFrontMatterInfo,
     moment,
     normalizePath,
     parseLinktext,
@@ -15,7 +13,6 @@ import {
 } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
-import { merge_front_matter } from "utils/Utils";
 
 export const DEPTH_LIMIT = 10;
 
@@ -213,20 +210,14 @@ export class InternalModuleFile extends InternalModule {
                 }
             }
 
-            const active_file = this.plugin.app.workspace.getActiveFile();
-
             try {
                 const parsed_content =
                     await this.plugin.templater.parser.parse_commands(
                         inc_file_content,
                         this.plugin.templater.current_functions_object
                     );
-                const front_matter_info = getFrontMatterInfo(parsed_content);
-                const frontmatter = yaml.load(front_matter_info.frontmatter);
-                await merge_front_matter(this.plugin.app, active_file, frontmatter);
-
                 this.include_depth -= 1;
-                return parsed_content.slice(front_matter_info.contentStart);
+                return parsed_content;
             } catch (e) {
                 this.include_depth -= 1;
                 throw e;
