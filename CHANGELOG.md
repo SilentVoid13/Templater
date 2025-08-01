@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.14.0](https://github.com/SilentVoid13/Templater/compare/2.13.1...2.14.0) (2025-08-01)
+
+
+### Features
+
+* clarify and enforce export type handling in UserScriptFunctions ([#1608](https://github.com/SilentVoid13/Templater/issues/1608)) ([b2917d6](https://github.com/SilentVoid13/Templater/commit/b2917d6be4ee5a5a549375d06568069abf0a1f6c))
+
+
+### Bug Fixes
+
+* Adding functions to allow backup current config before overwriting it and use it in case of create_new_note_from_template ([#1611](https://github.com/SilentVoid13/Templater/issues/1611)) ([506088e](https://github.com/SilentVoid13/Templater/commit/506088e7f7292260fe4ef8c4783fa7f25a6460b6))
+
 ### [2.13.1](https://github.com/SilentVoid13/Templater/compare/2.13.0...2.13.1) (2025-07-13)
 
 
