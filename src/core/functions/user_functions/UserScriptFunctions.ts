@@ -61,22 +61,41 @@ export class UserScriptFunctions implements IGenerateObject {
                 err.message
             );
         }
-        const user_function = exp["default"] || mod.exports;
+        const exported = exp["default"] ?? mod.exports;
 
-        if (!user_function) {
+        if (!exported) {
             throw new TemplaterError(
                 `Failed to load user script at "${file.path}". No exports detected.`
             );
         }
-        if (!(user_function instanceof Function)) {
+
+        if (typeof exported === "function") {
+            // ✅ Case 1: The export is a single function
+            user_script_functions.set(file.basename, exported);
+        }
+        else if (typeof exported === "object" && exported !== null) {
+            // ✅ Case 2: The export is an object, check if all values are functions
+            const allValuesAreFunctions = Object.values(exported).every(
+                (v) => typeof v === "function"
+            );
+
+            if (!allValuesAreFunctions) {
+                // ❌ Error: The exported object contains non-function values
+                throw new TemplaterError(
+                    `Exported object in "${file.path}" must contain only functions.`
+                );
+            }
+
+            // ✅ Case 2-1: The export is an object and all values are functions
+            user_script_functions.set(file.basename, exported);
+        }
+        // ❌ Error: The export is neither a function nor an object of functions
+        else {
             throw new TemplaterError(
-                `Failed to load user script at "${file.path}". Default export is not a function.`
+                `Invalid export in "${file.path}". Must be a function or object of functions.`
             );
         }
-        user_script_functions.set(
-            `${file.basename}`,
-            user_function as () => unknown
-        );
+
     }
 
     async generate_object(): Promise<Record<string, unknown>> {
