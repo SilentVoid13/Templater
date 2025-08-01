@@ -12,15 +12,14 @@ Templater will load all JavaScript (`.js` files) scripts in the `Scripts` folder
 
 You can then create your script named `Scripts/my_script.js` (the `.js` extension is required) for example. You will likely have to create the file outside of Obsidian, as Obsidian only creates markdown files.
 
-You will then be able to call your scripts as user functions. The function name corresponds to the script file name.
+You will then be able to call your scripts as user functions. **The function name corresponds to the script file name**.
 
-Scripts should follow the [CommonJS module specification](https://flaviocopes.com/commonjs/), and export a single function.
+Scripts should follow the [CommonJS module specification](https://flaviocopes.com/commonjs/), and export a single function or object where all the keys are functions.
 
 ```javascript
-function my_function (msg) {
+module.exports = function (msg) {
     return `Message from my script: ${msg}`;
-}
-module.exports = my_function;
+};
 ```
 
 In this example, a complete command invocation would look like this: 
@@ -30,6 +29,36 @@ In this example, a complete command invocation would look like this:
 ```
 
 Which would output `Message from my script: Hello World!`.
+
+You can also export an object of functions. Note that every property of the object must be a function.
+
+```javascript
+function formatAsCallout(text, type = "note") {
+  const blockQuoteLines = text.split("\n").map((line) => `> ${line}`);
+  return `> [!${type}]\n${blockQuoteLines.join("\n")}`;
+}
+
+module.exports = {
+  note: (text) => formatAsCallout(text, "note"),
+  tip: (text) => formatAsCallout(text, "tip"),
+  warning: (text) => formatAsCallout(text, "warning"),
+};
+
+```
+
+In this example, a complete command invocation would look like this:
+
+```javascript
+<% tp.user.my_script.note("Line 1\nLine2") %>
+```
+
+Which would output:
+
+```md
+> [!note]
+> Line 1
+> Line2
+```
 
 ## Global namespace
 
