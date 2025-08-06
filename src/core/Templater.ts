@@ -224,9 +224,11 @@ export class Templater {
                 true
             );
 
-            active_leaf.setEphemeralState({
-                rename: "all",
-            });
+            if (this.plugin.settings.prompt_to_rename_note_on_creation) {
+                active_leaf.setEphemeralState({
+                    rename: "all",
+                });
+            }
         }
 
         await this.functions_generator.generate_object(
