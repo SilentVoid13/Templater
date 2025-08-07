@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.14.1](https://github.com/SilentVoid13/Templater/compare/2.14.0...2.14.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* Revert "Adding functions to allow backup current config before overwriting it and use it in case of create_new_note_from_template" ([8dcdab7](https://github.com/SilentVoid13/Templater/commit/8dcdab75cb8bb773f4d36239d5dd5bde31e3329a)), closes [#1621](https://github.com/SilentVoid13/Templater/issues/1621) [#1554](https://github.com/SilentVoid13/Templater/issues/1554)
+
 ## [2.14.0](https://github.com/SilentVoid13/Templater/compare/2.13.1...2.14.0) (2025-08-01)
 
 
