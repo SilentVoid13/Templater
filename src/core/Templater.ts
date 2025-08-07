@@ -1,5 +1,6 @@
 import {
     App,
+    getFrontMatterInfo,
     MarkdownPostProcessorContext,
     MarkdownView,
     normalizePath,
@@ -13,6 +14,7 @@ import {
     get_active_file,
     get_folder_path_from_file_path,
     resolve_tfile,
+    merge_front_matter,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
 import {
@@ -22,6 +24,7 @@ import {
 import { errorWrapper, errorWrapperSync, TemplaterError } from "utils/Error";
 import { Parser } from "./parser/Parser";
 import { log_error } from "utils/Log";
+import * as yaml from "js-yaml";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -254,10 +257,20 @@ export class Templater {
             return;
         }
 
+        const front_matter_info = getFrontMatterInfo(output_content);
+        const frontmatter = yaml.load(front_matter_info.frontmatter);
+        await merge_front_matter(
+            this.plugin.app,
+            active_editor.file,
+            frontmatter
+        );
+
         const editor = active_editor.editor;
         const doc = editor.getDoc();
         const oldSelections = doc.listSelections();
-        doc.replaceSelection(output_content);
+        doc.replaceSelection(
+            output_content.slice(front_matter_info.contentStart)
+        );
         if (active_view) {
             // Wait for view to finish rendering properties widget
             await delay(100);
@@ -293,7 +306,7 @@ export class Templater {
             file,
             RunMode.OverwriteFile
         );
-        const output_content = await errorWrapper(
+        let output_content = await errorWrapper(
             async () => this.read_and_parse_template(running_config),
             "Template parsing error, aborting."
         );
@@ -302,7 +315,30 @@ export class Templater {
             await this.end_templater_task(path);
             return;
         }
-        await this.plugin.app.vault.modify(file, output_content);
+
+        let existing_front_matter = null;
+        await delay(100); // Sometimes the front matter is not yet available if the file was just created
+        await this.plugin.app.fileManager.processFrontMatter(
+            file,
+            (front_matter) => {
+                existing_front_matter = front_matter;
+            }
+        );
+
+        const front_matter_info = getFrontMatterInfo(output_content);
+        const frontmatter = yaml.load(front_matter_info.frontmatter);
+
+        if (existing_front_matter) {
+            // Bases can create frontmatter, merge this into the template frontmatter
+            await merge_front_matter(this.plugin.app, file, frontmatter);
+            await this.plugin.app.vault.append(
+                file,
+                output_content.slice(front_matter_info.contentStart)
+            );
+            output_content = await this.plugin.app.vault.read(file);
+        } else {
+            await this.plugin.app.vault.modify(file, output_content);
+        }
         // Set cursor to first line of editor (below properties)
         // https://github.com/SilentVoid13/Templater/issues/1231
         if (
@@ -491,8 +527,13 @@ export class Templater {
             return;
         }
 
+        const file_content = await app.vault.read(file);
+        const frontmatter_info = getFrontMatterInfo(file_content);
+        const content_size =
+            file_content.length - frontmatter_info.contentStart;
+
         if (
-            file.stat.size == 0 &&
+            content_size == 0 &&
             templater.plugin.settings.enable_folder_templates
         ) {
             const folder_template_match =
@@ -512,7 +553,7 @@ export class Templater {
             }
             await templater.write_template_to_file(template_file, file);
         } else if (
-            file.stat.size == 0 &&
+            content_size == 0 &&
             templater.plugin.settings.enable_file_templates
         ) {
             const file_template_match =
