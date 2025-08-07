@@ -16,10 +16,6 @@ export abstract class InternalModule implements IGenerateObject {
         return this.name;
     }
 
-    get_config(): RunningConfig {
-        return this.config;
-    }
-
     abstract create_static_templates(): Promise<void>;
     abstract create_dynamic_templates(): Promise<void>;
     abstract teardown(): Promise<void>;

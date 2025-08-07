@@ -19,10 +19,6 @@ export class FunctionsGenerator implements IGenerateObject {
         this.user_functions = new UserFunctions(this.plugin);
     }
 
-    get_config(): RunningConfig {
-        return this.internal_functions.get_config();
-    }
-
     async init(): Promise<void> {
         await this.internal_functions.init();
     }

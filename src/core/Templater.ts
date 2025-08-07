@@ -74,10 +74,6 @@ export class Templater {
         };
     }
 
-    get_current_running_config(): RunningConfig {
-        return this.functions_generator.get_config();
-    }
-
     async read_and_parse_template(config: RunningConfig): Promise<string> {
         const template_content = await this.plugin.app.vault.read(
             config.template_file as TFile
@@ -168,8 +164,6 @@ export class Templater {
             return;
         }
 
-        const backup_config = this.get_current_running_config();
-
         const { path } = created_note;
         this.start_templater_task(path);
         let running_config: RunningConfig;
@@ -229,10 +223,6 @@ export class Templater {
             });
         }
 
-        await this.functions_generator.generate_object(
-            backup_config,
-            FunctionsMode.USER_INTERNAL
-        );
         await this.end_templater_task(path);
         return created_note;
     }
