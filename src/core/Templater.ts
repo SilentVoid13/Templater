@@ -532,12 +532,13 @@ export class Templater {
             }
             await templater.write_template_to_file(template_file, file);
         } else {
-            if (file.stat.size <= 100000) {
+            const SIZE_LIMIT = 100_000;
+            if (file.stat.size <= SIZE_LIMIT) {
                 //https://github.com/SilentVoid13/Templater/issues/873
                 await templater.overwrite_file_commands(file);
             } else {
                 console.log(
-                    `Templater skipped parsing ${file.path} because file size exceeds 10000`
+                    `Templater skipped parsing ${file.path} because file size exceeds ${SIZE_LIMIT}`
                 );
             }
         }
