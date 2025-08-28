@@ -293,3 +293,46 @@ export function get_frontmatter_and_content(content: string) {
         content: content.slice(front_matter_info.contentStart),
     };
 }
+
+export async function processAsync(
+    app: App,
+    file: TFile,
+    fn: (content: string) => Promise<string | void>
+): Promise<void> {
+    let isProcessed = false;
+    const RETRY_DELAY_IN_MILLISECONDS = 100;
+    const TIMEOUT_IN_MILLISECONDS = 5000;
+    const startTime = performance.now();
+    while (true) {
+        const oldContent = (await app.vault.exists(file.path))
+            ? await app.vault.read(file)
+            : "";
+        const newContent = (await fn(oldContent)) as string | undefined;
+
+        if (!(await app.vault.exists(file.path))) {
+            isProcessed = true;
+            if (newContent !== undefined) {
+                await app.vault.create(file.path, newContent);
+            }
+        } else {
+            await app.vault.process(file, (content) => {
+                if (content !== oldContent) {
+                    return content;
+                }
+
+                isProcessed = true;
+                return newContent ?? oldContent;
+            });
+        }
+
+        if (isProcessed) {
+            return;
+        }
+
+        if (performance.now() - startTime > TIMEOUT_IN_MILLISECONDS) {
+            throw new Error("Timeout exceeded");
+        }
+
+        await sleep(RETRY_DELAY_IN_MILLISECONDS);
+    }
+}
