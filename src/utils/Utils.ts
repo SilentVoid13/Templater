@@ -256,8 +256,16 @@ export function merge_objects(
             if (target.hasOwnProperty(key)) {
                 const targetValue = target[key];
                 const sourceValue = source[key];
-                if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-                    target[key] = targetValue.concat(sourceValue).unique();
+                if (Array.isArray(targetValue) || Array.isArray(sourceValue)) {
+                    const targetValueArray = Array.isArray(targetValue)
+                        ? targetValue
+                        : [targetValue];
+                    const sourceValueArray = Array.isArray(sourceValue)
+                        ? sourceValue
+                        : [sourceValue];
+                    target[key] = targetValueArray
+                        .concat(sourceValueArray)
+                        .unique();
                 } else if (is_object(targetValue) && is_object(sourceValue)) {
                     merge_objects(targetValue, sourceValue);
                 } else {
