@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.15.0](https://github.com/SilentVoid13/Templater/compare/2.14.1...2.15.0) (2025-08-29)
+
+
+### Features
+
+* merge frontmatter properties when inserting a template ([0f2d26a](https://github.com/SilentVoid13/Templater/commit/0f2d26a5c220570c74e0963a5102c18846653784))
+* merge frontmatter when using `tp.file.include` ([80813c9](https://github.com/SilentVoid13/Templater/commit/80813c9a3bd21b124bf07243fb4b24bf2ad2b4c7))
+* merge template properties with base generated properties ([00983b7](https://github.com/SilentVoid13/Templater/commit/00983b70624b2d1ff6b51b31d14afcda911d291c))
+* remove console.log and change merging frontmatter to be async for speed. ([15ae98d](https://github.com/SilentVoid13/Templater/commit/15ae98d503ca2930db2a67c7c5e51880a09a009e))
+
+
+### Bug Fixes
+
+* add missing await ([80061a8](https://github.com/SilentVoid13/Templater/commit/80061a8ba319de53e01de2ecd8d76b5c6f67abad))
+* fix issue with merging frontmatter on newly created notes ([ecf68a7](https://github.com/SilentVoid13/Templater/commit/ecf68a73a2d8b753018d2665ad9a37e409e82985))
+* only apply templates if there is no content ([89eae72](https://github.com/SilentVoid13/Templater/commit/89eae72f058e59455aeff13b933767dec050c424))
+* remove closing bracket ([c05e2e8](https://github.com/SilentVoid13/Templater/commit/c05e2e8e0523e1a69b89a8eae7f88a7461550079))
+* remove Promise.all() to prevent potential race condition ([df55594](https://github.com/SilentVoid13/Templater/commit/df55594083bdfc5b88d84515c9780272a14b5240))
+* significantly improve speed and reliability of merging frontmatter ([eafa4a7](https://github.com/SilentVoid13/Templater/commit/eafa4a7e002f4dca5ae6cf7f0f8613ba3926bff5))
+
 ### [2.14.1](https://github.com/SilentVoid13/Templater/compare/2.14.0...2.14.1) (2025-08-07)
 
 
