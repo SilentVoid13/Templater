@@ -268,7 +268,11 @@ export function merge_objects(
                         .unique();
                 } else if (is_object(targetValue) && is_object(sourceValue)) {
                     merge_objects(targetValue, sourceValue);
-                } else {
+                } else if (
+                    sourceValue !== undefined &&
+                    sourceValue !== null &&
+                    sourceValue !== ""
+                ) {
                     target[key] = sourceValue;
                 }
             } else {

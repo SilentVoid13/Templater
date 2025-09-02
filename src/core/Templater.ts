@@ -328,7 +328,16 @@ export class Templater {
             active_editor &&
             active_editor.editor
         ) {
-            active_editor.editor.setValue(output_content);
+            let result = "";
+            const { content, frontmatter } = get_frontmatter_and_content(
+                active_editor.editor.getValue()
+            );
+            merge_objects(frontmatter, output_frontmatter);
+            if (Object.keys(frontmatter).length > 0) {
+                result += `---\n${stringifyYaml(frontmatter)}---\n`;
+            }
+            result += content + output_content_body;
+            active_editor.editor.setValue(result);
             // Set cursor to first line of editor (below properties)
             // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
