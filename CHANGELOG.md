@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.15.1](https://github.com/SilentVoid13/Templater/compare/2.15.0...2.15.1) (2025-09-02)
+
+
+### Bug Fixes
+
+* `tp.file.cursor()` not being replaced on new file creation for the active file with "auto jump to cursor" enabled ([406dcd3](https://github.com/SilentVoid13/Templater/commit/406dcd3658ef642d239a2833b2831dd69293861a)), closes [#1600](https://github.com/SilentVoid13/Templater/issues/1600) [#1218](https://github.com/SilentVoid13/Templater/issues/1218) [#1387](https://github.com/SilentVoid13/Templater/issues/1387)
+* notes created from base having filtered properties overridden by blank values in template ([1506a88](https://github.com/SilentVoid13/Templater/commit/1506a881efab251737701f183c41b6110e8a4157)), closes [#1600](https://github.com/SilentVoid13/Templater/issues/1600) [#1218](https://github.com/SilentVoid13/Templater/issues/1218) [#1387](https://github.com/SilentVoid13/Templater/issues/1387)
+
 ## [2.15.0](https://github.com/SilentVoid13/Templater/compare/2.14.1...2.15.0) (2025-08-29)
 
 
