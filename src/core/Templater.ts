@@ -323,27 +323,29 @@ export class Templater {
             content: output_content_body,
             frontmatter: output_frontmatter,
         } = get_frontmatter_and_content(output_content);
-
-        await this.plugin.app.vault.process(file, (data) => {
-            let result = "";
-            const { content, frontmatter } = get_frontmatter_and_content(data);
-            merge_objects(frontmatter, output_frontmatter);
-            if (Object.keys(frontmatter).length > 0) {
-                result += `---\n${stringifyYaml(frontmatter)}---\n`;
-            }
-            result += content + output_content_body;
-            output_content = result;
-            return result;
-        });
-        // Set cursor to first line of editor (below properties)
-        // https://github.com/SilentVoid13/Templater/issues/1231
         if (
             active_file?.path === file.path &&
             active_editor &&
             active_editor.editor
         ) {
+            active_editor.editor.setValue(output_content);
+            // Set cursor to first line of editor (below properties)
+            // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
             editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
+        } else {
+            await this.plugin.app.vault.process(file, (data) => {
+                let result = "";
+                const { content, frontmatter } =
+                    get_frontmatter_and_content(data);
+                merge_objects(frontmatter, output_frontmatter);
+                if (Object.keys(frontmatter).length > 0) {
+                    result += `---\n${stringifyYaml(frontmatter)}---\n`;
+                }
+                result += content + output_content_body;
+                output_content = result;
+                return result;
+            });
         }
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
             file,
