@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.15.2](https://github.com/SilentVoid13/Templater/compare/2.15.1...2.15.2) (2025-09-19)
+
 ### [2.15.1](https://github.com/SilentVoid13/Templater/compare/2.15.0...2.15.1) (2025-09-02)
 
 
