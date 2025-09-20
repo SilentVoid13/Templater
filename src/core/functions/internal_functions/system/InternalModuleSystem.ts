@@ -105,21 +105,21 @@ export class InternalModuleSystem extends InternalModule {
         text_items: string[] | ((item: T) => string),
         items: T[],
         throw_on_cancel: boolean,
-        placeholder: string,
+        title: string,
         limit?: number
     ) => Promise<T[]> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
             items: T[],
             throw_on_cancel = false,
-            placeholder = "",
+            title = "",
             limit?: number
         ): Promise<T[]> => {
             const suggester = new MultiSuggesterModal(
                 this.plugin.app,
                 text_items,
                 items,
-                placeholder,
+                title,
                 limit
             );
             const promise = new Promise(

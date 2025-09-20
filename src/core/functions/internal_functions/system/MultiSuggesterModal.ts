@@ -22,17 +22,16 @@ export class MultiSuggesterModal<T> extends Modal {
         app: App,
         private text_items: string[] | ((item: T) => string),
         private items: T[],
-        placeholder: string,
+        title: string,
         limit?: number
     ) {
         super(app);
+        this.setTitle(title);
         this.listEl = this.contentEl.createDiv("templater-multisuggester-list");
         const inputContainer = this.contentEl.createDiv(
             "templater-multisuggester-div"
         );
-        this.inputComponent = new TextComponent(inputContainer).setPlaceholder(
-            placeholder
-        );
+        this.inputComponent = new TextComponent(inputContainer);
         this.inputComponent.inputEl.addClass("templater-multisuggester-input");
         this.suggester = new Suggester(
             app,
