@@ -15,7 +15,6 @@ export class MultiSuggesterModal<T> extends Modal {
     private submitted = false;
     private selectedItems: T[] = [];
     private listEl: HTMLDivElement;
-    private inputComponent: TextComponent;
     private suggester: InstanceType<typeof Suggester>;
 
     constructor(
@@ -31,11 +30,11 @@ export class MultiSuggesterModal<T> extends Modal {
         const inputContainer = this.contentEl.createDiv(
             "templater-multisuggester-div"
         );
-        this.inputComponent = new TextComponent(inputContainer);
-        this.inputComponent.inputEl.addClass("templater-multisuggester-input");
+        const inputComponent = new TextComponent(inputContainer);
+        inputComponent.inputEl.addClass("templater-multisuggester-input");
         this.suggester = new Suggester(
             app,
-            this.inputComponent.inputEl,
+            inputComponent.inputEl,
             this.getItemText.bind(this),
             items,
             limit
@@ -72,10 +71,6 @@ export class MultiSuggesterModal<T> extends Modal {
                     });
                 }
             );
-            // itemEl.createDiv("clickable-icon mobile-option-setting-item-option-icon mobile-option-setting-drag-icon", dragEl => {
-            //     setIcon(dragEl, "lucide-menu");
-
-            // })
         });
     }
 
@@ -137,7 +132,7 @@ export class MultiSuggesterModal<T> extends Modal {
 class Suggester<T> extends AbstractInputSuggest<T> {
     constructor(
         app: App,
-        private textInputEl: HTMLInputElement | HTMLDivElement,
+        textInputEl: HTMLInputElement | HTMLDivElement,
         private getItemText: (item: T) => string,
         private items: T[],
         limit?: number
