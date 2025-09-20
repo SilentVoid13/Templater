@@ -3,6 +3,7 @@ import { PromptModal } from "./PromptModal";
 import { SuggesterModal } from "./SuggesterModal";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
+import { MultiSuggesterModal } from "./MultiSuggesterModal";
 
 export class InternalModuleSystem extends InternalModule {
     public name: ModuleName = "system";
@@ -11,6 +12,10 @@ export class InternalModuleSystem extends InternalModule {
         this.static_functions.set("clipboard", this.generate_clipboard());
         this.static_functions.set("prompt", this.generate_prompt());
         this.static_functions.set("suggester", this.generate_suggester());
+        this.static_functions.set(
+            "multi_suggester",
+            this.generate_multi_suggester()
+        );
     }
 
     async create_dynamic_templates(): Promise<void> {}
@@ -92,6 +97,44 @@ export class InternalModuleSystem extends InternalModule {
                     throw error;
                 }
                 return null as T;
+            }
+        };
+    }
+
+    generate_multi_suggester(): <T>(
+        text_items: string[] | ((item: T) => string),
+        items: T[],
+        throw_on_cancel: boolean,
+        title: string,
+        limit?: number
+    ) => Promise<T[]> {
+        return async <T>(
+            text_items: string[] | ((item: T) => string),
+            items: T[],
+            throw_on_cancel = false,
+            title = "",
+            limit?: number
+        ): Promise<T[]> => {
+            const suggester = new MultiSuggesterModal(
+                this.plugin.app,
+                text_items,
+                items,
+                title,
+                limit
+            );
+            const promise = new Promise(
+                (
+                    resolve: (values: T[]) => void,
+                    reject: (reason?: TemplaterError) => void
+                ) => suggester.openAndGetValue(resolve, reject)
+            );
+            try {
+                return await promise;
+            } catch (error) {
+                if (throw_on_cancel) {
+                    throw error;
+                }
+                return [];
             }
         };
     }

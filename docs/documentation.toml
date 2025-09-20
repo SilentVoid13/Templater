@@ -601,6 +601,55 @@ let selectedValue = await tp.system.suggester(["Happy", "Sad", "Confused"], ["Ha
 # <% selectedValue %>
 selected value: <% selectedValue %>"""
 
+[tp.system.functions.multi_suggester]
+name = "multi_suggester"
+description = "Spawns a suggester prompt that supports selecting multiple items and returns the user's chosen items."
+definition = "tp.system.multi_suggester(text_items: string[] ⎮ ((item: T) => string), items: T[], throw_on_cancel: boolean = false, title: string = \"\", limit?: number = undefined)"
+
+[[tp.system.functions.multi_suggester.args]]
+name = "text_items"
+description = "Array of strings representing the text that will be displayed for each item in the suggester prompt. This can also be a function that maps an item to its text representation."
+
+[[tp.system.functions.multi_suggester.args]]
+name = "items"
+description = "Array containing the values of each item in the correct order."
+
+[[tp.system.functions.multi_suggester.args]]
+name = "throw_on_cancel"
+description = "Throws an error if the prompt is canceled, instead of returning a `null` value."
+
+[[tp.system.functions.multi_suggester.args]]
+name = "title"
+description = "Text placed at the top of the modal."
+
+[[tp.system.functions.multi_suggester.args]]
+name = "limit"
+description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)."
+
+[[tp.system.functions.multi_suggester.examples]]
+name = "Multi-suggester"
+example = """<% await tp.system.multi_suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]) %>"""
+
+[[tp.system.functions.multi_suggester.examples]]
+name = "Multi-suggester with mapping function (same as above example)"
+example = """<% await tp.system.multi_suggester((item) => item, ["Happy", "Sad", "Confused"]) %>"""
+
+[[tp.system.functions.multi_suggester.examples]]
+name = "Multi-suggester for files"
+example = """<% (await tp.system.multi_suggester((item) => item.basename, tp.app.vault.getMarkdownFiles())).map(f => `[[${f.basename}]]`) %>"""
+
+[[tp.system.functions.multi_suggester.examples]]
+name = "Multi-suggester for tags"
+example = """<% await tp.system.multi_suggester(item => item, Object.keys(tp.app.metadataCache.getTags()).map(x => x.replace("#", ""))) %>"""
+
+[[tp.system.functions.multi_suggester.examples]]
+name = "Reuse value from multi-suggester"
+example = """<%*
+let selectedValues = await tp.system.multi_suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"]);
+%>
+# <% selectedValues %>
+selected values: <% selectedValues %>"""
+
 [tp.web]
 name = "web"
 description = "This modules contains every internal function related to the web (making web requests)."
