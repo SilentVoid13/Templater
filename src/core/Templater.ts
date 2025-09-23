@@ -14,7 +14,6 @@ import {
     generate_dynamic_command_regex,
     get_active_file,
     get_folder_path_from_file_path,
-    processAsync,
     resolve_tfile,
     get_frontmatter_and_content,
     merge_objects,
@@ -172,38 +171,36 @@ export class Templater {
         const { path } = created_note;
         this.start_templater_task(path);
         let running_config: RunningConfig;
-        let output_content = "";
-        await processAsync(this.plugin.app, created_note, async () => {
-            if (template instanceof TFile) {
-                running_config = this.create_running_config(
-                    template,
-                    created_note,
-                    RunMode.CreateNewFromTemplate
-                );
-                output_content = await errorWrapper(
-                    async () => this.read_and_parse_template(running_config),
-                    "Template parsing error, aborting."
-                );
-            } else {
-                running_config = this.create_running_config(
-                    undefined,
-                    created_note,
-                    RunMode.CreateNewFromTemplate
-                );
-                output_content = await errorWrapper(
-                    async () => this.parse_template(running_config, template),
-                    "Template parsing error, aborting."
-                );
-            }
+        let output_content: string;
+        if (template instanceof TFile) {
+            running_config = this.create_running_config(
+                template,
+                created_note,
+                RunMode.CreateNewFromTemplate
+            );
+            output_content = await errorWrapper(
+                async () => this.read_and_parse_template(running_config),
+                "Template parsing error, aborting."
+            );
+        } else {
+            running_config = this.create_running_config(
+                undefined,
+                created_note,
+                RunMode.CreateNewFromTemplate
+            );
+            output_content = await errorWrapper(
+                async () => this.parse_template(running_config, template),
+                "Template parsing error, aborting."
+            );
+        }
 
-            if (output_content == null) {
-                await this.plugin.app.vault.delete(created_note);
-                await this.end_templater_task(path);
-                return;
-            }
+        if (output_content == null) {
+            await this.plugin.app.vault.delete(created_note);
+            await this.end_templater_task(path);
+            return;
+        }
 
-            return output_content;
-        });
+        await this.plugin.app.vault.modify(created_note, output_content);
 
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
             file: created_note,
@@ -312,19 +309,15 @@ export class Templater {
             file,
             RunMode.OverwriteFile
         );
-        let output_content = "";
-        await processAsync(this.plugin.app, file, async () => {
-            output_content = await errorWrapper(
-                async () => this.read_and_parse_template(running_config),
-                "Template parsing error, aborting."
-            );
-            // errorWrapper failed
-            if (output_content == null) {
-                await this.end_templater_task(path);
-                return;
-            }
-            return output_content;
-        });
+        let output_content = await errorWrapper(
+            async () => this.read_and_parse_template(running_config),
+            "Template parsing error, aborting."
+        );
+        // errorWrapper failed
+        if (output_content == null) {
+            await this.end_templater_task(path);
+            return;
+        }
 
         const {
             content: output_content_body,
@@ -398,19 +391,16 @@ export class Templater {
             file,
             active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile
         );
-        let output_content = "";
-        await processAsync(this.plugin.app, file, async () => {
-            output_content = await errorWrapper(
-                async () => this.read_and_parse_template(running_config),
-                "Template parsing error, aborting."
-            );
-            // errorWrapper failed
-            if (output_content == null) {
-                await this.end_templater_task(path);
-                return;
-            }
-            return output_content;
-        });
+        const output_content = await errorWrapper(
+            async () => this.read_and_parse_template(running_config),
+            "Template parsing error, aborting."
+        );
+        // errorWrapper failed
+        if (output_content == null) {
+            await this.end_templater_task(path);
+            return;
+        }
+        await this.plugin.app.vault.modify(file, output_content);
         this.plugin.app.workspace.trigger("templater:overwrite-file", {
             file,
             content: output_content,
