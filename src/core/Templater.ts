@@ -47,8 +47,8 @@ export type RunningConfig = {
 export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
-    public current_functions_object: Record<string, unknown>;
     public files_with_pending_templates: Set<string>;
+    private functions_objects: Array<Record<string, unknown>>;
 
     constructor(private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(this.plugin);
@@ -59,6 +59,7 @@ export class Templater {
         this.files_with_pending_templates = new Set();
         await this.parser.init();
         await this.functions_generator.init();
+        this.functions_objects = [];
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
             this.process_dynamic_templates(el, ctx)
         );
@@ -86,7 +87,7 @@ export class Templater {
         );
         return this.parse_template(config, template_content);
     }
-    
+
     async parse_template(
         config: RunningConfig,
         template_content: string
@@ -95,20 +96,20 @@ export class Templater {
             config,
             FunctionsMode.USER_INTERNAL
         );
-        this.current_functions_object = functions_object;
+        this.functions_objects.push(functions_object);
         const content = await this.parser.parse_commands(
             template_content,
             functions_object
         );
-        
+        this.functions_objects.pop();
+
         // Merge the frontmatter of any included templates into the root template frontmatter after parsing
         // so that included templates frontmatter overrides root template frontmatter,
         // and any functions in the root frontmatter have been executed
-        const frontmatter =
-            get_frontmatter_and_content(content).frontmatter;
+        const frontmatter = get_frontmatter_and_content(content).frontmatter;
         merge_objects(frontmatter, config.frontmatter);
         config.frontmatter = frontmatter;
-        
+
         return content;
     }
 
@@ -471,7 +472,7 @@ export class Templater {
                                 config,
                                 FunctionsMode.USER_INTERNAL
                             );
-                        this.current_functions_object = functions_object;
+                        this.functions_objects.push(functions_object);
                     }
                 }
 
@@ -505,6 +506,16 @@ export class Templater {
                 node.nodeValue = content;
             }
         }
+        if (pass) {
+            this.functions_objects.pop();
+        }
+    }
+
+    get_current_functions_object(): Record<string, unknown> {
+        if (this.functions_objects.length === 0) {
+            return {};
+        }
+        return this.functions_objects[this.functions_objects.length - 1];
     }
 
     get_new_file_template_for_folder(folder: TFolder): string | undefined {
