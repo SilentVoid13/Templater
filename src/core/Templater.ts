@@ -84,12 +84,9 @@ export class Templater {
         const template_content = await this.plugin.app.vault.read(
             config.template_file as TFile
         );
-        const frontmatter =
-            get_frontmatter_and_content(template_content).frontmatter;
-        config.frontmatter = frontmatter;
         return this.parse_template(config, template_content);
     }
-
+    
     async parse_template(
         config: RunningConfig,
         template_content: string
@@ -103,6 +100,15 @@ export class Templater {
             template_content,
             functions_object
         );
+        
+        // Merge the frontmatter of any included templates into the root template frontmatter after parsing
+        // so that included templates frontmatter overrides root template frontmatter,
+        // and any functions in the root frontmatter have been executed
+        const frontmatter =
+            get_frontmatter_and_content(content).frontmatter;
+        merge_objects(frontmatter, config.frontmatter);
+        config.frontmatter = frontmatter;
+        
         return content;
     }
 
