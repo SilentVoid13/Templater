@@ -205,6 +205,20 @@ export class Templater {
             return;
         }
 
+        // Update the frontmatter of output_content with the merged frontmatter
+        // from all included templates
+        const output_content_body =
+            get_frontmatter_and_content(output_content).content;
+        const frontmatter = running_config.frontmatter;
+
+        if (Object.keys(frontmatter).length !== 0) {
+            output_content =
+                "---\n" +
+                stringifyYaml(frontmatter) +
+                "---\n" +
+                output_content_body;
+        }
+
         await this.plugin.app.vault.modify(created_note, output_content);
 
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
