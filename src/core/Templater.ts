@@ -41,6 +41,7 @@ export type RunningConfig = {
     target_file: TFile;
     run_mode: RunMode;
     active_file?: TFile | null;
+    frontmatter: Record<string, unknown>;
 };
 
 export class Templater {
@@ -75,6 +76,7 @@ export class Templater {
             target_file: target_file,
             run_mode: run_mode,
             active_file: active_file,
+            frontmatter: {},
         };
     }
 
@@ -82,6 +84,9 @@ export class Templater {
         const template_content = await this.plugin.app.vault.read(
             config.template_file as TFile
         );
+        const frontmatter =
+            get_frontmatter_and_content(template_content).frontmatter;
+        config.frontmatter = frontmatter;
         return this.parse_template(config, template_content);
     }
 
@@ -258,8 +263,8 @@ export class Templater {
             return;
         }
 
-        const { content, frontmatter } =
-            get_frontmatter_and_content(output_content);
+        const content = get_frontmatter_and_content(output_content).content;
+        const frontmatter = running_config.frontmatter;
 
         const editor = active_editor.editor;
         const doc = editor.getDoc();
@@ -319,10 +324,9 @@ export class Templater {
             return;
         }
 
-        const {
-            content: output_content_body,
-            frontmatter: output_frontmatter,
-        } = get_frontmatter_and_content(output_content);
+        const output_content_body =
+            get_frontmatter_and_content(output_content).content;
+        const output_frontmatter = running_config.frontmatter;
         if (
             active_file?.path === file.path &&
             active_editor &&
