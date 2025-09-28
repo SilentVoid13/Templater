@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.16.0](https://github.com/SilentVoid13/Templater/compare/2.15.2...2.16.0) (2025-09-28)
+
+
+### Features
+
+* add `tp.system.multi_suggester` ([#1639](https://github.com/SilentVoid13/Templater/issues/1639)) ([d6ef70c](https://github.com/SilentVoid13/Templater/commit/d6ef70cccc083b7d546edce317591031d30db57c)), closes [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130) [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130) [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130)
+
+
+### Bug Fixes
+
+* Ensure proper size limit is reported ([#1628](https://github.com/SilentVoid13/Templater/issues/1628)) ([879b34f](https://github.com/SilentVoid13/Templater/commit/879b34f1633821f11bdf15977dfe136e8cef0024))
+* refactor to processAsync ([#1630](https://github.com/SilentVoid13/Templater/issues/1630)) ([c6a18d9](https://github.com/SilentVoid13/Templater/commit/c6a18d979c193aca44564c47f50c60ccc64b8780))
+
 ### [2.15.2](https://github.com/SilentVoid13/Templater/compare/2.15.1...2.15.2) (2025-09-19)
 
 ### [2.15.1](https://github.com/SilentVoid13/Templater/compare/2.15.0...2.15.1) (2025-09-02)
