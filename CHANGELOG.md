@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.16.1](https://github.com/SilentVoid13/Templater/compare/2.16.0...2.16.1) (2025-10-13)
+
+
+### Bug Fixes
+
+* Save editor changes to disk when inserting template into active editor or jumping to cursor ([f9c4f47](https://github.com/SilentVoid13/Templater/commit/f9c4f479e1efa01b5d0fc2117430de3936703809)), closes [#1644](https://github.com/SilentVoid13/Templater/issues/1644) [#1647](https://github.com/SilentVoid13/Templater/issues/1647)
+
 ## [2.16.0](https://github.com/SilentVoid13/Templater/compare/2.15.2...2.16.0) (2025-09-28)
 
 
