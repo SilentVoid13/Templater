@@ -302,6 +302,8 @@ export class Templater {
     ): Promise<void> {
         const { path } = file;
         this.start_templater_task(path);
+        const active_view =
+            this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
         const active_editor = this.plugin.app.workspace.activeEditor;
         const active_file = get_active_file(this.plugin.app);
         const running_config = this.create_running_config(
@@ -326,7 +328,8 @@ export class Templater {
         if (
             active_file?.path === file.path &&
             active_editor &&
-            active_editor.editor
+            active_editor.editor &&
+            active_view
         ) {
             let result = "";
             const { content, frontmatter } = get_frontmatter_and_content(
@@ -342,6 +345,9 @@ export class Templater {
             // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
             editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
+            // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+            // https://github.com/SilentVoid13/Templater/issues/1569
+            await active_view.save();
         } else {
             await this.plugin.app.vault.process(file, (data) => {
                 let result = "";

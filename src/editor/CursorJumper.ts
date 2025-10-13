@@ -35,6 +35,9 @@ export class CursorJumper {
                 });
                 if (active_editor instanceof MarkdownView) {
                     active_editor.currentMode.applyFoldInfo(fold_info);
+                    // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+                    // https://github.com/SilentVoid13/Templater/issues/1569
+                    active_editor.save();
                 }
             }
             this.set_cursor_location(positions);
