@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.16.2](https://github.com/SilentVoid13/Templater/compare/2.16.1...2.16.2) (2025-10-17)
+
+
+### Bug Fixes
+
+* Folder templates preventing properties widget from rendering ([a1a0180](https://github.com/SilentVoid13/Templater/commit/a1a01809a7ef2a99a2259943763d4e496aab75ed)), closes [#1651](https://github.com/SilentVoid13/Templater/issues/1651) [#1644](https://github.com/SilentVoid13/Templater/issues/1644) [#1647](https://github.com/SilentVoid13/Templater/issues/1647)
+
 ### [2.16.1](https://github.com/SilentVoid13/Templater/compare/2.16.0...2.16.1) (2025-10-13)
 
 
