@@ -345,6 +345,8 @@ export class Templater {
             // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
             editor.setSelection({ line: 0, ch: 0 }, { line: 0, ch: 0 });
+            // Wait for view to finish rendering properties widget
+            await delay(100);
             // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
             // https://github.com/SilentVoid13/Templater/issues/1569
             await active_view.save();

@@ -5,7 +5,7 @@ import {
     EditorTransaction,
     MarkdownView,
 } from "obsidian";
-import { escape_RegExp } from "utils/Utils";
+import { delay, escape_RegExp } from "utils/Utils";
 
 export class CursorJumper {
     constructor(private app: App) {}
@@ -35,6 +35,8 @@ export class CursorJumper {
                 });
                 if (active_editor instanceof MarkdownView) {
                     active_editor.currentMode.applyFoldInfo(fold_info);
+                    // Wait for view to finish rendering properties widget
+                    await delay(100);
                     // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
                     // https://github.com/SilentVoid13/Templater/issues/1569
                     active_editor.save();
