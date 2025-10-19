@@ -38,21 +38,18 @@ export class PromptModal extends Modal {
     createForm(): void {
         const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
-        let textInput;
-        if (this.multi_line) {
-            textInput = new TextAreaComponent(div);
+        let textInput = new TextAreaComponent(div);
 
-            // Add submit button since enter needed for multiline input on mobile
-            const buttonDiv = this.contentEl.createDiv();
-            buttonDiv.addClass("templater-button-div");
-            const submitButton = new ButtonComponent(buttonDiv);
-            submitButton.buttonEl.addClass("mod-cta");
-            submitButton.setButtonText("Submit").onClick((evt: Event) => {
-                this.resolveAndClose(evt);
-            });
-        } else {
-            textInput = new TextComponent(div);
-        }
+        // Add submit button since enter needed for multiline input on mobile
+        // and some mobile keyboards don't confirm when pressing Enter at all,
+        // so used for single line input as well.
+        const buttonDiv = this.contentEl.createDiv();
+        buttonDiv.addClass("templater-button-div");
+        const submitButton = new ButtonComponent(buttonDiv);
+        submitButton.buttonEl.addClass("mod-cta");
+        submitButton.setButtonText("Submit").onClick((evt: Event) => {
+            this.resolveAndClose(evt);
+        });
 
         this.value = this.default_value ?? "";
         textInput.inputEl.addClass("templater-prompt-input");
