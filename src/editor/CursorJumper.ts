@@ -1,48 +1,64 @@
-import {
-    App,
-    EditorPosition,
-    EditorRangeOrCaret,
-    EditorTransaction,
-    MarkdownView,
-} from "obsidian";
-import { delay, escape_RegExp } from "utils/Utils";
+import { App, EditorPosition, MarkdownView } from "obsidian";
+import { delay } from "utils/Utils";
 
 export class CursorJumper {
     constructor(private app: App) {}
 
     async jump_to_next_cursor_location(): Promise<void> {
         const active_editor = this.app.workspace.activeEditor;
-        if (!active_editor || !active_editor.editor) {
+        if (!active_editor?.editor) {
             return;
         }
+
         const content = active_editor.editor.getValue();
 
-        const { new_content, positions } =
-            this.replace_and_get_cursor_positions(content);
-        if (positions) {
-            const fold_info =
-                active_editor instanceof MarkdownView
-                    ? active_editor.currentMode.getFoldInfo()
-                    : null;
-            active_editor.editor.setValue(new_content as string);
-            // only expand folds that have a cursor placed within it's bounds
-            if (fold_info && Array.isArray(fold_info.folds)) {
-                positions.forEach((position) => {
-                    fold_info.folds = fold_info.folds.filter(
-                        (fold) =>
-                            fold.from > position.line || fold.to < position.line
-                    );
-                });
-                if (active_editor instanceof MarkdownView) {
-                    active_editor.currentMode.applyFoldInfo(fold_info);
-                    // Wait for view to finish rendering properties widget
-                    await delay(100);
-                    // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
-                    // https://github.com/SilentVoid13/Templater/issues/1569
-                    active_editor.save();
-                }
+        const { cursor_matches, positions } =
+            this.get_cursor_matches_and_positions(content);
+        if (!positions || !cursor_matches) {
+            return;
+        }
+
+        const fold_info =
+            active_editor instanceof MarkdownView
+                ? active_editor.currentMode.getFoldInfo()
+                : null;
+
+        const changes = [];
+
+        for (let i = cursor_matches.length - 1; i >= 0; i--) {
+            const match = cursor_matches[i];
+            const from = this.get_editor_position_from_index(
+                content,
+                match.index
+            );
+            const to = this.get_editor_position_from_index(
+                content,
+                match.index + match[0].length
+            );
+            changes.push({ from, to, text: "" });
+        }
+
+        active_editor.editor.transaction({
+            changes,
+            selections: positions.map((pos) => ({ from: pos })),
+        });
+
+        // only expand folds that have a cursor placed within it's bounds
+        if (fold_info && Array.isArray(fold_info.folds)) {
+            positions.forEach((position) => {
+                fold_info.folds = fold_info.folds.filter(
+                    (fold) =>
+                        fold.from > position.line || fold.to < position.line
+                );
+            });
+            if (active_editor instanceof MarkdownView) {
+                active_editor.currentMode.applyFoldInfo(fold_info);
+                // Wait for view to finish rendering properties widget
+                await delay(100);
+                // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+                // https://github.com/SilentVoid13/Templater/issues/1569
+                active_editor.save();
             }
-            this.set_cursor_location(positions);
         }
 
         try {
@@ -78,70 +94,50 @@ export class CursorJumper {
         return { line: l, ch: ch };
     }
 
-    replace_and_get_cursor_positions(content: string): {
-        new_content?: string;
+    get_cursor_matches_and_positions(content: string): {
+        cursor_matches?: RegExpExecArray[];
         positions?: EditorPosition[];
     } {
-        let cursor_matches = [];
-        let match;
-        const cursor_regex = new RegExp(
-            "<%\\s*tp.file.cursor\\((?<order>[0-9]*)\\)\\s*%>",
-            "g"
-        );
+        const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*)\)\s*%>/g;
+        const cursor_matches = Array.from(content.matchAll(cursor_regex));
 
-        while ((match = cursor_regex.exec(content)) != null) {
-            cursor_matches.push(match);
-        }
         if (cursor_matches.length === 0) {
             return {};
         }
 
-        cursor_matches.sort((m1, m2) => {
-            return (
-                Number(m1.groups && m1.groups["order"]) -
-                Number(m2.groups && m2.groups["order"])
-            );
-        });
+        cursor_matches.sort(
+            (m1, m2) =>
+                Number(m1.groups?.order || 0) - Number(m2.groups?.order || 0)
+        );
+
         const match_str = cursor_matches[0][0];
+        const filtered_matches = cursor_matches.filter(
+            (m) => m[0] === match_str
+        );
 
-        cursor_matches = cursor_matches.filter((m) => {
-            return m[0] === match_str;
-        });
+        // For tp.file.cursor(), we keep the default top to bottom
+        const final_matches =
+            filtered_matches[0][1] === ""
+                ? [filtered_matches[0]]
+                : filtered_matches;
 
-        const positions = [];
+        // Calculate cursor positions accounting for deletions
+        const positions: EditorPosition[] = [];
         let index_offset = 0;
-        for (const match of cursor_matches) {
-            const index = match.index - index_offset;
-            positions.push(this.get_editor_position_from_index(content, index));
 
-            content = content.replace(new RegExp(escape_RegExp(match[0])), "");
+        for (const match of final_matches) {
+            const adjusted_index = match.index - index_offset;
+            positions.push(
+                this.get_editor_position_from_index(content, adjusted_index)
+            );
+
+            // Update content to simulate the deletion for position calculations
+            content =
+                content.slice(0, adjusted_index) +
+                content.slice(adjusted_index + match[0].length);
             index_offset += match[0].length;
-
-            // For tp.file.cursor(), we keep the default top to bottom
-            if (match[1] === "") {
-                break;
-            }
         }
 
-        return { new_content: content, positions: positions };
-    }
-
-    set_cursor_location(positions: EditorPosition[]): void {
-        const active_editor = this.app.workspace.activeEditor;
-        if (!active_editor || !active_editor.editor) {
-            return;
-        }
-
-        const editor = active_editor.editor;
-
-        const selections: Array<EditorRangeOrCaret> = [];
-        for (const pos of positions) {
-            selections.push({ from: pos });
-        }
-
-        const transaction: EditorTransaction = {
-            selections: selections,
-        };
-        editor.transaction(transaction);
+        return { cursor_matches: final_matches, positions };
     }
 }
