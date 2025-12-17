@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.16.3](https://github.com/SilentVoid13/Templater/compare/2.16.2...2.16.3) (2025-12-17)
+
+
+### Bug Fixes
+
+* `tp.file.cursor()` causing screen jumping on newer versions of Obsidian ([1e5e501](https://github.com/SilentVoid13/Templater/commit/1e5e5017c67fb00850970cf600bfbc162ce581dc)), closes [#1667](https://github.com/SilentVoid13/Templater/issues/1667)
+
 ### [2.16.2](https://github.com/SilentVoid13/Templater/compare/2.16.1...2.16.2) (2025-10-17)
 
 
