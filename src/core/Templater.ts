@@ -41,13 +41,14 @@ export type RunningConfig = {
     target_file: TFile;
     run_mode: RunMode;
     active_file?: TFile | null;
+    frontmatter: Record<string, unknown>;
 };
 
 export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
-    public current_functions_object: Record<string, unknown>;
     public files_with_pending_templates: Set<string>;
+    private functions_objects: Array<Record<string, unknown>>;
 
     constructor(private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(this.plugin);
@@ -58,6 +59,7 @@ export class Templater {
         this.files_with_pending_templates = new Set();
         await this.parser.init();
         await this.functions_generator.init();
+        this.functions_objects = [];
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
             this.process_dynamic_templates(el, ctx)
         );
@@ -75,6 +77,7 @@ export class Templater {
             target_file: target_file,
             run_mode: run_mode,
             active_file: active_file,
+            frontmatter: {},
         };
     }
 
@@ -93,11 +96,20 @@ export class Templater {
             config,
             FunctionsMode.USER_INTERNAL
         );
-        this.current_functions_object = functions_object;
+        this.functions_objects.push(functions_object);
         const content = await this.parser.parse_commands(
             template_content,
             functions_object
         );
+        this.functions_objects.pop();
+
+        // Merge the frontmatter of any included templates into the root template frontmatter after parsing
+        // so that included templates frontmatter overrides root template frontmatter,
+        // and any functions in the root frontmatter have been executed
+        const frontmatter = get_frontmatter_and_content(content).frontmatter;
+        merge_objects(frontmatter, config.frontmatter);
+        config.frontmatter = frontmatter;
+
         return content;
     }
 
@@ -200,6 +212,20 @@ export class Templater {
             return;
         }
 
+        // Update the frontmatter of output_content with the merged frontmatter
+        // from all included templates
+        const output_content_body =
+            get_frontmatter_and_content(output_content).content;
+        const frontmatter = running_config.frontmatter;
+
+        if (Object.keys(frontmatter).length !== 0) {
+            output_content =
+                "---\n" +
+                stringifyYaml(frontmatter) +
+                "---\n" +
+                output_content_body;
+        }
+
         await this.plugin.app.vault.modify(created_note, output_content);
 
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
@@ -258,8 +284,8 @@ export class Templater {
             return;
         }
 
-        const { content, frontmatter } =
-            get_frontmatter_and_content(output_content);
+        const content = get_frontmatter_and_content(output_content).content;
+        const frontmatter = running_config.frontmatter;
 
         const editor = active_editor.editor;
         const doc = editor.getDoc();
@@ -321,10 +347,9 @@ export class Templater {
             return;
         }
 
-        const {
-            content: output_content_body,
-            frontmatter: output_frontmatter,
-        } = get_frontmatter_and_content(output_content);
+        const output_content_body =
+            get_frontmatter_and_content(output_content).content;
+        const output_frontmatter = running_config.frontmatter;
         if (
             active_file?.path === file.path &&
             active_editor &&
@@ -455,7 +480,7 @@ export class Templater {
                                 config,
                                 FunctionsMode.USER_INTERNAL
                             );
-                        this.current_functions_object = functions_object;
+                        this.functions_objects.push(functions_object);
                     }
                 }
 
@@ -489,6 +514,16 @@ export class Templater {
                 node.nodeValue = content;
             }
         }
+        if (pass) {
+            this.functions_objects.pop();
+        }
+    }
+
+    get_current_functions_object(): Record<string, unknown> {
+        if (this.functions_objects.length === 0) {
+            return {};
+        }
+        return this.functions_objects[this.functions_objects.length - 1];
     }
 
     get_new_file_template_for_folder(folder: TFolder): string | undefined {
