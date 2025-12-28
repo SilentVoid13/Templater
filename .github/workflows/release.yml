@@ -17,9 +17,12 @@ jobs:
               run: |
                   npm install
                   npm run build --if-present
+            - name: Create zip archive
+              run: |
+                  zip -j templater-obsidian.zip main.js manifest.json styles.css
             - name: Create Release
               # https://github.com/ncipollo/release-action
               uses: ncipollo/release-action@v1.7.3
               with:
-                  artifacts: "main.js,manifest.json,styles.css"
+                  artifacts: "main.js,manifest.json,styles.css,templater-obsidian.zip"
                   token: ${{ secrets.GITHUB_TOKEN }}
