@@ -5,7 +5,7 @@ import { log_error } from "utils/Log";
 import { arraymove, get_tfiles_from_folder } from "utils/Utils";
 import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
 import { FolderSuggest } from "./suggesters/FolderSuggester";
-import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption"
+import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
 
 export interface FolderTemplate {
     folder: string;
@@ -34,7 +34,8 @@ export const DEFAULT_SETTINGS: Settings = {
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [""],
     startup_templates: [""],
-    intellisense_render: IntellisenseRenderOption.RenderDescriptionParameterReturn
+    intellisense_render:
+        IntellisenseRenderOption.RenderDescriptionParameterReturn,
 };
 
 export interface Settings {
@@ -58,6 +59,8 @@ export interface Settings {
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
+    icon = "templater-icon";
+
     constructor(private plugin: TemplaterPlugin) {
         super(plugin.app, plugin);
     }
@@ -91,7 +94,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.templates_folder)
                     .onChange((new_folder) => {
                         // Trim folder and Strip ending slash if there
-                        new_folder = new_folder.trim()
+                        new_folder = new_folder.trim();
                         new_folder = new_folder.replace(/\/$/, "");
 
                         this.plugin.settings.templates_folder = new_folder;
@@ -736,21 +739,31 @@ export class TemplaterSettingTab extends PluginSettingTab {
             });
 
         new Setting(this.containerEl)
-        .setName('User script intellisense')
-        .setDesc('Determine how you\'d like to have user script intellisense render. Note values will not render if not in the script.')
-        .addDropdown(cb => {
-            cb
-                .addOption("0", "Turn off intellisense")
-                .addOption("1", "Render method description, parameters list, and return")
-                .addOption("2", "Render method description and parameters list")
-                .addOption("3", "Render method description and return")
-                .addOption("4", "Render method description")
-                .setValue(this.plugin.settings.intellisense_render.toString())
-                .onChange((value) => {
-                    this.plugin.settings.intellisense_render = parseInt(value);
-                    this.plugin.save_settings();
-                })
-        })
+            .setName("User script intellisense")
+            .setDesc(
+                "Determine how you'd like to have user script intellisense render. Note values will not render if not in the script."
+            )
+            .addDropdown((cb) => {
+                cb.addOption("0", "Turn off intellisense")
+                    .addOption(
+                        "1",
+                        "Render method description, parameters list, and return"
+                    )
+                    .addOption(
+                        "2",
+                        "Render method description and parameters list"
+                    )
+                    .addOption("3", "Render method description and return")
+                    .addOption("4", "Render method description")
+                    .setValue(
+                        this.plugin.settings.intellisense_render.toString()
+                    )
+                    .onChange((value) => {
+                        this.plugin.settings.intellisense_render =
+                            parseInt(value);
+                        this.plugin.save_settings();
+                    });
+            });
 
         desc = document.createDocumentFragment();
         let name: string;
