@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.17.0](https://github.com/SilentVoid13/Templater/compare/2.16.4...2.17.0) (2026-01-20)
+
+
+### Features
+
+* Add icon to settings tab (Obsidian 1.11.0+) ([d449e0b](https://github.com/SilentVoid13/Templater/commit/d449e0b6627fa7592b3be168a64c549e4228e197))
+
+
+### Bug Fixes
+
+* Prompts always being multi-line, regardless of `multi_line` prop ([4a21578](https://github.com/SilentVoid13/Templater/commit/4a21578ed67c83168b32e167c661049d1119ead9)), closes [#1673](https://github.com/SilentVoid13/Templater/issues/1673)
+
 ### [2.16.4](https://github.com/SilentVoid13/Templater/compare/2.16.3...2.16.4) (2025-12-17)
 
 
