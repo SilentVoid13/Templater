@@ -38,7 +38,12 @@ export class PromptModal extends Modal {
     createForm(): void {
         const div = this.contentEl.createDiv();
         div.addClass("templater-prompt-div");
-        let textInput = new TextAreaComponent(div);
+        let textInput: TextAreaComponent | TextComponent;
+        if (this.multi_line) {
+            textInput = new TextAreaComponent(div);
+        } else {
+            textInput = new TextComponent(div);
+        }
 
         // Add submit button since enter needed for multiline input on mobile
         // and some mobile keyboards don't confirm when pressing Enter at all,
