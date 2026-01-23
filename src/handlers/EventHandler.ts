@@ -83,6 +83,7 @@ export default class EventHandler {
                         menu.addItem((item: MenuItem) => {
                             item.setTitle("Create new note from template")
                                 .setIcon("templater-icon")
+                                .setSection("action-primary")
                                 .onClick(() => {
                                     this.plugin.fuzzy_suggester.create_new_note_from_template(
                                         file
