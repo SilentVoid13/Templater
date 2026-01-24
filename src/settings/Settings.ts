@@ -17,6 +17,13 @@ export interface FileTemplate {
     template: string;
 }
 
+export interface RibbonTemplate {
+    name: string;
+    icon: string;
+    templatePath: string;
+    action: "insert" | "create";
+}
+
 export const DEFAULT_SETTINGS: Settings = {
     command_timeout: 5,
     templates_folder: "",
@@ -36,6 +43,7 @@ export const DEFAULT_SETTINGS: Settings = {
     startup_templates: [""],
     intellisense_render:
         IntellisenseRenderOption.RenderDescriptionParameterReturn,
+    ribbon_templates: [],
 };
 
 export interface Settings {
@@ -56,6 +64,7 @@ export interface Settings {
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
     intellisense_render: number;
+    ribbon_templates: Array<RibbonTemplate>;
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -78,6 +87,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             this.add_file_templates_setting();
         }
         this.add_templates_hotkeys_setting();
+        this.add_ribbon_templates_setting();
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
@@ -341,6 +351,135 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     this.plugin.settings.enabled_templates_hotkeys.push("");
                     this.plugin.save_settings();
                     // Force refresh
+                    this.display();
+                });
+        });
+    }
+
+    add_ribbon_templates_setting(): void {
+        new Setting(this.containerEl).setName("Ribbon templates").setHeading();
+
+        const desc = document.createDocumentFragment();
+        desc.append(
+            "Add template shortcuts to the ribbon for quick access.",
+            desc.createEl("br"),
+            "Useful for mobile devices where the ribbon provides easy access to common actions."
+        );
+
+        new Setting(this.containerEl).setDesc(desc);
+
+        this.plugin.settings.ribbon_templates.forEach(
+            (ribbon_template, index) => {
+                const s = new Setting(this.containerEl)
+                    .addText((cb) => {
+                        cb.setPlaceholder("Name")
+                            .setValue(ribbon_template.name)
+                            .onChange((new_name) => {
+                                this.plugin.settings.ribbon_templates[
+                                    index
+                                ].name = new_name;
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                            });
+                        cb.inputEl.addClass("templater_search");
+                    })
+                    .addText((cb) => {
+                        cb.setPlaceholder("Icon (e.g., file-plus)")
+                            .setValue(ribbon_template.icon)
+                            .onChange((new_icon) => {
+                                this.plugin.settings.ribbon_templates[
+                                    index
+                                ].icon = new_icon;
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                            });
+                        cb.inputEl.addClass("templater_search");
+                    })
+                    .addSearch((cb) => {
+                        new FileSuggest(
+                            cb.inputEl,
+                            this.plugin,
+                            FileSuggestMode.TemplateFiles
+                        );
+                        cb.setPlaceholder("Template file")
+                            .setValue(ribbon_template.templatePath)
+                            .onChange((new_template) => {
+                                this.plugin.settings.ribbon_templates[
+                                    index
+                                ].templatePath = new_template;
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                            });
+                        // @ts-ignore
+                        cb.containerEl.addClass("templater_search");
+                    })
+                    .addDropdown((cb) => {
+                        cb.addOption("insert", "Insert")
+                            .addOption("create", "Create new note")
+                            .setValue(ribbon_template.action)
+                            .onChange((new_action: "insert" | "create") => {
+                                this.plugin.settings.ribbon_templates[
+                                    index
+                                ].action = new_action;
+                                this.plugin.save_settings();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("up-chevron-glyph")
+                            .setTooltip("Move up")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings.ribbon_templates,
+                                    index,
+                                    index - 1
+                                );
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("down-chevron-glyph")
+                            .setTooltip("Move down")
+                            .onClick(() => {
+                                arraymove(
+                                    this.plugin.settings.ribbon_templates,
+                                    index,
+                                    index + 1
+                                );
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                                this.display();
+                            });
+                    })
+                    .addExtraButton((cb) => {
+                        cb.setIcon("cross")
+                            .setTooltip("Delete")
+                            .onClick(() => {
+                                this.plugin.settings.ribbon_templates.splice(
+                                    index,
+                                    1
+                                );
+                                this.plugin.save_settings();
+                                this.plugin.refresh_ribbon_templates();
+                                this.display();
+                            });
+                    });
+                s.infoEl.remove();
+            }
+        );
+
+        new Setting(this.containerEl).addButton((cb) => {
+            cb.setButtonText("Add new ribbon template")
+                .setCta()
+                .onClick(() => {
+                    this.plugin.settings.ribbon_templates.push({
+                        name: "",
+                        icon: "file-plus",
+                        templatePath: "",
+                        action: "insert",
+                    });
+                    this.plugin.save_settings();
                     this.display();
                 });
         });
