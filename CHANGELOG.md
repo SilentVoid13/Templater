@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.17.1](https://github.com/SilentVoid13/Templater/compare/2.17.0...2.17.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* Templater Commands not running on automatic Daily Note Creation on Obsidian 1.11.0+ ([e6fcf88](https://github.com/SilentVoid13/Templater/commit/e6fcf889d6ec54d04075ed4ec2c47d0ce7be3d86)), closes [#1689](https://github.com/SilentVoid13/Templater/issues/1689)
+
 ## [2.17.0](https://github.com/SilentVoid13/Templater/compare/2.16.4...2.17.0) (2026-01-20)
 
 
