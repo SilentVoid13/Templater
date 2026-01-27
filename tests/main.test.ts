@@ -194,6 +194,7 @@ export default class TestTemplaterPlugin extends Plugin {
             template_file: this.template_file,
             target_file: this.target_file,
             run_mode: RunMode.OverwriteFile,
+            frontmatter: {},
         };
         const content = await this.plugin.templater.read_and_parse_template(
             running_config
