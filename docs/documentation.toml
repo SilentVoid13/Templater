@@ -342,7 +342,7 @@ example = "<% tp.file.folder(true) %>"
 
 [tp.file.functions.include]
 name = "include"
-description = "Includes the file's link content. Templates in the included content will be resolved."
+description = "Includes the file's link content. Templates in the included content will be resolved. Any frontmatter in the included file will be merged with the parent file."
 definition = "tp.file.include(include_link: string ⎮ TFile)"
 
 [[tp.file.functions.include.args]]
