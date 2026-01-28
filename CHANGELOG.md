@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.18.0](https://github.com/SilentVoid13/Templater/compare/2.17.1...2.18.0) (2026-01-28)
+
+
+### Features
+
+* support merging frontmatter with `tp.file.include` ([#1643](https://github.com/SilentVoid13/Templater/issues/1643)) ([db9a91e](https://github.com/SilentVoid13/Templater/commit/db9a91e6d663308d21a318b186fb6c72bed3e799))
+
 ### [2.17.1](https://github.com/SilentVoid13/Templater/compare/2.17.0...2.17.1) (2026-01-27)
 
 
