@@ -20,11 +20,11 @@ export class InternalFunctions implements IGenerateObject {
     async init(): Promise<void> {}
 
     async teardown(): Promise<void> {
-        this.modules.forEach(async (module_array) => {
-            module_array.forEach(async (mod) => {
+        for (const module_array of this.modules) {
+            for (const mod of module_array) {
                 await mod.teardown();
-            });
-        });
+            }
+        }
         this.modules = [];
     }
 
