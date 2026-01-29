@@ -1,6 +1,6 @@
 {
     "name": "templater-obsidian",
-    "version": "2.15.2",
+    "version": "2.18.1",
     "description": "Create and use templates",
     "main": "main.js",
     "scripts": {
@@ -37,7 +37,7 @@
         "esbuild-plugin-toml": "^0.0.1",
         "eslint": "^8.27.0",
         "moment": "^2.29.4",
-        "obsidian": "^1.7.2",
+        "obsidian": "^1.11.4",
         "standard-version": "^9.5.0",
         "stringify-package": "^1.0.1",
         "ts-node": "^9.1.1",

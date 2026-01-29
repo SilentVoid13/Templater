@@ -2,6 +2,76 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.18.1](https://github.com/SilentVoid13/Templater/compare/2.18.0...2.18.1) (2026-01-29)
+
+## [2.18.0](https://github.com/SilentVoid13/Templater/compare/2.17.1...2.18.0) (2026-01-28)
+
+
+### Features
+
+* support merging frontmatter with `tp.file.include` ([#1643](https://github.com/SilentVoid13/Templater/issues/1643)) ([db9a91e](https://github.com/SilentVoid13/Templater/commit/db9a91e6d663308d21a318b186fb6c72bed3e799))
+
+### [2.17.1](https://github.com/SilentVoid13/Templater/compare/2.17.0...2.17.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* Templater Commands not running on automatic Daily Note Creation on Obsidian 1.11.0+ ([e6fcf88](https://github.com/SilentVoid13/Templater/commit/e6fcf889d6ec54d04075ed4ec2c47d0ce7be3d86)), closes [#1689](https://github.com/SilentVoid13/Templater/issues/1689)
+
+## [2.17.0](https://github.com/SilentVoid13/Templater/compare/2.16.4...2.17.0) (2026-01-20)
+
+
+### Features
+
+* Add icon to settings tab (Obsidian 1.11.0+) ([d449e0b](https://github.com/SilentVoid13/Templater/commit/d449e0b6627fa7592b3be168a64c549e4228e197))
+
+
+### Bug Fixes
+
+* Prompts always being multi-line, regardless of `multi_line` prop ([4a21578](https://github.com/SilentVoid13/Templater/commit/4a21578ed67c83168b32e167c661049d1119ead9)), closes [#1673](https://github.com/SilentVoid13/Templater/issues/1673)
+
+### [2.16.4](https://github.com/SilentVoid13/Templater/compare/2.16.3...2.16.4) (2025-12-17)
+
+
+### Bug Fixes
+
+* Fixed template name when templates folder is not configured ([#1665](https://github.com/SilentVoid13/Templater/issues/1665)) ([0ad40da](https://github.com/SilentVoid13/Templater/commit/0ad40daf711e2ac4944a4c60bc7fdfb6fac10c76))
+* prompt confirmation on some mobile keyboards, ([#1654](https://github.com/SilentVoid13/Templater/issues/1654)) ([f1f65c6](https://github.com/SilentVoid13/Templater/commit/f1f65c638df412f044765d6c5340e62b6f1f2aaa))
+
+### [2.16.3](https://github.com/SilentVoid13/Templater/compare/2.16.2...2.16.3) (2025-12-17)
+
+
+### Bug Fixes
+
+* `tp.file.cursor()` causing screen jumping on newer versions of Obsidian ([1e5e501](https://github.com/SilentVoid13/Templater/commit/1e5e5017c67fb00850970cf600bfbc162ce581dc)), closes [#1667](https://github.com/SilentVoid13/Templater/issues/1667)
+
+### [2.16.2](https://github.com/SilentVoid13/Templater/compare/2.16.1...2.16.2) (2025-10-17)
+
+
+### Bug Fixes
+
+* Folder templates preventing properties widget from rendering ([a1a0180](https://github.com/SilentVoid13/Templater/commit/a1a01809a7ef2a99a2259943763d4e496aab75ed)), closes [#1651](https://github.com/SilentVoid13/Templater/issues/1651) [#1644](https://github.com/SilentVoid13/Templater/issues/1644) [#1647](https://github.com/SilentVoid13/Templater/issues/1647)
+
+### [2.16.1](https://github.com/SilentVoid13/Templater/compare/2.16.0...2.16.1) (2025-10-13)
+
+
+### Bug Fixes
+
+* Save editor changes to disk when inserting template into active editor or jumping to cursor ([f9c4f47](https://github.com/SilentVoid13/Templater/commit/f9c4f479e1efa01b5d0fc2117430de3936703809)), closes [#1644](https://github.com/SilentVoid13/Templater/issues/1644) [#1647](https://github.com/SilentVoid13/Templater/issues/1647)
+
+## [2.16.0](https://github.com/SilentVoid13/Templater/compare/2.15.2...2.16.0) (2025-09-28)
+
+
+### Features
+
+* add `tp.system.multi_suggester` ([#1639](https://github.com/SilentVoid13/Templater/issues/1639)) ([d6ef70c](https://github.com/SilentVoid13/Templater/commit/d6ef70cccc083b7d546edce317591031d30db57c)), closes [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130) [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130) [#461](https://github.com/SilentVoid13/Templater/issues/461) [#1130](https://github.com/SilentVoid13/Templater/issues/1130)
+
+
+### Bug Fixes
+
+* Ensure proper size limit is reported ([#1628](https://github.com/SilentVoid13/Templater/issues/1628)) ([879b34f](https://github.com/SilentVoid13/Templater/commit/879b34f1633821f11bdf15977dfe136e8cef0024))
+* refactor to processAsync ([#1630](https://github.com/SilentVoid13/Templater/issues/1630)) ([c6a18d9](https://github.com/SilentVoid13/Templater/commit/c6a18d979c193aca44564c47f50c60ccc64b8780))
+
 ### [2.15.2](https://github.com/SilentVoid13/Templater/compare/2.15.1...2.15.2) (2025-09-19)
 
 ### [2.15.1](https://github.com/SilentVoid13/Templater/compare/2.15.0...2.15.1) (2025-09-02)

@@ -1,4 +1,4 @@
-# Templater Obsidian Plugin
+# Templater Plugin for Obsidian
 
 ![templater_logo](./imgs/templater_logo.svg)
 
@@ -58,4 +58,5 @@ If you want to support me and my work, you can [sponsor me on Github](https://gi
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/silentvoid13?label=Sponsor&logo=GitHub%20Sponsors&style=for-the-badge)](https://github.com/sponsors/silentvoid13)
 [![Paypal](https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal)](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q)
+
 
