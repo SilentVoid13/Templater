@@ -13,7 +13,6 @@ import {
 } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { ModuleName } from "editor/TpDocumentation";
-import { get_frontmatter_and_content, merge_objects } from "utils/Utils";
 
 export const DEPTH_LIMIT = 10;
 
@@ -215,15 +214,10 @@ export class InternalModuleFile extends InternalModule {
                 const parsed_content =
                     await this.plugin.templater.parser.parse_commands(
                         inc_file_content,
-                        this.plugin.templater.get_current_functions_object()
+                        this.plugin.templater.current_functions_object
                     );
-                const { frontmatter, content } =
-                    get_frontmatter_and_content(parsed_content);
-
-                merge_objects(this.config.frontmatter, frontmatter);
-
                 this.include_depth -= 1;
-                return content;
+                return parsed_content;
             } catch (e) {
                 this.include_depth -= 1;
                 throw e;
