@@ -48,14 +48,8 @@ export class Templater {
     public parser: Parser;
     public functions_generator: FunctionsGenerator;
     public files_with_pending_templates: Set<string>;
+    public current_functions_object: Record<string, unknown>;
     private functions_objects: Array<Record<string, unknown>>;
-
-    /**
-     * @deprecated Use get_current_functions_object() instead.
-     */
-    get current_functions_object(): Record<string, unknown> {
-        return this.get_current_functions_object();
-    }
 
     constructor(private plugin: TemplaterPlugin) {
         this.functions_generator = new FunctionsGenerator(this.plugin);
@@ -103,12 +97,12 @@ export class Templater {
             config,
             FunctionsMode.USER_INTERNAL,
         );
-        this.functions_objects.push(functions_object);
+        this.push_functions_object(functions_object);
         const content = await this.parser.parse_commands(
             template_content,
             functions_object,
         );
-        this.functions_objects.pop();
+        this.pop_functions_object();
 
         // Merge the frontmatter of any included templates into the root template frontmatter after parsing
         // so that included templates frontmatter overrides root template frontmatter,
@@ -479,7 +473,7 @@ export class Templater {
                                 config,
                                 FunctionsMode.USER_INTERNAL,
                             );
-                        this.functions_objects.push(functions_object);
+                        this.push_functions_object(functions_object);
                     }
                 }
 
@@ -514,15 +508,26 @@ export class Templater {
             }
         }
         if (pass) {
-            this.functions_objects.pop();
+            this.pop_functions_object();
         }
     }
 
+    private push_functions_object(obj: Record<string, unknown>): void {
+        this.functions_objects.push(obj);
+        this.current_functions_object = obj;
+    }
+
+    private pop_functions_object(): void {
+        this.functions_objects.pop();
+        this.current_functions_object = this.get_current_functions_object();
+    }
+
     get_current_functions_object(): Record<string, unknown> {
-        if (this.functions_objects.length === 0) {
+        const stack = this.functions_objects;
+        if (!stack || stack.length === 0) {
             return {};
         }
-        return this.functions_objects[this.functions_objects.length - 1];
+        return stack[stack.length - 1];
     }
 
     get_new_file_template_for_folder(folder: TFolder): string | undefined {
