@@ -456,67 +456,72 @@ export class Templater {
         let node;
         let pass = false;
         let functions_object: Record<string, unknown>;
-        while ((node = walker.nextNode())) {
-            let content = node.nodeValue;
-            if (content !== null) {
-                let match = dynamic_command_regex.exec(content);
-                if (match !== null) {
-                    const file =
-                        this.plugin.app.metadataCache.getFirstLinkpathDest(
-                            "",
-                            ctx.sourcePath,
-                        );
-                    if (!file || !(file instanceof TFile)) {
-                        return;
-                    }
-                    if (!pass) {
-                        pass = true;
-                        const config = this.create_running_config(
-                            file,
-                            file,
-                            RunMode.DynamicProcessor,
-                        );
-                        functions_object =
-                            await this.functions_generator.generate_object(
-                                config,
-                                FunctionsMode.USER_INTERNAL,
+        try {
+            while ((node = walker.nextNode())) {
+                let content = node.nodeValue;
+                if (content !== null) {
+                    let match = dynamic_command_regex.exec(content);
+                    if (match !== null) {
+                        const file =
+                            this.plugin.app.metadataCache.getFirstLinkpathDest(
+                                "",
+                                ctx.sourcePath,
                             );
-                        this.push_functions_object(functions_object);
-                    }
-                }
-
-                while (match != null) {
-                    // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
-                    const complete_command = match[1] + match[2];
-                    const command_output: string = await errorWrapper(
-                        async () => {
-                            return await this.parser.parse_commands(
-                                complete_command,
-                                functions_object,
+                        if (!file || !(file instanceof TFile)) {
+                            return;
+                        }
+                        if (!pass) {
+                            pass = true;
+                            const config = this.create_running_config(
+                                file,
+                                file,
+                                RunMode.DynamicProcessor,
                             );
-                        },
-                        `Command Parsing error in dynamic command '${complete_command}'`,
-                    );
-                    if (command_output == null) {
-                        return;
+                            functions_object =
+                                await this.functions_generator.generate_object(
+                                    config,
+                                    FunctionsMode.USER_INTERNAL,
+                                );
+                            this.push_functions_object(functions_object);
+                        }
                     }
-                    const start =
-                        dynamic_command_regex.lastIndex - match[0].length;
-                    const end = dynamic_command_regex.lastIndex;
-                    content =
-                        content.substring(0, start) +
-                        command_output +
-                        content.substring(end);
 
-                    dynamic_command_regex.lastIndex +=
-                        command_output.length - match[0].length;
-                    match = dynamic_command_regex.exec(content);
+                    while (match != null) {
+                        // Not the most efficient way to exclude the '+' from the command but I couldn't find something better
+                        const complete_command = match[1] + match[2];
+                        const command_output: string = await errorWrapper(
+                            async () => {
+                                return await this.parser.parse_commands(
+                                    complete_command,
+                                    functions_object,
+                                );
+                            },
+                            `Command Parsing error in dynamic command '${complete_command}'`,
+                        );
+                        if (command_output == null) {
+                            throw new TemplaterError(
+                                "Aborting dynamic command processing",
+                            );
+                        }
+                        const start =
+                            dynamic_command_regex.lastIndex - match[0].length;
+                        const end = dynamic_command_regex.lastIndex;
+                        content =
+                            content.substring(0, start) +
+                            command_output +
+                            content.substring(end);
+
+                        dynamic_command_regex.lastIndex +=
+                            command_output.length - match[0].length;
+                        match = dynamic_command_regex.exec(content);
+                    }
+                    node.nodeValue = content;
                 }
-                node.nodeValue = content;
             }
-        }
-        if (pass) {
-            this.pop_functions_object();
+        } finally {
+            if (pass) {
+                this.pop_functions_object();
+            }
         }
     }
 
