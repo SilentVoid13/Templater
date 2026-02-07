@@ -68,21 +68,24 @@ export class InternalModuleSystem extends InternalModule {
         items: T[],
         throw_on_cancel: boolean,
         placeholder: string,
-        limit?: number
+        limit?: number,
+        initial_query?: string
     ) => Promise<T> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
             items: T[],
             throw_on_cancel = false,
             placeholder = "",
-            limit?: number
+            limit?: number,
+            initial_query?: string
         ): Promise<T> => {
             const suggester = new SuggesterModal(
                 this.plugin.app,
                 text_items,
                 items,
                 placeholder,
-                limit
+                limit,
+                initial_query
             );
             const promise = new Promise(
                 (
