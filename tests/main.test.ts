@@ -18,6 +18,7 @@ import { InternalModuleHooksTests } from "./InternalTemplates/InternalModuleHook
 import { InternalModuleSystemTests } from "./InternalTemplates/InternalModuleSystem.test";
 import { InternalModuleConfigTests } from "./InternalTemplates/InternalModuleConfig.test";
 import { TemplaterTests } from "./Templater.test";
+import { CommandHandlerTests } from "./CommandHandler.test";
 
 chai.use(chaiAsPromised);
 
@@ -112,6 +113,7 @@ export default class TestTemplaterPlugin extends Plugin {
         InternalModuleSystemTests(this);
         InternalModuleConfigTests(this);
         TemplaterTests(this);
+        CommandHandlerTests(this);
     }
 
     test(name: string, fn: () => Promise<void>) {

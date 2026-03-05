@@ -1,7 +1,7 @@
 import TemplaterPlugin from "main";
-import { Platform } from "obsidian";
+import { normalizePath, Platform, TFile, TFolder } from "obsidian";
 import { errorWrapperSync } from "utils/Error";
-import { resolve_tfile } from "utils/Utils";
+import { resolve_tfile, resolve_tfolder, get_folder_path_from_file_path } from "utils/Utils";
 
 export class CommandHandler {
     constructor(private plugin: TemplaterPlugin) {}
@@ -74,6 +74,7 @@ export class CommandHandler {
         });
 
         this.register_templates_hotkeys();
+        this.register_cli_handler();
     }
 
     register_templates_hotkeys(): void {
@@ -142,6 +143,93 @@ export class CommandHandler {
         if (template) {
             this.plugin.removeCommand(`${template}`);
             this.plugin.removeCommand(`create-${template}`);
+        }
+    }
+
+    register_cli_handler(): void {
+        this.plugin.registerCliHandler(
+            "templater:create-from-template",
+            "Create a new note from a Templater template",
+            {
+                template: {
+                    value: "<path>",
+                    description: "Template file path (relative to vault root or templates folder)",
+                    required: true,
+                },
+                file: {
+                    value: "<path>",
+                    description: "Output file path (relative to vault root)",
+                    required: true,
+                },
+                open: {
+                    description: "Open the created file in the UI",
+                    required: false,
+                },
+            },
+            async (params) => this.handle_create_from_template(params)
+        );
+    }
+
+    private resolve_template_file(template: string): TFile {
+        let template_path = template;
+        if (!template_path.endsWith(".md")) {
+            template_path = `${template_path}.md`;
+        }
+
+        try {
+            return resolve_tfile(this.plugin.app, template_path);
+        } catch {
+            const templates_folder = this.plugin.settings.templates_folder;
+            if (templates_folder) {
+                const full_path = normalizePath(`${templates_folder}/${template_path}`);
+                return resolve_tfile(this.plugin.app, full_path);
+            }
+            throw new Error(`Template "${template}" not found`);
+        }
+    }
+
+    private async handle_create_from_template(
+        params: Record<string, string | "true">
+    ): Promise<string> {
+        const { template, file, open } = params;
+
+        if (!template) {
+            return "Error: template parameter is required";
+        }
+        if (!file) {
+            return "Error: file parameter is required";
+        }
+
+        try {
+            const template_file = this.resolve_template_file(template);
+
+            const file_path = normalizePath(file);
+            const folder_path = get_folder_path_from_file_path(file_path);
+            const filename = file_path.slice(folder_path.length + 1).replace(/\.md$/, "");
+
+            let folder: TFolder | undefined;
+            if (folder_path) {
+                try {
+                    folder = resolve_tfolder(this.plugin.app, folder_path);
+                } catch {
+                    // Folder will be created by create_new_note_from_template
+                }
+            }
+
+            const open_note = open === "true";
+            const created_file = await this.plugin.templater.create_new_note_from_template(
+                template_file,
+                folder ?? folder_path,
+                filename,
+                open_note
+            );
+
+            if (created_file) {
+                return created_file.path;
+            }
+            return "Error: Failed to create note from template";
+        } catch (error) {
+            return `Error: ${error instanceof Error ? error.message : String(error)}`;
         }
     }
 }
