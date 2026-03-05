@@ -22,7 +22,8 @@ export class MultiSuggesterModal<T> extends Modal {
         private text_items: string[] | ((item: T) => string),
         private items: T[],
         title: string,
-        limit?: number
+        limit?: number,
+        private default_value?: string
     ) {
         super(app);
         this.setTitle(title);
@@ -37,7 +38,8 @@ export class MultiSuggesterModal<T> extends Modal {
             inputComponent.inputEl,
             this.getItemText.bind(this),
             items,
-            limit
+            limit,
+            default_value
         ).onSelect(this.onChooseItem.bind(this));
         const buttonContainer = this.contentEl.createDiv(
             "modal-button-container"
@@ -135,10 +137,14 @@ class Suggester<T> extends AbstractInputSuggest<T> {
         textInputEl: HTMLInputElement | HTMLDivElement,
         private getItemText: (item: T) => string,
         private items: T[],
-        limit?: number
+        limit?: number,
+        default_value?: string
     ) {
         super(app, textInputEl);
         limit && (this.limit = limit);
+        if (default_value) {
+            this.setValue(default_value);
+        }
     }
     protected getSuggestions(query: string): T[] | Promise<T[]> {
         const q = prepareFuzzySearch(query);
