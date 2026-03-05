@@ -12,7 +12,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         private items: T[],
         placeholder: string,
         limit?: number,
-        private initial_query?: string
+        private default_value?: string
     ) {
         super(app);
         this.setPlaceholder(placeholder);
@@ -24,8 +24,8 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     }
 
     onOpen(): void {
-        if (this.initial_query) {
-            this.inputEl.value = this.initial_query;
+        if (this.default_value) {
+            this.inputEl.value = this.default_value;
             this.inputEl.dispatchEvent(new InputEvent("input"));
         }
     }
