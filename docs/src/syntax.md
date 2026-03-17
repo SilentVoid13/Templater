@@ -34,7 +34,7 @@ All arguments must be passed in the correct order.
 
 The arguments of a function can have different **types**. Here is a non-exhaustive list of the possible types of a function:
 
-- A `string` type means the value must be placed within simple or double quotes (`"value"` or `'value'`)
+- A `string` type means the value must be placed within single or double quotes (`"value"` or `'value'`)
 - A `number` type means the value must be an integer (`15`, `-5`, ...)
 - A `boolean` type means the value must be either `true` or `false` (completely lower case), and nothing else.
 
