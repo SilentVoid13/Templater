@@ -1,23 +1,4 @@
 declare module "obsidian" {
-    interface CliFlag {
-        value?: string;
-        description: string;
-        required?: boolean;
-    }
-
-    type CliFlags = Record<string, CliFlag>;
-    type CliData = Record<string, string | "true">;
-    type CliHandler = (params: CliData) => string | Promise<string>;
-
-    interface Plugin {
-        registerCliHandler(
-            command: string,
-            description: string,
-            flags: CliFlags | null,
-            handler: CliHandler
-        ): void;
-    }
-
     interface App {
         dom: {
             appContainerEl: HTMLElement;
