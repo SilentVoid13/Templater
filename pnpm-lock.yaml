@@ -79,8 +79,8 @@ importers:
         specifier: ^2.29.4
         version: 2.30.1
       obsidian:
-        specifier: ^1.11.4
-        version: 1.11.4(@codemirror/state@6.4.0)(@codemirror/view@6.23.1)
+        specifier: ^1.12.2
+        version: 1.12.3(@codemirror/state@6.4.0)(@codemirror/view@6.23.1)
       standard-version:
         specifier: ^9.5.0
         version: 9.5.0
@@ -1258,8 +1258,8 @@ packages:
     resolution: {integrity: sha512-p2W1sgqij3zMMyRC067Dg16bfzVH+w7hyegmpIvZ4JNjqtGOVAIvLmjBx3yP7YTe9vKJgkoNOPjwQGogDoMXFA==}
     engines: {node: '>=10'}
 
-  obsidian@1.11.4:
-    resolution: {integrity: sha512-n0KD3S+VndgaByrEtEe8NELy0ya6/s+KZ7OcxA6xOm5NN4thxKpQjo6eqEudHEvfGCeT/TYToAKJzitQ1I3XTg==}
+  obsidian@1.12.3:
+    resolution: {integrity: sha512-HxWqe763dOqzXjnNiHmAJTRERN8KILBSqxDSEqbeSr7W8R8Jxezzbca+nz1LiiqXnMpM8lV2jzAezw3CZ4xNUw==}
     peerDependencies:
       '@codemirror/state': 6.5.0
       '@codemirror/view': 6.38.6
@@ -3034,7 +3034,7 @@ snapshots:
       semver: 7.5.4
       validate-npm-package-license: 3.0.4
 
-  obsidian@1.11.4(@codemirror/state@6.4.0)(@codemirror/view@6.23.1):
+  obsidian@1.12.3(@codemirror/state@6.4.0)(@codemirror/view@6.23.1):
     dependencies:
       '@codemirror/state': 6.4.0
       '@codemirror/view': 6.23.1
