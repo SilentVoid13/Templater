@@ -555,7 +555,7 @@ selected value: <% value %>"""
 [tp.system.functions.suggester]
 name = "suggester"
 description = "Spawns a suggester prompt and returns the user's chosen item."
-definition = "tp.system.suggester(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\", limit?: number = undefined, default_value?: string = undefined)"
+definition = "tp.system.suggester(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false, placeholder: string = \"\", limit?: number = undefined, default_value?: T = undefined)"
 
 [[tp.system.functions.suggester.args]]
 name = "text_items"
