@@ -69,7 +69,7 @@ export class InternalModuleSystem extends InternalModule {
         throw_on_cancel: boolean,
         placeholder: string,
         limit?: number,
-        default_value?: string
+        default_value?: T
     ) => Promise<T> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
@@ -77,7 +77,7 @@ export class InternalModuleSystem extends InternalModule {
             throw_on_cancel = false,
             placeholder = "",
             limit?: number,
-            default_value?: string
+            default_value?: T
         ): Promise<T> => {
             const suggester = new SuggesterModal(
                 this.plugin.app,
