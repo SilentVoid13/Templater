@@ -110,7 +110,7 @@ export class InternalModuleSystem extends InternalModule {
         throw_on_cancel: boolean,
         title: string,
         limit?: number,
-        default_value?: string
+        default_values?: T[]
     ) => Promise<T[]> {
         return async <T>(
             text_items: string[] | ((item: T) => string),
@@ -118,7 +118,7 @@ export class InternalModuleSystem extends InternalModule {
             throw_on_cancel = false,
             title = "",
             limit?: number,
-            default_value?: string
+            default_values?: T[]
         ): Promise<T[]> => {
             const suggester = new MultiSuggesterModal(
                 this.plugin.app,
@@ -126,7 +126,7 @@ export class InternalModuleSystem extends InternalModule {
                 items,
                 title,
                 limit,
-                default_value
+                default_values
             );
             const promise = new Promise(
                 (

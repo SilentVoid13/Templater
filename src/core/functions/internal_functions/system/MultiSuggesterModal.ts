@@ -23,7 +23,7 @@ export class MultiSuggesterModal<T> extends Modal {
         private items: T[],
         title: string,
         limit?: number,
-        private default_value?: string
+        default_values?: T[]
     ) {
         super(app);
         this.setTitle(title);
@@ -38,8 +38,7 @@ export class MultiSuggesterModal<T> extends Modal {
             inputComponent.inputEl,
             this.getItemText.bind(this),
             items,
-            limit,
-            default_value
+            limit
         ).onSelect(this.onChooseItem.bind(this));
         const buttonContainer = this.contentEl.createDiv(
             "modal-button-container"
@@ -51,10 +50,13 @@ export class MultiSuggesterModal<T> extends Modal {
         new ButtonComponent(buttonContainer)
             .setButtonText("Cancel")
             .onClick(() => this.close());
+        if (default_values) {
+            this.selectedItems = default_values;
+        }
     }
 
     onOpen(): void {
-        this.display();
+        this.processSelectedItems();
     }
 
     display(): void {
@@ -87,6 +89,10 @@ export class MultiSuggesterModal<T> extends Modal {
 
     onChooseItem(item: T): void {
         this.selectedItems.push(item);
+        this.processSelectedItems();
+    }
+
+    private processSelectedItems(): void {
         const filteredItems = this.items.filter((item) => {
             return !this.selectedItems.some(
                 (selected_item) => selected_item === item
@@ -138,11 +144,11 @@ class Suggester<T> extends AbstractInputSuggest<T> {
         private getItemText: (item: T) => string,
         private items: T[],
         limit?: number,
-        default_value?: string
+        default_values?: T[]
     ) {
         super(app, textInputEl);
         limit && (this.limit = limit);
-        if (default_value) {
+        if (default_values) {
             this.setValue(default_value);
         }
     }

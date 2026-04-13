@@ -616,7 +616,7 @@ selected value: <% selectedValue %>"""
 [tp.system.functions.multi_suggester]
 name = "multi_suggester"
 description = "Spawns a suggester prompt that supports selecting multiple items and returns the user's chosen items."
-definition = "tp.system.multi_suggester(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false, title: string = \"\", limit?: number = undefined, default_value?: string = undefined)"
+definition = "tp.system.multi_suggester(text_items: string[] | ((item: T) => string), items: T[], throw_on_cancel: boolean = false, title: string = \"\", limit?: number = undefined, default_values?: T[] = undefined)"
 
 [[tp.system.functions.multi_suggester.args]]
 name = "text_items"
@@ -639,8 +639,8 @@ name = "limit"
 description = "Limit the number of items rendered at once (useful to improve performance when displaying large lists)."
 
 [[tp.system.functions.multi_suggester.args]]
-name = "default_value"
-description = "Default value to initialize the suggester with."
+name = "default_values"
+description = "Default values to initialize the suggester with."
 
 [[tp.system.functions.multi_suggester.examples]]
 name = "Multi-suggester"
@@ -669,7 +669,7 @@ selected values: <% selectedValues %>"""
 [[tp.system.functions.suggester.examples]]
 name = "Default value for the suggester"
 example = """<%*
-let selectedValue = await tp.system.multi_suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"], false, "", undefined, "Confused");
+let selectedValue = await tp.system.multi_suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"], false, "", undefined, ["Happy", "Confused"]);
 %>
 # <% selectedValue %>
 selected value: <% selectedValue %>"""
