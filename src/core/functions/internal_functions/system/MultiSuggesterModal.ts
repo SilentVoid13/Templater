@@ -143,14 +143,10 @@ class Suggester<T> extends AbstractInputSuggest<T> {
         textInputEl: HTMLInputElement | HTMLDivElement,
         private getItemText: (item: T) => string,
         private items: T[],
-        limit?: number,
-        default_values?: T[]
+        limit?: number
     ) {
         super(app, textInputEl);
         limit && (this.limit = limit);
-        if (default_values) {
-            this.setValue(default_value);
-        }
     }
     protected getSuggestions(query: string): T[] | Promise<T[]> {
         const q = prepareFuzzySearch(query);
