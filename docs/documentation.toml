@@ -666,7 +666,7 @@ let selectedValues = await tp.system.multi_suggester(["Happy", "Sad", "Confused"
 # <% selectedValues %>
 selected values: <% selectedValues %>"""
 
-[[tp.system.functions.suggester.examples]]
+[[tp.system.functions.multi_suggester.examples]]
 name = "Default value for the suggester"
 example = """<%*
 let selectedValue = await tp.system.multi_suggester(["Happy", "Sad", "Confused"], ["Happy", "Sad", "Confused"], false, "", undefined, ["Happy", "Confused"]);
