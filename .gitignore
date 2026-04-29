@@ -16,8 +16,8 @@ main.test.js
 *.js.map
 
 # test
-test/
 tests_jest/
+.obsidian-cache/
 
 # Obsidian
 data.json

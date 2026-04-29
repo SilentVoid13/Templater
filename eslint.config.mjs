@@ -3,6 +3,7 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
 import obsidianmd from "eslint-plugin-obsidianmd";
+import { configs as wdioConfigs } from "eslint-plugin-wdio";
 
 const obsidianGlobals = {
     activeWindow: "readonly",
@@ -22,6 +23,8 @@ export default defineConfig([
             globals: {
                 ...globals.browser,
                 ...obsidianGlobals,
+                ...globals.mocha,
+                Webdriverio: "readonly",
             },
             parserOptions: {
                 projectService: {
@@ -33,6 +36,7 @@ export default defineConfig([
         },
     },
     ...obsidianmd.configs.recommended,
+    wdioConfigs["flat/recommended"],
     globalIgnores([
         "node_modules",
         "dist",

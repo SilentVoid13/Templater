@@ -79,22 +79,12 @@ const reloadObsidianPlugin = {
 const prod = process.argv[2] === "production";
 const test_build = process.argv[2] === "test" || process.argv[3] === "test";
 
-let entry_point;
-let outfile;
-if (!test_build) {
-    entry_point = "src/main.ts";
-    outfile = "main.js";
-} else {
-    entry_point = "tests/main.test.ts";
-    outfile = "main.test.js";
-}
-
 esbuild
     .build({
         banner: {
             js: banner,
         },
-        entryPoints: [entry_point],
+        entryPoints: ["src/main.ts"],
         bundle: true,
         external: [
             "obsidian",
@@ -130,6 +120,6 @@ esbuild
         treeShaking: true,
         minify: prod,
         plugins: [toml(), wasmPlugin({ mode: "embed" }), reloadObsidianPlugin],
-        outfile: outfile,
+        outfile: "main.js",
     })
     .catch(() => process.exit(1));
