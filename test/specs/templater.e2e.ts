@@ -1,48 +1,29 @@
-import { resetWorkspace } from "../helpers/obsidianTestHelpers";
-import {
-    arePropertiesVisible,
-    deleteVaultPath,
-    runInNewLeafAndGetOutput,
-    uniqueTestName,
-} from "../helpers/legacyTemplaterTestHelpers";
+import { obsidianPage } from "wdio-obsidian-service";
+import OpenInsertTemplateModalPage from "../page-objects/OpenInsertTemplateModal.page";
+import WorkspacePage from "../page-objects/Workspace.page";
+import EmptyStateViewPage from "../page-objects/EmptyStateView.page";
+import VaultPage from "../page-objects/Vault.page";
+import ActiveMarkdownViewPage from "../page-objects/ActiveMarkdownView.page";
 
 describe("Templater", () => {
-    const cleanupPaths: string[] = [];
-
-    beforeEach(async () => {
-        cleanupPaths.length = 0;
-        await resetWorkspace();
-    });
-
-    afterEach(async () => {
-        for (const path of cleanupPaths.reverse()) {
-            await deleteVaultPath(path);
-        }
-    });
-
     it("append_template_to_active_file shows properties in live preview", async () => {
-        const baseName = uniqueTestName("wdio-templater-properties");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "---\nkey: value\n---\nText",
-            targetContent: "",
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": "---\nkey: value\n---\nText",
         });
-
-        expect(await arePropertiesVisible()).toBe(true);
-        expect(output).toBe("---\nkey: value\n---\nText");
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await ActiveMarkdownViewPage.expectPropertiesToBeVisible();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "---\nkey: value\n---\nText",
+        );
     });
 
     it("append_template_to_active_file gracefully merges YAML primitives", async () => {
-        const baseName = uniqueTestName("wdio-templater-primitives");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
         const templateContent =
             "---\n" +
             "only_in_template: template value\n" +
@@ -59,24 +40,20 @@ describe("Templater", () => {
             "both: template value\n" +
             "only_in_template: template value\n" +
             "---\n";
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent,
-            targetContent,
-            waitCache: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
         });
-
-        expect(output).toBe(expected);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/target.md", expected);
     });
 
     it("append_template_to_active_file gracefully merges YAML lists", async () => {
-        const baseName = uniqueTestName("wdio-templater-lists");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
         const templateContent =
             "---\n" +
             "only_in_template:\n" +
@@ -109,24 +86,20 @@ describe("Templater", () => {
             "  - template_item1\n" +
             "  - template_item2\n" +
             "---\n";
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent,
-            targetContent,
-            waitCache: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
         });
-
-        expect(output).toBe(expected);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/target.md", expected);
     });
 
     it("append_template_to_active_file preserves duplicate values in YAML lists that do not match", async () => {
-        const baseName = uniqueTestName("wdio-templater-preserve-duplicates");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
         const templateContent =
             "---\n" +
             "template_duplicates:\n" +
@@ -152,24 +125,20 @@ describe("Templater", () => {
             "  - duplicate_value\n" +
             "  - unique_value\n" +
             "---\n";
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent,
-            targetContent,
-            waitCache: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
         });
-
-        expect(output).toBe(expected);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/target.md", expected);
     });
 
     it("append_template_to_active_file de-duplicates duplicate values in matching YAML lists", async () => {
-        const baseName = uniqueTestName("wdio-templater-dedup-duplicates");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
         const templateContent =
             "---\n" +
             "duplicates_when_merged:\n" +
@@ -205,24 +174,20 @@ describe("Templater", () => {
             "  - target_item\n" +
             "  - template_item\n" +
             "---\n";
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent,
-            targetContent,
-            waitCache: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
         });
-
-        expect(output).toBe(expected);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/target.md", expected);
     });
 
     it("append_template_to_active_file handles mixed data types for same key", async () => {
-        const baseName = uniqueTestName("wdio-templater-mixed-types");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
         const templateContent =
             "---\n" +
             "string_to_list:\n" +
@@ -251,15 +216,16 @@ describe("Templater", () => {
             "string_to_number: 42\n" +
             "list_to_boolean: true\n" +
             "---\n";
-
-        const output = await runInNewLeafAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent,
-            targetContent,
-            waitCache: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
         });
-
-        expect(output).toBe(expected);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/target.md", expected);
     });
 });

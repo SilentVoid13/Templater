@@ -10,6 +10,12 @@ class ActiveMarkdownView {
         return this.activeEditorEl.$(".view-header-title");
     }
 
+    get propertiesEl() {
+        return this.activeEditorEl.$(
+            ".metadata-properties .metadata-property",
+        );
+    }
+
     async waitForFocus() {
         await this.activeEditorEl.waitForDisplayed();
         await this.activeEditorEl.click();
@@ -19,6 +25,10 @@ class ActiveMarkdownView {
                 return !!active?.closest(this.#activeEditorSelector);
             });
         });
+    }
+
+    async expectPropertiesToBeVisible() {
+        await this.propertiesEl.waitForDisplayed();
     }
 }
 
