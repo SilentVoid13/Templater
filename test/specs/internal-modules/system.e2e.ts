@@ -1,49 +1,180 @@
-import { resetWorkspace } from "../../helpers/obsidianTestHelpers";
-import {
-    deleteVaultPath,
-    runAndGetOutput,
-    setClipboardText,
-    uniqueTestName,
-} from "../../helpers/legacyTemplaterTestHelpers";
+import { obsidianPage } from "wdio-obsidian-service";
+import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateModal.page";
+import WorkspacePage from "../../page-objects/Workspace.page";
+import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
+import VaultPage from "../../page-objects/Vault.page";
+import PromptModalPage from "../../page-objects/PromptModal.page";
+import SuggesterModalPage from "../../page-objects/SuggesterModal.page";
+import MultiSuggesterModalPage from "../../page-objects/MultiSuggesterModal.page";
+import { setClipboardText } from "../../helpers/legacyTemplaterTestHelpers";
 
 describe("InternalModuleSystem", () => {
-    const cleanupPaths: string[] = [];
-
-    beforeEach(async () => {
-        cleanupPaths.length = 0;
-        await resetWorkspace();
-    });
-
-    afterEach(async () => {
-        for (const path of cleanupPaths.reverse()) {
-            await deleteVaultPath(path);
-        }
-    });
-
-    it("tp.system.clipboard", async () => {
-        const baseName = uniqueTestName("wdio-system");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        cleanupPaths.push(targetPath, templatePath);
-
-        const clipboardContent = "This some test\n\ncontent\n\n";
-        await setClipboardText(clipboardContent);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Clipboard content: <% tp.system.clipboard() %>",
-            targetContent: "",
+    it("tp.system.clipboard returns clipboard content", async () => {
+        await setClipboardText("Hello from clipboard");
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.clipboard.md": `<% tp.system.clipboard() %>`,
         });
-
-        expect(output).toBe(`Clipboard content: ${clipboardContent}`);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.clipboard",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "Hello from clipboard",
+        );
     });
 
-    it.skip("tp.system.prompt", async () => {
-        // Legacy test is TODO.
+    it("tp.system.prompt returns entered text", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.enterValue("my typed value");
+        await PromptModalPage.submit();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "my typed value");
     });
 
-    it.skip("tp.system.suggester", async () => {
-        // Legacy test is TODO.
+    it("tp.system.prompt uses default value", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "default text") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.submit();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "default text");
+    });
+
+    it("tp.system.prompt returns null on cancel when throw_on_cancel is false", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "", false) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "null");
+    });
+
+    it("tp.system.prompt supports multi-line input", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter text", "", false, true) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.enterValue("line one\nline two");
+        await PromptModalPage.submitMultiLine();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "line one\nline two",
+        );
+    });
+
+    it("tp.system.suggester returns the value for the selected item", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.selectSuggestionByName("Banana");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "banana");
+    });
+
+    it("tp.system.suggester filters items by search query", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.filterAndSelectByName("Cher", "Cherry");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "cherry");
+    });
+
+    it("tp.system.suggester returns null on cancel when throw_on_cancel is false", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "null");
+    });
+
+    it("tp.system.multi_suggester returns selected items as array", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.selectItem("Apple");
+        await MultiSuggesterModalPage.save();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "apple");
+    });
+
+    it("tp.system.multi_suggester returns empty array on cancel", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
     });
 });
