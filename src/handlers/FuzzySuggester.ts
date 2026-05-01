@@ -18,6 +18,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
         super(plugin.app);
         this.plugin = plugin;
         this.setPlaceholder("Type name of a template...");
+        this.containerEl.addClass("templater-fuzzy-suggester-modal");
     }
 
     getItems(): TFile[] {
@@ -28,9 +29,9 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
             () =>
                 get_tfiles_from_folder(
                     this.plugin.app,
-                    this.plugin.settings.templates_folder
+                    this.plugin.settings.templates_folder,
                 ),
-            `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`
+            `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`,
         );
         if (!files) {
             return [];
@@ -45,7 +46,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
             normalizePath(this.plugin.settings.templates_folder) != "/"
         ) {
             // Modify splice position if folder has a trailing slash
-            const folderLength = this.plugin.settings.templates_folder.length
+            const folderLength = this.plugin.settings.templates_folder.length;
             let position: number;
             if (folderLength === 0) {
                 position = 0;
@@ -54,9 +55,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
             } else {
                 position = folderLength + 1;
             }
-            relativePath = item.path.slice(
-                position
-            );
+            relativePath = item.path.slice(position);
         }
         return relativePath.split(".").slice(0, -1).join(".");
     }
@@ -69,7 +68,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
             case OpenMode.CreateNoteTemplate:
                 this.plugin.templater.create_new_note_from_template(
                     item,
-                    this.creation_folder
+                    this.creation_folder,
                 );
                 break;
         }
