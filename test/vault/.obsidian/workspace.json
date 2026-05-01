@@ -4,11 +4,11 @@
         "type": "split",
         "children": [
             {
-                "id": "3144e4ca74284eab",
+                "id": "4221940ccc195b79",
                 "type": "tabs",
                 "children": [
                     {
-                        "id": "fc0ac5a5610921a9",
+                        "id": "9d62cc33078d9a3b",
                         "type": "leaf",
                         "state": {
                             "type": "empty",
@@ -61,11 +61,11 @@
     },
     "left-ribbon": {
         "hiddenItems": {
+            "templater-obsidian:Templater": false,
             "command-palette:Open command palette": false,
-            "workspaces:Manage workspace layouts": false,
-            "templater-obsidian:Templater": false
+            "workspaces:Manage workspace layouts": false
         }
     },
-    "active": "7e3d79e1710a7609",
+    "active": "9d62cc33078d9a3b",
     "lastOpenFiles": []
 }

@@ -36,6 +36,12 @@ export default defineConfig([
         },
     },
     ...obsidianmd.configs.recommended,
+    {
+        files: ["test/**/*.ts"],
+        rules: {
+            "no-restricted-imports": "off",
+        },
+    },
     wdioConfigs["flat/recommended"],
     globalIgnores([
         "node_modules",

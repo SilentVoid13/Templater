@@ -11,6 +11,7 @@
         "importHelpers": true,
         "isolatedModules": true,
         "strictNullChecks": true,
+        "allowSyntheticDefaultImports": true,
         "types": [
             "node",
             "@wdio/globals/types",

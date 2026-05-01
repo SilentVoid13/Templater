@@ -48,12 +48,25 @@ const wasmPlugin = (config) => {
     };
 };
 
+const copyOutputPlugin = {
+    name: "copy-output",
+    setup(build) {
+        build.onEnd(() => {
+            fs.copyFileSync(
+                "main.js",
+                `test/vault/.obsidian/plugins/${manifest.id}/main.js`,
+            );
+        });
+    },
+};
+
 const reloadObsidianPlugin = {
     name: "reload-obsidian-plugin",
     setup(build) {
         build.onEnd(() => {
             exec(
                 `obsidian plugin:reload id=${manifest.id}`,
+                { cwd: path.join(process.cwd(), "test", "vault") },
                 (error, stdout, stderr) => {
                     if (error) {
                         console.error(
@@ -119,7 +132,12 @@ esbuild
         sourcemap: prod ? false : "inline",
         treeShaking: true,
         minify: prod,
-        plugins: [toml(), wasmPlugin({ mode: "embed" }), reloadObsidianPlugin],
+        plugins: [
+            toml(),
+            wasmPlugin({ mode: "embed" }),
+            copyOutputPlugin,
+            reloadObsidianPlugin,
+        ],
         outfile: "main.js",
     })
     .catch(() => process.exit(1));
