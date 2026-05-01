@@ -1,144 +1,101 @@
-import { resetWorkspace } from "../helpers/obsidianTestHelpers";
-import {
-    createNewNoteFromTemplate,
-    deleteVaultPath,
-    uniqueTestName,
-} from "../helpers/templaterCommandTestHelpers";
+import { browser } from "@wdio/globals";
+import { obsidianPage } from "wdio-obsidian-service";
+import CreateNewNoteFromTemplateModalPage from "../page-objects/CreateNewNoteFromTemplateModal.page";
+import WorkspacePage from "../page-objects/Workspace.page";
+import VaultPage from "../page-objects/Vault.page";
 
 describe("create_new_note_from_template", () => {
-    const cleanupPaths: string[] = [];
-
-    beforeEach(async () => {
-        cleanupPaths.length = 0;
-        await resetWorkspace();
-    });
-
-    afterEach(async () => {
-        for (const path of cleanupPaths.reverse()) {
-            await deleteVaultPath(path);
-        }
-    });
-
     it("creates file with processed content", async () => {
-        const baseName = uniqueTestName("wdio-template-create");
-        const templatePath = `${baseName}-template.md`;
-        const noteName = `${baseName}-note`;
-
-        cleanupPaths.push(templatePath);
-
-        const created = await createNewNoteFromTemplate({
-            templateContent: "# <% tp.file.title %>",
-            filename: noteName,
-            templatePath,
-            useTemplateFile: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": "# <% tp.file.title %>",
         });
-
-        expect(created).not.toBeNull();
-        expect(created?.name).toBe(`${noteName}.md`);
-        expect(created?.content).toBe(`# ${noteName}`);
-
-        if (created) {
-            cleanupPaths.push(created.path);
-        }
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await CreateNewNoteFromTemplateModalPage.open();
+        await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
+            "template",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "# Untitled");
     });
 
     it("auto-increments filename on conflict", async () => {
-        const baseName = uniqueTestName("wdio-template-conflict");
-        const templatePath = `${baseName}-template.md`;
-
-        cleanupPaths.push(templatePath);
-
-        const first = await createNewNoteFromTemplate({
-            templateContent: "Test content",
-            filename: baseName,
-            templatePath,
-            useTemplateFile: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": "Test content",
         });
-
-        const second = await createNewNoteFromTemplate({
-            templateContent: "Test content",
-            filename: baseName,
-            templatePath,
-            useTemplateFile: true,
-        });
-
-        expect(first).not.toBeNull();
-        expect(second).not.toBeNull();
-        expect(first?.name).toBe(`${baseName}.md`);
-        expect(second?.name).toBe(`${baseName} 1.md`);
-
-        if (first) {
-            cleanupPaths.push(first.path);
-        }
-        if (second) {
-            cleanupPaths.push(second.path);
-        }
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await CreateNewNoteFromTemplateModalPage.open();
+        await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
+            "template",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await CreateNewNoteFromTemplateModalPage.open();
+        await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
+            "template",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "Test content");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled 1.md",
+            "Test content",
+        );
     });
 
     it("creates file in the requested folder", async () => {
-        const baseName = uniqueTestName("wdio-template-folder");
-        const templatePath = `${baseName}-template.md`;
-        const folderPath = `${baseName}-folder`;
-        const noteName = `${baseName}-note`;
-
-        cleanupPaths.push(templatePath, folderPath);
-
-        const created = await createNewNoteFromTemplate({
-            templateContent: "Folder test",
-            filename: noteName,
-            folderPath,
-            templatePath,
-            useTemplateFile: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md": "Folder test",
         });
-
-        expect(created).not.toBeNull();
-        expect(created?.path).toBe(`${folderPath}/${noteName}.md`);
-
-        if (created) {
-            cleanupPaths.push(created.path);
-        }
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await browser.executeObsidian(async ({ app }) => {
+            const plugin = app.plugins.getPlugin("templater-obsidian");
+            if (!plugin) throw new Error("templater-obsidian is not loaded");
+            const templateFile =
+                app.vault.getFileByPath("templates/template.md");
+            if (!templateFile) throw new Error("Template file not found");
+            await plugin.templater.create_new_note_from_template(
+                templateFile,
+                "my-folder",
+                "my-note",
+                false,
+            );
+        });
+        await VaultPage.expectFileToHaveContent(
+            "my-folder/my-note.md",
+            "Folder test",
+        );
     });
 
     it("processes frontmatter and body", async () => {
-        const baseName = uniqueTestName("wdio-template-frontmatter");
-        const templatePath = `${baseName}-template.md`;
-        const noteName = `${baseName}-note`;
-
-        cleanupPaths.push(templatePath);
-
-        const templateContent = `---\ntitle: "<% tp.file.title %>"\n---\n# <% tp.file.title %>`;
-
-        const created = await createNewNoteFromTemplate({
-            templateContent,
-            filename: noteName,
-            templatePath,
-            useTemplateFile: true,
+        await obsidianPage.resetVault("test/vault", {
+            "templates/template.md":
+                '---\ntitle: "<% tp.file.title %>"\n---\n# <% tp.file.title %>',
         });
-
-        expect(created).not.toBeNull();
-        expect(created?.content).toContain(`title: "${noteName}"`);
-        expect(created?.content).toContain(`# ${noteName}`);
-
-        if (created) {
-            cleanupPaths.push(created.path);
-        }
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await CreateNewNoteFromTemplateModalPage.open();
+        await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
+            "template",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        const content = await obsidianPage.read("Untitled.md");
+        expect(content).toContain('title: "Untitled"');
+        expect(content).toContain("# Untitled");
     });
 
     it("supports string template content", async () => {
-        const noteName = uniqueTestName("wdio-template-string");
-
-        const created = await createNewNoteFromTemplate({
-            templateContent: "# <% tp.file.title %>\nCreated via string",
-            filename: noteName,
-            useTemplateFile: false,
+        await obsidianPage.resetVault("test/vault", {});
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await browser.executeObsidian(async ({ app }) => {
+            const plugin = app.plugins.getPlugin("templater-obsidian");
+            if (!plugin) throw new Error("templater-obsidian is not loaded");
+            await plugin.templater.create_new_note_from_template(
+                "# <% tp.file.title %>\nCreated via string",
+                undefined,
+                undefined,
+                false,
+            );
         });
-
-        expect(created).not.toBeNull();
-        expect(created?.name).toBe(`${noteName}.md`);
-        expect(created?.content).toBe(`# ${noteName}\nCreated via string`);
-
-        if (created) {
-            cleanupPaths.push(created.path);
-        }
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "# Untitled\nCreated via string",
+        );
     });
 });
