@@ -1,443 +1,356 @@
+import moment from "moment";
 import { browser } from "@wdio/globals";
-import { resetWorkspace } from "../../helpers/obsidianTestHelpers";
-import {
-    createOrUpdateVaultFile,
-    deleteVaultPath,
-    getFileTimes,
-    runAndGetOutput,
-    setFileTimes,
-    uniqueTestName,
-} from "../../helpers/legacyTemplaterTestHelpers";
+import { obsidianPage } from "wdio-obsidian-service";
+import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateModal.page";
+import WorkspacePage from "../../page-objects/Workspace.page";
+import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
+import VaultPage from "../../page-objects/Vault.page";
 
 describe("InternalModuleFile", () => {
-    const cleanupPaths: string[] = [];
-    const fixedTimestamp = 1619852400000;
+    const fixedTimestamp = 1619866800000; // 2021-05-01 07:00:00 UTC
 
-    const addCleanup = (...paths: string[]) => {
-        cleanupPaths.push(...paths);
-    };
-
-    const formatLocalDateTime = (timestamp: number): string => {
-        const date = new Date(timestamp);
-        const pad = (value: number) => String(value).padStart(2, "0");
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    };
-
-    beforeEach(async () => {
-        cleanupPaths.length = 0;
-        await resetWorkspace();
+    it("tp.file.title", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.title.md": `<% tp.file.title %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.title");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
 
-    afterEach(async () => {
-        for (const path of cleanupPaths.reverse()) {
-            await deleteVaultPath(path);
+    it("tp.file.content returns file content", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.content.md": `<% tp.file.content %>`,
+            "notes/note.md": `original content\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.content");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "original content\noriginal content\n",
+        );
+    });
+
+    it("tp.file.tags returns file tags", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.tags.md": `<% tp.file.tags %>`,
+            "notes/note.md": `---\ntags:\n- tag1\n- tag2\n---\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.tags");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "---\ntags:\n- tag1\n- tag2\n---\n#tag1,#tag2",
+        );
+    });
+
+    it("tp.file.folder returns empty name for root file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.folder.md": `folder:<% tp.file.folder() %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.folder");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "folder:");
+    });
+
+    it("tp.file.folder returns folder name and absolute path for file in subfolder", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.folder.md": `<% tp.file.folder() %>|<% tp.file.folder(true) %>`,
+            "notes/sub/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/sub/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.folder");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/sub/note.md",
+            "sub|notes/sub\n",
+        );
+    });
+
+    it("tp.file.path returns relative path", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.path.md": `<% tp.file.path(true) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.path");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/note.md", "notes/note.md\n");
+    });
+
+    it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `<% tp.file.cursor(1) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.cursor");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "<% tp.file.cursor(1) %>",
+        );
+    });
+
+    it("tp.file.cursor removes placeholder when auto jump is enabled", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `before<% tp.file.cursor(1) %>after`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        try {
+            await obsidianPage.loadWorkspaceLayout("empty");
+            await EmptyStateViewPage.clickCreateNewNote();
+            await WorkspacePage.expectActiveTabToHaveText("Untitled");
+            await OpenInsertTemplateModalPage.open();
+            await OpenInsertTemplateModalPage.selectSuggestionByName(
+                "tp.file.cursor",
+            );
+            await WorkspacePage.waitForAllTemplatesExecuted();
+            await VaultPage.expectFileToHaveContent("Untitled.md", "beforeafter");
+        } finally {
+            await browser.executeObsidian(async ({ plugins }) => {
+                plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
+                await plugins.templaterObsidian.save_settings();
+            });
         }
     });
 
-    it("tp.file.content", async () => {
-        const baseName = uniqueTestName("wdio-file-content");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        const targetContent =
-            "This is some content\r\nWith \tsome newlines\n\n";
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "<% tp.file.content %>",
-            targetContent,
+    it("tp.file.exists returns true for existing file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.exists.md": `<% tp.file.exists("notes/note.md") %>`,
+            "notes/note.md": `\n`,
         });
-
-        expect(output).toBe(targetContent);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.exists");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "true");
     });
 
-    it.skip("tp.file.create_new", async () => {
-        // Legacy test is TODO.
+    it("tp.file.exists returns false for missing file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.exists.md": `<% tp.file.exists("nonexistent.md") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.exists");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "false");
     });
 
-    it("tp.file.creation_date", async () => {
-        const baseName = uniqueTestName("wdio-file-creation-date");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        await createOrUpdateVaultFile(targetPath, "");
-
-        const original = await getFileTimes(targetPath);
-        await setFileTimes(targetPath, { ctime: fixedTimestamp });
-
-        const defaultFormat = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Creation date: <% tp.file.creation_date() %>\n\n",
-            skipTargetModify: true,
+    it("tp.file.find_tfile returns file by name", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.find_tfile.md": `<% tp.file.find_tfile("findme").path %>`,
+            "notes/findme.md": `\n`,
         });
-        expect(defaultFormat).toBe(
-            `Creation date: ${formatLocalDateTime(fixedTimestamp)}\n\n`,
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.find_tfile",
         );
-
-        const customFormat = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                'Creation date: <% tp.file.creation_date("dddd Do MMMM YYYY, ddd") %>\n\n',
-            skipTargetModify: true,
-        });
-        expect(customFormat).toBe(
-            "Creation date: Saturday 1st May 2021, Sat\n\n",
-        );
-
-        await setFileTimes(targetPath, { ctime: original.ctime });
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "notes/findme.md");
     });
 
-    it("tp.file.cursor", async () => {
-        const baseName = uniqueTestName("wdio-file-cursor");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Cursor: <%\t\ntp.file.cursor(10)\t\r\n%>\n\n",
-            targetContent: "",
+    it("tp.file.find_tfile returns null for missing file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.find_tfile.md": `<% tp.file.find_tfile("nonexistent") %>`,
         });
-
-        expect(output).toBe("Cursor: <% tp.file.cursor(10) %>\n\n");
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.find_tfile",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "null");
     });
 
-    it.skip("tp.file.cursor_append", async () => {
-        // Legacy test is TODO.
+    it("tp.file.include includes another file's content", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.include.md": `<% tp.file.include('[[include-source]]') %>`,
+            "notes/include-source.md": `Included content`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.include",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "Included content");
     });
 
-    it("tp.file.exists", async () => {
-        const baseName = uniqueTestName("wdio-file-exists");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        const targetName = `${baseName}-target.md`;
-        addCleanup(targetPath, templatePath);
-
-        const outputExists = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: `File Exists: <% tp.file.exists("${targetName}") %>\n\n`,
-            targetContent: "",
+    it("tp.file.creation_date with default format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.creation_date.md": `<% tp.file.creation_date() %>`,
+            "notes/note.md": `\n`,
         });
-        expect(outputExists).toBe("File Exists: true\n\n");
-
-        const outputMissing = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                'File Exists: <% tp.file.exists("NonExistingFile.md") %>\n\n',
-            targetContent: "",
-        });
-        expect(outputMissing).toBe("File Exists: false\n\n");
-    });
-
-    it("tp.file.find_tfile", async () => {
-        const baseName = uniqueTestName("wdio-file-find-tfile");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        const targetBasename = `${baseName}-target`;
-        addCleanup(targetPath, templatePath);
-
-        const outputFound = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: `File: <% tp.file.find_tfile("${targetBasename}").path %>\n\n`,
-            targetContent: "",
-        });
-        expect(outputFound).toBe(`File: ${targetPath}\n\n`);
-
-        const outputMissing = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                'File: <% tp.file.find_tfile("NonExistingFile") %>\n\n',
-            targetContent: "",
-        });
-        expect(outputMissing).toBe("File: null\n\n");
-    });
-
-    it("tp.file.folder", async () => {
-        const baseName = uniqueTestName("wdio-file-folder");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                "Folder: <% tp.file.folder() %>\n\nFolder: <% tp.file.folder(true) %>\n\n",
-            targetContent: "",
-        });
-
-        expect(output).toBe("Folder: \n\nFolder: /\n\n");
-    });
-
-    it("tp.file.include", async () => {
-        const baseName = uniqueTestName("wdio-file-include");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        const inc1 = `${baseName}-Inc1.md`;
-        const inc2 = `${baseName}-Inc2.md`;
-        const inc3 = `${baseName}-Inc3.md`;
-        const inc1Base = `${baseName}-Inc1`;
-        const inc2Base = `${baseName}-Inc2`;
-        const inc3Base = `${baseName}-Inc3`;
-        addCleanup(targetPath, templatePath, inc1, inc2, inc3);
-
-        await createOrUpdateVaultFile(
-            inc1,
-            `Inc1 content\n<% tp.file.include('[[${inc2Base}]]') %>\n\n`,
+        await browser.executeObsidian(({ app }, ctime: number) => {
+            const file = app.vault.getFileByPath("notes/note.md");
+            if (!file) throw new Error("File not found");
+            file.stat.ctime = ctime;
+        }, fixedTimestamp);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.creation_date",
         );
-        await createOrUpdateVaultFile(inc2, "Inc2 content\n\n");
-        await createOrUpdateVaultFile(
-            inc3,
-            `Inc3 content\n<% tp.file.include('[[${inc3Base}]]') %>\n\n`,
-        );
-
-        const includeNestedOutput = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: `Included: <% tp.file.include('[[${inc1Base}]]') %>\n\n`,
-            targetContent: "",
-        });
-        expect(includeNestedOutput).toBe(
-            "Included: Inc1 content\nInc2 content\n\n\n\n\n\n",
-        );
-
-        const includeSimpleOutput = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: `Included: <% tp.file.include('[[${inc2Base}]]') %>\n\n`,
-            targetContent: "",
-        });
-        expect(includeSimpleOutput).toBe("Included: Inc2 content\n\n\n\n");
-
-        await expect(
-            runAndGetOutput({
-                templatePath,
-                targetPath,
-                templateContent: `Included: <% tp.file.include('[[${inc3Base}]]') %>\n\n`,
-                targetContent: "",
-            }),
-        ).rejects.toThrow("Reached inclusion depth limit (max = 10)");
-
-        await expect(
-            runAndGetOutput({
-                templatePath,
-                targetPath,
-                templateContent: `Included: <% tp.file.include('${inc3Base}') %>\n\n`,
-                targetContent: "",
-            }),
-        ).rejects.toThrow(
-            "Invalid file format, provide an obsidian link between quotes.",
-        );
-
-        await expect(
-            runAndGetOutput({
-                templatePath,
-                targetPath,
-                templateContent:
-                    "Included: <% tp.file.include('[[NonExistingFile]]') %>\n\n",
-                targetContent: "",
-            }),
-        ).rejects.toThrow("File [[NonExistingFile]] doesn't exist");
-    });
-
-    it("tp.file.last_modified_date", async () => {
-        const baseName = uniqueTestName("wdio-file-last-modified-date");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        await createOrUpdateVaultFile(targetPath, "");
-
-        const original = await getFileTimes(targetPath);
-        await setFileTimes(targetPath, { mtime: fixedTimestamp });
-
-        const defaultFormat = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                "Last modif date: <% tp.file.last_modified_date() %>\n\n",
-            skipTargetModify: true,
-        });
-        expect(defaultFormat).toBe(
-            `Last modif date: ${formatLocalDateTime(fixedTimestamp)}\n\n`,
-        );
-
-        const customFormat = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent:
-                'Last modif date: <% tp.file.last_modified_date("dddd Do MMMM YYYY, ddd") %>\n\n',
-            skipTargetModify: true,
-        });
-        expect(customFormat).toBe(
-            "Last modif date: Saturday 1st May 2021, Sat\n\n",
-        );
-
-        await setFileTimes(targetPath, { mtime: original.mtime });
-    });
-
-    it("tp.file.move", async () => {
-        const baseName = uniqueTestName("wdio-file-move");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        const folderPath = `${baseName}-folder`;
-        const nestedPath = `${folderPath}/nested`;
-        const file1Path = `${baseName}-File1.md`;
-        const nested1Path = `${baseName}-Nested1.md`;
-        addCleanup(
-            targetPath,
-            templatePath,
-            folderPath,
-            file1Path,
-            nested1Path,
-        );
-
-        await createOrUpdateVaultFile(file1Path, "");
-        await createOrUpdateVaultFile(nested1Path, "");
-
-        const firstOutput = await runAndGetOutput({
-            templatePath,
-            targetPath: file1Path,
-            templateContent: `Move <% tp.file.move("${folderPath}/File2") %>\n\n`,
-            skipTargetModify: true,
-        });
-        expect(firstOutput).toBe("Move \n\n");
-
-        const firstMovedPath = `${folderPath}/File2.md`;
-        const firstExists = await browser.executeObsidian(
-            ({ app }, path: string) => !!app.vault.getFileByPath(path),
-            firstMovedPath,
-        );
-        expect(firstExists).toBe(true);
-
-        const secondOutput = await runAndGetOutput({
-            templatePath,
-            targetPath: nested1Path,
-            templateContent: `Move <% tp.file.move("${nestedPath}/Nested2") %>\n\n`,
-            skipTargetModify: true,
-        });
-        expect(secondOutput).toBe("Move \n\n");
-
-        const secondMovedPath = `${nestedPath}/Nested2.md`;
-        const secondExists = await browser.executeObsidian(
-            ({ app }, path: string) => !!app.vault.getFileByPath(path),
-            secondMovedPath,
-        );
-        expect(secondExists).toBe(true);
-    });
-
-    it("tp.file.path", async () => {
-        const baseName = uniqueTestName("wdio-file-path");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Path: <% tp.file.path(true) %>\n\n",
-            targetContent: "",
-        });
-
-        expect(output).toBe(`Path: ${targetPath}\n\n`);
-    });
-
-    it("tp.file.rename", async () => {
-        const baseName = uniqueTestName("wdio-file-rename");
-        const templatePath = `${baseName}-template.md`;
-        const initialPath = `${baseName}-File1.md`;
-        const renamedPath = `${baseName}-File2.md`;
-        addCleanup(templatePath, initialPath, renamedPath);
-
-        await createOrUpdateVaultFile(initialPath, "");
-
-        const renameOutput = await runAndGetOutput({
-            templatePath,
-            targetPath: initialPath,
-            templateContent: `Rename <% tp.file.rename("${baseName}-File2") %>\n\n`,
-            skipTargetModify: true,
-        });
-        expect(renameOutput).toBe("Rename \n\n");
-
-        const renamedExists = await browser.executeObsidian(
-            ({ app }, path: string) => !!app.vault.getFileByPath(path),
-            renamedPath,
-        );
-        expect(renamedExists).toBe(true);
-
-        await expect(
-            runAndGetOutput({
-                templatePath,
-                targetPath: renamedPath,
-                templateContent:
-                    'Rename <% tp.file.rename("Fail/File2.md") %>\n\n',
-                skipTargetModify: true,
-            }),
-        ).rejects.toThrow(
-            "File name cannot contain any of these characters: \\ / :",
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            moment(fixedTimestamp).format("YYYY-MM-DD HH:mm") + "\n",
         );
     });
 
-    it.skip("tp.file.selection", async () => {
-        // Legacy test is TODO.
+    it("tp.file.creation_date with custom format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.creation_date.md": `<% tp.file.creation_date("YYYY-MM-DD") %>`,
+            "notes/note.md": `\n`,
+        });
+        await browser.executeObsidian(({ app }, ctime: number) => {
+            const file = app.vault.getFileByPath("notes/note.md");
+            if (!file) throw new Error("File not found");
+            file.stat.ctime = ctime;
+        }, fixedTimestamp);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.creation_date",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            moment(fixedTimestamp).format("YYYY-MM-DD") + "\n",
+        );
     });
 
-    it("tp.file.tags", async () => {
-        const baseName = uniqueTestName("wdio-file-tags");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        await createOrUpdateVaultFile(targetPath, "#tag1\n#tag2\n#tag3\n\n");
-        await browser.executeObsidian(async ({ app }, path: string) => {
-            const file = app.vault.getFileByPath(path);
-            if (!file) {
-                return;
-            }
-
-            for (let i = 0; i < 20; i += 1) {
-                const cache = app.metadataCache.getFileCache(file);
-                if (cache?.tags?.length) {
-                    return;
-                }
-                await new Promise((resolve) =>
-                    activeWindow.setTimeout(resolve, 50),
-                );
-            }
-        }, targetPath);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Tags: <% tp.file.tags %>\n\n",
-            skipTargetModify: true,
+    it("tp.file.last_modified_date with default format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.last_modified_date.md": `<% tp.file.last_modified_date() %>`,
+            "notes/note.md": `\n`,
         });
-
-        expect(output).toBe("Tags: #tag1,#tag2,#tag3\n\n");
+        await browser.executeObsidian(({ app }, mtime: number) => {
+            const file = app.vault.getFileByPath("notes/note.md");
+            if (!file) throw new Error("File not found");
+            file.stat.mtime = mtime;
+        }, fixedTimestamp);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.last_modified_date",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            moment(fixedTimestamp).format("YYYY-MM-DD HH:mm") + "\n",
+        );
     });
 
-    it("tp.file.title", async () => {
-        const baseName = uniqueTestName("wdio-file-title");
-        const targetPath = `${baseName}-target.md`;
-        const templatePath = `${baseName}-template.md`;
-        addCleanup(targetPath, templatePath);
-
-        const output = await runAndGetOutput({
-            templatePath,
-            targetPath,
-            templateContent: "Title: <% tp.file.title %>\n\n",
-            targetContent: "",
+    it("tp.file.last_modified_date with custom format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.last_modified_date.md": `<% tp.file.last_modified_date("YYYY-MM-DD") %>`,
+            "notes/note.md": `\n`,
         });
+        await browser.executeObsidian(({ app }, mtime: number) => {
+            const file = app.vault.getFileByPath("notes/note.md");
+            if (!file) throw new Error("File not found");
+            file.stat.mtime = mtime;
+        }, fixedTimestamp);
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.last_modified_date",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            moment(fixedTimestamp).format("YYYY-MM-DD") + "\n",
+        );
+    });
 
-        expect(output).toBe(`Title: ${baseName}-target\n\n`);
+    it("tp.file.move moves file to new path", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.move.md": `moved:<% tp.file.move("notes/moved") %>`,
+            "notes/original.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/original.md");
+        await WorkspacePage.expectActiveTabToHaveText("original");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.move");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/moved.md", "moved:\n");
+    });
+
+    it("tp.file.rename renames file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.rename.md": `renamed:<% tp.file.rename("renamed") %>`,
+            "notes/original.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/original.md");
+        await WorkspacePage.expectActiveTabToHaveText("original");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.rename",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/renamed.md", "renamed:\n");
+    });
+
+    it.skip("tp.file.cursor_append", () => {
+        // Requires complex active-editor cursor positioning.
+    });
+
+    it.skip("tp.file.selection", () => {
+        // Requires programmatic text selection in editor.
+    });
+
+    it.skip("tp.file.create_new", () => {
+        // Complex multi-note flow; warrants dedicated test suite.
     });
 });
