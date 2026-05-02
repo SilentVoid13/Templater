@@ -4,11 +4,12 @@ import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateMo
 import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
 import VaultPage from "../../page-objects/Vault.page";
+import NoticePage from "../../page-objects/Notice.page";
 
 describe("InternalModuleDate", () => {
     //#region tp.date.now
 
-    it("tp.date.now returns today with default format", async () => {
+    it("tp.date.now uses default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.now.md": `<% tp.date.now() %>`,
         });
@@ -24,7 +25,87 @@ describe("InternalModuleDate", () => {
         );
     });
 
-    it("tp.date.now uses reference date", async () => {
+    it("tp.date.now uses custom format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("Do MMMM YYYY") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().format("Do MMMM YYYY"),
+        );
+    });
+
+    it("tp.date.now uses positive number offset", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 7) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add(7, "days").format("YYYY-MM-DD"),
+        );
+    });
+
+    it("tp.date.now uses negative number offset", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", -7) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add(-7, "days").format("YYYY-MM-DD"),
+        );
+    });
+
+    it("tp.date.now uses positive string duration offset", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", "P1M") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add("P1M").format("YYYY-MM-DD"),
+        );
+    });
+
+    it("tp.date.now uses negative string duration offset", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", "P-1M") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add("P-1M").format("YYYY-MM-DD"),
+        );
+    });
+
+    it("tp.date.now uses reference date with default reference format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 0, "2025-01-15") %>`,
         });
@@ -37,7 +118,34 @@ describe("InternalModuleDate", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-15");
     });
 
-    it("tp.date.now uses file title as reference date", async () => {
+    it("tp.date.now uses reference date with custom reference format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 0, "01/15/2025", "MM/DD/YYYY") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-15");
+    });
+
+    it("tp.date.now fails with reference date with invalid custom reference format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 0, "01/15/2025", "DD/MM/YYYY") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectInvalidReferenceDateFormatErrorNotice();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.date.now uses file title as reference date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 7, tp.file.title) %>`,
             "notes/2025-06-01.md": `\n`,
@@ -54,22 +162,26 @@ describe("InternalModuleDate", () => {
         );
     });
 
-    it("tp.date.now uses custom output format", async () => {
+    it("tp.date.now uses file path as reference date with custom format", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("DD/MM/YYYY", 0, "2025-01-15") %>`,
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 7, tp.file.path(true), "[Daily]/YYYY/MM/DD[.md]") %>`,
+            "Daily/2025/06/01.md": `\n`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await obsidianPage.openFile("Daily/2025/06/01.md");
+        await WorkspacePage.expectActiveTabToHaveText("01");
         await OpenInsertTemplateModalPage.open();
         await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "15/01/2025");
+        await VaultPage.expectFileToHaveContent(
+            "Daily/2025/06/01.md",
+            "2025-06-08\n",
+        );
     });
 
-    it("tp.date.now applies positive numeric day offset", async () => {
+    it("tp.date.now uses custom format with zero offset", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 5, "2025-01-15") %>`,
+            "templates/tp.date.now.md": `<% tp.date.now("DD/MM/YYYY", 0) %>`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
@@ -77,12 +189,15 @@ describe("InternalModuleDate", () => {
         await OpenInsertTemplateModalPage.open();
         await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-20");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().format("DD/MM/YYYY"),
+        );
     });
 
-    it("tp.date.now applies negative numeric day offset", async () => {
+    it("tp.date.now uses custom format with positive offset", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", -3, "2025-01-15") %>`,
+            "templates/tp.date.now.md": `<% tp.date.now("DD/MM/YYYY", 1) %>`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
@@ -90,12 +205,15 @@ describe("InternalModuleDate", () => {
         await OpenInsertTemplateModalPage.open();
         await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-12");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add(1, "days").format("DD/MM/YYYY"),
+        );
     });
 
-    it("tp.date.now applies string duration offset", async () => {
+    it("tp.date.now uses custom format with negative offset", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", "P1M", "2025-01-15") %>`,
+            "templates/tp.date.now.md": `<% tp.date.now("DD/MM/YYYY", -1) %>`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
@@ -103,40 +221,17 @@ describe("InternalModuleDate", () => {
         await OpenInsertTemplateModalPage.open();
         await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-02-15");
-    });
-
-    it("tp.date.now applies negative string duration offset", async () => {
-        await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", "P-1M", "2025-01-15") %>`,
-        });
-        await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2024-12-15");
-    });
-
-    it("tp.date.now parses reference with custom reference_format", async () => {
-        await obsidianPage.resetVault("test/vault", {
-            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 0, "15/01/2025", "DD/MM/YYYY") %>`,
-        });
-        await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-15");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().add(-1, "days").format("DD/MM/YYYY"),
+        );
     });
 
     //#endregion
 
     //#region tp.date.tomorrow
 
-    it("tp.date.tomorrow returns tomorrow with default format", async () => {
+    it("tp.date.tomorrow uses default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.tomorrow.md": `<% tp.date.tomorrow() %>`,
         });
@@ -176,7 +271,7 @@ describe("InternalModuleDate", () => {
 
     //#region tp.date.yesterday
 
-    it("tp.date.yesterday returns yesterday with default format", async () => {
+    it("tp.date.yesterday uses default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.yesterday.md": `<% tp.date.yesterday() %>`,
         });
@@ -218,7 +313,115 @@ describe("InternalModuleDate", () => {
 
     // weekday() is locale-sensitive; tests assume en-US locale (Sunday = weekday 0).
     // Jan 12, 2025 is a Sunday.
-    it("tp.date.weekday returns correct weekday from reference", async () => {
+
+    it("tp.date.weekday fails if no format or weekday", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday() %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectTemplateParsingErrorNotice();
+        await NoticePage.dismissAll();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.date.weekday fails if no weekday", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("DD/MM/YYYY") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectTemplateParsingErrorNotice();
+        await NoticePage.dismissAll();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.date.weekday uses default format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday(undefined, 0) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().weekday(0).format("YYYY-MM-DD"),
+        );
+    });
+
+    it("tp.date.weekday uses custom format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("DD/MM/YYYY", 0) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().weekday(0).format("DD/MM/YYYY"),
+        );
+    });
+
+    it("tp.date.weekday uses positive weekday", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("DD/MM/YYYY", 3) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().weekday(3).format("DD/MM/YYYY"),
+        );
+    });
+
+    // Jan 12, 2025 is a Sunday (weekday 0 in en-US). weekday(-7) goes back 7 days to the previous Sunday.
+    it("tp.date.weekday uses negative weekday", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("DD/MM/YYYY", -7) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            moment().weekday(-7).format("DD/MM/YYYY"),
+        );
+    });
+
+    it("tp.date.weekday uses reference date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", 0, "2025-01-12") %>`,
         });
@@ -233,7 +436,7 @@ describe("InternalModuleDate", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-12");
     });
 
-    it("tp.date.weekday uses custom output format", async () => {
+    it("tp.date.weekday uses reference date with custom format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.weekday.md": `<% tp.date.weekday("dddd", 0, "2025-01-12") %>`,
         });
@@ -248,7 +451,7 @@ describe("InternalModuleDate", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "Sunday");
     });
 
-    it("tp.date.weekday parses reference with custom reference_format", async () => {
+    it("tp.date.weekday uses reference date with custom reference format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", 0, "12/01/2025", "DD/MM/YYYY") %>`,
         });
@@ -263,10 +466,42 @@ describe("InternalModuleDate", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-12");
     });
 
+    it("tp.date.weekday fails with reference date with invalid custom reference format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", 0, "13/12/2025", "MM/DD/YYYY") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectInvalidReferenceDateFormatErrorNotice();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
     // Jan 12, 2025 is a Sunday (weekday 0 in en-US). weekday(-7) goes back 7 days to the previous Sunday.
-    it("tp.date.weekday with negative offset returns same weekday from previous week", async () => {
+    it("tp.date.weekday uses negative offset with reference date", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", -7, "2025-01-12") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-05");
+    });
+
+    // Jan 12, 2025 is a Sunday (weekday 0 in en-US). weekday(-7) goes back 7 days to the previous Sunday.
+    it("tp.date.weekday uses negative offset with reference date and reference format", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", -7, "12/01/2025", "DD/MM/YYYY") %>`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
