@@ -218,4 +218,50 @@ describe("InternalModuleDate", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-12");
     });
+
+    it("tp.date.now applies negative string duration offset", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", "P-1M", "2025-01-15") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2024-12-15");
+    });
+
+    // Jan 12, 2025 is a Sunday (weekday 0 in en-US). weekday(-7) goes back 7 days to the previous Sunday.
+    it("tp.date.weekday with negative offset returns same weekday from previous week", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.weekday.md": `<% tp.date.weekday("YYYY-MM-DD", -7, "2025-01-12") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.date.weekday",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2025-01-05");
+    });
+
+    it("tp.date.now uses file title as reference date", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.date.now.md": `<% tp.date.now("YYYY-MM-DD", 7, tp.file.title) %>`,
+            "notes/2025-06-01.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/2025-06-01.md");
+        await WorkspacePage.expectActiveTabToHaveText("2025-06-01");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.date.now");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/2025-06-01.md",
+            "2025-06-08\n",
+        );
+    });
 });

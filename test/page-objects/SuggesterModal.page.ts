@@ -36,6 +36,12 @@ class SuggesterModal {
         await this.selectSuggestionByName(name);
     }
 
+    async submit(): Promise<void> {
+        await this.waitForDisplayed();
+        await browser.keys("Enter");
+        await this.modalEl.waitForDisplayed({ reverse: true });
+    }
+
     async cancel() {
         await this.waitForDisplayed();
         await browser.keys("Escape");

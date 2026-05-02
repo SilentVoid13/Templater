@@ -34,4 +34,35 @@ describe("InternalModuleHooks", () => {
             "---\nkey: value\n---\n\nTEXT THAT SHOULD STAY",
         );
     });
+
+    it("tp.hooks.on_all_templates_executed runs multiple registered hooks", async () => {
+        const templateContent =
+            "<%*\n" +
+            "tp.hooks.on_all_templates_executed(async () => {\n" +
+            "  await app.vault.create('hook-result-1.md', 'first hook ran');\n" +
+            "});\n" +
+            "tp.hooks.on_all_templates_executed(async () => {\n" +
+            "  await app.vault.create('hook-result-2.md', 'second hook ran');\n" +
+            "});\n" +
+            "%>";
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.hooks.multiple.md": templateContent,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.hooks.multiple",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "hook-result-1.md",
+            "first hook ran",
+        );
+        await VaultPage.expectFileToHaveContent(
+            "hook-result-2.md",
+            "second hook ran",
+        );
+    });
 });

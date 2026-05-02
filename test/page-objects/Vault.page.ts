@@ -7,6 +7,16 @@ class Vault {
             return content === expectedContent;
         });
     }
+
+    async expectFileToNotExist(filePath: string): Promise<void> {
+        await browser.waitUntil(async () => {
+            const result = await browser.executeObsidian(
+                ({ app }, path: string) => app.vault.getFileByPath(path) === null,
+                filePath,
+            );
+            return Boolean(result);
+        });
+    }
 }
 
 export default new Vault();

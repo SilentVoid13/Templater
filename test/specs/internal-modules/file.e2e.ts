@@ -10,6 +10,8 @@ import ActiveMarkdownViewPage from "../../page-objects/ActiveMarkdownView.page";
 describe("InternalModuleFile", () => {
     const fixedTimestamp = 1619866800000; // 2021-05-01 07:00:00 UTC
 
+    // #region tp.file.title
+
     it("tp.file.title", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.title.md": `<% tp.file.title %>`,
@@ -24,6 +26,10 @@ describe("InternalModuleFile", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
+
+    // #endregion
+
+    // #region tp.file.content
 
     it("tp.file.content returns file content", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -44,6 +50,10 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    // #endregion
+
+    // #region tp.file.tags
+
     it("tp.file.tags returns file tags", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.tags.md": `<% tp.file.tags %>`,
@@ -62,6 +72,29 @@ describe("InternalModuleFile", () => {
             "---\ntags:\n- tag1\n- tag2\n---\n#tag1,#tag2",
         );
     });
+
+    it("tp.file.tags returns empty for file with no tags", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.tags.md": `tags:<% tp.file.tags %>`,
+            "notes/note.md": `---\nname: Alice\n---\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.tags",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "---\nname: Alice\n---\ntags:",
+        );
+    });
+
+    // #endregion
+
+    // #region tp.file.folder
 
     it("tp.file.folder returns empty name for root file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -97,6 +130,10 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    // #endregion
+
+    // #region tp.file.path
+
     it("tp.file.path returns relative path", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.path.md": `<% tp.file.path(true) %>`,
@@ -115,6 +152,54 @@ describe("InternalModuleFile", () => {
             "notes/note.md\n",
         );
     });
+
+    it("tp.file.path returns absolute system path", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.path.md": `<% tp.file.path() %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.path",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        const vaultPath = await browser.executeObsidian(({ app }) => {
+            return app.vault.adapter.basePath;
+        });
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            vaultPath + "/notes/note.md\n",
+        );
+    });
+
+    it("tp.file.path returns absolute system path when explicitly false", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.path.md": `<% tp.file.path(false) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.path",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        const vaultPath = await browser.executeObsidian(({ app }) => {
+            return app.vault.adapter.basePath;
+        });
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            vaultPath + "/notes/note.md\n",
+        );
+    });
+
+    // #endregion
+
+    // #region tp.file.cursor
 
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -163,6 +248,10 @@ describe("InternalModuleFile", () => {
         }
     });
 
+    // #endregion
+
+    // #region tp.file.exists
+
     it("tp.file.exists returns true for existing file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.exists.md": `<% tp.file.exists("notes/note.md") %>`,
@@ -193,6 +282,10 @@ describe("InternalModuleFile", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "false");
     });
+
+    // #endregion
+
+    // #region tp.file.find_tfile
 
     it("tp.file.find_tfile returns file by name", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -228,6 +321,10 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "null");
     });
 
+    // #endregion
+
+    // #region tp.file.include
+
     it("tp.file.include includes another file's content", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.include.md": `<% tp.file.include('[[include-source]]') %>`,
@@ -246,6 +343,45 @@ describe("InternalModuleFile", () => {
             "Included content",
         );
     });
+
+    it("tp.file.include includes a section from another file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.include.md": `<% tp.file.include('[[section-source#Section1]]') %>`,
+            "notes/section-source.md": `# Section1\nsection content\n# Section2\nother content`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.include",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "# Section1\nsection content\n",
+        );
+    });
+
+    it("tp.file.include resolves templates in the included file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.include.md": `<% tp.file.include('[[include-with-template]]') %>`,
+            "notes/include-with-template.md": `<% tp.file.title %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.include",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
+    });
+
+    // #endregion
+
+    // #region tp.file.creation_date
 
     it("tp.file.creation_date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -295,6 +431,10 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    // #endregion
+
+    // #region tp.file.last_modified_date
+
     it("tp.file.last_modified_date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.last_modified_date.md": `<% tp.file.last_modified_date() %>`,
@@ -343,6 +483,10 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    // #endregion
+
+    // #region tp.file.move
+
     it("tp.file.move moves file to new path", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.move.md": `moved:<%* tp.file.move("notes/moved") %>`,
@@ -358,6 +502,31 @@ describe("InternalModuleFile", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("notes/moved.md", "moved:\n");
     });
+
+    it("tp.file.move moves a non-active file via file_to_move parameter", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.move.md": `<%* await tp.file.move("notes/other-moved", tp.file.find_tfile("other-file")) %>`,
+            "notes/note.md": `\n`,
+            "notes/other-file.md": `other file content`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.move",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/other-moved.md",
+            "other file content",
+        );
+        await VaultPage.expectFileToNotExist("notes/other-file.md");
+    });
+
+    // #endregion
+
+    // #region tp.file.rename
 
     it("tp.file.rename renames file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -377,6 +546,10 @@ describe("InternalModuleFile", () => {
             "renamed:\n",
         );
     });
+
+    // #endregion
+
+    // #region tp.file.cursor_append
 
     it("tp.file.cursor_append inserts at cursor in empty file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -440,6 +613,10 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    // #endregion
+
+    // #region tp.file.selection
+
     it("tp.file.selection returns selected text", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.file.selection.md": `Selected: <% tp.file.selection() %>`,
@@ -462,6 +639,10 @@ describe("InternalModuleFile", () => {
             "Selected: hello world\n",
         );
     });
+
+    // #endregion
+
+    // #region tp.file.create_new
 
     it("tp.file.create_new creates a note from string content", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -540,4 +721,25 @@ describe("InternalModuleFile", () => {
             "opened content",
         );
     });
+
+    it("tp.file.create_new uses Untitled as default filename", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.create_new.md": `<%* await tp.file.create_new("default content", undefined, false) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.create_new",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "default content",
+        );
+    });
+
+    // #endregion
 });
