@@ -7,7 +7,7 @@ import CreateNewNoteFromTemplateModalPage from "../../page-objects/CreateNewNote
 import NoticePage from "../../page-objects/Notice.page";
 
 describe("InternalModuleConfig", () => {
-    it("reports correct config on create new from template with no active file", async () => {
+    it("tp.config reports correct config on create new from template with no active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.config.md": `Template file: <% tp.config.template_file.path %>
 Target file: <% tp.config.target_file.path %>
@@ -27,7 +27,7 @@ Run mode: 0`;
         await VaultPage.expectFileToHaveContent("Untitled.md", expectedContent);
     });
 
-    it("reports correct config on create new from template with active file", async () => {
+    it("tp.config reports correct config on create new from template with active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.config.md": `Template file: <% tp.config.template_file.path %>
 Target file: <% tp.config.target_file.path %>
@@ -51,7 +51,7 @@ Run mode: 0`;
         );
     });
 
-    it("reports correct config on append to active file", async () => {
+    it("tp.config reports correct config on append to active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.config.md": `Template file: <% tp.config.template_file.path %>
 Target file: <% tp.config.target_file.path %>
@@ -95,7 +95,7 @@ Run mode: 2`;
         );
     });
 
-    it("reports correct config on overwrite active file", async () => {
+    it("tp.config reports correct config on overwrite active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "notes/tp.config.md": `Template file: <% tp.config.template_file.path %>
 Target file: <% tp.config.target_file.path %>
@@ -121,7 +121,7 @@ Run mode: 3`;
     // Deprecated, do not need to test this functionality
     it.skip("reports correct config on dynamic processor", () => {});
 
-    it("reports correct config on startup template with no active file", async () => {
+    it("tp.config reports correct config on startup template with no active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.config.md":
                 "<%*\n" +
@@ -146,7 +146,7 @@ Run mode: 5`;
         await NoticePage.expectNoticeElWithText(expectedContent);
     });
 
-    it("reports correct config on startup template with active file", async () => {
+    it("tp.config reports correct config on startup template with active file", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.config.md":
                 "<%*\n" +
