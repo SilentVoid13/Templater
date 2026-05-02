@@ -5,6 +5,7 @@ import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateMo
 import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
 import VaultPage from "../../page-objects/Vault.page";
+import ActiveMarkdownViewPage from "../../page-objects/ActiveMarkdownView.page";
 
 describe("InternalModuleFile", () => {
     const fixedTimestamp = 1619866800000; // 2021-05-01 07:00:00 UTC
@@ -17,7 +18,9 @@ describe("InternalModuleFile", () => {
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.title");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.title",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
@@ -31,7 +34,9 @@ describe("InternalModuleFile", () => {
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.content");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.content",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
@@ -48,7 +53,9 @@ describe("InternalModuleFile", () => {
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.tags");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.tags",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
@@ -64,7 +71,9 @@ describe("InternalModuleFile", () => {
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.folder");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.folder",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "folder:");
     });
@@ -78,7 +87,9 @@ describe("InternalModuleFile", () => {
         await obsidianPage.openFile("notes/sub/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.folder");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.folder",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(
             "notes/sub/note.md",
@@ -95,9 +106,14 @@ describe("InternalModuleFile", () => {
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.path");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.path",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("notes/note.md", "notes/note.md\n");
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "notes/note.md\n",
+        );
     });
 
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
@@ -108,7 +124,9 @@ describe("InternalModuleFile", () => {
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.cursor");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(
             "Untitled.md",
@@ -133,7 +151,10 @@ describe("InternalModuleFile", () => {
                 "tp.file.cursor",
             );
             await WorkspacePage.waitForAllTemplatesExecuted();
-            await VaultPage.expectFileToHaveContent("Untitled.md", "beforeafter");
+            await VaultPage.expectFileToHaveContent(
+                "Untitled.md",
+                "beforeafter",
+            );
         } finally {
             await browser.executeObsidian(async ({ plugins }) => {
                 plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
@@ -151,7 +172,9 @@ describe("InternalModuleFile", () => {
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.exists");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.exists",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "true");
     });
@@ -164,7 +187,9 @@ describe("InternalModuleFile", () => {
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.exists");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.exists",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "false");
     });
@@ -182,7 +207,10 @@ describe("InternalModuleFile", () => {
             "tp.file.find_tfile",
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "notes/findme.md");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "notes/findme.md",
+        );
     });
 
     it("tp.file.find_tfile returns null for missing file", async () => {
@@ -213,7 +241,10 @@ describe("InternalModuleFile", () => {
             "tp.file.include",
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "Included content");
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "Included content",
+        );
     });
 
     it("tp.file.creation_date with default format", async () => {
@@ -314,21 +345,23 @@ describe("InternalModuleFile", () => {
 
     it("tp.file.move moves file to new path", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.file.move.md": `moved:<% tp.file.move("notes/moved") %>`,
+            "templates/tp.file.move.md": `moved:<%* tp.file.move("notes/moved") %>`,
             "notes/original.md": `\n`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/original.md");
         await WorkspacePage.expectActiveTabToHaveText("original");
         await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.file.move");
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.move",
+        );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("notes/moved.md", "moved:\n");
     });
 
     it("tp.file.rename renames file", async () => {
         await obsidianPage.resetVault("test/vault", {
-            "templates/tp.file.rename.md": `renamed:<% tp.file.rename("renamed") %>`,
+            "templates/tp.file.rename.md": `renamed:<%* tp.file.rename("renamed") %>`,
             "notes/original.md": `\n`,
         });
         await obsidianPage.loadWorkspaceLayout("empty");
@@ -339,18 +372,172 @@ describe("InternalModuleFile", () => {
             "tp.file.rename",
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("notes/renamed.md", "renamed:\n");
+        await VaultPage.expectFileToHaveContent(
+            "notes/renamed.md",
+            "renamed:\n",
+        );
     });
 
-    it.skip("tp.file.cursor_append", () => {
-        // Requires complex active-editor cursor positioning.
+    it("tp.file.cursor_append inserts at cursor in empty file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.cursor_append.md": `<%* tp.file.cursor_append("appended") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await ActiveMarkdownViewPage.waitForFocus();
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor_append",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "appended");
     });
 
-    it.skip("tp.file.selection", () => {
-        // Requires programmatic text selection in editor.
+    it("tp.file.cursor_append inserts at the current cursor position", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.cursor_append.md": `<%* tp.file.cursor_append("INSERTED ") %>`,
+            "notes/note.md": `foo bar\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await ActiveMarkdownViewPage.setSelection(
+            { line: 0, ch: 4 },
+            { line: 0, ch: 4 },
+        );
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor_append",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "foo INSERTED bar\n",
+        );
     });
 
-    it.skip("tp.file.create_new", () => {
-        // Complex multi-note flow; warrants dedicated test suite.
+    it("tp.file.cursor_append replaces the current selection", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.cursor_append.md": `<% tp.file.cursor_append("REPLACED") %>`,
+            "notes/note.md": `hello world\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await ActiveMarkdownViewPage.setSelection(
+            { line: 0, ch: 6 },
+            { line: 0, ch: 11 },
+        );
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor_append",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "hello REPLACED\n",
+        );
+    });
+
+    it("tp.file.selection returns selected text", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.selection.md": `Selected: <% tp.file.selection() %>`,
+            "notes/note.md": `hello world\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await ActiveMarkdownViewPage.setSelection(
+            { line: 0, ch: 0 },
+            { line: 0, ch: 5 },
+        );
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.selection",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "Selected: hello world\n",
+        );
+    });
+
+    it("tp.file.create_new creates a note from string content", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.create_new.md": `<%* await tp.file.create_new("child content", "notes/child-note", false) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.create_new",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/child-note.md",
+            "child content",
+        );
+    });
+
+    it("tp.file.create_new creates a note from a template file", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/child-template.md": `# <% tp.file.title %>`,
+            "templates/tp.file.create_new.md": `<%* await tp.file.create_new(tp.file.find_tfile("child-template"), "notes/from-template", false) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.create_new",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/from-template.md",
+            "# from-template",
+        );
+    });
+
+    it("tp.file.create_new respects the folder parameter", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.create_new.md": `<%* await tp.file.create_new("in subfolder", "leaf-note", false, "notes/sub") %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.create_new",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/sub/leaf-note.md",
+            "in subfolder",
+        );
+    });
+
+    it("tp.file.create_new opens new note when open_new is true", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.file.create_new.md": `<%* await tp.file.create_new("opened content", "notes/opened-note", true) %>`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.create_new",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await WorkspacePage.expectActiveTabToHaveText("opened-note");
+        await VaultPage.expectFileToHaveContent(
+            "notes/opened-note.md",
+            "opened content",
+        );
     });
 });

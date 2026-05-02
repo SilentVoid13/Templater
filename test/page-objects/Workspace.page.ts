@@ -1,5 +1,4 @@
 import { browser } from "@wdio/globals";
-import { TFile } from "obsidian";
 import { obsidianPage } from "wdio-obsidian-service";
 
 class Workspace {
