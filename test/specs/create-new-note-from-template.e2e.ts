@@ -3,13 +3,13 @@ import { obsidianPage } from "wdio-obsidian-service";
 import CreateNewNoteFromTemplateModalPage from "../page-objects/CreateNewNoteFromTemplateModal.page";
 import WorkspacePage from "../page-objects/Workspace.page";
 import VaultPage from "../page-objects/Vault.page";
+import { resetVault } from "../utils/reset-vault";
 
 describe("create_new_note_from_template", () => {
     it("creates file with processed content", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": "# <% tp.file.title %>",
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await CreateNewNoteFromTemplateModalPage.open();
         await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
             "template",
@@ -19,10 +19,9 @@ describe("create_new_note_from_template", () => {
     });
 
     it("auto-increments filename on conflict", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": "Test content",
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await CreateNewNoteFromTemplateModalPage.open();
         await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
             "template",
@@ -41,15 +40,15 @@ describe("create_new_note_from_template", () => {
     });
 
     it("creates file in the requested folder", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": "Folder test",
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await browser.executeObsidian(async ({ app }) => {
             const plugin = app.plugins.getPlugin("templater-obsidian");
             if (!plugin) throw new Error("templater-obsidian is not loaded");
-            const templateFile =
-                app.vault.getFileByPath("templates/template.md");
+            const templateFile = app.vault.getFileByPath(
+                "templates/template.md",
+            );
             if (!templateFile) throw new Error("Template file not found");
             await plugin.templater.create_new_note_from_template(
                 templateFile,
@@ -65,11 +64,10 @@ describe("create_new_note_from_template", () => {
     });
 
     it("processes frontmatter and body", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md":
                 '---\ntitle: "<% tp.file.title %>"\n---\n# <% tp.file.title %>',
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await CreateNewNoteFromTemplateModalPage.open();
         await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
             "template",
@@ -81,8 +79,7 @@ describe("create_new_note_from_template", () => {
     });
 
     it("supports string template content", async () => {
-        await obsidianPage.resetVault("test/vault", {});
-        await obsidianPage.loadWorkspaceLayout("empty");
+        await resetVault("test/vault", {});
         await browser.executeObsidian(async ({ app }) => {
             const plugin = app.plugins.getPlugin("templater-obsidian");
             if (!plugin) throw new Error("templater-obsidian is not loaded");

@@ -1,38 +1,38 @@
 class CreateNewNoteFromTemplateModal {
-    get modalEl() {
+    get #modalEl() {
         return browser.$(".templater-fuzzy-suggester-modal");
     }
-    get inputEl() {
-        return this.modalEl.$("input");
+    get #inputEl() {
+        return this.#modalEl.$("input");
     }
-    get suggestionEls() {
-        return this.modalEl.$$(".prompt-results .suggestion-item");
+    get #suggestionEls() {
+        return this.#modalEl.$$(".prompt-results .suggestion-item");
     }
     get suggestionEl() {
-        return this.modalEl.$(".prompt-results .suggestion-item");
+        return this.#modalEl.$(".prompt-results .suggestion-item");
     }
     get selectedSuggestionEl() {
-        return this.modalEl.$(".prompt-results .suggestion-item.is-selected");
+        return this.#modalEl.$(".prompt-results .suggestion-item.is-selected");
     }
     get emptyMessageEl() {
-        return this.modalEl.$(".suggestion-empty");
+        return this.#modalEl.$(".suggestion-empty");
     }
 
     async open() {
         await browser.executeObsidianCommand(
             "templater-obsidian:create-new-note-from-template",
         );
-        await this.modalEl.waitForDisplayed();
+        await this.#modalEl.waitForDisplayed();
     }
 
-    async enterSnippetName(name: string) {
-        await this.inputEl.waitForDisplayed();
-        await this.inputEl.addValue(name);
+    async enterTemplateName(name: string) {
+        await this.#inputEl.waitForDisplayed();
+        await this.#inputEl.addValue(name);
     }
 
     async selectSuggestionByName(name: string) {
         await browser.waitUntil(async () => {
-            for await (const el of this.suggestionEls) {
+            for await (const el of this.#suggestionEls) {
                 if ((await el.getText()) === name) {
                     await el.click();
                     return true;
@@ -40,7 +40,7 @@ class CreateNewNoteFromTemplateModal {
             }
             return false;
         });
-        await this.modalEl.waitForDisplayed({ reverse: true });
+        await this.#modalEl.waitForDisplayed({ reverse: true });
     }
 }
 

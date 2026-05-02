@@ -4,6 +4,7 @@ import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
 import VaultPage from "../../page-objects/Vault.page";
 import ActiveMarkdownViewPage from "../../page-objects/ActiveMarkdownView.page";
+import { resetVault } from "../../utils/reset-vault";
 
 describe("InternalModuleHooks", () => {
     it("tp.hooks.on_all_templates_executed shows properties in live preview", async () => {
@@ -17,10 +18,9 @@ describe("InternalModuleHooks", () => {
             "});\n" +
             "%>\n" +
             "TEXT THAT SHOULD STAY";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.hooks.on_all_templates_executed.md": templateContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -45,10 +45,9 @@ describe("InternalModuleHooks", () => {
             "  await app.vault.create('hook-result-2.md', 'second hook ran');\n" +
             "});\n" +
             "%>";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.hooks.multiple.md": templateContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();

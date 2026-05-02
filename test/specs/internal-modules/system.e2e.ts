@@ -7,16 +7,16 @@ import PromptModalPage from "../../page-objects/PromptModal.page";
 import SuggesterModalPage from "../../page-objects/SuggesterModal.page";
 import MultiSuggesterModalPage from "../../page-objects/MultiSuggesterModal.page";
 import ClipboardPage from "../../page-objects/Clipboard.page";
+import { resetVault } from "../../utils/reset-vault";
 
 describe("InternalModuleSystem", () => {
     //#region tp.system.clipboard
 
     it("tp.system.clipboard returns clipboard content", async () => {
         await ClipboardPage.setClipboardText("Hello from clipboard");
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.clipboard.md": `<% tp.system.clipboard() %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -35,10 +35,9 @@ describe("InternalModuleSystem", () => {
     //#region tp.system.prompt
 
     it("tp.system.prompt returns entered text", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -55,10 +54,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.prompt uses default value", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "default text") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -71,10 +69,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.prompt returns null on cancel when throw_on_cancel is false", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "", false) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -87,10 +84,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.prompt supports multi-line input", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter text", "", false, true) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -111,10 +107,9 @@ describe("InternalModuleSystem", () => {
     //#region
 
     it("tp.system.suggester returns the value for the selected item", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -127,10 +122,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.suggester filters items by search query", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -143,10 +137,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.suggester returns null on cancel when throw_on_cancel is false", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -159,10 +152,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.suggester throws on cancel when throw_on_cancel is true", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<%* try { await tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], true); } catch(e) { tR += "cancelled"; } %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -175,10 +167,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.suggester uses function as text_items", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(item => "Item " + item, [1, 2, 3]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -191,10 +182,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.suggester uses default_value to pre-select item", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, "banana") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -211,10 +201,9 @@ describe("InternalModuleSystem", () => {
     //#region tp.system.multi_suggester
 
     it("tp.system.multi_suggester returns selected items as array", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -228,10 +217,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.multi_suggester returns empty array on cancel", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -244,10 +232,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.multi_suggester throws on cancel when throw_on_cancel is true", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<%* try { await tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], true); } catch(e) { tR += "cancelled"; } %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -260,10 +247,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.multi_suggester returns multiple selected items as comma-separated", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -278,10 +264,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.multi_suggester pre-selects default values", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, ["banana"]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -294,10 +279,9 @@ describe("InternalModuleSystem", () => {
     });
 
     it("tp.system.multi_suggester uses function as text_items", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(item => "Item " + item, [1, 2, 3]) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -315,10 +299,9 @@ describe("InternalModuleSystem", () => {
     //#region tp.system.prompt
 
     it("tp.system.prompt throws on cancel when throw_on_cancel is true", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<%* try { await tp.system.prompt("Enter", "", true); } catch(e) { tR += "cancelled"; } %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();

@@ -6,17 +6,18 @@ import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
 import VaultPage from "../../page-objects/Vault.page";
 import ActiveMarkdownViewPage from "../../page-objects/ActiveMarkdownView.page";
+import CreateNewNoteFromTemplateModalPage from "../../page-objects/CreateNewNoteFromTemplateModal.page";
+import { resetVault } from "../../utils/reset-vault";
 
 describe("InternalModuleFile", () => {
     const fixedTimestamp = 1619866800000; // 2021-05-01 07:00:00 UTC
 
     //#region tp.file.title
 
-    it("tp.file.title", async () => {
-        await obsidianPage.resetVault("test/vault", {
+    it("tp.file.title returns file title", async () => {
+        await resetVault("test/vault", {
             "templates/tp.file.title.md": `<% tp.file.title %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -27,16 +28,50 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
 
+    it("tp.file.title does not change when file is renamed", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.title.md":
+                "<% tp.file.title %>\n" +
+                `<%* await tp.file.rename("new name") %>` +
+                "<% tp.file.title %>",
+            "notes/old name.md": "\n",
+        });
+        await obsidianPage.openFile("notes/old name.md");
+        await WorkspacePage.expectActiveTabToHaveText("old name");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.title",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToNotExist("notes/old name.md");
+        await VaultPage.expectFileToHaveContent(
+            "notes/new name.md",
+            "old name\nold name\n",
+        );
+    });
+
+    it("tp.file.title returns default name on file creation", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.title.md": "<% tp.file.title %>",
+        });
+        await CreateNewNoteFromTemplateModalPage.open();
+        await CreateNewNoteFromTemplateModalPage.selectSuggestionByName(
+            "tp.file.title",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
+    });
+
     //#endregion
 
     //#region tp.file.content
 
     it("tp.file.content returns file content", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.content.md": `<% tp.file.content %>`,
             "notes/note.md": `original content\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -55,11 +90,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.tags
 
     it("tp.file.tags returns file tags", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.tags.md": `<% tp.file.tags %>`,
             "notes/note.md": `---\ntags:\n- tag1\n- tag2\n---\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -74,11 +108,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.tags returns empty for file with no tags", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.tags.md": `tags:<% tp.file.tags %>`,
             "notes/note.md": `---\nname: Alice\n---\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -97,10 +130,9 @@ describe("InternalModuleFile", () => {
     //#region tp.file.folder
 
     it("tp.file.folder returns empty name for root file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.folder.md": `folder:<% tp.file.folder() %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -112,11 +144,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.folder returns folder name and absolute path for file in subfolder", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.folder.md": `<% tp.file.folder() %>|<% tp.file.folder(true) %>`,
             "notes/sub/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/sub/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -135,11 +166,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.path
 
     it("tp.file.path returns relative path", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.path.md": `<% tp.file.path(true) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -154,11 +184,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.path returns absolute system path", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.path.md": `<% tp.file.path() %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -176,11 +205,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.path returns absolute system path when explicitly false", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.path.md": `<% tp.file.path(false) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -202,10 +230,9 @@ describe("InternalModuleFile", () => {
     //#region tp.file.cursor
 
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor.md": `<% tp.file.cursor(1) %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -220,7 +247,7 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.cursor removes placeholder when auto jump is enabled", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor.md": `before<% tp.file.cursor(1) %>after`,
         });
         await browser.executeObsidian(async ({ plugins }) => {
@@ -253,11 +280,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.exists
 
     it("tp.file.exists returns true for existing file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.exists.md": `<% tp.file.exists("notes/note.md") %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -269,10 +295,9 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.exists returns false for missing file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.exists.md": `<% tp.file.exists("nonexistent.md") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -288,11 +313,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.find_tfile
 
     it("tp.file.find_tfile returns file by name", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.find_tfile.md": `<% tp.file.find_tfile("findme").path %>`,
             "notes/findme.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -307,10 +331,9 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.find_tfile returns null for missing file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.find_tfile.md": `<% tp.file.find_tfile("nonexistent") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -326,11 +349,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.include
 
     it("tp.file.include includes another file's content", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.include.md": `<% tp.file.include('[[include-source]]') %>`,
             "notes/include-source.md": `Included content`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -345,11 +367,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.include includes a section from another file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.include.md": `<% tp.file.include('[[section-source#Section1]]') %>`,
             "notes/section-source.md": `# Section1\nsection content\n# Section2\nother content`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -364,11 +385,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.include resolves templates in the included file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.include.md": `<% tp.file.include('[[include-with-template]]') %>`,
             "notes/include-with-template.md": `<% tp.file.title %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -384,7 +404,7 @@ describe("InternalModuleFile", () => {
     //#region tp.file.creation_date
 
     it("tp.file.creation_date with default format", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.creation_date.md": `<% tp.file.creation_date() %>`,
             "notes/note.md": `\n`,
         });
@@ -393,7 +413,6 @@ describe("InternalModuleFile", () => {
             if (!file) throw new Error("File not found");
             file.stat.ctime = ctime;
         }, fixedTimestamp);
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -408,7 +427,7 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.creation_date with custom format", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.creation_date.md": `<% tp.file.creation_date("YYYY-MM-DD") %>`,
             "notes/note.md": `\n`,
         });
@@ -417,7 +436,6 @@ describe("InternalModuleFile", () => {
             if (!file) throw new Error("File not found");
             file.stat.ctime = ctime;
         }, fixedTimestamp);
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -436,7 +454,7 @@ describe("InternalModuleFile", () => {
     //#region tp.file.last_modified_date
 
     it("tp.file.last_modified_date with default format", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.last_modified_date.md": `<% tp.file.last_modified_date() %>`,
             "notes/note.md": `\n`,
         });
@@ -445,7 +463,6 @@ describe("InternalModuleFile", () => {
             if (!file) throw new Error("File not found");
             file.stat.mtime = mtime;
         }, fixedTimestamp);
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -460,7 +477,7 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.last_modified_date with custom format", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.last_modified_date.md": `<% tp.file.last_modified_date("YYYY-MM-DD") %>`,
             "notes/note.md": `\n`,
         });
@@ -469,7 +486,6 @@ describe("InternalModuleFile", () => {
             if (!file) throw new Error("File not found");
             file.stat.mtime = mtime;
         }, fixedTimestamp);
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -488,11 +504,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.move
 
     it("tp.file.move moves file to new path", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.move.md": `moved:<%* tp.file.move("notes/moved") %>`,
             "notes/original.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/original.md");
         await WorkspacePage.expectActiveTabToHaveText("original");
         await OpenInsertTemplateModalPage.open();
@@ -504,12 +519,11 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.move moves a non-active file via file_to_move parameter", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.move.md": `<%* await tp.file.move("notes/other-moved", tp.file.find_tfile("other-file")) %>`,
             "notes/note.md": `\n`,
             "notes/other-file.md": `other file content`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -529,11 +543,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.rename
 
     it("tp.file.rename renames file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.rename.md": `renamed:<%* tp.file.rename("renamed") %>`,
             "notes/original.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/original.md");
         await WorkspacePage.expectActiveTabToHaveText("original");
         await OpenInsertTemplateModalPage.open();
@@ -552,10 +565,9 @@ describe("InternalModuleFile", () => {
     //#region tp.file.cursor_append
 
     it("tp.file.cursor_append inserts at cursor in empty file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor_append.md": `<%* tp.file.cursor_append("appended") %>`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await ActiveMarkdownViewPage.waitForFocus();
@@ -568,11 +580,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.cursor_append inserts at the current cursor position", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor_append.md": `<%* tp.file.cursor_append("INSERTED ") %>`,
             "notes/note.md": `foo bar\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await ActiveMarkdownViewPage.setSelection(
@@ -591,11 +602,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.cursor_append replaces the current selection", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor_append.md": `<% tp.file.cursor_append("REPLACED") %>`,
             "notes/note.md": `hello world\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await ActiveMarkdownViewPage.setSelection(
@@ -618,11 +628,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.selection
 
     it("tp.file.selection returns selected text", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.selection.md": `Selected: <% tp.file.selection() %>`,
             "notes/note.md": `hello world\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await ActiveMarkdownViewPage.setSelection(
@@ -645,11 +654,10 @@ describe("InternalModuleFile", () => {
     //#region tp.file.create_new
 
     it("tp.file.create_new creates a note from string content", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.create_new.md": `<%* await tp.file.create_new("child content", "notes/child-note", false) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -664,12 +672,11 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.create_new creates a note from a template file", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/child-template.md": `# <% tp.file.title %>`,
             "templates/tp.file.create_new.md": `<%* await tp.file.create_new(tp.file.find_tfile("child-template"), "notes/from-template", false) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -684,11 +691,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.create_new respects the folder parameter", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.create_new.md": `<%* await tp.file.create_new("in subfolder", "leaf-note", false, "notes/sub") %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -703,11 +709,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.create_new opens new note when open_new is true", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.create_new.md": `<%* await tp.file.create_new("opened content", "notes/opened-note", true) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();
@@ -723,11 +728,10 @@ describe("InternalModuleFile", () => {
     });
 
     it("tp.file.create_new uses Untitled as default filename", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/tp.file.create_new.md": `<%* await tp.file.create_new("default content", undefined, false) %>`,
             "notes/note.md": `\n`,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/note.md");
         await WorkspacePage.expectActiveTabToHaveText("note");
         await OpenInsertTemplateModalPage.open();

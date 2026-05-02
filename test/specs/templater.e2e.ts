@@ -4,13 +4,13 @@ import WorkspacePage from "../page-objects/Workspace.page";
 import EmptyStateViewPage from "../page-objects/EmptyStateView.page";
 import VaultPage from "../page-objects/Vault.page";
 import ActiveMarkdownViewPage from "../page-objects/ActiveMarkdownView.page";
+import { resetVault } from "../utils/reset-vault";
 
 describe("Templater", () => {
     it("append_template_to_active_file shows properties in live preview", async () => {
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": "---\nkey: value\n---\nText",
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
         await OpenInsertTemplateModalPage.open();
@@ -40,11 +40,10 @@ describe("Templater", () => {
             "both: template value\n" +
             "only_in_template: template value\n" +
             "---\n";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": templateContent,
             "notes/target.md": targetContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/target.md");
         await WorkspacePage.expectActiveTabToHaveText("target");
         await OpenInsertTemplateModalPage.open();
@@ -86,11 +85,10 @@ describe("Templater", () => {
             "  - template_item1\n" +
             "  - template_item2\n" +
             "---\n";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": templateContent,
             "notes/target.md": targetContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/target.md");
         await WorkspacePage.expectActiveTabToHaveText("target");
         await OpenInsertTemplateModalPage.open();
@@ -125,11 +123,10 @@ describe("Templater", () => {
             "  - duplicate_value\n" +
             "  - unique_value\n" +
             "---\n";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": templateContent,
             "notes/target.md": targetContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/target.md");
         await WorkspacePage.expectActiveTabToHaveText("target");
         await OpenInsertTemplateModalPage.open();
@@ -174,11 +171,10 @@ describe("Templater", () => {
             "  - target_item\n" +
             "  - template_item\n" +
             "---\n";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": templateContent,
             "notes/target.md": targetContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/target.md");
         await WorkspacePage.expectActiveTabToHaveText("target");
         await OpenInsertTemplateModalPage.open();
@@ -216,11 +212,10 @@ describe("Templater", () => {
             "string_to_number: 42\n" +
             "list_to_boolean: true\n" +
             "---\n";
-        await obsidianPage.resetVault("test/vault", {
+        await resetVault("test/vault", {
             "templates/template.md": templateContent,
             "notes/target.md": targetContent,
         });
-        await obsidianPage.loadWorkspaceLayout("empty");
         await obsidianPage.openFile("notes/target.md");
         await WorkspacePage.expectActiveTabToHaveText("target");
         await OpenInsertTemplateModalPage.open();
