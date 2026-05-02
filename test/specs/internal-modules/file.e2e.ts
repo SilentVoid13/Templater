@@ -10,7 +10,7 @@ import ActiveMarkdownViewPage from "../../page-objects/ActiveMarkdownView.page";
 describe("InternalModuleFile", () => {
     const fixedTimestamp = 1619866800000; // 2021-05-01 07:00:00 UTC
 
-    // #region tp.file.title
+    //#region tp.file.title
 
     it("tp.file.title", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -27,9 +27,9 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.content
+    //#region tp.file.content
 
     it("tp.file.content returns file content", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -50,9 +50,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.tags
+    //#region tp.file.tags
 
     it("tp.file.tags returns file tags", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -92,9 +92,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.folder
+    //#region tp.file.folder
 
     it("tp.file.folder returns empty name for root file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -130,9 +130,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.path
+    //#region tp.file.path
 
     it("tp.file.path returns relative path", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -197,9 +197,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.cursor
+    //#region tp.file.cursor
 
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -248,9 +248,9 @@ describe("InternalModuleFile", () => {
         }
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.exists
+    //#region tp.file.exists
 
     it("tp.file.exists returns true for existing file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -283,9 +283,9 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "false");
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.find_tfile
+    //#region tp.file.find_tfile
 
     it("tp.file.find_tfile returns file by name", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -321,9 +321,9 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "null");
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.include
+    //#region tp.file.include
 
     it("tp.file.include includes another file's content", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -379,9 +379,9 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "Untitled");
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.creation_date
+    //#region tp.file.creation_date
 
     it("tp.file.creation_date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -431,9 +431,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.last_modified_date
+    //#region tp.file.last_modified_date
 
     it("tp.file.last_modified_date with default format", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -483,9 +483,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.move
+    //#region tp.file.move
 
     it("tp.file.move moves file to new path", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -524,9 +524,9 @@ describe("InternalModuleFile", () => {
         await VaultPage.expectFileToNotExist("notes/other-file.md");
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.rename
+    //#region tp.file.rename
 
     it("tp.file.rename renames file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -547,9 +547,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.cursor_append
+    //#region tp.file.cursor_append
 
     it("tp.file.cursor_append inserts at cursor in empty file", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -613,9 +613,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.selection
+    //#region tp.file.selection
 
     it("tp.file.selection returns selected text", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -640,9 +640,9 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 
-    // #region tp.file.create_new
+    //#region tp.file.create_new
 
     it("tp.file.create_new creates a note from string content", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -741,5 +741,5 @@ describe("InternalModuleFile", () => {
         );
     });
 
-    // #endregion
+    //#endregion
 });

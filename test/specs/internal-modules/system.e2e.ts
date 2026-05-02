@@ -9,6 +9,8 @@ import MultiSuggesterModalPage from "../../page-objects/MultiSuggesterModal.page
 import { setClipboardText } from "../../helpers/legacyTemplaterTestHelpers";
 
 describe("InternalModuleSystem", () => {
+    //#region tp.system.clipboard
+
     it("tp.system.clipboard returns clipboard content", async () => {
         await setClipboardText("Hello from clipboard");
         await obsidianPage.resetVault("test/vault", {
@@ -27,6 +29,10 @@ describe("InternalModuleSystem", () => {
             "Hello from clipboard",
         );
     });
+
+    //#endregion
+
+    //#region tp.system.prompt
 
     it("tp.system.prompt returns entered text", async () => {
         await obsidianPage.resetVault("test/vault", {
@@ -100,6 +106,10 @@ describe("InternalModuleSystem", () => {
         );
     });
 
+    //#endregion
+
+    //#region
+
     it("tp.system.suggester returns the value for the selected item", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
@@ -164,6 +174,42 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
     });
 
+    it("tp.system.suggester uses function as text_items", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% tp.system.suggester(item => "Item " + item, [1, 2, 3]) %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.selectSuggestionByName("Item 2");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
+    });
+
+    it("tp.system.suggester uses default_value to pre-select item", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, "banana") %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.submit();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "banana");
+    });
+
+    //#endregion
+
+    //#region tp.system.multi_suggester
+
     it("tp.system.multi_suggester returns selected items as array", async () => {
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
@@ -211,54 +257,6 @@ describe("InternalModuleSystem", () => {
         await MultiSuggesterModalPage.cancel();
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
-    });
-
-    it("tp.system.prompt throws on cancel when throw_on_cancel is true", async () => {
-        await obsidianPage.resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<%* try { await tp.system.prompt("Enter", "", true); } catch(e) { tR += "cancelled"; } %>`,
-        });
-        await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.system.prompt",
-        );
-        await PromptModalPage.cancel();
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
-    });
-
-    it("tp.system.suggester uses function as text_items", async () => {
-        await obsidianPage.resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(item => "Item " + item, [1, 2, 3]) %>`,
-        });
-        await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.system.suggester",
-        );
-        await SuggesterModalPage.selectSuggestionByName("Item 2");
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
-    });
-
-    it("tp.system.suggester uses default_value to pre-select item", async () => {
-        await obsidianPage.resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, "banana") %>`,
-        });
-        await obsidianPage.loadWorkspaceLayout("empty");
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.system.suggester",
-        );
-        await SuggesterModalPage.submit();
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "banana");
     });
 
     it("tp.system.multi_suggester returns multiple selected items as comma-separated", async () => {
@@ -311,4 +309,26 @@ describe("InternalModuleSystem", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "2");
     });
+
+    //#endregion
+
+    //#region tp.system.prompt
+
+    it("tp.system.prompt throws on cancel when throw_on_cancel is true", async () => {
+        await obsidianPage.resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<%* try { await tp.system.prompt("Enter", "", true); } catch(e) { tR += "cancelled"; } %>`,
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
+    });
+
+    //#endregion
 });
