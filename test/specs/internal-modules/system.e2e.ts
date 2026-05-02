@@ -6,13 +6,13 @@ import VaultPage from "../../page-objects/Vault.page";
 import PromptModalPage from "../../page-objects/PromptModal.page";
 import SuggesterModalPage from "../../page-objects/SuggesterModal.page";
 import MultiSuggesterModalPage from "../../page-objects/MultiSuggesterModal.page";
-import { setClipboardText } from "../../helpers/legacyTemplaterTestHelpers";
+import ClipboardPage from "../../page-objects/Clipboard.page";
 
 describe("InternalModuleSystem", () => {
     //#region tp.system.clipboard
 
     it("tp.system.clipboard returns clipboard content", async () => {
-        await setClipboardText("Hello from clipboard");
+        await ClipboardPage.setClipboardText("Hello from clipboard");
         await obsidianPage.resetVault("test/vault", {
             "templates/tp.system.clipboard.md": `<% tp.system.clipboard() %>`,
         });
