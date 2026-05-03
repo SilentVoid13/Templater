@@ -36,15 +36,15 @@ class ActiveMarkdownView {
     }
 
     async setSelection(
-        from: { line: number; ch: number },
-        to: { line: number; ch: number },
+        from: EditorPosition,
+        to: EditorPosition,
     ): Promise<void> {
         await browser.executeObsidian(
             (
                 { app },
                 payload: {
-                    from: { line: number; ch: number };
-                    to: { line: number; ch: number };
+                    from: EditorPosition;
+                    to: EditorPosition;
                 },
             ) => {
                 const editor = app.workspace.activeEditor?.editor;
@@ -53,6 +53,14 @@ class ActiveMarkdownView {
             },
             { from, to },
         );
+    }
+
+    async setSelections(ranges: EditorSelection[]): Promise<void> {
+        await browser.executeObsidian(({ app }, payload: EditorSelection[]) => {
+            const editor = app.workspace.activeEditor?.editor;
+            if (!editor) throw new Error("No active editor");
+            editor.setSelections(payload);
+        }, ranges);
     }
 
     async expectSelectionsToEqual(expectedSelections: EditorSelection[]) {

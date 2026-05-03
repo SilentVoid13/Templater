@@ -22,6 +22,18 @@ class Notice {
         );
     }
 
+    async expectInclusionDepthLimitErrorNotice() {
+        await this.expectNoticeElWithText(
+            "Templater Error:\n" + "Reached inclusion depth limit (max = 10)",
+        );
+    }
+    async expectFileNameCannotIncludeCharsErrorNotice() {
+        await this.expectNoticeElWithText(
+            "Templater Error:\n" +
+                "File name cannot contain any of these characters: \\ / :",
+        );
+    }
+
     async dismissAll() {
         let attempts = 0;
         const maxAttempts = 10;
