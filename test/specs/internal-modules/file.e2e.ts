@@ -125,6 +125,24 @@ describe("InternalModuleFile", () => {
         );
     });
 
+    it("tp.file.tags returns empty for file with no frontmatter", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.tags.md": `tags:<% tp.file.tags %>`,
+            "notes/note.md": `\nContent`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.tags",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "tags:\nContent",
+        );
+    });
+
     //#endregion
 
     //#region tp.file.folder
@@ -195,9 +213,7 @@ describe("InternalModuleFile", () => {
             "tp.file.path",
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        const vaultPath = await browser.executeObsidian(({ app }) => {
-            return app.vault.adapter.basePath;
-        });
+        const vaultPath = obsidianPage.getVaultPath();
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
             vaultPath + "/notes/note.md\n",
@@ -216,9 +232,7 @@ describe("InternalModuleFile", () => {
             "tp.file.path",
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
-        const vaultPath = await browser.executeObsidian(({ app }) => {
-            return app.vault.adapter.basePath;
-        });
+        const vaultPath = obsidianPage.getVaultPath();
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
             vaultPath + "/notes/note.md\n",
@@ -229,9 +243,102 @@ describe("InternalModuleFile", () => {
 
     //#region tp.file.cursor
 
+    it("tp.file.cursor removes placeholder when auto jump is enabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `before<% tp.file.cursor() %>after`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "beforeafter");
+        await ActiveMarkdownViewPage.expectCursorsToEqual([{ line: 0, ch: 6 }]);
+    });
+
+    it("tp.file.cursor removes first placeholder by order when auto jump is enabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `before<% tp.file.cursor(0) %>after<% tp.file.cursor(1) %>`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "beforeafter<% tp.file.cursor(1) %>",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([{ line: 0, ch: 6 }]);
+    });
+
+    it("tp.file.cursor removes multiple placeholders with the same order when auto jump is enabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `before<% tp.file.cursor(1) %>middle<% tp.file.cursor(1) %>after<% tp.file.cursor(2) %>`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await obsidianPage.loadWorkspaceLayout("empty");
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "beforemiddleafter<% tp.file.cursor(2) %>",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([
+            { line: 0, ch: 6 },
+            { line: 0, ch: 12 },
+        ]);
+    });
+
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
         await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `<% tp.file.cursor() %>`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "<% tp.file.cursor() %>",
+        );
+    });
+
+    it("tp.file.cursor with order retains placeholder when auto jump is disabled", async () => {
+        await resetVault("test/vault", {
             "templates/tp.file.cursor.md": `<% tp.file.cursor(1) %>`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
+            await plugins.templaterObsidian.save_settings();
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -244,35 +351,6 @@ describe("InternalModuleFile", () => {
             "Untitled.md",
             "<% tp.file.cursor(1) %>",
         );
-    });
-
-    it("tp.file.cursor removes placeholder when auto jump is enabled", async () => {
-        await resetVault("test/vault", {
-            "templates/tp.file.cursor.md": `before<% tp.file.cursor(1) %>after`,
-        });
-        await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
-            await plugins.templaterObsidian.save_settings();
-        });
-        try {
-            await obsidianPage.loadWorkspaceLayout("empty");
-            await EmptyStateViewPage.clickCreateNewNote();
-            await WorkspacePage.expectActiveTabToHaveText("Untitled");
-            await OpenInsertTemplateModalPage.open();
-            await OpenInsertTemplateModalPage.selectSuggestionByName(
-                "tp.file.cursor",
-            );
-            await WorkspacePage.waitForAllTemplatesExecuted();
-            await VaultPage.expectFileToHaveContent(
-                "Untitled.md",
-                "beforeafter",
-            );
-        } finally {
-            await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
-                await plugins.templaterObsidian.save_settings();
-            });
-        }
     });
 
     //#endregion
@@ -570,7 +648,7 @@ describe("InternalModuleFile", () => {
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await ActiveMarkdownViewPage.waitForFocus();
+        await ActiveMarkdownViewPage.focusEditor();
         await OpenInsertTemplateModalPage.open();
         await OpenInsertTemplateModalPage.selectSuggestionByName(
             "tp.file.cursor_append",

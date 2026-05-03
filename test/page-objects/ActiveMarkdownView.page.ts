@@ -1,30 +1,37 @@
+import type { EditorPosition, EditorSelection } from "obsidian";
+
 class ActiveMarkdownView {
-    #activeEditorSelector =
+    #leafContentSelector =
         ".workspace-leaf.mod-active .workspace-leaf-content[data-type=markdown]";
 
-    get activeEditorEl() {
-        return browser.$(this.#activeEditorSelector);
+    #editorSelector = `${this.#leafContentSelector} .cm-content`;
+
+    get leafContentEl() {
+        return browser.$(this.#leafContentSelector);
     }
 
     get titleEl() {
-        return this.activeEditorEl.$(".view-header-title");
+        return this.leafContentEl.$(".view-header-title");
     }
 
     get propertiesEl() {
-        return this.activeEditorEl.$(
-            ".metadata-properties .metadata-property",
-        );
+        return this.leafContentEl.$(".metadata-properties .metadata-property");
     }
 
-    async waitForFocus() {
-        await this.activeEditorEl.waitForDisplayed();
-        await this.activeEditorEl.click();
-        const selector = this.#activeEditorSelector;
+    get editorEl() {
+        return browser.$(this.#editorSelector);
+    }
+
+    async focusEditor() {
+        await this.leafContentEl.waitForDisplayed();
         await browser.waitUntil(async () => {
-            return browser.execute((sel: string) => {
+            return browser.execute((selector) => {
+                const el = activeDocument.querySelector(selector);
+                if (!el || !el.instanceOf(HTMLElement)) return false;
+                el.focus();
                 const active = activeDocument.activeElement;
-                return !!active?.closest(sel);
-            }, selector);
+                return !!active?.closest(selector);
+            }, this.#editorSelector);
         });
     }
 
@@ -46,6 +53,31 @@ class ActiveMarkdownView {
             },
             { from, to },
         );
+    }
+
+    async expectSelectionsToEqual(expectedSelections: EditorSelection[]) {
+        await browser.waitUntil(async () => {
+            const selections = await browser.executeObsidian(({ app }) => {
+                const editor = app.workspace.activeEditor?.editor;
+                if (!editor) throw new Error("No active editor");
+                return editor.listSelections();
+            });
+            expect(selections).toEqual(expectedSelections);
+            return true;
+        });
+    }
+
+    async expectCursorsToEqual(expected: EditorPosition[]) {
+        await this.focusEditor();
+        await browser.waitUntil(async () => {
+            const cursors = await browser.executeObsidian(({ app }) => {
+                const editor = app.workspace.activeEditor?.editor;
+                if (!editor) throw new Error("No active editor");
+                return editor.listSelections().map((sel) => sel.head);
+            });
+            expect(cursors).toEqual(expected);
+            return true;
+        });
     }
 
     async expectPropertiesToBeVisible() {

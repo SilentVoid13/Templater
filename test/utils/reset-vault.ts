@@ -1,7 +1,7 @@
 import {
     obsidianPage,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type ObsidianBrowserCommands,
+    ObsidianBrowserCommands,
 } from "wdio-obsidian-service";
 import NoticePage from "../page-objects/Notice.page";
 
