@@ -25,7 +25,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     }
 
     onOpen(): void {
-        super.onOpen();
+        void super.onOpen();
         if (this.default_value !== undefined) {
             this.inputEl.value = this.getItemText(this.default_value);
             this.inputEl.dispatchEvent(new InputEvent("input"));

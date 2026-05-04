@@ -63,10 +63,10 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     onChooseItem(item: TFile): void {
         switch (this.open_mode) {
             case OpenMode.InsertTemplate:
-                this.plugin.templater.append_template_to_active_file(item);
+                void this.plugin.templater.append_template_to_active_file(item);
                 break;
             case OpenMode.CreateNoteTemplate:
-                this.plugin.templater.create_new_note_from_template(
+                void this.plugin.templater.create_new_note_from_template(
                     item,
                     this.creation_folder,
                 );

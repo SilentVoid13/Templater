@@ -36,8 +36,8 @@ export class CommandHandler {
                           key: "r",
                       },
                   ],
-            callback: () => {
-                this.plugin.templater.overwrite_active_file_commands();
+            callback: async () => {
+                await this.plugin.templater.overwrite_active_file_commands();
             },
         });
 
@@ -51,8 +51,8 @@ export class CommandHandler {
                     key: "Tab",
                 },
             ],
-            callback: () => {
-                this.plugin.editor_handler.jump_to_next_cursor_location();
+            callback: async () => {
+                await this.plugin.editor_handler.jump_to_next_cursor_location();
             },
         });
 
@@ -106,7 +106,7 @@ export class CommandHandler {
                 id: new_template,
                 name: `Insert ${new_template_name}`,
                 icon: "templater-icon",
-                callback: () => {
+                callback: async () => {
                     const template = errorWrapperSync(
                         () => resolve_tfile(this.plugin.app, new_template),
                         `Couldn't find the template file associated with this hotkey`
@@ -114,7 +114,7 @@ export class CommandHandler {
                     if (!template) {
                         return;
                     }
-                    this.plugin.templater.append_template_to_active_file(
+                    await this.plugin.templater.append_template_to_active_file(
                         template
                     );
                 },
@@ -123,7 +123,7 @@ export class CommandHandler {
                 id: `create-${new_template}`,
                 name: `Create ${new_template_name}`,
                 icon: "templater-icon",
-                callback: () => {
+                callback: async () => {
                     const template = errorWrapperSync(
                         () => resolve_tfile(this.plugin.app, new_template),
                         `Couldn't find the template file associated with this hotkey`
@@ -131,7 +131,7 @@ export class CommandHandler {
                     if (!template) {
                         return;
                     }
-                    this.plugin.templater.create_new_note_from_template(
+                    await this.plugin.templater.create_new_note_from_template(
                         template
                     );
                 },

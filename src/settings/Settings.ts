@@ -99,13 +99,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.templates_folder)
-                    .onChange((new_folder) => {
+                    .onChange(async (new_folder) => {
                         // Trim folder and Strip ending slash if there
                         new_folder = new_folder.trim();
                         new_folder = new_folder.replace(/\/$/, "");
 
                         this.plugin.settings.templates_folder = new_folder;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
                 // @ts-ignore
                 cb.containerEl.addClass("templater_search");
@@ -149,11 +149,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.syntax_highlighting)
-                    .onChange((syntax_highlighting) => {
+                    .onChange(async (syntax_highlighting) => {
                         this.plugin.settings.syntax_highlighting =
                             syntax_highlighting;
-                        this.plugin.save_settings();
-                        this.plugin.event_handler.update_syntax_highlighting();
+                        await this.plugin.save_settings();
+                        await this.plugin.event_handler.update_syntax_highlighting();
                     });
             });
 
@@ -163,11 +163,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.syntax_highlighting_mobile)
-                    .onChange((syntax_highlighting_mobile) => {
+                    .onChange(async (syntax_highlighting_mobile) => {
                         this.plugin.settings.syntax_highlighting_mobile =
                             syntax_highlighting_mobile;
-                        this.plugin.save_settings();
-                        this.plugin.event_handler.update_syntax_highlighting();
+                        await this.plugin.save_settings();
+                        await this.plugin.event_handler.update_syntax_highlighting();
                     });
             });
     }
@@ -190,10 +190,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.auto_jump_to_cursor)
-                    .onChange((auto_jump_to_cursor) => {
+                    .onChange(async (auto_jump_to_cursor) => {
                         this.plugin.settings.auto_jump_to_cursor =
                             auto_jump_to_cursor;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
             });
     }
@@ -220,10 +220,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.trigger_on_file_creation)
-                    .onChange((trigger_on_file_creation) => {
+                    .onChange(async (trigger_on_file_creation) => {
                         this.plugin.settings.trigger_on_file_creation =
                             trigger_on_file_creation;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         this.plugin.event_handler.update_trigger_file_on_creation();
                         // Force refresh
                         this.display();
@@ -252,7 +252,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         cb.setPlaceholder("Example: folder1/template_file")
                             .setValue(template)
-                            .onChange((new_template) => {
+                            .onChange(async (new_template) => {
                                 if (
                                     new_template &&
                                     this.plugin.settings.enabled_templates_hotkeys.contains(
@@ -274,7 +274,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.enabled_templates_hotkeys[
                                     index
                                 ] = new_template;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
                         // @ts-ignore
                         cb.containerEl.addClass("templater_search");
@@ -295,35 +295,35 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.command_handler.remove_template_hotkey(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys[index]
@@ -332,7 +332,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 // Force refresh
                                 this.display();
                             });
@@ -344,9 +344,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new hotkey for template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.enabled_templates_hotkeys.push("");
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -382,13 +382,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_folder_templates)
-                    .onChange((use_new_folder_templates) => {
+                    .onChange(async (use_new_folder_templates) => {
                         this.plugin.settings.enable_folder_templates =
                             use_new_folder_templates;
                         if (use_new_folder_templates) {
                             this.plugin.settings.enable_file_templates = false;
                         }
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -405,7 +405,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(folder_template.folder)
-                            .onChange((new_folder) => {
+                            .onChange(async (new_folder) => {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.folder_templates.some(
@@ -423,7 +423,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.folder_templates[
                                     index
                                 ].folder = new_folder;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
                         // @ts-ignore
                         cb.containerEl.addClass("templater_search");
@@ -436,11 +436,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         cb.setPlaceholder("Template")
                             .setValue(folder_template.template)
-                            .onChange((new_template) => {
+                            .onChange(async (new_template) => {
                                 this.plugin.settings.folder_templates[
                                     index
                                 ].template = new_template;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
                         // @ts-ignore
                         cb.containerEl.addClass("templater_search");
@@ -448,38 +448,38 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.settings.folder_templates.splice(
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     });
@@ -492,12 +492,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add new folder template")
                 .setTooltip("Add additional folder template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.folder_templates.push({
                         folder: "",
                         template: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });
@@ -534,14 +534,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_file_templates)
-                    .onChange((use_new_file_templates) => {
+                    .onChange(async (use_new_file_templates) => {
                         this.plugin.settings.enable_file_templates =
                             use_new_file_templates;
                         if (use_new_file_templates) {
                             this.plugin.settings.enable_folder_templates =
                                 false;
                         }
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -556,10 +556,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addText((cb) => {
                     cb.setPlaceholder("File regex")
                         .setValue(file_template.regex)
-                        .onChange((new_regex) => {
+                        .onChange(async (new_regex) => {
                             this.plugin.settings.file_templates[index].regex =
                                 new_regex;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                     // @ts-ignore
                     cb.inputEl.addClass("templater_search");
@@ -572,11 +572,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     );
                     cb.setPlaceholder("Template")
                         .setValue(file_template.template)
-                        .onChange((new_template) => {
+                        .onChange(async (new_template) => {
                             this.plugin.settings.file_templates[
                                 index
                             ].template = new_template;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                     // @ts-ignore
                     cb.containerEl.addClass("templater_search");
@@ -584,38 +584,38 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addExtraButton((cb) => {
                     cb.setIcon("up-chevron-glyph")
                         .setTooltip("Move up")
-                        .onClick(() => {
+                        .onClick(async () => {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
                                 index - 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("down-chevron-glyph")
                         .setTooltip("Move down")
-                        .onClick(() => {
+                        .onClick(async () => {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
                                 index + 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("cross")
                         .setTooltip("Delete")
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.file_templates.splice(
                                 index,
                                 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 });
@@ -627,12 +627,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add new file regex")
                 .setTooltip("Add additional file regex")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.file_templates.push({
                         regex: "",
                         template: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });
@@ -662,7 +662,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     );
                     cb.setPlaceholder("Example: folder1/template_file")
                         .setValue(template)
-                        .onChange((new_template) => {
+                        .onChange(async (new_template) => {
                             if (
                                 new_template &&
                                 this.plugin.settings.startup_templates.contains(
@@ -678,7 +678,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             }
                             this.plugin.settings.startup_templates[index] =
                                 new_template;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                     // @ts-ignore
                     cb.containerEl.addClass("templater_search");
@@ -686,12 +686,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addExtraButton((cb) => {
                     cb.setIcon("cross")
                         .setTooltip("Delete")
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.startup_templates.splice(
                                 index,
                                 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });
@@ -702,9 +702,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new startup template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.startup_templates.push("");
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -737,9 +737,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.user_scripts_folder)
-                    .onChange((new_folder) => {
+                    .onChange(async (new_folder) => {
                         this.plugin.settings.user_scripts_folder = new_folder;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
                 // @ts-ignore
                 cb.containerEl.addClass("templater_search");
@@ -765,10 +765,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .setValue(
                         this.plugin.settings.intellisense_render.toString()
                     )
-                    .onChange((value) => {
+                    .onChange(async (value) => {
                         this.plugin.settings.intellisense_render =
                             parseInt(value);
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
             });
 
@@ -837,10 +837,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_system_commands)
-                    .onChange((enable_system_commands) => {
+                    .onChange(async (enable_system_commands) => {
                         this.plugin.settings.enable_system_commands =
                             enable_system_commands;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -855,7 +855,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .setValue(
                             this.plugin.settings.command_timeout.toString()
                         )
-                        .onChange((new_value) => {
+                        .onChange(async (new_value) => {
                             const new_timeout = Number(new_value);
                             if (isNaN(new_timeout)) {
                                 log_error(
@@ -866,7 +866,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 return;
                             }
                             this.plugin.settings.command_timeout = new_timeout;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                 });
 
@@ -884,9 +884,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addText((text) => {
                     text.setPlaceholder("Example: /bin/bash, ...")
                         .setValue(this.plugin.settings.shell_path)
-                        .onChange((shell_path) => {
+                        .onChange(async (shell_path) => {
                             this.plugin.settings.shell_path = shell_path;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                 });
 
@@ -905,7 +905,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         extra
                             .setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -915,7 +915,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                         index,
                                         1
                                     );
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                     // Force refresh
                                     this.display();
                                 }
@@ -925,7 +925,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         const t = text
                             .setPlaceholder("Function name")
                             .setValue(template_pair[0])
-                            .onChange((new_value) => {
+                            .onChange(async (new_value) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -934,7 +934,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings.templates_pairs[
                                         index
                                     ][0] = new_value;
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                 }
                             });
                         t.inputEl.addClass("templater_template");
@@ -945,7 +945,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         const t = text
                             .setPlaceholder("System command")
                             .setValue(template_pair[1])
-                            .onChange((new_cmd) => {
+                            .onChange(async (new_cmd) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -954,7 +954,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings.templates_pairs[
                                         index
                                     ][1] = new_cmd;
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                 }
                             });
 
@@ -980,9 +980,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     button
                         .setButtonText("Add new user function")
                         .setCta()
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.templates_pairs.push(["", ""]);
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });
@@ -1017,7 +1017,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(ignore_folder.folder)
-                            .onChange((new_folder) => {
+                            .onChange(async (new_folder) => {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.ignore_folders_on_creation.some(
@@ -1035,7 +1035,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.ignore_folders_on_creation[
                                     index
                                 ].folder = new_folder;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
                         // @ts-ignore
                         cb.containerEl.addClass("templater_search");
@@ -1043,38 +1043,38 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.ignore_folders_on_creation,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.ignore_folders_on_creation,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.settings.ignore_folders_on_creation.splice(
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     });
@@ -1087,11 +1087,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add folder to ignore list")
                 .setTooltip("Add folder to ignore on file creation")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.ignore_folders_on_creation.push({
                         folder: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });

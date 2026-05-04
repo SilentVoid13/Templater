@@ -375,7 +375,7 @@ export class Templater {
         await this.end_templater_task(path);
     }
 
-    overwrite_active_file_commands(): void {
+    async overwrite_active_file_commands(): Promise<void> {
         const active_editor = this.plugin.app.workspace.activeEditor;
         if (!active_editor || !active_editor.file) {
             log_error(
@@ -385,7 +385,7 @@ export class Templater {
             );
             return;
         }
-        this.overwrite_file_commands(active_editor.file, true);
+        await this.overwrite_file_commands(active_editor.file, true);
     }
 
     async overwrite_file_commands(

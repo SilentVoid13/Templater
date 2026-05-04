@@ -57,7 +57,7 @@ export class CursorJumper {
                 await delay(100);
                 // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
                 // https://github.com/SilentVoid13/Templater/issues/1569
-                active_editor.save();
+                await active_editor.save();
             }
         }
 
