@@ -1196,7 +1196,7 @@ describe("InternalModuleFile", () => {
         );
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
-            "hello world\n",
+            "hello world\nsecond line\n",
         );
     });
 
