@@ -56,6 +56,10 @@ const copyOutputPlugin = {
                 "main.js",
                 `test/vault/.obsidian/plugins/${manifest.id}/main.js`,
             );
+            fs.copyFileSync(
+                "manifest.json",
+                `test/vault/.obsidian/plugins/${manifest.id}/manifest.json`,
+            );
         });
     },
 };
