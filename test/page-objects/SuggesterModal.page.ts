@@ -17,6 +17,19 @@ class SuggesterModal {
         await this.inputEl.waitForDisplayed();
     }
 
+    async expectSuggestionCountToBe(expectedCount: number) {
+        await this.waitForDisplayed();
+        await expect(this.suggestionEls).toBeElementsArrayOfSize(expectedCount);
+    }
+
+    async expectPlaceholderToBe(expectedPlaceholder: string) {
+        await this.waitForDisplayed();
+        await expect(this.inputEl).toHaveAttribute(
+            "placeholder",
+            expectedPlaceholder,
+        );
+    }
+
     async selectSuggestionByName(name: string) {
         await browser.waitUntil(async () => {
             for await (const item of this.suggestionEls) {

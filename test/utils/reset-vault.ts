@@ -3,6 +3,7 @@ import {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ObsidianBrowserCommands,
 } from "wdio-obsidian-service";
+import { Key } from "webdriverio";
 import NoticePage from "../page-objects/Notice.page";
 
 /**
@@ -45,4 +46,7 @@ export async function resetVault(
     await obsidianPage.resetVault(...vaults);
     await obsidianPage.loadWorkspaceLayout("empty");
     await NoticePage.dismissAll();
+    // Close any open modals/menus
+    await browser.keys(Key.Escape);
+    await browser.keys(Key.Escape);
 }

@@ -34,6 +34,10 @@ class Notice {
         );
     }
 
+    async expectCancelledPromptErrorNotice() {
+        await this.expectNoticeElWithText("Templater Error:\nCancelled prompt");
+    }
+
     async dismissAll() {
         let attempts = 0;
         const maxAttempts = 10;

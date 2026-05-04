@@ -9,6 +9,10 @@ class MultiSuggesterModal {
         return this.modalEl.$(".templater-multisuggester-input");
     }
 
+    get #title() {
+        return this.modalEl.$(".modal-title");
+    }
+
     // AbstractInputSuggest renders its popup outside the modal in the document body
     get inlineSuggestionEls() {
         return browser.$$(".suggestion-item");
@@ -26,9 +30,20 @@ class MultiSuggesterModal {
         await this.inputEl.waitForDisplayed();
     }
 
+    async expectSuggestionCountToBe(expectedCount: number) {
+        await this.waitForDisplayed();
+        await expect(this.inlineSuggestionEls).toBeElementsArrayOfSize(
+            expectedCount,
+        );
+    }
+
+    async expectTitleToBe(expectedTitle: string) {
+        await this.waitForDisplayed();
+        expect(await this.#title.getText()).toBe(expectedTitle);
+    }
+
     async selectItem(name: string) {
         await this.waitForDisplayed();
-        await this.inputEl.setValue(name);
         await browser.waitUntil(async () => {
             for await (const item of this.inlineSuggestionEls) {
                 if ((await item.getText()).includes(name)) {
@@ -38,6 +53,12 @@ class MultiSuggesterModal {
             }
             return false;
         });
+    }
+
+    async filterAndSelectByName(query: string, name: string) {
+        await this.waitForDisplayed();
+        await this.inputEl.setValue(query);
+        await this.selectItem(name);
     }
 
     async save() {

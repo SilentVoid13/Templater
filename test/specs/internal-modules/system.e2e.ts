@@ -1,4 +1,3 @@
-import { obsidianPage } from "wdio-obsidian-service";
 import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateModal.page";
 import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";
@@ -8,6 +7,7 @@ import SuggesterModalPage from "../../page-objects/SuggesterModal.page";
 import MultiSuggesterModalPage from "../../page-objects/MultiSuggesterModal.page";
 import ClipboardPage from "../../page-objects/Clipboard.page";
 import { resetVault } from "../../utils/reset-vault";
+import NoticePage from "../../page-objects/Notice.page";
 
 describe("InternalModuleSystem", () => {
     //#region tp.system.clipboard
@@ -36,7 +36,7 @@ describe("InternalModuleSystem", () => {
 
     it("tp.system.prompt returns entered text", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value") %>`,
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value") %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -55,7 +55,7 @@ describe("InternalModuleSystem", () => {
 
     it("tp.system.prompt uses default value", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "default text") %>`,
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value", "default text") %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -68,9 +68,9 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "default text");
     });
 
-    it("tp.system.prompt returns null on cancel when throw_on_cancel is false", async () => {
+    it("tp.system.prompt returns null on cancel when throw_on_cancel is not set", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter a value", "", false) %>`,
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value") %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -83,9 +83,55 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "null");
     });
 
+    it("tp.system.prompt returns null on cancel when throw_on_cancel is false", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value", "", false) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "null");
+    });
+
+    it("tp.system.prompt throws error on cancel when throw_on_cancel is true", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<%* try { await tp.system.prompt("Enter a value", "", true); } catch (e) { tR += "cancelled"; } %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
+    });
+
+    it("tp.system.prompt shows error notice on cancel when throw_on_cancel is true and not caught", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value", "", true) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        await PromptModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectCancelledPromptErrorNotice();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
     it("tp.system.prompt supports multi-line input", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<% tp.system.prompt("Enter text", "", false, true) %>`,
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter text", "", false, true) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -104,11 +150,11 @@ describe("InternalModuleSystem", () => {
 
     //#endregion
 
-    //#region
+    //#region tp.system.suggester
 
     it("tp.system.suggester returns the value for the selected item", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -123,7 +169,7 @@ describe("InternalModuleSystem", () => {
 
     it("tp.system.suggester filters items by search query", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -136,9 +182,39 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "cherry");
     });
 
+    it("tp.system.suggester uses function as text_items", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(item => "Item " + item, [1, 2, 3]) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.selectSuggestionByName("Item 2");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
+    });
+
+    it("tp.system.suggester returns null on cancel when throw_on_cancel is not set", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana"], ["apple", "banana"]) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "null");
+    });
+
     it("tp.system.suggester returns null on cancel when throw_on_cancel is false", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -166,9 +242,9 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
     });
 
-    it("tp.system.suggester uses function as text_items", async () => {
+    it("tp.system.suggester shows error notice on cancel when throw_on_cancel is true and not caught", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(item => "Item " + item, [1, 2, 3]) %>`,
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], true) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -176,14 +252,47 @@ describe("InternalModuleSystem", () => {
         await OpenInsertTemplateModalPage.selectSuggestionByName(
             "tp.system.suggester",
         );
-        await SuggesterModalPage.selectSuggestionByName("Item 2");
+        await SuggesterModalPage.cancel();
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
+        await NoticePage.expectCancelledPromptErrorNotice();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.system.suggester respects placeholder", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana"], ["apple", "banana"], false, "Pick a fruit") %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.expectPlaceholderToBe("Pick a fruit");
+        await SuggesterModalPage.selectSuggestionByName("Banana");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "banana");
+    });
+
+    it("tp.system.suggester respects limit", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", 2) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.suggester",
+        );
+        await SuggesterModalPage.expectSuggestionCountToBe(2);
+        await SuggesterModalPage.filterAndSelectByName("Cherry", "Cherry");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "cherry");
     });
 
     it("tp.system.suggester uses default_value to pre-select item", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.suggester.md": `<% tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, "banana") %>`,
+            "templates/tp.system.suggester.md": `<% await tp.system.suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, "banana") %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -200,9 +309,9 @@ describe("InternalModuleSystem", () => {
 
     //#region tp.system.multi_suggester
 
-    it("tp.system.multi_suggester returns selected items as array", async () => {
+    it("tp.system.multi_suggester returns selected item", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -216,9 +325,57 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "apple");
     });
 
-    it("tp.system.multi_suggester returns empty array on cancel", async () => {
+    it("tp.system.multi_suggester returns multiple selected items comma separated", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.selectItem("Apple");
+        await MultiSuggesterModalPage.filterAndSelectByName("Cherry", "Cherry");
+        await MultiSuggesterModalPage.save();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "apple,cherry");
+    });
+
+    it("tp.system.multi_suggester uses function as text_items", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(item => "Item " + item, [1, 2, 3]) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.selectItem("Item 2");
+        await MultiSuggesterModalPage.save();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
+    });
+
+    it("tp.system.multi_suggester returns nothing on cancel when throw_on_cancel is not set", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"]) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.system.multi_suggester returns nothing on cancel when throw_on_cancel is false", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], false) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -246,9 +403,9 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
     });
 
-    it("tp.system.multi_suggester returns multiple selected items as comma-separated", async () => {
+    it("tp.system.multi_suggester shows error notice on cancel when throw_on_cancel is true and not caught", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"]) %>`,
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana"], ["apple", "banana"], true) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -256,16 +413,48 @@ describe("InternalModuleSystem", () => {
         await OpenInsertTemplateModalPage.selectSuggestionByName(
             "tp.system.multi_suggester",
         );
-        await MultiSuggesterModalPage.selectItem("Apple");
-        await MultiSuggesterModalPage.selectItem("Cherry");
+        await MultiSuggesterModalPage.cancel();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectCancelledPromptErrorNotice();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.system.multi_suggester respects title", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "Pick a fruit") %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.expectTitleToBe("Pick a fruit");
         await MultiSuggesterModalPage.save();
         await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "apple,cherry");
+        await VaultPage.expectFileToHaveContent("Untitled.md", "");
+    });
+
+    it("tp.system.multi_suggester respects limit", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", 2) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.multi_suggester",
+        );
+        await MultiSuggesterModalPage.expectSuggestionCountToBe(2);
+        await MultiSuggesterModalPage.filterAndSelectByName("Cherry", "Cherry");
+        await MultiSuggesterModalPage.save();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "cherry");
     });
 
     it("tp.system.multi_suggester pre-selects default values", async () => {
         await resetVault("test/vault", {
-            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, ["banana"]) %>`,
+            "templates/tp.system.multi_suggester.md": `<% await tp.system.multi_suggester(["Apple", "Banana", "Cherry"], ["apple", "banana", "cherry"], false, "", undefined, ["banana"]) %>`,
         });
         await EmptyStateViewPage.clickCreateNewNote();
         await WorkspacePage.expectActiveTabToHaveText("Untitled");
@@ -276,41 +465,6 @@ describe("InternalModuleSystem", () => {
         await MultiSuggesterModalPage.save();
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("Untitled.md", "banana");
-    });
-
-    it("tp.system.multi_suggester uses function as text_items", async () => {
-        await resetVault("test/vault", {
-            "templates/tp.system.multi_suggester.md": `<% tp.system.multi_suggester(item => "Item " + item, [1, 2, 3]) %>`,
-        });
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.system.multi_suggester",
-        );
-        await MultiSuggesterModalPage.selectItem("Item 2");
-        await MultiSuggesterModalPage.save();
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "2");
-    });
-
-    //#endregion
-
-    //#region tp.system.prompt
-
-    it("tp.system.prompt throws on cancel when throw_on_cancel is true", async () => {
-        await resetVault("test/vault", {
-            "templates/tp.system.prompt.md": `<%* try { await tp.system.prompt("Enter", "", true); } catch(e) { tR += "cancelled"; } %>`,
-        });
-        await EmptyStateViewPage.clickCreateNewNote();
-        await WorkspacePage.expectActiveTabToHaveText("Untitled");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.system.prompt",
-        );
-        await PromptModalPage.cancel();
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        await VaultPage.expectFileToHaveContent("Untitled.md", "cancelled");
     });
 
     //#endregion
