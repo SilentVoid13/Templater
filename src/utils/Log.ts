@@ -15,7 +15,7 @@ export function log_update(msg: string): void {
 export function log_error(e: Error | TemplaterError): void {
     const notice = new Notice("", 8000);
     const messageEl = createFragment((frag) => {
-        frag.createEl("b", { text: "Templater Error" });
+        frag.createEl("b", { text: "Templater error" });
         frag.createSpan({ text: ":" });
         frag.createEl("br");
         frag.createSpan({ text: e.message });
