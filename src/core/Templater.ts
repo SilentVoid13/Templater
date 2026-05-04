@@ -426,7 +426,7 @@ export class Templater {
     ): Promise<void> {
         const dynamic_command_regex = generate_dynamic_command_regex();
 
-        const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
+        const walker = activeDocument.createNodeIterator(el, NodeFilter.SHOW_TEXT);
         let node;
         let pass = false;
         let functions_object: Record<string, unknown>;

@@ -234,7 +234,7 @@ export function append_bolded_label_with_value_to_parent(
     const para = parent.createEl(tag);
     const bold = parent.createEl("b", { text: title });
     para.appendChild(bold);
-    para.appendChild(document.createTextNode(`: ${value}`));
+    para.appendChild(activeDocument.createTextNode(`: ${value}`));
 
     // Returns a p or li element
     // Resulting in <b>Title</b>: value

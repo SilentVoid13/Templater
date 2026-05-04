@@ -157,7 +157,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             el.createEl("code", { text: value.definition });
         }
         if (shouldRenderFunctionDescription) {
-            el.createEl("div", { text: value.description });
+            el.createDiv({ text: value.description });
         }
     }
 

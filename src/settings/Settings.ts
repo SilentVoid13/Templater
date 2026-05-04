@@ -113,7 +113,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_internal_functions_setting(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Templater provides multiples predefined variables / functions that you can use.",
             desc.createEl("br"),
@@ -131,12 +131,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_syntax_highlighting_settings(): void {
-        const desktopDesc = document.createDocumentFragment();
+        const desktopDesc = createFragment();
         desktopDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode."
         );
 
-        const mobileDesc = document.createDocumentFragment();
+        const mobileDesc = createFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
                 "mobile. Use with caution: this may break live preview on mobile " +
@@ -173,7 +173,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_auto_jump_to_cursor(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Automatically triggers ",
             desc.createEl("code", { text: "tp.file.cursor" }),
@@ -199,7 +199,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_trigger_on_new_file_creation_setting(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
@@ -234,7 +234,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_templates_hotkeys_setting(): void {
         new Setting(this.containerEl).setName("Template hotkeys").setHeading();
 
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Template hotkeys allows you to bind a template to a hotkey."
         );
@@ -356,7 +356,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_folder_templates_setting(): void {
         new Setting(this.containerEl).setName("Folder templates").setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "Folder templates are triggered when a new ",
             descHeading.createEl("strong", { text: "empty " }),
@@ -371,7 +371,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl).setDesc(descHeading);
 
-        const descUseNewFileTemplate = document.createDocumentFragment();
+        const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
             "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other."
         );
@@ -508,7 +508,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("File regex templates")
             .setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "File regex templates are triggered when a new ",
             descHeading.createEl("strong", { text: "empty" }),
@@ -523,7 +523,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl).setDesc(descHeading);
 
-        const descUseNewFileTemplate = document.createDocumentFragment();
+        const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
             "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other."
         );
@@ -641,7 +641,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_startup_templates_setting(): void {
         new Setting(this.containerEl).setName("Startup templates").setHeading();
 
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Startup templates are templates that will get executed once when Templater starts.",
             desc.createEl("br"),
@@ -716,7 +716,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("User script functions")
             .setHeading();
 
-        let desc = document.createDocumentFragment();
+        let desc = createFragment();
         desc.append(
             "All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.",
             desc.createEl("br"),
@@ -772,7 +772,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     });
             });
 
-        desc = document.createDocumentFragment();
+        desc = createFragment();
         let name: string;
         if (!this.plugin.settings.user_scripts_folder) {
             name = "No user scripts folder set";
@@ -818,7 +818,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_system_command_functions_setting(): void {
-        let desc = document.createDocumentFragment();
+        let desc = createFragment();
         desc.append(
             "Allows you to create user functions linked to system commands.",
             desc.createEl("br"),
@@ -870,7 +870,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         });
                 });
 
-            desc = document.createDocumentFragment();
+            desc = createFragment();
             desc.append(
                 "Full path to the shell binary to execute the command with.",
                 desc.createEl("br"),
@@ -892,7 +892,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
             let i = 1;
             this.plugin.settings.templates_pairs.forEach((template_pair) => {
-                const div = this.containerEl.createEl("div");
+                const div = this.containerEl.createDiv();
                 div.addClass("templater_div");
 
                 const title = this.containerEl.createEl("h4", {
@@ -972,7 +972,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 i += 1;
             });
 
-            const div = this.containerEl.createEl("div");
+            const div = this.containerEl.createDiv();
             div.addClass("templater_div2");
 
             const setting = new Setting(this.containerEl).addButton(
@@ -999,7 +999,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Ignore folders on file creation")
             .setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "Files created in these folders will NOT trigger Templater's file creation handler.",
             descHeading.createEl("br"),
@@ -1104,21 +1104,21 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 "If you like this Plugin, consider donating to support continued development."
             );
 
-        const a1 = document.createElement("a");
+        const a1 = createEl("a");
         a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
         a1.addClass("templater_donating");
-        const img1 = document.createElement("img");
+        const img1 = createEl("img");
         img1.src =
             "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
         a1.appendChild(img1);
 
-        const a2 = document.createElement("a");
+        const a2 = createEl("a");
         a2.setAttribute(
             "href",
             "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
         );
         a2.addClass("templater_donating");
-        const img2 = document.createElement("img");
+        const img2 = createEl("img");
         img2.src =
             "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
         a2.appendChild(img2);
