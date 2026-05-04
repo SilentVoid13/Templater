@@ -8,10 +8,6 @@ import { FunctionsMode } from "../FunctionsGenerator";
 
 export class UserSystemFunctions implements IGenerateObject {
     private cwd: string;
-    private exec_promise: (
-        arg1: string,
-        arg2: Record<string, unknown>
-    ) => Promise<{ stdout: string; stderr: string }>;
 
     constructor(private plugin: TemplaterPlugin) {
         if (
@@ -21,12 +17,6 @@ export class UserSystemFunctions implements IGenerateObject {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { promisify } = require("util") as typeof import("util");
-            const { exec } =
-                // eslint-disable-next-line @typescript-eslint/no-var-requires
-                require("child_process") as typeof import("child_process");
-            this.exec_promise = promisify(exec);
         }
     }
 
@@ -45,6 +35,18 @@ export class UserSystemFunctions implements IGenerateObject {
                 config,
                 FunctionsMode.INTERNAL
             );
+
+        let exec_promise:
+            | ((
+                  cmd: string,
+                  options: Record<string, unknown>
+              ) => Promise<{ stdout: string; stderr: string }>)
+            | undefined;
+        if (Platform.isDesktop) {
+            const { promisify } = await import("util");
+            const { exec } = await import("child_process");
+            exec_promise = promisify(exec);
+        }
 
         for (const template_pair of this.plugin.settings.templates_pairs) {
             const template = template_pair[0];
@@ -86,7 +88,7 @@ export class UserSystemFunctions implements IGenerateObject {
                         };
 
                         try {
-                            const { stdout } = await this.exec_promise(
+                            const { stdout } = await exec_promise!(
                                 cmd,
                                 cmd_options
                             );
