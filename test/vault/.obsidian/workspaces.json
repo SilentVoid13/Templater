@@ -1,0 +1,79 @@
+{
+  "workspaces": {
+    "empty": {
+      "main": {
+        "id": "74ac389c99e1a00d",
+        "type": "split",
+        "children": [
+          {
+            "id": "3144e4ca74284eab",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "fc0ac5a5610921a9",
+                "type": "leaf",
+                "state": {
+                  "type": "empty",
+                  "state": {},
+                  "icon": "lucide-file",
+                  "title": "New tab"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "vertical"
+      },
+      "left": {
+        "id": "c6c402f4fbb2c016",
+        "type": "split",
+        "children": [
+          {
+            "id": "a9aa54ac45124a9b",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "7e3d79e1710a7609",
+                "type": "leaf",
+                "state": {
+                  "type": "file-explorer",
+                  "state": {
+                    "sortOrder": "alphabetical",
+                    "autoReveal": false
+                  },
+                  "icon": "lucide-folder-closed",
+                  "title": "Files"
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 300
+      },
+      "right": {
+        "id": "282c5b1fe14d8edd",
+        "type": "split",
+        "children": [],
+        "direction": "horizontal",
+        "width": 300,
+        "collapsed": true
+      },
+      "left-ribbon": {
+        "hiddenItems": {
+          "switcher:Open quick switcher": false,
+          "graph:Open graph view": false,
+          "canvas:Create new canvas": false,
+          "daily-notes:Open today's daily note": false,
+          "templates:Insert template": false,
+          "command-palette:Open command palette": false,
+          "bases:Create new base": false,
+          "workspaces:Manage workspace layouts": false
+        }
+      },
+      "active": "fc0ac5a5610921a9",
+      "mtime": "2026-04-28T12:00:00-07:00"
+    }
+  },
+  "active": "empty"
+}

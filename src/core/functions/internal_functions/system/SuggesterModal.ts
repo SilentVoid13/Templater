@@ -15,6 +15,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         private default_value?: T
     ) {
         super(app);
+        this.containerEl.addClass("templater-suggester-modal");
         this.setPlaceholder(placeholder);
         limit && (this.limit = limit);
     }

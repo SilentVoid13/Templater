@@ -16,11 +16,13 @@ main.test.js
 *.js.map
 
 # test
-test/
 tests_jest/
+.obsidian-cache/
+test/vault/.obsidian/plugins/templater-obsidian/main.js
+test/vault/.obsidian/plugins/templater-obsidian/manifest.json
 
 # Obsidian
-data.json
+/data.json
 .hotreload
 resources/
 
