@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "node esbuild.config.mjs",
         "build": "node esbuild.config.mjs production",
-        "cli-build": "node openclaw-templater-cli.cjs help > /dev/null",
+        "postbuild": "npm run cli-build",
+        "cli-build": "mkdir -p dist && cp openclaw-templater-cli.cjs openclaw-plugin-cli.cjs dist/ && node openclaw-templater-cli.cjs help > /dev/null",
         "lint": "eslint src/",
         "test:lint": "npm run lint",
         "test": "wdio run ./wdio.conf.mts",

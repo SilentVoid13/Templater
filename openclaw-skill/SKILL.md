@@ -5,17 +5,17 @@ description: Use this skill when an OpenClaw agent needs to render a simple Obsi
 
 # Templater CLI
 
-Use this repo's CLI for simple headless template rendering. Always pass `--vault <vault>`.
+Use the CLI shipped in the installed plugin folder. Always pass `--vault <vault>`.
 
 ```bash
-PLUGIN_REPO=/path/to/Templater
-npm --prefix "$PLUGIN_REPO" run cli-build
-node "$PLUGIN_REPO/openclaw-templater-cli.cjs" render --vault <vault> --template "Templates/Note.md" --output "Notes/New.md" --var title=New
+VAULT=/path/to/vault
+CLI="$VAULT/.obsidian/plugins/templater-obsidian/openclaw-templater-cli.cjs"
+node "$CLI" render --vault "$VAULT" --template "Templates/Note.md" --output "Notes/New.md" --var title=New
 ```
 
 The CLI replaces `{{ key }}` placeholders from `--var key=value` and strips Templater execution blocks.
 
-If installed or linked, `templater-obsidian-cli ...` may be used instead.
+If the installed plugin does not include the CLI yet, use `templater-obsidian-cli` from `PATH` or `node "$PLUGIN_REPO/openclaw-templater-cli.cjs"` from a checkout.
 
 ## Safety
 
