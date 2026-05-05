@@ -6,12 +6,16 @@
     "scripts": {
         "dev": "node esbuild.config.mjs",
         "build": "node esbuild.config.mjs production",
+        "cli-build": "node openclaw-templater-cli.cjs help > /dev/null",
         "lint": "eslint src/",
         "test:lint": "npm run lint",
         "test": "wdio run ./wdio.conf.mts",
         "docs-dev": "mdbook serve docs",
         "commit": "cz",
         "release": "standard-version -t ''"
+    },
+    "bin": {
+        "templater-obsidian-cli": "./openclaw-templater-cli.cjs"
     },
     "keywords": [
         "obsidian",
