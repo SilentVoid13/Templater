@@ -8,24 +8,51 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: write
+            attestations: write
+            artifact-metadata: write
         steps:
-            - uses: actions/checkout@v4
-            - uses: denolib/setup-deno@v2
+            - uses: actions/checkout@v5
+
+            - name: Use Node.js
+              uses: actions/setup-node@v5
               with:
-                  deno-version: v1.x
-            - uses: pnpm/action-setup@v4
+                  node-version: "18.x"
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v4
               with:
                   version: 10
-            - name: pnpm build
-              run: |
-                  pnpm install
-                  pnpm run build
+
+            - name: Install dependencies
+              run: pnpm install
+
+            - name: Lint code
+              run: pnpm lint
+
+            - name: Build plugin
+              run: pnpm build
+
+            - name: Generate artifact attestation
+              uses: actions/attest@v4
+              with:
+                  subject-path: |
+                      main.js
+                      styles.css
+
             - name: Create zip archive
               run: |
                   zip -j templater-obsidian.zip main.js manifest.json styles.css
-            - name: Create Release
-              # https://github.com/ncipollo/release-action
-              uses: ncipollo/release-action@v1.7.3
-              with:
-                  artifacts: "main.js,manifest.json,styles.css,templater-obsidian.zip"
-                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  tag="${GITHUB_REF#refs/tags/}"
+
+                  gh release create "$tag" \
+                    --title="$tag" \
+                    --draft \
+                    main.js manifest.json styles.css templater-obsidian.zip
