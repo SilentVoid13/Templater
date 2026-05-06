@@ -53,7 +53,12 @@ Check [this](https://silentvoid13.github.io/Templater/internal-functions/contrib
 
 ## Support
 
-If you want to support me and my work, you can [sponsor me on Github](https://github.com/sponsors/SilentVoid13) (preferred method) or donate something on [**Paypal**](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q).
+If you want to support the current maintainer ([Zachatoo](https://github.com/Zachatoo)), you can [sponsor them on Github](https://github.com/sponsors/Zachatoo) (preferred method) or [buy them a coffee on Ko-fi](https://ko-fi.com/zachatoo).
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/zachatoo?label=Sponsor&logo=GitHub%20Sponsors&style=for-the-badge)](https://github.com/sponsors/zachatoo)
+[![Ko-fi](https://img.shields.io/badge/ko--fi-donate-3FF6433?label=Ko-fi&logo=Ko-fi&style=for-the-badge&color=%23FF6433)](https://ko-fi.com/zachatoo)
+
+If you want to support the original creator ([SilentVoid13](https://github.com/SilentVoid13)), you can [sponsor them on Github](https://github.com/sponsors/SilentVoid13) (preferred method) or donate something on [**Paypal**](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q).
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/silentvoid13?label=Sponsor&logo=GitHub%20Sponsors&style=for-the-badge)](https://github.com/sponsors/silentvoid13)
 [![Paypal](https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal)](https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q)
