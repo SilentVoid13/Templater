@@ -142,6 +142,7 @@ export class InternalModuleFile extends InternalModule {
     generate_folder(): (absolute?: boolean) => string {
         return (absolute = false) => {
             const parent = this.config.target_file.parent;
+            if (!(parent instanceof TFolder)) return "";
             let folder;
 
             if (absolute) {
@@ -282,8 +283,10 @@ export class InternalModuleFile extends InternalModule {
                     "File name cannot contain any of these characters: \\ / :"
                 );
             }
+            const parent = this.config.target_file.parent;
+            if (!(parent instanceof TFolder)) return "";
             const new_path = normalizePath(
-                `${this.config.target_file.parent.path}/${new_title}.${this.config.target_file.extension}`
+                `${parent.path}/${new_title}.${this.config.target_file.extension}`
             );
             await this.plugin.app.fileManager.renameFile(
                 this.config.target_file,

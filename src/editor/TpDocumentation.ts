@@ -75,15 +75,16 @@ export class Documentation {
     constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
-        let tp = this.documentation.tp
+        const tp = this.documentation.tp;
+        let modules = Object.values(tp);
 
         // Remove 'user' if no user scripts found
         if (!this.plugin.settings ||
             !this.plugin.settings.user_scripts_folder) {
-            tp = Object.values(tp).filter((x) => x.name !== 'user')
+            modules = modules.filter((x) => x.name !== 'user');
         }
 
-        return Object.values(tp).map((mod) => {
+        return modules.map((mod) => {
             mod.queryKey = mod.name;
             return mod;
         });
@@ -173,10 +174,11 @@ export class Documentation {
         for (let index = 0; index < parts.length - 1; index++) {
             const part = parts[index];
             if (part in currentObj) {
-                if (!is_object(currentObj[part])) {
+                const next = currentObj[part];
+                if (!is_object(next)) {
                     return [];
                 }
-                currentObj = currentObj[part];
+                currentObj = next;
             }
         }
 

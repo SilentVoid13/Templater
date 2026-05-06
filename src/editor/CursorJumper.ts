@@ -101,7 +101,11 @@ export class CursorJumper {
         positions?: EditorPosition[];
     } {
         const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*)\)\s*%>/g;
-        const cursor_matches = Array.from(content.matchAll(cursor_regex));
+        const cursor_matches: RegExpExecArray[] = [];
+        let m: RegExpExecArray | null;
+        while ((m = cursor_regex.exec(content)) !== null) {
+            cursor_matches.push(m);
+        }
 
         if (cursor_matches.length === 0) {
             return {};

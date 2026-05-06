@@ -137,6 +137,7 @@ function generate_jsdoc_description(summarySection: DocSection): string {
         return description.join("\n");
     } catch (_error) {
         console.error("Failed to parse summary section");
+        return "";
     }
 }
 

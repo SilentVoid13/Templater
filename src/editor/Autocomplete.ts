@@ -32,10 +32,10 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     private tp_keyword_regex =
         /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-zA-Z_.]*)?)?$/;
     private documentation: Documentation;
-    private latest_trigger_info: EditorSuggestTriggerInfo;
-    private module_name: string;
-    private function_trigger: boolean;
-    private function_name: string;
+    private latest_trigger_info?: EditorSuggestTriggerInfo;
+    private module_name: ModuleName | "" = "";
+    private function_trigger: boolean = false;
+    private function_name: string = "";
     private intellisense_render_setting: IntellisenseRenderOption;
 
     constructor(plugin: TemplaterPlugin) {
@@ -60,7 +60,9 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
 
         let query: string;
         const module_name = (match.groups && match.groups["module"]) || "";
-        this.module_name = module_name;
+        if (is_module_name(module_name)) {
+            this.module_name = module_name;
+        }
 
         if (match.groups && match.groups["fn_trigger"]) {
             if (module_name == "" || !is_module_name(module_name)) {
@@ -90,7 +92,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         if (this.module_name && this.function_trigger) {
             suggestions =
                 (await this.documentation.get_all_functions_documentation(
-                    this.module_name as ModuleName,
+                    this.module_name,
                     this.function_name,
                 )) as TpFunctionDocumentation[];
         } else {
@@ -137,7 +139,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             if (shouldRenderFunctionParameters) {
                 el.createEl("p", { text: "Parameter list:" });
                 const list = el.createEl("ol");
-                for (const [key, val] of Object.entries(value.args)) {
+                for (const [key, val] of Object.entries(value.args ?? {})) {
                     append_bolded_label_with_value_to_parent(
                         list,
                         key,
@@ -170,6 +172,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             // TODO: Error msg
             return;
         }
+        if (!this.latest_trigger_info) return;
         active_editor.editor.replaceRange(
             value.queryKey,
             this.latest_trigger_info.start,

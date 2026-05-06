@@ -9,8 +9,7 @@ import init, {
 import { default as wasmbin } from "../../../node_modules/@silentvoid13/rusty_engine/rusty_engine_bg.wasm";
 
 export class Parser {
-    // @ts-expect-error - renderer is initialized in init method in wasm
-    private renderer: Renderer;
+    private renderer!: Renderer;
 
     async init() {
         await init(wasmbin as InitInput);

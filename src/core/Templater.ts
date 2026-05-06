@@ -132,7 +132,7 @@ export class Templater {
                 case "current": {
                     const active_file = get_active_file(this.plugin.app);
                     if (active_file) {
-                        folder = active_file.parent;
+                        folder = active_file.parent instanceof TFolder ? active_file.parent : undefined;
                     }
                     break;
                 }
@@ -500,17 +500,19 @@ export class Templater {
     }
 
     get_new_file_template_for_folder(folder: TFolder): string | undefined {
-        do {
+        let current: TFolder | null = folder;
+        while (current instanceof TFolder) {
+            const f = current;
             const match = this.plugin.settings.folder_templates.find(
-                (e) => e.folder == folder.path,
+                (e) => e.folder == f.path,
             );
 
             if (match && match.template) {
                 return match.template;
             }
 
-            folder = folder.parent;
-        } while (folder);
+            current = current.parent;
+        }
     }
 
     get_new_file_template_for_file(file: TFile): string | undefined {
@@ -568,6 +570,9 @@ export class Templater {
             content_size == 0 &&
             templater.plugin.settings.enable_folder_templates
         ) {
+            if (!(file.parent instanceof TFolder)) {
+                return;
+            }
             const folder_template_match =
                 templater.get_new_file_template_for_folder(file.parent);
             if (!folder_template_match) {
