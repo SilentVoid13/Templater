@@ -107,7 +107,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.templates_folder = new_folder;
                         await this.plugin.save_settings();
                     });
-                // @ts-ignore
                 cb.containerEl.addClass("templater_search");
             });
     }
@@ -280,7 +279,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ] = new_template;
                                 await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
@@ -288,9 +286,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setTooltip("Configure hotkey")
                             .onClick(() => {
                                 // TODO: Replace with future "official" way to do this
-                                // @ts-ignore
                                 this.app.setting.openTabById("hotkeys");
-                                // @ts-ignore
                                 const tab = this.app.setting.activeTab;
                                 tab.searchComponent.inputEl.value = template;
                                 tab.updateHotkeyVisibility();
@@ -430,7 +426,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ].folder = new_folder;
                                 await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addSearch((cb) => {
@@ -447,7 +442,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ].template = new_template;
                                 await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
@@ -567,7 +561,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 new_regex;
                             await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.inputEl.addClass("templater_search");
                 })
                 .addSearch((cb) => {
@@ -584,7 +577,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             ].template = new_template;
                             await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.containerEl.addClass("templater_search");
                 })
                 .addExtraButton((cb) => {
@@ -686,7 +678,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 new_template;
                             await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.containerEl.addClass("templater_search");
                 })
                 .addExtraButton((cb) => {
@@ -748,7 +739,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.user_scripts_folder = new_folder;
                         await this.plugin.save_settings();
                     });
-                // @ts-ignore
                 cb.containerEl.addClass("templater_search");
             });
 
@@ -902,10 +892,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 const div = this.containerEl.createDiv();
                 div.addClass("templater_div");
 
-                const title = this.containerEl.createEl("h4", {
-                    text: "User function n°" + i,
-                });
-                title.addClass("templater_title");
+                const titleSetting = new Setting(this.containerEl)
+                    .setName("User function n°" + i)
+                    .setHeading();
+                titleSetting.nameEl.addClass("templater_title");
 
                 const setting = new Setting(this.containerEl)
                     .addExtraButton((extra) => {
@@ -973,7 +963,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
                 setting.infoEl.remove();
 
-                div.appendChild(title);
+                div.appendChild(titleSetting.settingEl);
                 div.appendChild(this.containerEl.lastChild as Node);
 
                 i += 1;
@@ -1044,7 +1034,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 ].folder = new_folder;
                                 await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {

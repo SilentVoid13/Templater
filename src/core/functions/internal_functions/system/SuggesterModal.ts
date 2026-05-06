@@ -17,7 +17,9 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         super(app);
         this.containerEl.addClass("templater-suggester-modal");
         this.setPlaceholder(placeholder);
-        limit && (this.limit = limit);
+        if (limit) {
+            this.limit = limit;
+        }
     }
 
     getItems(): T[] {

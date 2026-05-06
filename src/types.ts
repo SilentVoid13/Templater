@@ -1,7 +1,21 @@
+import type { Events } from "obsidian";
+
 declare module "obsidian" {
     interface App {
         dom: {
             appContainerEl: HTMLElement;
+        };
+        internalPlugins: {
+            getEnabledPluginById(
+                id: string,
+            ): { options: Record<string, string> } | null;
+        };
+        setting: {
+            openTabById(id: string): void;
+            activeTab: {
+                searchComponent: { inputEl: HTMLInputElement };
+                updateHotkeyVisibility(): void;
+            };
         };
     }
 
@@ -22,7 +36,7 @@ declare module "obsidian" {
     interface Workspace {
         on(
             name: "templater:all-templates-executed",
-            callback: () => unknown
+            callback: () => unknown,
         ): EventRef;
         onLayoutReadyCallbacks?: {
             pluginId: string;
@@ -52,6 +66,67 @@ declare module "obsidian" {
     interface MarkdownView {
         metadataEditor?: {
             insertProperties?: (properties: Record<string, unknown>) => void;
+        };
+    }
+
+    interface SearchComponent {
+        containerEl: HTMLElement;
+    }
+}
+
+export interface CodeMirrorModeState {
+    [key: string]: unknown;
+}
+
+export interface TemplaterModeState extends CodeMirrorModeState {
+    inCommand: boolean;
+    tag_class: string;
+    freeLine: boolean;
+}
+
+export interface CodeMirrorStream {
+    sol(): boolean;
+    peek(): string | null;
+    next(): string | null;
+    match(
+        pattern: string | RegExp,
+        consume?: boolean,
+    ): RegExpMatchArray | false | null;
+}
+
+export interface CodeMirrorMode {
+    name?: string;
+    token?: (
+        stream: CodeMirrorStream,
+        state: CodeMirrorModeState,
+    ) => string | null;
+    startState?: () => CodeMirrorModeState;
+    copyState?: (state: CodeMirrorModeState) => CodeMirrorModeState;
+    blankLine?: (state: CodeMirrorModeState) => string | null;
+}
+
+export type UserScriptFunction =
+    | ((...args: unknown[]) => unknown)
+    | Record<string, (...args: unknown[]) => unknown>;
+
+declare global {
+    interface Window {
+        CodeMirror: {
+            getMode(config: object, mode: string | object): CodeMirrorMode;
+            defineMode(
+                name: string,
+                factory: (config: object) => CodeMirrorMode,
+            ): void;
+            startState(mode: CodeMirrorMode): CodeMirrorModeState;
+            customOverlayMode?: (
+                base: CodeMirrorMode,
+                overlay: Partial<CodeMirrorMode>,
+            ) => CodeMirrorMode;
+        };
+        CodeMirrorAdapter?: {
+            Vim: {
+                handleKey(cm: unknown, key: string, type: string): void;
+            };
         };
     }
 }

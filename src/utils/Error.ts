@@ -18,7 +18,7 @@ export async function errorWrapper<T>(
         return await fn();
     } catch (e) {
         if (!(e instanceof TemplaterError)) {
-            log_error(new TemplaterError(msg, e.message));
+            log_error(new TemplaterError(msg, e instanceof Error ? e.message : undefined));
         } else {
             log_error(e);
         }
@@ -30,7 +30,7 @@ export function errorWrapperSync<T>(fn: () => T, msg: string): T {
     try {
         return fn();
     } catch (e) {
-        log_error(new TemplaterError(msg, e.message));
+        log_error(new TemplaterError(msg, e instanceof Error ? e.message : undefined));
         return null as T;
     }
 }

@@ -56,8 +56,7 @@ export type TpArgumentDocumentation = {
 
 export type TpSuggestDocumentation =
     | TpModuleDocumentation
-    | TpFunctionDocumentation
-    | TpArgumentDocumentation;
+    | TpFunctionDocumentation;
 
 export function is_function_documentation(
     x: TpSuggestDocumentation
@@ -71,7 +70,7 @@ export function is_function_documentation(
 }
 
 export class Documentation {
-    public documentation: TpDocumentation = documentation;
+    public documentation: TpDocumentation = documentation as TpDocumentation;
 
     constructor(private plugin: TemplaterPlugin) {}
 
@@ -198,7 +197,7 @@ export class Documentation {
                     typeof currentObj[key] === "function"
                         ? `${definition}(${get_fn_params(
                               currentObj[key] as (...args: unknown[]) => unknown
-                          )})`
+                          ).join(", ")})`
                         : definition,
                 description: "",
                 returns: "",

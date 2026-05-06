@@ -9,7 +9,7 @@ export function log_update(msg: string): void {
         frag.createEl("br");
         frag.createSpan({ text: msg });
     });
-    notice.noticeEl.appendChild(messageEl);
+    notice.messageEl.appendChild(messageEl);
 }
 
 export function log_error(e: Error | TemplaterError): void {
@@ -27,5 +27,5 @@ export function log_error(e: Error | TemplaterError): void {
             console.error(`Templater Error:`, e.message, "\n", e.console_msg);
         }
     });
-    notice.noticeEl.appendChild(messageEl);
+    notice.messageEl.appendChild(messageEl);
 }

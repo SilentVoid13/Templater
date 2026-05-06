@@ -78,7 +78,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
         try {
             this.open();
         } catch (e) {
-            log_error(e);
+            log_error(e instanceof Error ? e : new Error(String(e)));
         }
     }
 

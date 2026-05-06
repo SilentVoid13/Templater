@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Platform, TFile } from "obsidian";
 import TemplaterPlugin from "main";
 import { TemplaterError } from "utils/Error";
@@ -6,6 +5,13 @@ import { CursorJumper } from "editor/CursorJumper";
 import { log_error } from "utils/Log";
 import { get_active_file } from "utils/Utils";
 import { Autocomplete } from "editor/Autocomplete";
+import { IntellisenseRenderOption } from "settings/RenderSettings/IntellisenseRenderOption";
+import {
+    CodeMirrorMode,
+    CodeMirrorModeState,
+    CodeMirrorStream,
+    TemplaterModeState,
+} from "types";
 
 import "editor/mode/javascript";
 import "editor/mode/custom_overlay";
@@ -59,7 +65,10 @@ export class Editor {
         await this.registerCodeMirrorMode();
         this.templaterLanguage = Prec.high(
             StreamLanguage.define(
-                window.CodeMirror.getMode({}, TEMPLATER_MODE_NAME) as any
+                window.CodeMirror.getMode(
+                    {},
+                    TEMPLATER_MODE_NAME
+                ) as unknown as Parameters<typeof StreamLanguage.define>[0]
             )
         );
         if (this.templaterLanguage === undefined) {
@@ -141,7 +150,6 @@ export class Editor {
         }
 
         // Custom overlay mode used to handle edge cases
-        // @ts-ignore
         const overlay_mode = window.CodeMirror.customOverlayMode;
         if (overlay_mode == null) {
             log_error(
@@ -152,95 +160,112 @@ export class Editor {
             return;
         }
 
-        window.CodeMirror.defineMode(TEMPLATER_MODE_NAME, function (config) {
-            const templaterOverlay = {
-                startState: function () {
-                    const js_state = window.CodeMirror.startState(
-                        js_mode
-                    ) as Object;
-                    return {
-                        ...js_state,
-                        inCommand: false,
-                        tag_class: "",
-                        freeLine: false,
-                    };
-                },
-                copyState: function (state: any) {
-                    const js_state = window.CodeMirror.startState(
-                        js_mode
-                    ) as Object;
-                    const new_state = {
-                        ...js_state,
-                        inCommand: state.inCommand,
-                        tag_class: state.tag_class,
-                        freeLine: state.freeLine,
-                    };
-                    return new_state;
-                },
-                blankLine: function (state: any) {
-                    if (state.inCommand) {
-                        return `line-background-templater-command-bg`;
-                    }
-                    return null;
-                },
-                token: function (stream: any, state: any) {
-                    if (stream.sol() && state.inCommand) {
-                        state.freeLine = true;
-                    }
-
-                    if (state.inCommand) {
-                        let keywords = "";
-                        if (stream.match(/[-_]{0,1}%>/, true)) {
-                            state.inCommand = false;
-                            state.freeLine = false;
-                            const tag_class = state.tag_class;
-                            state.tag_class = "";
-
-                            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
+        window.CodeMirror.defineMode(
+            TEMPLATER_MODE_NAME,
+            function (config): CodeMirrorMode {
+                const templaterOverlay: CodeMirrorMode = {
+                    startState: function (): TemplaterModeState {
+                        const js_state =
+                            window.CodeMirror.startState(js_mode);
+                        return {
+                            ...js_state,
+                            inCommand: false,
+                            tag_class: "",
+                            freeLine: false,
+                        };
+                    },
+                    copyState: function (
+                        state: CodeMirrorModeState
+                    ): TemplaterModeState {
+                        const js_state =
+                            window.CodeMirror.startState(js_mode);
+                        const tState = state as TemplaterModeState;
+                        return {
+                            ...js_state,
+                            inCommand: tState.inCommand,
+                            tag_class: tState.tag_class,
+                            freeLine: tState.freeLine,
+                        };
+                    },
+                    blankLine: function (
+                        state: CodeMirrorModeState
+                    ): string | null {
+                        const tState = state as TemplaterModeState;
+                        if (tState.inCommand) {
+                            return `line-background-templater-command-bg`;
+                        }
+                        return null;
+                    },
+                    token: function (
+                        stream: CodeMirrorStream,
+                        state: CodeMirrorModeState
+                    ): string | null {
+                        const tState = state as TemplaterModeState;
+                        if (stream.sol() && tState.inCommand) {
+                            tState.freeLine = true;
                         }
 
-                        const js_result =
-                            js_mode.token && js_mode.token(stream, state);
-                        if (stream.peek() == null && state.freeLine) {
-                            keywords += ` line-background-templater-command-bg`;
-                        }
-                        if (!state.freeLine) {
-                            keywords += ` line-${TP_INLINE_CLASS}`;
+                        if (tState.inCommand) {
+                            let keywords = "";
+                            if (stream.match(/[-_]{0,1}%>/, true)) {
+                                tState.inCommand = false;
+                                tState.freeLine = false;
+                                const tag_class = tState.tag_class;
+                                tState.tag_class = "";
+
+                                return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_CLOSING_TAG_TOKEN_CLASS} ${tag_class}`;
+                            }
+
+                            const js_result =
+                                js_mode.token &&
+                                js_mode.token(stream, tState);
+                            if (
+                                stream.peek() == null &&
+                                tState.freeLine
+                            ) {
+                                keywords += ` line-background-templater-command-bg`;
+                            }
+                            if (!tState.freeLine) {
+                                keywords += ` line-${TP_INLINE_CLASS}`;
+                            }
+
+                            return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
                         }
 
-                        return `${keywords} ${TP_CMD_TOKEN_CLASS} ${js_result}`;
-                    }
-
-                    const match = stream.match(
-                        /<%[-_]{0,1}\s*([*+]{0,1})/,
-                        true
-                    );
-                    if (match != null) {
-                        switch (match[1]) {
-                            case "*":
-                                state.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
-                                break;
-                            default:
-                                state.tag_class =
-                                    TP_INTERPOLATION_TAG_TOKEN_CLASS;
-                                break;
+                        const match = stream.match(
+                            /<%[-_]{0,1}\s*([*+]{0,1})/,
+                            true
+                        );
+                        if (match) {
+                            switch (match[1]) {
+                                case "*":
+                                    tState.tag_class = TP_EXEC_TAG_TOKEN_CLASS;
+                                    break;
+                                default:
+                                    tState.tag_class =
+                                        TP_INTERPOLATION_TAG_TOKEN_CLASS;
+                                    break;
+                            }
+                            tState.inCommand = true;
+                            return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${tState.tag_class}`;
                         }
-                        state.inCommand = true;
-                        return `line-${TP_INLINE_CLASS} ${TP_CMD_TOKEN_CLASS} ${TP_OPENING_TAG_TOKEN_CLASS} ${state.tag_class}`;
-                    }
 
-                    while (stream.next() != null && !stream.match(/<%/, false));
-                    return null;
-                },
-            };
-            return overlay_mode(
-                window.CodeMirror.getMode(config, "hypermd"),
-                templaterOverlay
-            );
-        });
+                        while (
+                            stream.next() != null &&
+                            !stream.match(/<%/, false)
+                        );
+                        return null;
+                    },
+                };
+                return overlay_mode(
+                    window.CodeMirror.getMode(config, "hypermd"),
+                    templaterOverlay
+                );
+            }
+        );
     }
 
-    updateEditorIntellisenseSetting(value: any){
-        this.autocomplete.updateAutocompleteIntellisenseSetting(value)
+    updateEditorIntellisenseSetting(value: IntellisenseRenderOption): void {
+        this.autocomplete.updateAutocompleteIntellisenseSetting(value);
     }
 }

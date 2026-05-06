@@ -189,7 +189,7 @@ export class CommandHandler {
     }
 
     private async handle_create_from_template(
-        params: Record<string, string | "true">
+        params: Record<string, string>
     ): Promise<string> {
         const { template, file, open } = params;
 

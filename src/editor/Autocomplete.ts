@@ -33,7 +33,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
         /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-zA-Z_.]*)?)?$/;
     private documentation: Documentation;
     private latest_trigger_info: EditorSuggestTriggerInfo;
-    private module_name: ModuleName | string;
+    private module_name: string;
     private function_trigger: boolean;
     private function_name: string;
     private intellisense_render_setting: IntellisenseRenderOption;
@@ -190,7 +190,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     getNumberOfArguments(args: object): number {
         try {
             return new Map(Object.entries(args)).size;
-        } catch (error) {
+        } catch (_error) {
             return 0;
         }
     }

@@ -64,10 +64,12 @@ export class CursorJumper {
         try {
             // enter insert mode for vim users
             if (this.app.vault.getConfig("vimMode")) {
-                // @ts-ignore
-                const cm = active_editor.editor.cm.cm;
-                // @ts-ignore
-                window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
+                const cm = (
+                    active_editor.editor as unknown as {
+                        cm: { cm: unknown };
+                    }
+                ).cm.cm;
+                window.CodeMirrorAdapter?.Vim.handleKey(cm, "i", "mapping");
             }
         } catch (error) {
             console.warn(
