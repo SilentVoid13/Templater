@@ -8,6 +8,10 @@ import { FunctionsMode } from "../FunctionsGenerator";
 
 export class UserSystemFunctions implements IGenerateObject {
     private cwd: string;
+    private exec_promise?: (
+        arg1: string,
+        arg2: Record<string, unknown>,
+    ) => Promise<{ stdout: string; stderr: string }>;
 
     constructor(private plugin: TemplaterPlugin) {
         if (
@@ -17,12 +21,18 @@ export class UserSystemFunctions implements IGenerateObject {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
+            // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports
+            const { promisify } = require("util") as typeof import("util");
+            const { exec } =
+                // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports
+                require("child_process") as typeof import("child_process");
+            this.exec_promise = promisify(exec);
         }
     }
 
     // TODO: Add mobile support
     async generate_system_functions(
-        config: RunningConfig
+        config: RunningConfig,
     ): Promise<
         Map<string, (user_args?: Record<string, unknown>) => Promise<string>>
     > {
@@ -33,20 +43,8 @@ export class UserSystemFunctions implements IGenerateObject {
         const internal_functions_object =
             await this.plugin.templater.functions_generator.generate_object(
                 config,
-                FunctionsMode.INTERNAL
+                FunctionsMode.INTERNAL,
             );
-
-        let exec_promise:
-            | ((
-                  cmd: string,
-                  options: Record<string, unknown>
-              ) => Promise<{ stdout: string; stderr: string }>)
-            | undefined;
-        if (Platform.isDesktop) {
-            const { promisify } = await import("util");
-            const { exec } = await import("child_process");
-            exec_promise = promisify(exec);
-        }
 
         for (const template_pair of this.plugin.settings.templates_pairs) {
             const template = template_pair[0];
@@ -58,20 +56,22 @@ export class UserSystemFunctions implements IGenerateObject {
             if (Platform.isMobile) {
                 user_system_functions.set(template, (): Promise<string> => {
                     return new Promise((resolve) =>
-                        resolve(UNSUPPORTED_MOBILE_TEMPLATE)
+                        resolve(UNSUPPORTED_MOBILE_TEMPLATE),
                     );
                 });
             } else {
                 cmd = await this.plugin.templater.parser.parse_commands(
                     cmd,
-                    internal_functions_object
+                    internal_functions_object,
                 );
 
                 user_system_functions.set(
                     template,
                     async (
-                        user_args?: Record<string, unknown>
+                        user_args?: Record<string, unknown>,
                     ): Promise<string> => {
+                        if (!this.exec_promise) return "";
+
                         const process_env = {
                             ...process.env,
                             ...user_args,
@@ -88,9 +88,9 @@ export class UserSystemFunctions implements IGenerateObject {
                         };
 
                         try {
-                            const { stdout } = await exec_promise!(
+                            const { stdout } = await this.exec_promise(
                                 cmd,
-                                cmd_options
+                                cmd_options,
                             );
                             return stdout.trimRight();
                         } catch (error) {
@@ -98,10 +98,10 @@ export class UserSystemFunctions implements IGenerateObject {
                                 `Error with User Template ${template}`,
                                 error instanceof Error
                                     ? error.message
-                                    : String(error)
+                                    : String(error),
                             );
                         }
-                    }
+                    },
                 );
             }
         }
@@ -109,11 +109,10 @@ export class UserSystemFunctions implements IGenerateObject {
     }
 
     async generate_object(
-        config: RunningConfig
+        config: RunningConfig,
     ): Promise<Record<string, unknown>> {
-        const user_system_functions = await this.generate_system_functions(
-            config
-        );
+        const user_system_functions =
+            await this.generate_system_functions(config);
         return Object.fromEntries(user_system_functions);
     }
 }
