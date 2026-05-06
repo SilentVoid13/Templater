@@ -1,7 +1,11 @@
 import TemplaterPlugin from "main";
 import { normalizePath, Platform, TFile, TFolder } from "obsidian";
 import { errorWrapperSync } from "utils/Error";
-import { resolve_tfile, resolve_tfolder, get_folder_path_from_file_path } from "utils/Utils";
+import {
+    resolve_tfile,
+    resolve_tfolder,
+    get_folder_path_from_file_path,
+} from "utils/Utils";
 
 export class CommandHandler {
     constructor(private plugin: TemplaterPlugin) {}
@@ -11,6 +15,7 @@ export class CommandHandler {
             id: "insert-templater",
             name: "Open insert template modal",
             icon: "templater-icon",
+            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
@@ -28,6 +33,7 @@ export class CommandHandler {
             id: "replace-in-file-templater",
             name: "Replace templates in the active file",
             icon: "templater-icon",
+            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
@@ -45,6 +51,7 @@ export class CommandHandler {
             id: "jump-to-next-cursor-location",
             name: "Jump to next cursor location",
             icon: "text-cursor",
+            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -60,6 +67,7 @@ export class CommandHandler {
             id: "create-new-note-from-template",
             name: "Create new note from template",
             icon: "templater-icon",
+            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
@@ -87,19 +95,19 @@ export class CommandHandler {
 
     add_template_hotkey(
         old_template: string | null,
-        new_template: string
+        new_template: string,
     ): void {
         this.remove_template_hotkey(old_template);
 
         if (new_template) {
             // Determine started index based on templates folder
-            const template_start_index = this.plugin.settings.templates_folder ?
-                this.plugin.settings.templates_folder.length + 1 :
-                0;
+            const template_start_index = this.plugin.settings.templates_folder
+                ? this.plugin.settings.templates_folder.length + 1
+                : 0;
 
             const new_template_name = new_template.slice(
                 template_start_index,
-                -3
+                -3,
             );
 
             this.plugin.addCommand({
@@ -109,13 +117,13 @@ export class CommandHandler {
                 callback: async () => {
                     const template = errorWrapperSync(
                         () => resolve_tfile(this.plugin.app, new_template),
-                        `Couldn't find the template file associated with this hotkey`
+                        `Couldn't find the template file associated with this hotkey`,
                     );
                     if (!template) {
                         return;
                     }
                     await this.plugin.templater.append_template_to_active_file(
-                        template
+                        template,
                     );
                 },
             });
@@ -126,13 +134,13 @@ export class CommandHandler {
                 callback: async () => {
                     const template = errorWrapperSync(
                         () => resolve_tfile(this.plugin.app, new_template),
-                        `Couldn't find the template file associated with this hotkey`
+                        `Couldn't find the template file associated with this hotkey`,
                     );
                     if (!template) {
                         return;
                     }
                     await this.plugin.templater.create_new_note_from_template(
-                        template
+                        template,
                     );
                 },
             });
@@ -153,7 +161,8 @@ export class CommandHandler {
             {
                 template: {
                     value: "<path>",
-                    description: "Template file path (relative to vault root or templates folder)",
+                    description:
+                        "Template file path (relative to vault root or templates folder)",
                     required: true,
                 },
                 file: {
@@ -166,7 +175,7 @@ export class CommandHandler {
                     required: false,
                 },
             },
-            async (params) => this.handle_create_from_template(params)
+            async (params) => this.handle_create_from_template(params),
         );
     }
 
@@ -181,7 +190,9 @@ export class CommandHandler {
         } catch {
             const templates_folder = this.plugin.settings.templates_folder;
             if (templates_folder) {
-                const full_path = normalizePath(`${templates_folder}/${template_path}`);
+                const full_path = normalizePath(
+                    `${templates_folder}/${template_path}`,
+                );
                 return resolve_tfile(this.plugin.app, full_path);
             }
             throw new Error(`Template "${template}" not found`);
@@ -189,7 +200,7 @@ export class CommandHandler {
     }
 
     private async handle_create_from_template(
-        params: Record<string, string>
+        params: Record<string, string>,
     ): Promise<string> {
         const { template, file, open } = params;
 
@@ -205,7 +216,9 @@ export class CommandHandler {
 
             const file_path = normalizePath(file);
             const folder_path = get_folder_path_from_file_path(file_path);
-            const filename = file_path.slice(folder_path.length + 1).replace(/\.md$/, "");
+            const filename = file_path
+                .slice(folder_path.length + 1)
+                .replace(/\.md$/, "");
 
             let folder: TFolder | undefined;
             if (folder_path) {
@@ -217,12 +230,13 @@ export class CommandHandler {
             }
 
             const open_note = open === "true";
-            const created_file = await this.plugin.templater.create_new_note_from_template(
-                template_file,
-                folder ?? folder_path,
-                filename,
-                open_note
-            );
+            const created_file =
+                await this.plugin.templater.create_new_note_from_template(
+                    template_file,
+                    folder ?? folder_path,
+                    filename,
+                    open_note,
+                );
 
             if (created_file) {
                 return created_file.path;
