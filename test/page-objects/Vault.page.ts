@@ -1,10 +1,12 @@
 import { obsidianPage } from "wdio-obsidian-service";
 
 class Vault {
-    async expectFileToHaveContent(filePath: string, expectedContent: string) {
+    async expectFileToHaveContent(filePath: string, expectedContent: string | RegExp) {
         return browser.waitUntil(async () => {
             const content = await obsidianPage.read(filePath);
-            return content === expectedContent;
+            return expectedContent instanceof RegExp
+                ? expectedContent.test(content)
+                : content === expectedContent;
         });
     }
 
