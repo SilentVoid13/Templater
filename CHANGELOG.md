@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.20.3](https://github.com/SilentVoid13/Templater/compare/2.20.2...2.20.3) (2026-05-06)
+
+
+### Bug Fixes
+
+* Revert require to import change for user system functions causing templates to fail to execute ([b841368](https://github.com/SilentVoid13/Templater/commit/b8413682e191fddc03851df1599705b311dd16c3)), closes [#1728](https://github.com/SilentVoid13/Templater/issues/1728)
+
 ### [2.20.2](https://github.com/SilentVoid13/Templater/compare/2.20.1...2.20.2) (2026-05-06)
 
 ### [2.20.1](https://github.com/SilentVoid13/Templater/compare/2.20.0...2.20.1) (2026-05-06)
