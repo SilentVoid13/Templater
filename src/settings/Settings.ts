@@ -118,7 +118,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "Check the ",
             desc.createEl("a", {
                 href: "https://silentvoid13.github.io/Templater/",
-                // eslint-disable-next-line obsidianmd/ui/sentence-case
+                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
                 text: "documentation",
             }),
             " to get a list of all the available internal variables / functions.",
@@ -175,12 +175,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const desc = createFragment();
         desc.append(
             "Automatically triggers ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
             desc.createEl("code", { text: "tp.file.cursor" }),
             " after inserting a template.",
             desc.createEl("br"),
             "You can also set a hotkey to manually trigger ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
             desc.createEl("code", { text: "tp.file.cursor" }),
             ".",
         );
@@ -216,7 +216,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
-            // eslint-disable-next-line obsidianmd/ui/sentence-case
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Templater" is a proper noun requiring capitalization
             .setName("Trigger Templater on new file creation")
             .setDesc(desc)
             .addToggle((toggle) => {
@@ -358,7 +358,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const descHeading = createFragment();
         descHeading.append(
             "Folder templates are triggered when a new ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline emphasis within a sentence, not a standalone UI label
             descHeading.createEl("strong", { text: "empty " }),
             "file is created in a given folder.",
             descHeading.createEl("br"),
@@ -509,7 +509,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const descHeading = createFragment();
         descHeading.append(
             "File regex templates are triggered when a new ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline emphasis within a sentence, not a standalone UI label
             descHeading.createEl("strong", { text: "empty" }),
             " file is created that matches one of them. Templater will fill the empty file with the specified template.",
             descHeading.createEl("br"),
@@ -720,7 +720,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "Check the ",
             desc.createEl("a", {
                 href: "https://silentvoid13.github.io/Templater/",
-                // eslint-disable-next-line obsidianmd/ui/sentence-case
+                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
                 text: "documentation",
             }),
             " for more information.",

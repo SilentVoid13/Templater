@@ -50,7 +50,7 @@ export class UserScriptFunctions implements IGenerateObject {
 
         const file_content = await this.plugin.app.vault.read(file);
         try {
-            // eslint-disable-next-line no-eval
+            // eslint-disable-next-line no-eval -- eval is required to execute user scripts dynamically loaded from the vault
             const wrapping_fn = window.eval(
                 "(function anonymous(require, module, exports){" +
                     file_content +

@@ -21,10 +21,10 @@ export class UserSystemFunctions implements IGenerateObject {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
-            // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports
+            // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports -- Node.js built-ins required for shell command execution
             const { promisify } = require("util") as typeof import("util");
             const { exec } =
-                // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports
+                // eslint-disable-next-line obsidianmd/no-nodejs-modules, @typescript-eslint/no-require-imports -- Node.js built-ins required for shell command execution
                 require("child_process") as typeof import("child_process");
             this.exec_promise = promisify(exec);
         }

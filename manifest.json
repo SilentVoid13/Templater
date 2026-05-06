@@ -2,7 +2,7 @@
     "id": "templater-obsidian",
     "name": "Templater",
     "version": "2.20.3",
-    "description": "Create and use templates",
+    "description": "Advanced templating and automation using handlebars-like syntax.",
     "minAppVersion": "1.12.2",
     "author": "SilentVoid",
     "authorUrl": "https://github.com/SilentVoid13",

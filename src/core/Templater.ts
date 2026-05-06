@@ -132,7 +132,10 @@ export class Templater {
                 case "current": {
                     const active_file = get_active_file(this.plugin.app);
                     if (active_file) {
-                        folder = active_file.parent instanceof TFolder ? active_file.parent : undefined;
+                        folder =
+                            active_file.parent instanceof TFolder
+                                ? active_file.parent
+                                : undefined;
                     }
                     break;
                 }
@@ -198,8 +201,7 @@ export class Templater {
         }
 
         if (output_content == null) {
-            // Intentionally hard deleting the file that we just created if Templater fails or returns nothing
-            // eslint-disable-next-line obsidianmd/prefer-file-manager-trash-file
+            // eslint-disable-next-line obsidianmd/prefer-file-manager-trash-file -- Hard delete is intentional; the file was just created by Templater and immediately failed
             await this.plugin.app.vault.delete(created_note);
             await this.end_templater_task(path);
             return;
