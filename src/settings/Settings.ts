@@ -88,7 +88,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         this.add_startup_templates_setting();
         this.add_user_script_functions_setting();
         this.add_user_system_command_functions_setting();
-        this.add_donating_setting();
     }
 
     add_template_folder_setting(): void {
@@ -122,7 +121,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 // eslint-disable-next-line obsidianmd/ui/sentence-case
                 text: "documentation",
             }),
-            " to get a list of all the available internal variables / functions."
+            " to get a list of all the available internal variables / functions.",
         );
 
         new Setting(this.containerEl)
@@ -133,14 +132,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_syntax_highlighting_settings(): void {
         const desktopDesc = createFragment();
         desktopDesc.append(
-            "Adds syntax highlighting for Templater commands in edit mode."
+            "Adds syntax highlighting for Templater commands in edit mode.",
         );
 
         const mobileDesc = createFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
                 "mobile. Use with caution: this may break live preview on mobile " +
-                "platforms."
+                "platforms.",
         );
 
         new Setting(this.containerEl)
@@ -183,7 +182,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "You can also set a hotkey to manually trigger ",
             // eslint-disable-next-line obsidianmd/ui/sentence-case
             desc.createEl("code", { text: "tp.file.cursor" }),
-            "."
+            ".",
         );
 
         new Setting(this.containerEl)
@@ -213,7 +212,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             desc.createEl("b", {
                 text: "Warning: ",
             }),
-            "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation."
+            "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.",
         );
 
         new Setting(this.containerEl)
@@ -239,7 +238,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         const desc = createFragment();
         desc.append(
-            "Template hotkeys allows you to bind a template to a hotkey."
+            "Template hotkeys allows you to bind a template to a hotkey.",
         );
 
         new Setting(this.containerEl).setDesc(desc);
@@ -251,7 +250,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FileSuggest(
                             cb.inputEl,
                             this.plugin,
-                            FileSuggestMode.TemplateFiles
+                            FileSuggestMode.TemplateFiles,
                         );
                         cb.setPlaceholder("Example: folder1/template_file")
                             .setValue(template)
@@ -259,20 +258,20 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 if (
                                     new_template &&
                                     this.plugin.settings.enabled_templates_hotkeys.contains(
-                                        new_template
+                                        new_template,
                                     )
                                 ) {
                                     log_error(
                                         new TemplaterError(
-                                            "This template is already bound to a hotkey"
-                                        )
+                                            "This template is already bound to a hotkey",
+                                        ),
                                     );
                                     return;
                                 }
                                 this.plugin.command_handler.add_template_hotkey(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys[index],
-                                    new_template
+                                    new_template,
                                 );
                                 this.plugin.settings.enabled_templates_hotkeys[
                                     index
@@ -300,7 +299,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
-                                    index - 1
+                                    index - 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -314,7 +313,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
-                                    index + 1
+                                    index + 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -326,11 +325,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(async () => {
                                 this.plugin.command_handler.remove_template_hotkey(
                                     this.plugin.settings
-                                        .enabled_templates_hotkeys[index]
+                                        .enabled_templates_hotkeys[index],
                                 );
                                 this.plugin.settings.enabled_templates_hotkeys.splice(
                                     index,
-                                    1
+                                    1,
                                 );
                                 await this.plugin.save_settings();
                                 // Force refresh
@@ -338,7 +337,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             });
                     });
                 s.infoEl.remove();
-            }
+            },
         );
 
         new Setting(this.containerEl).addButton((cb) => {
@@ -367,14 +366,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
             descHeading.createEl("br"),
             "The deepest match is used. A global default template would be defined on the root ",
             descHeading.createEl("code", { text: "/" }),
-            "."
+            ".",
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
 
         const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other."
+            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other.",
         );
 
         new Setting(this.containerEl)
@@ -410,13 +409,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.folder_templates.some(
-                                        (e) => e.folder == new_folder
+                                        (e) => e.folder == new_folder,
                                     )
                                 ) {
                                     log_error(
                                         new TemplaterError(
-                                            "This folder already has a template associated with it"
-                                        )
+                                            "This folder already has a template associated with it",
+                                        ),
                                     );
                                     return;
                                 }
@@ -432,7 +431,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FileSuggest(
                             cb.inputEl,
                             this.plugin,
-                            FileSuggestMode.TemplateFiles
+                            FileSuggestMode.TemplateFiles,
                         );
                         cb.setPlaceholder("Template")
                             .setValue(folder_template.template)
@@ -451,7 +450,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
-                                    index - 1
+                                    index - 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -464,7 +463,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
-                                    index + 1
+                                    index + 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -476,14 +475,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(async () => {
                                 this.plugin.settings.folder_templates.splice(
                                     index,
-                                    1
+                                    1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
                             });
                     });
                 s.infoEl.remove();
-            }
+            },
         );
 
         new Setting(this.containerEl).addButton((button: ButtonComponent) => {
@@ -518,14 +517,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
             descHeading.createEl("br"),
             "Use ",
             descHeading.createEl("code", { text: ".*" }),
-            " as a final catch-all, if you need it."
+            " as a final catch-all, if you need it.",
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
 
         const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other."
+            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other.",
         );
 
         new Setting(this.containerEl)
@@ -538,8 +537,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         this.plugin.settings.enable_file_templates =
                             use_new_file_templates;
                         if (use_new_file_templates) {
-                            this.plugin.settings.enable_folder_templates =
-                                false;
+                            this.plugin.settings.enable_folder_templates = false;
                         }
                         await this.plugin.save_settings();
                         // Force refresh
@@ -567,7 +565,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     new FileSuggest(
                         cb.inputEl,
                         this.plugin,
-                        FileSuggestMode.TemplateFiles
+                        FileSuggestMode.TemplateFiles,
                     );
                     cb.setPlaceholder("Template")
                         .setValue(file_template.template)
@@ -586,7 +584,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
-                                index - 1
+                                index - 1,
                             );
                             await this.plugin.save_settings();
                             this.display();
@@ -599,7 +597,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
-                                index + 1
+                                index + 1,
                             );
                             await this.plugin.save_settings();
                             this.display();
@@ -611,7 +609,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .onClick(async () => {
                             this.plugin.settings.file_templates.splice(
                                 index,
-                                1
+                                1,
                             );
                             await this.plugin.save_settings();
                             this.display();
@@ -645,7 +643,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             desc.createEl("br"),
             "These templates won't output anything.",
             desc.createEl("br"),
-            "This can be useful to set up templates adding hooks to Obsidian events for example."
+            "This can be useful to set up templates adding hooks to Obsidian events for example.",
         );
 
         new Setting(this.containerEl).setDesc(desc);
@@ -656,7 +654,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     new FileSuggest(
                         cb.inputEl,
                         this.plugin,
-                        FileSuggestMode.TemplateFiles
+                        FileSuggestMode.TemplateFiles,
                     );
                     cb.setPlaceholder("Example: folder1/template_file")
                         .setValue(template)
@@ -664,13 +662,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             if (
                                 new_template &&
                                 this.plugin.settings.startup_templates.contains(
-                                    new_template
+                                    new_template,
                                 )
                             ) {
                                 log_error(
                                     new TemplaterError(
-                                        "This startup template already exist"
-                                    )
+                                        "This startup template already exist",
+                                    ),
                                 );
                                 return;
                             }
@@ -686,7 +684,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .onClick(async () => {
                             this.plugin.settings.startup_templates.splice(
                                 index,
-                                1
+                                1,
                             );
                             await this.plugin.save_settings();
                             // Force refresh
@@ -725,7 +723,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 // eslint-disable-next-line obsidianmd/ui/sentence-case
                 text: "documentation",
             }),
-            " for more information."
+            " for more information.",
         );
 
         new Setting(this.containerEl)
@@ -745,22 +743,22 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl)
             .setName("User script intellisense")
             .setDesc(
-                "Determine how you'd like to have user script intellisense render. Note values will not render if not in the script."
+                "Determine how you'd like to have user script intellisense render. Note values will not render if not in the script.",
             )
             .addDropdown((cb) => {
                 cb.addOption("0", "Turn off intellisense")
                     .addOption(
                         "1",
-                        "Render method description, parameters list, and return"
+                        "Render method description, parameters list, and return",
                     )
                     .addOption(
                         "2",
-                        "Render method description and parameters list"
+                        "Render method description and parameters list",
                     )
                     .addOption("3", "Render method description and return")
                     .addOption("4", "Render method description")
                     .setValue(
-                        this.plugin.settings.intellisense_render.toString()
+                        this.plugin.settings.intellisense_render.toString(),
                     )
                     .onChange(async (value) => {
                         this.plugin.settings.intellisense_render =
@@ -778,9 +776,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 () =>
                     get_tfiles_from_folder(
                         this.app,
-                        this.plugin.settings.user_scripts_folder
+                        this.plugin.settings.user_scripts_folder,
                     ),
-                `User scripts folder doesn't exist`
+                `User scripts folder doesn't exist`,
             );
             if (!files || files.length === 0) {
                 name = "No user scripts detected";
@@ -792,7 +790,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         desc.append(
                             desc.createEl("li", {
                                 text: `tp.user.${file.basename}`,
-                            })
+                            }),
                         );
                     }
                 }
@@ -822,7 +820,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             desc.createEl("b", {
                 text: "Warning: ",
             }),
-            "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources."
+            "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
         );
         new Setting(this.containerEl)
             .setName("User system command functions")
@@ -850,15 +848,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addText((text) => {
                     text.setPlaceholder("Timeout")
                         .setValue(
-                            this.plugin.settings.command_timeout.toString()
+                            this.plugin.settings.command_timeout.toString(),
                         )
                         .onChange(async (new_value) => {
                             const new_timeout = Number(new_value);
                             if (isNaN(new_timeout)) {
                                 log_error(
                                     new TemplaterError(
-                                        "Timeout must be a number"
-                                    )
+                                        "Timeout must be a number",
+                                    ),
                                 );
                                 return;
                             }
@@ -873,7 +871,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 desc.createEl("br"),
                 "This setting is optional and will default to the system's default shell if not specified.",
                 desc.createEl("br"),
-                "You can use forward slashes ('/') as path separators on all platforms if in doubt."
+                "You can use forward slashes ('/') as path separators on all platforms if in doubt.",
             );
             new Setting(this.containerEl)
                 .setName("Shell binary location")
@@ -905,12 +903,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(async () => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair
+                                        template_pair,
                                     );
                                 if (index > -1) {
                                     this.plugin.settings.templates_pairs.splice(
                                         index,
-                                        1
+                                        1,
                                     );
                                     await this.plugin.save_settings();
                                     // Force refresh
@@ -925,7 +923,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onChange(async (new_value) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair
+                                        template_pair,
                                     );
                                 if (index > -1) {
                                     this.plugin.settings.templates_pairs[
@@ -945,7 +943,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onChange(async (new_cmd) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair
+                                        template_pair,
                                     );
                                 if (index > -1) {
                                     this.plugin.settings.templates_pairs[
@@ -983,7 +981,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             // Force refresh
                             this.display();
                         });
-                }
+                },
             );
             setting.infoEl.remove();
 
@@ -1002,7 +1000,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             descHeading.createEl("br"),
             "This prevents Templater syntax from being stripped in files created in these locations.",
             descHeading.createEl("br"),
-            "The check includes all subfolders."
+            "The check includes all subfolders.",
         );
 
         new Setting(this.containerEl).setDesc(descHeading);
@@ -1018,13 +1016,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.ignore_folders_on_creation.some(
-                                        (e) => e.folder == new_folder
+                                        (e) => e.folder == new_folder,
                                     )
                                 ) {
                                     log_error(
                                         new TemplaterError(
-                                            "This folder is already in the ignore list"
-                                        )
+                                            "This folder is already in the ignore list",
+                                        ),
                                     );
                                     return;
                                 }
@@ -1041,9 +1039,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setTooltip("Move up")
                             .onClick(async () => {
                                 arraymove(
-                                    this.plugin.settings.ignore_folders_on_creation,
+                                    this.plugin.settings
+                                        .ignore_folders_on_creation,
                                     index,
-                                    index - 1
+                                    index - 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -1054,9 +1053,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .setTooltip("Move down")
                             .onClick(async () => {
                                 arraymove(
-                                    this.plugin.settings.ignore_folders_on_creation,
+                                    this.plugin.settings
+                                        .ignore_folders_on_creation,
                                     index,
-                                    index + 1
+                                    index + 1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
@@ -1068,14 +1068,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             .onClick(async () => {
                                 this.plugin.settings.ignore_folders_on_creation.splice(
                                     index,
-                                    1
+                                    1,
                                 );
                                 await this.plugin.save_settings();
                                 this.display();
                             });
                     });
                 s.infoEl.remove();
-            }
+            },
         );
 
         new Setting(this.containerEl).addButton((button: ButtonComponent) => {
@@ -1091,35 +1091,5 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     this.display();
                 });
         });
-    }
-
-    add_donating_setting(): void {
-        const s = new Setting(this.containerEl)
-            .setName("Donate")
-            .setDesc(
-                "If you like this plugin, consider donating to support continued development."
-            );
-
-        const a1 = createEl("a");
-        a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
-        a1.addClass("templater_donating");
-        const img1 = createEl("img");
-        img1.src =
-            "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
-        a1.appendChild(img1);
-
-        const a2 = createEl("a");
-        a2.setAttribute(
-            "href",
-            "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
-        );
-        a2.addClass("templater_donating");
-        const img2 = createEl("img");
-        img2.src =
-            "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
-        a2.appendChild(img2);
-
-        s.settingEl.appendChild(a1);
-        s.settingEl.appendChild(a2);
     }
 }
