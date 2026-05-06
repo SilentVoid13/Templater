@@ -9,7 +9,7 @@ class Notice {
 
     async expectTemplateParsingErrorNotice() {
         await this.expectNoticeElWithText(
-            "Templater Error:\n" +
+            "Templater error:\n" +
                 "Template parsing error, aborting.\n" +
                 "Check console for more information",
         );
@@ -17,25 +17,25 @@ class Notice {
 
     async expectInvalidReferenceDateFormatErrorNotice() {
         await this.expectNoticeElWithText(
-            "Templater Error:\n" +
+            "Templater error:\n" +
                 "Invalid reference date format, try specifying one with the argument 'reference_format'",
         );
     }
 
     async expectInclusionDepthLimitErrorNotice() {
         await this.expectNoticeElWithText(
-            "Templater Error:\n" + "Reached inclusion depth limit (max = 10)",
+            "Templater error:\n" + "Reached inclusion depth limit (max = 10)",
         );
     }
     async expectFileNameCannotIncludeCharsErrorNotice() {
         await this.expectNoticeElWithText(
-            "Templater Error:\n" +
+            "Templater error:\n" +
                 "File name cannot contain any of these characters: \\ / :",
         );
     }
 
     async expectCancelledPromptErrorNotice() {
-        await this.expectNoticeElWithText("Templater Error:\nCancelled prompt");
+        await this.expectNoticeElWithText("Templater error:\nCancelled prompt");
     }
 
     async dismissAll() {

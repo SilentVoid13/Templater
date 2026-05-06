@@ -18,7 +18,7 @@ export class PromptModal extends Modal {
         app: App,
         private prompt_text: string,
         private default_value: string,
-        private multi_line: boolean
+        private multi_line: boolean,
     ) {
         super(app);
     }
@@ -63,12 +63,13 @@ export class PromptModal extends Modal {
         textInput.onChange((value) => (this.value = value));
         textInput.inputEl.focus();
         textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
-            this.enterCallback(evt)
+            this.enterCallback(evt),
         );
     }
 
     private enterCallback(evt: KeyboardEvent) {
         // Fix for Korean inputs https://github.com/SilentVoid13/Templater/issues/1284
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
         if (evt.isComposing || evt.keyCode === 229) return;
 
         if (this.multi_line) {
@@ -91,7 +92,7 @@ export class PromptModal extends Modal {
 
     async openAndGetValue(
         resolve: (value: string) => void,
-        reject: (reason?: TemplaterError) => void
+        reject: (reason?: TemplaterError) => void,
     ): Promise<void> {
         this.resolve = resolve;
         this.reject = reject;

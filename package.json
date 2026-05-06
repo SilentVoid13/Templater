@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "node esbuild.config.mjs",
         "build": "node esbuild.config.mjs production",
+        "typecheck": "tsc --noEmit",
         "lint": "eslint src/",
         "test:lint": "npm run lint",
         "test": "wdio run ./wdio.conf.mts",

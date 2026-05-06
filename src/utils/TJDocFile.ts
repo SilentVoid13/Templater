@@ -6,7 +6,7 @@ export class TJDocFile extends TFile {
     public arguments: TJDocFileArgument[]
 
     constructor(file: TFile) {
-        super(file.vault, file.path)
+        super()
         Object.assign(this, file)
     }
 }

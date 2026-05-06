@@ -56,8 +56,7 @@ export type TpArgumentDocumentation = {
 
 export type TpSuggestDocumentation =
     | TpModuleDocumentation
-    | TpFunctionDocumentation
-    | TpArgumentDocumentation;
+    | TpFunctionDocumentation;
 
 export function is_function_documentation(
     x: TpSuggestDocumentation
@@ -71,20 +70,21 @@ export function is_function_documentation(
 }
 
 export class Documentation {
-    public documentation: TpDocumentation = documentation;
+    public documentation: TpDocumentation = documentation as TpDocumentation;
 
     constructor(private plugin: TemplaterPlugin) {}
 
     get_all_modules_documentation(): TpModuleDocumentation[] {
-        let tp = this.documentation.tp
+        const tp = this.documentation.tp;
+        let modules = Object.values(tp);
 
         // Remove 'user' if no user scripts found
         if (!this.plugin.settings ||
             !this.plugin.settings.user_scripts_folder) {
-            tp = Object.values(tp).filter((x) => x.name !== 'user')
+            modules = modules.filter((x) => x.name !== 'user');
         }
 
-        return Object.values(tp).map((mod) => {
+        return modules.map((mod) => {
             mod.queryKey = mod.name;
             return mod;
         });
@@ -174,10 +174,11 @@ export class Documentation {
         for (let index = 0; index < parts.length - 1; index++) {
             const part = parts[index];
             if (part in currentObj) {
-                if (!is_object(currentObj[part])) {
+                const next = currentObj[part];
+                if (!is_object(next)) {
                     return [];
                 }
-                currentObj = currentObj[part];
+                currentObj = next;
             }
         }
 
@@ -198,7 +199,7 @@ export class Documentation {
                     typeof currentObj[key] === "function"
                         ? `${definition}(${get_fn_params(
                               currentObj[key] as (...args: unknown[]) => unknown
-                          )})`
+                          ).join(", ")})`
                         : definition,
                 description: "",
                 returns: "",

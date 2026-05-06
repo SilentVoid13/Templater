@@ -3,6 +3,17 @@ import { TemplaterError } from "utils/Error";
 import { InternalModule } from "../InternalModule";
 import { ModuleName } from "editor/TpDocumentation";
 
+interface DailyQuote {
+    quote: string;
+    author: string;
+}
+
+interface UnsplashPhoto {
+    full: string;
+    photog: string;
+    photogUrl: string;
+}
+
 export class InternalModuleWeb extends InternalModule {
     name: ModuleName = "web";
 
@@ -26,7 +37,7 @@ export class InternalModuleWeb extends InternalModule {
                 throw new TemplaterError("Error performing GET request");
             }
             return response;
-        } catch (error) {
+        } catch (_error) {
             throw new TemplaterError("Error performing GET request");
         }
     }
@@ -37,7 +48,7 @@ export class InternalModuleWeb extends InternalModule {
                 const response = await this.getRequest(
                     "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json"
                 );
-                const quotes = response.json;
+                const quotes = response.json as DailyQuote[];
                 const random_quote =
                     quotes[Math.floor(Math.random() * quotes.length)];
 
@@ -45,7 +56,7 @@ export class InternalModuleWeb extends InternalModule {
                 const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
-            } catch (error) {
+            } catch (_error) {
                 new TemplaterError("Error generating daily quote");
                 return "Error generating daily quote";
             }
@@ -63,7 +74,7 @@ export class InternalModuleWeb extends InternalModule {
                     `https://templater-unsplash-2.fly.dev/${
                         query ? "?q=" + query : ""
                     }`
-                ).then((res) => res.json);
+                ).then((res) => res.json as UnsplashPhoto);
                 let url = response.full;
                 if (size && !include_size) {
                     if (size.includes("x")) {
@@ -77,7 +88,7 @@ export class InternalModuleWeb extends InternalModule {
                     return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash|${size}](${url})`;
                 }
                 return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash](${url})`;
-            } catch (error) {
+            } catch (_error) {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
             }
@@ -88,21 +99,25 @@ export class InternalModuleWeb extends InternalModule {
         return async (url: string, path?: string) => {
             try {
                 const response = await this.getRequest(url);
-                const jsonData = await response.json;
+                const jsonData = response.json as Record<string, unknown>;
 
                 if (path && jsonData) {
-                    return path.split(".").reduce((obj, key) => {
-                        if (obj && obj.hasOwnProperty(key)) {
-                            return obj[key];
-                        } else {
-                            throw new Error(
-                                `Path ${path} not found in the JSON response`
-                            );
-                        }
-                    }, jsonData);
+                    return path
+                        .split(".")
+                        .reduce((obj: Record<string, unknown>, key) => {
+                            if (
+                                Object.prototype.hasOwnProperty.call(obj, key)
+                            ) {
+                                return obj[key] as Record<string, unknown>;
+                            } else {
+                                throw new Error(
+                                    `Path ${path} not found in the JSON response`
+                                );
+                            }
+                        }, jsonData) as unknown as string;
                 }
 
-                return jsonData;
+                return jsonData as unknown as string;
             } catch (error) {
                 console.error(error);
                 throw new TemplaterError("Error fetching and extracting value");

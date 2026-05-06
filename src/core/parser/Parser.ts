@@ -1,22 +1,26 @@
-import init, { ParserConfig, Renderer } from "@silentvoid13/rusty_engine";
+import init, {
+    InitInput,
+    ParserConfig,
+    Renderer,
+} from "@silentvoid13/rusty_engine";
 
 // TODO: find a cleaner way to embed wasm
-// @ts-ignore
+// @ts-expect-error
 import { default as wasmbin } from "../../../node_modules/@silentvoid13/rusty_engine/rusty_engine_bg.wasm";
 
 export class Parser {
-    private renderer: Renderer;
+    private renderer!: Renderer;
 
     async init() {
-        await init(wasmbin);
+        await init(wasmbin as InitInput);
         const config = new ParserConfig("<%", "%>", "\0", "*", "-", "_", "tR");
         this.renderer = new Renderer(config);
     }
 
     async parse_commands(
         content: string,
-        context: Record<string, unknown>
+        context: Record<string, unknown>,
     ): Promise<string> {
-        return this.renderer.render_content(content, context);
+        return this.renderer.render_content(content, context) as string;
     }
 }

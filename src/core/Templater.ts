@@ -59,14 +59,14 @@ export class Templater {
         await this.parser.init();
         await this.functions_generator.init();
         this.plugin.registerMarkdownPostProcessor((el, ctx) =>
-            this.process_dynamic_templates(el, ctx)
+            this.process_dynamic_templates(el, ctx),
         );
     }
 
     create_running_config(
         template_file: TFile | undefined,
         target_file: TFile,
-        run_mode: RunMode
+        run_mode: RunMode,
     ): RunningConfig {
         const active_file = get_active_file(this.plugin.app);
 
@@ -79,24 +79,27 @@ export class Templater {
     }
 
     async read_and_parse_template(config: RunningConfig): Promise<string> {
+        if (!(config.template_file instanceof TFile)) {
+            throw new TemplaterError("Template file is not a TFile");
+        }
         const template_content = await this.plugin.app.vault.read(
-            config.template_file as TFile
+            config.template_file,
         );
         return this.parse_template(config, template_content);
     }
 
     async parse_template(
         config: RunningConfig,
-        template_content: string
+        template_content: string,
     ): Promise<string> {
         const functions_object = await this.functions_generator.generate_object(
             config,
-            FunctionsMode.USER_INTERNAL
+            FunctionsMode.USER_INTERNAL,
         );
         this.current_functions_object = functions_object;
         const content = await this.parser.parse_commands(
             template_content,
-            functions_object
+            functions_object,
         );
         return content;
     }
@@ -109,7 +112,7 @@ export class Templater {
         this.files_with_pending_templates.delete(path);
         if (this.files_with_pending_templates.size === 0) {
             this.plugin.app.workspace.trigger(
-                "templater:all-templates-executed"
+                "templater:all-templates-executed",
             );
             await this.functions_generator.teardown();
         }
@@ -119,7 +122,7 @@ export class Templater {
         template: TFile | string,
         folder?: TFolder | string,
         filename?: string,
-        open_new_note = true
+        open_new_note = true,
     ): Promise<TFile | undefined> {
         // TODO: Maybe there is an obsidian API function for that
         if (!folder) {
@@ -129,7 +132,7 @@ export class Templater {
                 case "current": {
                     const active_file = get_active_file(this.plugin.app);
                     if (active_file) {
-                        folder = active_file.parent;
+                        folder = active_file.parent instanceof TFolder ? active_file.parent : undefined;
                     }
                     break;
                 }
@@ -150,13 +153,13 @@ export class Templater {
             const folderPath = folder instanceof TFolder ? folder.path : folder;
             const path = this.plugin.app.vault.getAvailablePath(
                 normalizePath(`${folderPath ?? ""}/${filename || "Untitled"}`),
-                extension
+                extension,
             );
             const folder_path = get_folder_path_from_file_path(path);
             if (
                 folder_path &&
                 !this.plugin.app.vault.getAbstractFileByPathInsensitive(
-                    folder_path
+                    folder_path,
                 )
             ) {
                 await this.plugin.app.vault.createFolder(folder_path);
@@ -176,25 +179,27 @@ export class Templater {
             running_config = this.create_running_config(
                 template,
                 created_note,
-                RunMode.CreateNewFromTemplate
+                RunMode.CreateNewFromTemplate,
             );
             output_content = await errorWrapper(
                 async () => this.read_and_parse_template(running_config),
-                "Template parsing error, aborting."
+                "Template parsing error, aborting.",
             );
         } else {
             running_config = this.create_running_config(
                 undefined,
                 created_note,
-                RunMode.CreateNewFromTemplate
+                RunMode.CreateNewFromTemplate,
             );
             output_content = await errorWrapper(
                 async () => this.parse_template(running_config, template),
-                "Template parsing error, aborting."
+                "Template parsing error, aborting.",
             );
         }
 
         if (output_content == null) {
+            // Intentionally hard deleting the file that we just created if Templater fails or returns nothing
+            // eslint-disable-next-line obsidianmd/prefer-file-manager-trash-file
             await this.plugin.app.vault.delete(created_note);
             await this.end_templater_task(path);
             return;
@@ -219,7 +224,7 @@ export class Templater {
 
             await this.plugin.editor_handler.jump_to_next_cursor_location(
                 created_note,
-                true
+                true,
             );
 
             active_leaf.setEphemeralState({
@@ -237,7 +242,7 @@ export class Templater {
         const active_editor = this.plugin.app.workspace.activeEditor;
         if (!active_editor || !active_editor.file || !active_editor.editor) {
             log_error(
-                new TemplaterError("No active editor, can't append templates.")
+                new TemplaterError("No active editor, can't append templates."),
             );
             return;
         }
@@ -246,11 +251,11 @@ export class Templater {
         const running_config = this.create_running_config(
             template_file,
             active_editor.file,
-            RunMode.AppendActiveFile
+            RunMode.AppendActiveFile,
         );
         const output_content = await errorWrapper(
             async () => this.read_and_parse_template(running_config),
-            "Template parsing error, aborting."
+            "Template parsing error, aborting.",
         );
         // errorWrapper failed
         if (output_content == null) {
@@ -291,14 +296,14 @@ export class Templater {
 
         await this.plugin.editor_handler.jump_to_next_cursor_location(
             active_editor.file,
-            true
+            true,
         );
         await this.end_templater_task(path);
     }
 
     async write_template_to_file(
         template_file: TFile,
-        file: TFile
+        file: TFile,
     ): Promise<void> {
         const { path } = file;
         this.start_templater_task(path);
@@ -309,11 +314,11 @@ export class Templater {
         const running_config = this.create_running_config(
             template_file,
             file,
-            RunMode.OverwriteFile
+            RunMode.OverwriteFile,
         );
         let output_content = await errorWrapper(
             async () => this.read_and_parse_template(running_config),
-            "Template parsing error, aborting."
+            "Template parsing error, aborting.",
         );
         // errorWrapper failed
         if (output_content == null) {
@@ -333,7 +338,7 @@ export class Templater {
         ) {
             let result = "";
             const { content, frontmatter } = get_frontmatter_and_content(
-                active_editor.editor.getValue()
+                active_editor.editor.getValue(),
             );
             merge_objects(frontmatter, output_frontmatter);
             if (Object.keys(frontmatter).length > 0) {
@@ -370,38 +375,38 @@ export class Templater {
         });
         await this.plugin.editor_handler.jump_to_next_cursor_location(
             file,
-            true
+            true,
         );
         await this.end_templater_task(path);
     }
 
-    overwrite_active_file_commands(): void {
+    async overwrite_active_file_commands(): Promise<void> {
         const active_editor = this.plugin.app.workspace.activeEditor;
         if (!active_editor || !active_editor.file) {
             log_error(
                 new TemplaterError(
-                    "Active editor is null, can't overwrite content"
-                )
+                    "Active editor is null, can't overwrite content",
+                ),
             );
             return;
         }
-        this.overwrite_file_commands(active_editor.file, true);
+        await this.overwrite_file_commands(active_editor.file, true);
     }
 
     async overwrite_file_commands(
         file: TFile,
-        active_file = false
+        active_file = false,
     ): Promise<void> {
         const { path } = file;
         this.start_templater_task(path);
         const running_config = this.create_running_config(
             file,
             file,
-            active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile
+            active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile,
         );
         const output_content = await errorWrapper(
             async () => this.read_and_parse_template(running_config),
-            "Template parsing error, aborting."
+            "Template parsing error, aborting.",
         );
         // errorWrapper failed
         if (output_content == null) {
@@ -415,18 +420,21 @@ export class Templater {
         });
         await this.plugin.editor_handler.jump_to_next_cursor_location(
             file,
-            true
+            true,
         );
         await this.end_templater_task(path);
     }
 
     async process_dynamic_templates(
         el: HTMLElement,
-        ctx: MarkdownPostProcessorContext
+        ctx: MarkdownPostProcessorContext,
     ): Promise<void> {
         const dynamic_command_regex = generate_dynamic_command_regex();
 
-        const walker = document.createNodeIterator(el, NodeFilter.SHOW_TEXT);
+        const walker = activeDocument.createNodeIterator(
+            el,
+            NodeFilter.SHOW_TEXT,
+        );
         let node;
         let pass = false;
         let functions_object: Record<string, unknown>;
@@ -438,7 +446,7 @@ export class Templater {
                     const file =
                         this.plugin.app.metadataCache.getFirstLinkpathDest(
                             "",
-                            ctx.sourcePath
+                            ctx.sourcePath,
                         );
                     if (!file || !(file instanceof TFile)) {
                         return;
@@ -448,12 +456,12 @@ export class Templater {
                         const config = this.create_running_config(
                             file,
                             file,
-                            RunMode.DynamicProcessor
+                            RunMode.DynamicProcessor,
                         );
                         functions_object =
                             await this.functions_generator.generate_object(
                                 config,
-                                FunctionsMode.USER_INTERNAL
+                                FunctionsMode.USER_INTERNAL,
                             );
                         this.current_functions_object = functions_object;
                     }
@@ -466,10 +474,10 @@ export class Templater {
                         async () => {
                             return await this.parser.parse_commands(
                                 complete_command,
-                                functions_object
+                                functions_object,
                             );
                         },
-                        `Command Parsing error in dynamic command '${complete_command}'`
+                        `Command Parsing error in dynamic command '${complete_command}'`,
                     );
                     if (command_output == null) {
                         return;
@@ -492,17 +500,19 @@ export class Templater {
     }
 
     get_new_file_template_for_folder(folder: TFolder): string | undefined {
-        do {
+        let current: TFolder | null = folder;
+        while (current instanceof TFolder) {
+            const f = current;
             const match = this.plugin.settings.folder_templates.find(
-                (e) => e.folder == folder.path
+                (e) => e.folder == f.path,
             );
 
             if (match && match.template) {
                 return match.template;
             }
 
-            folder = folder.parent;
-        } while (folder);
+            current = current.parent;
+        }
     }
 
     get_new_file_template_for_file(file: TFile): string | undefined {
@@ -519,7 +529,7 @@ export class Templater {
     static async on_file_creation(
         templater: Templater,
         app: App,
-        file: TAbstractFile
+        file: TAbstractFile,
     ): Promise<void> {
         if (!(file instanceof TFile) || file.extension !== "md") {
             return;
@@ -527,14 +537,15 @@ export class Templater {
 
         // Avoids template replacement when syncing template files
         const template_folder = normalizePath(
-            templater.plugin.settings.templates_folder
+            templater.plugin.settings.templates_folder,
         );
         if (file.path.includes(template_folder) && template_folder !== "/") {
             return;
         }
 
         // Avoids template replacement in ignored folders
-        for (const ignore_folder of templater.plugin.settings.ignore_folders_on_creation) {
+        for (const ignore_folder of templater.plugin.settings
+            .ignore_folders_on_creation) {
             const ignore_path = normalizePath(ignore_folder.folder);
             if (file.path.startsWith(ignore_path) && ignore_path !== "") {
                 return;
@@ -559,6 +570,9 @@ export class Templater {
             content_size == 0 &&
             templater.plugin.settings.enable_folder_templates
         ) {
+            if (!(file.parent instanceof TFolder)) {
+                return;
+            }
             const folder_template_match =
                 templater.get_new_file_template_for_folder(file.parent);
             if (!folder_template_match) {
@@ -568,7 +582,7 @@ export class Templater {
                 async (): Promise<TFile> => {
                     return resolve_tfile(app, folder_template_match);
                 },
-                `Couldn't find template ${folder_template_match}`
+                `Couldn't find template ${folder_template_match}`,
             );
             // errorWrapper failed
             if (template_file == null) {
@@ -588,7 +602,7 @@ export class Templater {
                 async (): Promise<TFile> => {
                     return resolve_tfile(app, file_template_match);
                 },
-                `Couldn't find template ${file_template_match}`
+                `Couldn't find template ${file_template_match}`,
             );
             // errorWrapper failed
             if (template_file == null) {
@@ -601,8 +615,8 @@ export class Templater {
                 //https://github.com/SilentVoid13/Templater/issues/873
                 await templater.overwrite_file_commands(file);
             } else {
-                console.log(
-                    `Templater skipped parsing ${file.path} because file size exceeds ${SIZE_LIMIT}`
+                console.debug(
+                    `Templater skipped parsing ${file.path} because file size exceeds ${SIZE_LIMIT}`,
                 );
             }
         }
@@ -615,7 +629,7 @@ export class Templater {
             }
             const file = errorWrapperSync(
                 () => resolve_tfile(this.plugin.app, template),
-                `Couldn't find startup template "${template}"`
+                `Couldn't find startup template "${template}"`,
             );
             if (!file) {
                 continue;
@@ -625,11 +639,11 @@ export class Templater {
             const running_config = this.create_running_config(
                 file,
                 file,
-                RunMode.StartupTemplate
+                RunMode.StartupTemplate,
             );
             await errorWrapper(
                 async () => this.read_and_parse_template(running_config),
-                `Startup Template parsing error, aborting.`
+                `Startup Template parsing error, aborting.`,
             );
             await this.end_templater_task(path);
         }

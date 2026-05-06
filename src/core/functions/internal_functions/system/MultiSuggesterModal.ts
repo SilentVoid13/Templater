@@ -36,10 +36,10 @@ export class MultiSuggesterModal<T> extends Modal {
         this.suggester = new Suggester(
             app,
             inputComponent.inputEl,
-            this.getItemText.bind(this),
+            (item: T) => this.getItemText(item),
             items,
             limit
-        ).onSelect(this.onChooseItem.bind(this));
+        ).onSelect((item: T) => this.onChooseItem(item));
         const buttonContainer = this.contentEl.createDiv(
             "modal-button-container"
         );
@@ -146,7 +146,9 @@ class Suggester<T> extends AbstractInputSuggest<T> {
         limit?: number
     ) {
         super(app, textInputEl);
-        limit && (this.limit = limit);
+        if (limit) {
+            this.limit = limit;
+        }
     }
     protected getSuggestions(query: string): T[] | Promise<T[]> {
         const q = prepareFuzzySearch(query);

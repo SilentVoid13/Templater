@@ -17,7 +17,9 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
         super(app);
         this.containerEl.addClass("templater-suggester-modal");
         this.setPlaceholder(placeholder);
-        limit && (this.limit = limit);
+        if (limit) {
+            this.limit = limit;
+        }
     }
 
     getItems(): T[] {
@@ -25,7 +27,7 @@ export class SuggesterModal<T> extends FuzzySuggestModal<T> {
     }
 
     onOpen(): void {
-        super.onOpen();
+        void super.onOpen();
         if (this.default_value !== undefined) {
             this.inputEl.value = this.getItemText(this.default_value);
             this.inputEl.dispatchEvent(new InputEvent("input"));

@@ -99,27 +99,27 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.templates_folder)
-                    .onChange((new_folder) => {
+                    .onChange(async (new_folder) => {
                         // Trim folder and Strip ending slash if there
                         new_folder = new_folder.trim();
                         new_folder = new_folder.replace(/\/$/, "");
 
                         this.plugin.settings.templates_folder = new_folder;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
-                // @ts-ignore
                 cb.containerEl.addClass("templater_search");
             });
     }
 
     add_internal_functions_setting(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Templater provides multiples predefined variables / functions that you can use.",
             desc.createEl("br"),
             "Check the ",
             desc.createEl("a", {
                 href: "https://silentvoid13.github.io/Templater/",
+                // eslint-disable-next-line obsidianmd/ui/sentence-case
                 text: "documentation",
             }),
             " to get a list of all the available internal variables / functions."
@@ -131,12 +131,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_syntax_highlighting_settings(): void {
-        const desktopDesc = document.createDocumentFragment();
+        const desktopDesc = createFragment();
         desktopDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode."
         );
 
-        const mobileDesc = document.createDocumentFragment();
+        const mobileDesc = createFragment();
         mobileDesc.append(
             "Adds syntax highlighting for Templater commands in edit mode on " +
                 "mobile. Use with caution: this may break live preview on mobile " +
@@ -149,11 +149,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.syntax_highlighting)
-                    .onChange((syntax_highlighting) => {
+                    .onChange(async (syntax_highlighting) => {
                         this.plugin.settings.syntax_highlighting =
                             syntax_highlighting;
-                        this.plugin.save_settings();
-                        this.plugin.event_handler.update_syntax_highlighting();
+                        await this.plugin.save_settings();
+                        await this.plugin.event_handler.update_syntax_highlighting();
                     });
             });
 
@@ -163,23 +163,25 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.syntax_highlighting_mobile)
-                    .onChange((syntax_highlighting_mobile) => {
+                    .onChange(async (syntax_highlighting_mobile) => {
                         this.plugin.settings.syntax_highlighting_mobile =
                             syntax_highlighting_mobile;
-                        this.plugin.save_settings();
-                        this.plugin.event_handler.update_syntax_highlighting();
+                        await this.plugin.save_settings();
+                        await this.plugin.event_handler.update_syntax_highlighting();
                     });
             });
     }
 
     add_auto_jump_to_cursor(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Automatically triggers ",
+            // eslint-disable-next-line obsidianmd/ui/sentence-case
             desc.createEl("code", { text: "tp.file.cursor" }),
             " after inserting a template.",
             desc.createEl("br"),
             "You can also set a hotkey to manually trigger ",
+            // eslint-disable-next-line obsidianmd/ui/sentence-case
             desc.createEl("code", { text: "tp.file.cursor" }),
             "."
         );
@@ -190,16 +192,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.auto_jump_to_cursor)
-                    .onChange((auto_jump_to_cursor) => {
+                    .onChange(async (auto_jump_to_cursor) => {
                         this.plugin.settings.auto_jump_to_cursor =
                             auto_jump_to_cursor;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
             });
     }
 
     add_trigger_on_new_file_creation_setting(): void {
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
@@ -215,15 +217,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
 
         new Setting(this.containerEl)
+            // eslint-disable-next-line obsidianmd/ui/sentence-case
             .setName("Trigger Templater on new file creation")
             .setDesc(desc)
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.trigger_on_file_creation)
-                    .onChange((trigger_on_file_creation) => {
+                    .onChange(async (trigger_on_file_creation) => {
                         this.plugin.settings.trigger_on_file_creation =
                             trigger_on_file_creation;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         this.plugin.event_handler.update_trigger_file_on_creation();
                         // Force refresh
                         this.display();
@@ -234,7 +237,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_templates_hotkeys_setting(): void {
         new Setting(this.containerEl).setName("Template hotkeys").setHeading();
 
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Template hotkeys allows you to bind a template to a hotkey."
         );
@@ -252,7 +255,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         cb.setPlaceholder("Example: folder1/template_file")
                             .setValue(template)
-                            .onChange((new_template) => {
+                            .onChange(async (new_template) => {
                                 if (
                                     new_template &&
                                     this.plugin.settings.enabled_templates_hotkeys.contains(
@@ -274,19 +277,16 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.enabled_templates_hotkeys[
                                     index
                                 ] = new_template;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("any-key")
-                            .setTooltip("Configure Hotkey")
+                            .setTooltip("Configure hotkey")
                             .onClick(() => {
                                 // TODO: Replace with future "official" way to do this
-                                // @ts-ignore
                                 this.app.setting.openTabById("hotkeys");
-                                // @ts-ignore
                                 const tab = this.app.setting.activeTab;
                                 tab.searchComponent.inputEl.value = template;
                                 tab.updateHotkeyVisibility();
@@ -295,35 +295,35 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.command_handler.remove_template_hotkey(
                                     this.plugin.settings
                                         .enabled_templates_hotkeys[index]
@@ -332,7 +332,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 // Force refresh
                                 this.display();
                             });
@@ -344,9 +344,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new hotkey for template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.enabled_templates_hotkeys.push("");
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -356,9 +356,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_folder_templates_setting(): void {
         new Setting(this.containerEl).setName("Folder templates").setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "Folder templates are triggered when a new ",
+            // eslint-disable-next-line obsidianmd/ui/sentence-case
             descHeading.createEl("strong", { text: "empty " }),
             "file is created in a given folder.",
             descHeading.createEl("br"),
@@ -371,7 +372,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl).setDesc(descHeading);
 
-        const descUseNewFileTemplate = document.createDocumentFragment();
+        const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
             "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other."
         );
@@ -382,13 +383,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_folder_templates)
-                    .onChange((use_new_folder_templates) => {
+                    .onChange(async (use_new_folder_templates) => {
                         this.plugin.settings.enable_folder_templates =
                             use_new_folder_templates;
                         if (use_new_folder_templates) {
                             this.plugin.settings.enable_file_templates = false;
                         }
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -405,7 +406,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(folder_template.folder)
-                            .onChange((new_folder) => {
+                            .onChange(async (new_folder) => {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.folder_templates.some(
@@ -423,9 +424,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.folder_templates[
                                     index
                                 ].folder = new_folder;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addSearch((cb) => {
@@ -436,50 +436,49 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         cb.setPlaceholder("Template")
                             .setValue(folder_template.template)
-                            .onChange((new_template) => {
+                            .onChange(async (new_template) => {
                                 this.plugin.settings.folder_templates[
                                     index
                                 ].template = new_template;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.folder_templates,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.settings.folder_templates.splice(
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     });
@@ -492,12 +491,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add new folder template")
                 .setTooltip("Add additional folder template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.folder_templates.push({
                         folder: "",
                         template: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });
@@ -508,9 +507,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("File regex templates")
             .setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "File regex templates are triggered when a new ",
+            // eslint-disable-next-line obsidianmd/ui/sentence-case
             descHeading.createEl("strong", { text: "empty" }),
             " file is created that matches one of them. Templater will fill the empty file with the specified template.",
             descHeading.createEl("br"),
@@ -523,7 +523,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         new Setting(this.containerEl).setDesc(descHeading);
 
-        const descUseNewFileTemplate = document.createDocumentFragment();
+        const descUseNewFileTemplate = createFragment();
         descUseNewFileTemplate.append(
             "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other."
         );
@@ -534,14 +534,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_file_templates)
-                    .onChange((use_new_file_templates) => {
+                    .onChange(async (use_new_file_templates) => {
                         this.plugin.settings.enable_file_templates =
                             use_new_file_templates;
                         if (use_new_file_templates) {
                             this.plugin.settings.enable_folder_templates =
                                 false;
                         }
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -556,12 +556,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addText((cb) => {
                     cb.setPlaceholder("File regex")
                         .setValue(file_template.regex)
-                        .onChange((new_regex) => {
+                        .onChange(async (new_regex) => {
                             this.plugin.settings.file_templates[index].regex =
                                 new_regex;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.inputEl.addClass("templater_search");
                 })
                 .addSearch((cb) => {
@@ -572,50 +571,49 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     );
                     cb.setPlaceholder("Template")
                         .setValue(file_template.template)
-                        .onChange((new_template) => {
+                        .onChange(async (new_template) => {
                             this.plugin.settings.file_templates[
                                 index
                             ].template = new_template;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.containerEl.addClass("templater_search");
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("up-chevron-glyph")
                         .setTooltip("Move up")
-                        .onClick(() => {
+                        .onClick(async () => {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
                                 index - 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("down-chevron-glyph")
                         .setTooltip("Move down")
-                        .onClick(() => {
+                        .onClick(async () => {
                             arraymove(
                                 this.plugin.settings.file_templates,
                                 index,
                                 index + 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("cross")
                         .setTooltip("Delete")
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.file_templates.splice(
                                 index,
                                 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             this.display();
                         });
                 });
@@ -627,12 +625,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add new file regex")
                 .setTooltip("Add additional file regex")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.file_templates.push({
                         regex: "",
                         template: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });
@@ -641,7 +639,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     add_startup_templates_setting(): void {
         new Setting(this.containerEl).setName("Startup templates").setHeading();
 
-        const desc = document.createDocumentFragment();
+        const desc = createFragment();
         desc.append(
             "Startup templates are templates that will get executed once when Templater starts.",
             desc.createEl("br"),
@@ -662,7 +660,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     );
                     cb.setPlaceholder("Example: folder1/template_file")
                         .setValue(template)
-                        .onChange((new_template) => {
+                        .onChange(async (new_template) => {
                             if (
                                 new_template &&
                                 this.plugin.settings.startup_templates.contains(
@@ -678,20 +676,19 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             }
                             this.plugin.settings.startup_templates[index] =
                                 new_template;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
-                    // @ts-ignore
                     cb.containerEl.addClass("templater_search");
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("cross")
                         .setTooltip("Delete")
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.startup_templates.splice(
                                 index,
                                 1
                             );
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });
@@ -702,9 +699,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
         new Setting(this.containerEl).addButton((cb) => {
             cb.setButtonText("Add new startup template")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.startup_templates.push("");
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     // Force refresh
                     this.display();
                 });
@@ -716,7 +713,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("User script functions")
             .setHeading();
 
-        let desc = document.createDocumentFragment();
+        let desc = createFragment();
         desc.append(
             "All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.",
             desc.createEl("br"),
@@ -725,6 +722,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "Check the ",
             desc.createEl("a", {
                 href: "https://silentvoid13.github.io/Templater/",
+                // eslint-disable-next-line obsidianmd/ui/sentence-case
                 text: "documentation",
             }),
             " for more information."
@@ -737,11 +735,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 new FolderSuggest(this.app, cb.inputEl);
                 cb.setPlaceholder("Example: folder1/folder2")
                     .setValue(this.plugin.settings.user_scripts_folder)
-                    .onChange((new_folder) => {
+                    .onChange(async (new_folder) => {
                         this.plugin.settings.user_scripts_folder = new_folder;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
-                // @ts-ignore
                 cb.containerEl.addClass("templater_search");
             });
 
@@ -765,14 +762,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     .setValue(
                         this.plugin.settings.intellisense_render.toString()
                     )
-                    .onChange((value) => {
+                    .onChange(async (value) => {
                         this.plugin.settings.intellisense_render =
                             parseInt(value);
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                     });
             });
 
-        desc = document.createDocumentFragment();
+        desc = createFragment();
         let name: string;
         if (!this.plugin.settings.user_scripts_folder) {
             name = "No user scripts folder set";
@@ -818,7 +815,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     add_user_system_command_functions_setting(): void {
-        let desc = document.createDocumentFragment();
+        let desc = createFragment();
         desc.append(
             "Allows you to create user functions linked to system commands.",
             desc.createEl("br"),
@@ -837,10 +834,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .addToggle((toggle) => {
                 toggle
                     .setValue(this.plugin.settings.enable_system_commands)
-                    .onChange((enable_system_commands) => {
+                    .onChange(async (enable_system_commands) => {
                         this.plugin.settings.enable_system_commands =
                             enable_system_commands;
-                        this.plugin.save_settings();
+                        await this.plugin.save_settings();
                         // Force refresh
                         this.display();
                     });
@@ -855,7 +852,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         .setValue(
                             this.plugin.settings.command_timeout.toString()
                         )
-                        .onChange((new_value) => {
+                        .onChange(async (new_value) => {
                             const new_timeout = Number(new_value);
                             if (isNaN(new_timeout)) {
                                 log_error(
@@ -866,11 +863,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 return;
                             }
                             this.plugin.settings.command_timeout = new_timeout;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                 });
 
-            desc = document.createDocumentFragment();
+            desc = createFragment();
             desc.append(
                 "Full path to the shell binary to execute the command with.",
                 desc.createEl("br"),
@@ -884,28 +881,28 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .addText((text) => {
                     text.setPlaceholder("Example: /bin/bash, ...")
                         .setValue(this.plugin.settings.shell_path)
-                        .onChange((shell_path) => {
+                        .onChange(async (shell_path) => {
                             this.plugin.settings.shell_path = shell_path;
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                         });
                 });
 
             let i = 1;
             this.plugin.settings.templates_pairs.forEach((template_pair) => {
-                const div = this.containerEl.createEl("div");
+                const div = this.containerEl.createDiv();
                 div.addClass("templater_div");
 
-                const title = this.containerEl.createEl("h4", {
-                    text: "User function n°" + i,
-                });
-                title.addClass("templater_title");
+                const titleSetting = new Setting(this.containerEl)
+                    .setName("User function n°" + i)
+                    .setHeading();
+                titleSetting.nameEl.addClass("templater_title");
 
                 const setting = new Setting(this.containerEl)
                     .addExtraButton((extra) => {
                         extra
                             .setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -915,7 +912,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                         index,
                                         1
                                     );
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                     // Force refresh
                                     this.display();
                                 }
@@ -925,7 +922,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         const t = text
                             .setPlaceholder("Function name")
                             .setValue(template_pair[0])
-                            .onChange((new_value) => {
+                            .onChange(async (new_value) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -934,7 +931,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings.templates_pairs[
                                         index
                                     ][0] = new_value;
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                 }
                             });
                         t.inputEl.addClass("templater_template");
@@ -945,7 +942,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         const t = text
                             .setPlaceholder("System command")
                             .setValue(template_pair[1])
-                            .onChange((new_cmd) => {
+                            .onChange(async (new_cmd) => {
                                 const index =
                                     this.plugin.settings.templates_pairs.indexOf(
                                         template_pair
@@ -954,7 +951,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                     this.plugin.settings.templates_pairs[
                                         index
                                     ][1] = new_cmd;
-                                    this.plugin.save_settings();
+                                    await this.plugin.save_settings();
                                 }
                             });
 
@@ -966,13 +963,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
                 setting.infoEl.remove();
 
-                div.appendChild(title);
+                div.appendChild(titleSetting.settingEl);
                 div.appendChild(this.containerEl.lastChild as Node);
 
                 i += 1;
             });
 
-            const div = this.containerEl.createEl("div");
+            const div = this.containerEl.createDiv();
             div.addClass("templater_div2");
 
             const setting = new Setting(this.containerEl).addButton(
@@ -980,9 +977,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     button
                         .setButtonText("Add new user function")
                         .setCta()
-                        .onClick(() => {
+                        .onClick(async () => {
                             this.plugin.settings.templates_pairs.push(["", ""]);
-                            this.plugin.save_settings();
+                            await this.plugin.save_settings();
                             // Force refresh
                             this.display();
                         });
@@ -999,7 +996,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             .setName("Ignore folders on file creation")
             .setHeading();
 
-        const descHeading = document.createDocumentFragment();
+        const descHeading = createFragment();
         descHeading.append(
             "Files created in these folders will NOT trigger Templater's file creation handler.",
             descHeading.createEl("br"),
@@ -1017,7 +1014,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         new FolderSuggest(this.app, cb.inputEl);
                         cb.setPlaceholder("Folder")
                             .setValue(ignore_folder.folder)
-                            .onChange((new_folder) => {
+                            .onChange(async (new_folder) => {
                                 if (
                                     new_folder &&
                                     this.plugin.settings.ignore_folders_on_creation.some(
@@ -1035,46 +1032,45 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 this.plugin.settings.ignore_folders_on_creation[
                                     index
                                 ].folder = new_folder;
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                             });
-                        // @ts-ignore
                         cb.containerEl.addClass("templater_search");
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("up-chevron-glyph")
                             .setTooltip("Move up")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.ignore_folders_on_creation,
                                     index,
                                     index - 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("down-chevron-glyph")
                             .setTooltip("Move down")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 arraymove(
                                     this.plugin.settings.ignore_folders_on_creation,
                                     index,
                                     index + 1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     })
                     .addExtraButton((cb) => {
                         cb.setIcon("cross")
                             .setTooltip("Delete")
-                            .onClick(() => {
+                            .onClick(async () => {
                                 this.plugin.settings.ignore_folders_on_creation.splice(
                                     index,
                                     1
                                 );
-                                this.plugin.save_settings();
+                                await this.plugin.save_settings();
                                 this.display();
                             });
                     });
@@ -1087,11 +1083,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 .setButtonText("Add folder to ignore list")
                 .setTooltip("Add folder to ignore on file creation")
                 .setCta()
-                .onClick(() => {
+                .onClick(async () => {
                     this.plugin.settings.ignore_folders_on_creation.push({
                         folder: "",
                     });
-                    this.plugin.save_settings();
+                    await this.plugin.save_settings();
                     this.display();
                 });
         });
@@ -1101,24 +1097,24 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const s = new Setting(this.containerEl)
             .setName("Donate")
             .setDesc(
-                "If you like this Plugin, consider donating to support continued development."
+                "If you like this plugin, consider donating to support continued development."
             );
 
-        const a1 = document.createElement("a");
+        const a1 = createEl("a");
         a1.setAttribute("href", "https://github.com/sponsors/silentvoid13");
         a1.addClass("templater_donating");
-        const img1 = document.createElement("img");
+        const img1 = createEl("img");
         img1.src =
             "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86";
         a1.appendChild(img1);
 
-        const a2 = document.createElement("a");
+        const a2 = createEl("a");
         a2.setAttribute(
             "href",
             "https://www.paypal.com/donate?hosted_button_id=U2SRGAFYXT32Q"
         );
         a2.addClass("templater_donating");
-        const img2 = document.createElement("img");
+        const img2 = createEl("img");
         img2.src =
             "https://img.shields.io/badge/paypal-silentvoid13-yellow?style=social&logo=paypal";
         a2.appendChild(img2);

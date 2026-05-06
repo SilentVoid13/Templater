@@ -22,7 +22,7 @@ import {
 } from "obsidian";
 
 export function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => activeWindow.setTimeout(resolve, ms));
 }
 
 export function escape_RegExp(str: string): string {
@@ -135,8 +135,9 @@ function generate_jsdoc_description(summarySection: DocSection): string {
         );
 
         return description.join("\n");
-    } catch (error) {
+    } catch (_error) {
         console.error("Failed to parse summary section");
+        return "";
     }
 }
 
@@ -144,11 +145,12 @@ function generate_jsdoc_return(returnSection: DocBlock | undefined): string {
     if (!returnSection) return "";
 
     try {
-        const returnValue = returnSection.content.nodes[0]
-            .getChildNodes()[0]
-            .text.trim();
-        return returnValue;
-    } catch (error) {
+        const firstChild = returnSection.content.nodes[0]?.getChildNodes()[0];
+        if (firstChild instanceof DocPlainText) {
+            return firstChild.text.trim();
+        }
+        return "";
+    } catch {
         return "";
     }
 }
@@ -163,14 +165,14 @@ function generate_jsdoc_arguments(
             const description = block.content
                 .getChildNodes()[0]
                 .getChildNodes()
-                .filter((x) => x instanceof DocPlainText)
+                .filter((x): x is DocPlainText => x instanceof DocPlainText)
                 .map((x) => x.text)
                 .join(" ");
             return new TJDocFileArgument(name, description);
         });
 
         return args;
-    } catch (error) {
+    } catch (_error) {
         return [];
     }
 }
@@ -229,12 +231,12 @@ export function append_bolded_label_with_value_to_parent(
     title: string,
     value: string
 ): HTMLElement {
-    const tag = parent instanceof HTMLOListElement ? "li" : "p";
+    const tag = parent.instanceOf(HTMLOListElement) ? "li" : "p";
 
     const para = parent.createEl(tag);
     const bold = parent.createEl("b", { text: title });
     para.appendChild(bold);
-    para.appendChild(document.createTextNode(`: ${value}`));
+    para.appendChild(activeDocument.createTextNode(`: ${value}`));
 
     // Returns a p or li element
     // Resulting in <b>Title</b>: value
@@ -252,8 +254,8 @@ export function merge_objects(
 ) {
     if (Object.keys(source).length === 0) return;
     for (const key in source) {
-        if (source.hasOwnProperty(key)) {
-            if (target.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+            if (Object.prototype.hasOwnProperty.call(target, key)) {
                 const targetValue = target[key];
                 const sourceValue = source[key];
                 if (Array.isArray(targetValue) || Array.isArray(sourceValue)) {
@@ -286,7 +288,7 @@ export function get_frontmatter_and_content(content: string) {
     let frontmatter: Record<string, unknown> = {};
     const front_matter_info = getFrontMatterInfo(content);
     if (front_matter_info.frontmatter) {
-        frontmatter = parseYaml(front_matter_info.frontmatter);
+        frontmatter = parseYaml(front_matter_info.frontmatter) as Record<string, unknown>;
     }
     return {
         frontmatter,

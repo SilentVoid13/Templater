@@ -50,7 +50,7 @@ export class InternalModuleSystem extends InternalModule {
                 (
                     resolve: (value: string) => void,
                     reject: (reason?: TemplaterError) => void
-                ) => prompt.openAndGetValue(resolve, reject)
+                ) => { void prompt.openAndGetValue(resolve, reject); }
             );
             try {
                 return await promise;
@@ -91,7 +91,7 @@ export class InternalModuleSystem extends InternalModule {
                 (
                     resolve: (value: T) => void,
                     reject: (reason?: TemplaterError) => void
-                ) => suggester.openAndGetValue(resolve, reject)
+                ) => { void suggester.openAndGetValue(resolve, reject); }
             );
             try {
                 return await promise;
@@ -132,7 +132,7 @@ export class InternalModuleSystem extends InternalModule {
                 (
                     resolve: (values: T[]) => void,
                     reject: (reason?: TemplaterError) => void
-                ) => suggester.openAndGetValue(resolve, reject)
+                ) => { void suggester.openAndGetValue(resolve, reject); }
             );
             try {
                 return await promise;

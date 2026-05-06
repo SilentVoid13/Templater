@@ -57,17 +57,19 @@ export class CursorJumper {
                 await delay(100);
                 // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
                 // https://github.com/SilentVoid13/Templater/issues/1569
-                active_editor.save();
+                await active_editor.save();
             }
         }
 
         try {
             // enter insert mode for vim users
             if (this.app.vault.getConfig("vimMode")) {
-                // @ts-ignore
-                const cm = active_editor.editor.cm.cm;
-                // @ts-ignore
-                window.CodeMirrorAdapter.Vim.handleKey(cm, "i", "mapping");
+                const cm = (
+                    active_editor.editor as unknown as {
+                        cm: { cm: unknown };
+                    }
+                ).cm.cm;
+                window.CodeMirrorAdapter?.Vim.handleKey(cm, "i", "mapping");
             }
         } catch (error) {
             console.warn(
@@ -99,7 +101,11 @@ export class CursorJumper {
         positions?: EditorPosition[];
     } {
         const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*)\)\s*%>/g;
-        const cursor_matches = Array.from(content.matchAll(cursor_regex));
+        const cursor_matches: RegExpExecArray[] = [];
+        let m: RegExpExecArray | null;
+        while ((m = cursor_regex.exec(content)) !== null) {
+            cursor_matches.push(m);
+        }
 
         if (cursor_matches.length === 0) {
             return {};
