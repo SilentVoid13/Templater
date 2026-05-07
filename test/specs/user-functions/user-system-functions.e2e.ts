@@ -52,27 +52,4 @@ describe("UserSystemFunctions", () => {
             /^paris: .+\d+°F\n$/,
         );
     });
-
-    it.skip("tp.user.date example from docs works", async () => {
-        await resetVault("test/vault", {
-            "templates/tp.user.echo.md": `<% tp.user.echo() %>`,
-            "notes/note.md": `\n`,
-        });
-        await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.settings.enable_system_commands = true;
-            plugins.templaterObsidian.settings.templates_pairs = [
-                ["echo", 'echo "I love Templater"'],
-            ];
-            await plugins.templaterObsidian.save_settings();
-        });
-        await obsidianPage.openFile("notes/note.md");
-        await WorkspacePage.expectActiveTabToHaveText("note");
-        await OpenInsertTemplateModalPage.open();
-        await OpenInsertTemplateModalPage.selectSuggestionByName(
-            "tp.user.echo",
-        );
-        await WorkspacePage.waitForAllTemplatesExecuted();
-        // TODO: validate echo
-        await VaultPage.expectFileToHaveContent("notes/note.md", "");
-    });
 });
