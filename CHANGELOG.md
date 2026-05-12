@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.20.4](https://github.com/SilentVoid13/Templater/compare/2.20.3...2.20.4) (2026-05-12)
+
+
+### Bug Fixes
+
+* Fix linting issues ([ca423f9](https://github.com/SilentVoid13/Templater/commit/ca423f99dcfb588db63f731b5290a7ffd8be4e65))
+* Fix linting issues ([864ce16](https://github.com/SilentVoid13/Templater/commit/864ce16d9fea309f71b448215eea96a716b9e4f6))
+* Fix linting issues ([10ef074](https://github.com/SilentVoid13/Templater/commit/10ef074a303c2853981d0162856323aca8965b4d))
+
 ### [2.20.3](https://github.com/SilentVoid13/Templater/compare/2.20.2...2.20.3) (2026-05-06)
 
 
