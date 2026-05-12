@@ -111,7 +111,7 @@
                 return ret("number", "number");
             } else if (ch == "." && stream.match("..")) {
                 return ret("spread", "meta");
-            } else if (/[\[\]{}(),;:.]/.test(ch)) {
+            } else if (/[[\]{}(),;:.]/.test(ch)) {
                 return ret(ch);
             } else if (ch == "=" && stream.eat(">")) {
                 return ret("=>", "operator");
@@ -178,7 +178,7 @@
                     if (
                         word == "async" &&
                         stream.match(
-                            /^(\s|\/\*([^*]|\*(?!\/))*?\*\/)*[\[(\w]/,
+                            /^(\s|\/\*([^*]|\*(?!\/))*?\*\/)*[[(\w]/,
                             false
                         )
                     )
@@ -1313,7 +1313,7 @@
         function expressionAllowed(stream, state, backUp) {
             return (
                 (state.tokenize == tokenBase &&
-                    /^(?:operator|sof|keyword [bcd]|case|new|export|default|spread|[\[{}(,;:]|=>)$/.test(
+                    /^(?:operator|sof|keyword [bcd]|case|new|export|default|spread|[[{}(,;:]|=>)$/.test(
                         state.lastType
                     )) ||
                 (state.lastType == "quasi" &&
