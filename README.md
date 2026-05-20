@@ -39,13 +39,7 @@ A list of useful resources about [Templater](https://github.com/SilentVoid13/Tem
 
 ## Contributing
 
-Feel free to contribute.
-
-You can create an [issue](https://github.com/SilentVoid13/Templater/issues) to report a bug, suggest an improvement for this plugin, ask a question, etc.
-
-You can make a [pull request](https://github.com/SilentVoid13/Templater/pulls) to contribute to this plugin development.
-
-Check [this](https://silentvoid13.github.io/Templater/internal-functions/contribute.html) to get more information on how to develop a new internal variable / function.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, proposing features, and submitting pull requests.
 
 ## License
 
