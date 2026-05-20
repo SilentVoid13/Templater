@@ -106,45 +106,45 @@ export class Documentation {
                 !this.plugin.settings.user_scripts_folder
             )
                 return;
-            const files = await errorWrapper(
-                async () => {
-                    const files = get_tfiles_from_folder(
-                        this.plugin.app,
-                        this.plugin.settings.user_scripts_folder
-                    ).filter(x => x.extension == "js")
-                    const docFiles = await populate_docs_from_user_scripts(
-                        this.plugin.app,
-                        files
-                    )
-                    return docFiles;
-                },
-                `User Scripts folder doesn't exist`
+            // Show an error notice if the configured folder doesn't exist.
+            const jsFiles = await errorWrapper(
+                () =>
+                    Promise.resolve(
+                        get_tfiles_from_folder(
+                            this.plugin.app,
+                            this.plugin.settings.user_scripts_folder,
+                        ).filter((x) => x.extension === "js"),
+                    ),
+                `User Scripts folder doesn't exist`,
             );
-            if (!files || files.length === 0) return;
-            return files.reduce<TpFunctionDocumentation[]>(
-                (processedFiles, file) => {
-                    if (file.extension !== "js") return processedFiles;
-                    const values = [
-                        ...processedFiles,
-                        {
-                            name: file.basename,
-                            queryKey: file.basename,
-                            definition: "",
-                            description: file.description,
-                            returns: file.returns,
-                            args: file.arguments.reduce<{[key: string]: TpArgumentDocumentation}>((acc, arg) => {
-                                acc[arg.name] = {
-                                    name: arg.name,
-                                    description: arg.description
-                                };
-                                return acc;
-                            }, {}),
-                            example: "",
-                        },
-                    ];
-                    return values;
-                },
-                []
+            if (!jsFiles || jsFiles.length === 0) return;
+            const docFiles = await errorWrapper(
+                () => populate_docs_from_user_scripts(this.plugin.app, jsFiles),
+                `Failed to parse user script documentation`,
+            );
+            if (!docFiles || docFiles.length === 0) return;
+            return docFiles.reduce<TpFunctionDocumentation[]>(
+                (acc, file) => [
+                    ...acc,
+                    {
+                        name: file.basename,
+                        queryKey: file.basename,
+                        definition: "",
+                        description: file.description ?? "",
+                        returns: file.returns ?? "",
+                        args: (file.arguments ?? []).reduce<{
+                            [key: string]: TpArgumentDocumentation;
+                        }>((argAcc, arg) => {
+                            argAcc[arg.name] = {
+                                name: arg.name,
+                                description: arg.description,
+                            };
+                            return argAcc;
+                        }, {}),
+                        example: "",
+                    },
+                ],
+                [],
             );
         }
         if (!this.documentation.tp[module_name].functions) {

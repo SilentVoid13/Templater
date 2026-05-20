@@ -101,6 +101,11 @@ class ActiveMarkdownView {
         });
     }
 
+    async typeText(text: string): Promise<void> {
+        await this.focusEditor();
+        await browser.keys(text.split(""));
+    }
+
     async expectPropertiesToBeVisible() {
         await this.propertiesEl.waitForDisplayed();
     }
