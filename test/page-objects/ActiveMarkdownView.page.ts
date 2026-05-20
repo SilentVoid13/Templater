@@ -55,6 +55,19 @@ class ActiveMarkdownView {
         );
     }
 
+    async setCursorToEnd(): Promise<void> {
+        await browser.executeObsidian(({ app }) => {
+            const editor = app.workspace.activeEditor?.editor;
+            if (!editor) throw new Error("No active editor");
+            const lastLine = editor.lastLine();
+            const lastCh = editor.getLine(lastLine).length;
+            editor.setSelection(
+                { line: lastLine, ch: lastCh },
+                { line: lastLine, ch: lastCh },
+            );
+        });
+    }
+
     async setSelections(ranges: EditorSelection[]): Promise<void> {
         await browser.executeObsidian(({ app }, payload: EditorSelection[]) => {
             const editor = app.workspace.activeEditor?.editor;

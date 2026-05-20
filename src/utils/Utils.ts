@@ -288,7 +288,12 @@ export function get_frontmatter_and_content(content: string) {
     let frontmatter: Record<string, unknown> = {};
     const front_matter_info = getFrontMatterInfo(content);
     if (front_matter_info.frontmatter) {
-        frontmatter = parseYaml(front_matter_info.frontmatter) as Record<string, unknown>;
+        try {
+            frontmatter = parseYaml(front_matter_info.frontmatter) as Record<string, unknown>;
+        } catch {
+            // Invalid YAML — preserve full content as body with no frontmatter merging
+            return { frontmatter, content };
+        }
     }
     return {
         frontmatter,

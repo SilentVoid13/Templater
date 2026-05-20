@@ -1,3 +1,4 @@
+import { browser } from "@wdio/globals";
 import { obsidianPage } from "wdio-obsidian-service";
 import OpenInsertTemplateModalPage from "../page-objects/OpenInsertTemplateModal.page";
 import WorkspacePage from "../page-objects/Workspace.page";
@@ -181,6 +182,98 @@ describe("Templater", () => {
         await OpenInsertTemplateModalPage.selectSuggestionByName("template");
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("notes/target.md", expected);
+    });
+
+    async function testInvalidYamlFolderTemplate(templateContent: string) {
+        await resetVault("test/vault", {
+            "templates/template.md": templateContent,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.trigger_on_file_creation = true;
+            plugins.templaterObsidian.settings.enable_folder_templates = true;
+            plugins.templaterObsidian.settings.folder_templates = [
+                { folder: "notes", template: "templates/template.md" },
+            ];
+            await plugins.templaterObsidian.save_settings();
+            plugins.templaterObsidian.event_handler.update_trigger_file_on_creation();
+        });
+        try {
+            await browser.executeObsidian(async ({ app }) => {
+                await app.vault.create("notes/new-note.md", "");
+            });
+            await WorkspacePage.waitForAllTemplatesExecuted();
+            await VaultPage.expectFileToHaveContent(
+                "notes/new-note.md",
+                templateContent,
+            );
+        } finally {
+            await browser.executeObsidian(async ({ plugins }) => {
+                plugins.templaterObsidian.settings.trigger_on_file_creation = false;
+                await plugins.templaterObsidian.save_settings();
+                plugins.templaterObsidian.event_handler.update_trigger_file_on_creation();
+            });
+        }
+    }
+
+    it("write_template_to_file inserts template with invalid YAML % directive via folder template trigger", async () => {
+        await testInvalidYamlFolderTemplate("---\naliases:\n- %\n---\n");
+    });
+
+    it("write_template_to_file inserts template with invalid YAML # in flow sequence via folder template trigger", async () => {
+        await testInvalidYamlFolderTemplate("---\ntags: [#test]\n---\n");
+    });
+
+    async function testInvalidYamlAppendToActiveFile(
+        templateContent: string,
+        targetContent: string,
+        expectedContent: string,
+    ) {
+        await resetVault("test/vault", {
+            "templates/template.md": templateContent,
+            "notes/target.md": targetContent,
+        });
+        await obsidianPage.openFile("notes/target.md");
+        await WorkspacePage.expectActiveTabToHaveText("target");
+        await ActiveMarkdownViewPage.setCursorToEnd();
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("template");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/target.md",
+            expectedContent,
+        );
+    }
+
+    it("append_template_to_active_file inserts % directive template into note with valid YAML", async () => {
+        await testInvalidYamlAppendToActiveFile(
+            "---\naliases:\n- %\n---\n",
+            "---\ntitle: existing\n---\n",
+            "---\ntitle: existing\n---\n---\naliases:\n- %\n---\n",
+        );
+    });
+
+    it("append_template_to_active_file inserts % directive template into note with invalid YAML", async () => {
+        await testInvalidYamlAppendToActiveFile(
+            "---\naliases:\n- %\n---\n",
+            "---\ntags: [#test]\n---\n",
+            "---\ntags: [#test]\n---\n---\naliases:\n- %\n---\n",
+        );
+    });
+
+    it("append_template_to_active_file inserts # in flow sequence template into note with valid YAML", async () => {
+        await testInvalidYamlAppendToActiveFile(
+            "---\ntags: [#test]\n---\n",
+            "---\ntitle: existing\n---\n",
+            "---\ntitle: existing\n---\n---\ntags: [#test]\n---\n",
+        );
+    });
+
+    it("append_template_to_active_file inserts # in flow sequence template into note with invalid YAML", async () => {
+        await testInvalidYamlAppendToActiveFile(
+            "---\ntags: [#test]\n---\n",
+            "---\naliases:\n- %\n---\n",
+            "---\naliases:\n- %\n---\n---\ntags: [#test]\n---\n",
+        );
     });
 
     it("append_template_to_active_file handles mixed data types for same key", async () => {
