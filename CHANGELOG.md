@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.20.5](https://github.com/SilentVoid13/Templater/compare/2.20.4...2.20.5) (2026-05-20)
+
+
+### Bug Fixes
+
+* Editor autocompletion for tp.user throwing errors when user scripts are correctly configured ([5baf663](https://github.com/SilentVoid13/Templater/commit/5baf6631dbe5125d54f2c171cc2245e237a90bcc)), closes [#1733](https://github.com/SilentVoid13/Templater/issues/1733)
+* YAML parsing error when inserting template with invalid YAML ([75b6f3d](https://github.com/SilentVoid13/Templater/commit/75b6f3dbe9e49e5378c11e9451656198e409516f)), closes [#1708](https://github.com/SilentVoid13/Templater/issues/1708)
+
 ### [2.20.4](https://github.com/SilentVoid13/Templater/compare/2.20.3...2.20.4) (2026-05-12)
 
 
