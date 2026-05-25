@@ -185,9 +185,8 @@ export function arraymove<T>(
     if (toIndex < 0 || toIndex === arr.length) {
         return;
     }
-    const element = arr[fromIndex];
-    arr[fromIndex] = arr[toIndex];
-    arr[toIndex] = element;
+    const element = arr.splice(fromIndex, 1)[0];
+    arr.splice(toIndex, 0, element);
 }
 
 export function get_active_file(app: App) {

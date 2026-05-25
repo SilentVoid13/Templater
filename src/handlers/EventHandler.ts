@@ -68,7 +68,10 @@ export default class EventHandler {
     }
 
     update_trigger_file_on_creation(): void {
-        if (this.settings.trigger_on_file_creation) {
+        if (
+            this.settings.trigger_on_file_creation &&
+            !this.trigger_on_file_creation_event
+        ) {
             this.trigger_on_file_creation_event = this.plugin.app.vault.on(
                 "create",
                 (file: TAbstractFile) =>
