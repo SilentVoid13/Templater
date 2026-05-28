@@ -60,6 +60,10 @@ const copyOutputPlugin = {
                 "manifest.json",
                 `test/vault/.obsidian/plugins/${manifest.id}/manifest.json`,
             );
+            fs.copyFileSync(
+                "styles.css",
+                `test/vault/.obsidian/plugins/${manifest.id}/styles.css`,
+            );
         });
     },
 };
