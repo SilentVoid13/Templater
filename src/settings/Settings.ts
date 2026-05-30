@@ -107,6 +107,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         await this.plugin.save_settings();
                     });
                 cb.containerEl.addClass("templater_search");
+                cb.inputEl.addClass("templater-folder-input");
             });
     }
 
