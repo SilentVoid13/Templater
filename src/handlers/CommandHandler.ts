@@ -129,7 +129,7 @@ export class CommandHandler {
             });
             this.plugin.addCommand({
                 id: `create-${new_template}`,
-                name: `Create ${new_template_name}`,
+                name: `Create from ${new_template_name}`,
                 icon: "templater-icon",
                 callback: async () => {
                     const template = errorWrapperSync(
