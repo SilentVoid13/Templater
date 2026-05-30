@@ -71,12 +71,15 @@ export default class EventHandler {
         if (this.settings.trigger_on_file_creation) {
             this.trigger_on_file_creation_event = this.plugin.app.vault.on(
                 "create",
-                (file: TAbstractFile) =>
-                    Templater.on_file_creation(
-                        this.templater,
-                        this.plugin.app,
-                        file,
-                    ),
+                (file: TAbstractFile) => {
+                    if (file instanceof TFile) {
+                        Templater.on_file_creation(
+                            this.templater,
+                            this.plugin.app,
+                            file,
+                        );
+                    }
+                },
             );
             this.plugin.registerEvent(this.trigger_on_file_creation_event);
         } else {
