@@ -100,7 +100,7 @@ export class CursorJumper {
         cursor_matches?: RegExpExecArray[];
         positions?: EditorPosition[];
     } {
-        const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*)\)\s*%>/g;
+        const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*\.?[0-9]*)\)\s*%>/g;
         const cursor_matches: RegExpExecArray[] = [];
         let m: RegExpExecArray | null;
         while ((m = cursor_regex.exec(content)) !== null) {
@@ -113,7 +113,7 @@ export class CursorJumper {
 
         cursor_matches.sort(
             (m1, m2) =>
-                Number(m1.groups?.order || 0) - Number(m2.groups?.order || 0)
+                parseFloat(m1.groups?.order || "0") - parseFloat(m2.groups?.order || "0")
         );
 
         const match_str = cursor_matches[0][0];
