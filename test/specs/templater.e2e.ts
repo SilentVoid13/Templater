@@ -189,7 +189,7 @@ describe("Templater", () => {
             "templates/template.md": templateContent,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("local-settings", {
+            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
                 trigger_on_file_creation: true,
             });
             plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
@@ -211,7 +211,7 @@ describe("Templater", () => {
         } finally {
             await browser.executeObsidian(async ({ plugins }) => {
                 plugins.templaterObsidian.app.saveLocalStorage(
-                    "local-settings",
+                    "templater-local-settings",
                     {
                         trigger_on_file_creation: false,
                     },

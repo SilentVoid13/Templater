@@ -130,7 +130,10 @@ Run mode: 3`;
                 "Run mode: ${tp.config.run_mode}`)\n" +
                 "%>",
         });
-        await browser.executeObsidian(async ({ plugins }) => {
+        await browser.executeObsidian(async ({ app, plugins }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                enable_startup_templates: true,
+            });
             plugins.templaterObsidian.settings.startup_templates = [
                 "templates/tp.config.md",
             ];
@@ -156,7 +159,10 @@ Run mode: 5`;
                 "%>",
             "notes/note.md": "\n",
         });
-        await browser.executeObsidian(async ({ plugins }) => {
+        await browser.executeObsidian(async ({ app, plugins }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                enable_startup_templates: true,
+            });
             plugins.templaterObsidian.settings.startup_templates = [
                 "templates/tp.config.md",
             ];

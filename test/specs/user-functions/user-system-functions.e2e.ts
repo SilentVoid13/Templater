@@ -12,7 +12,7 @@ describe("UserSystemFunctions", () => {
             "notes/note.md": `\n`,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("local-settings", {
+            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
                 enable_system_commands: true,
             });
             plugins.templaterObsidian.settings.templates_pairs = [
@@ -36,7 +36,7 @@ describe("UserSystemFunctions", () => {
             "notes/note.md": `\n`,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("local-settings", {
+            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
                 enable_system_commands: true,
             });
             plugins.templaterObsidian.settings.templates_pairs = [
