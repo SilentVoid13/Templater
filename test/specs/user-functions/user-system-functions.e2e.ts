@@ -2,6 +2,7 @@ import { obsidianPage } from "wdio-obsidian-service";
 import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateModal.page";
 import WorkspacePage from "../../page-objects/Workspace.page";
 import VaultPage from "../../page-objects/Vault.page";
+import NoticePage from "../../page-objects/Notice.page";
 import { resetVault } from "../../utils/reset-vault";
 
 describe("UserSystemFunctions", () => {
@@ -28,6 +29,30 @@ describe("UserSystemFunctions", () => {
         );
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("notes/note.md", "");
+    });
+
+    it("does not execute system commands when enable_system_commands is disabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.weather.md": `<% tp.user.weather() %>`,
+            "notes/note.md": `\n`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.app.saveLocalStorage(
+                "templater-local-settings",
+                { enable_system_commands: false },
+            );
+            plugins.templaterObsidian.settings.templates_pairs = [
+                ["weather", 'curl "wttr.in/Paris?format=3"'],
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.user.weather",
+        );
+        await NoticePage.expectTemplateParsingErrorNotice();
     });
 
     it("tp.user.weather example from docs works", async () => {
