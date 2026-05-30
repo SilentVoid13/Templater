@@ -70,9 +70,11 @@ export class InternalModuleDate extends InternalModule {
                     "Invalid reference date format, try specifying one with the argument 'reference_format'"
                 );
             }
-            return moment(reference, reference_format)
-                .weekday(weekday)
-                .format(format);
+            const referenceDate = moment(reference, reference_format);
+            const currentWeekday = referenceDate.weekday();
+            const targetWeekday = weekday;
+            const diff = targetWeekday - currentWeekday;
+            return referenceDate.add(diff, "days").format(format);
         };
     }
 
