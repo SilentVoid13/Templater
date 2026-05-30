@@ -100,6 +100,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
             },
             true,
         );
+        // Some settings require files/folders to be loaded to properly render.
+        if (!this.app.workspace.layoutReady) {
+            this.app.workspace.onLayoutReady(() => {
+                this.update();
+            });
+        }
     }
 
     private isLocalSettingsKey(key: string): key is keyof LocalSettings {
@@ -622,6 +628,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     private templateHotkeysGroup(): SettingDefinitionList<keyof Settings>[] {
+        if (!this.app.workspace.layoutReady) {
+            return [];
+        }
         const allTemplates = errorWrapperSync(
             () =>
                 get_tfiles_from_folder(
@@ -774,6 +783,8 @@ export class TemplaterSettingTab extends PluginSettingTab {
         let scriptDesc: string;
         if (!this.plugin.settings.user_scripts_folder) {
             scriptDesc = "No user scripts folder set";
+        } else if (!this.app.workspace.layoutReady) {
+            scriptDesc = "Loading...";
         } else {
             const files = errorWrapperSync(
                 () =>
