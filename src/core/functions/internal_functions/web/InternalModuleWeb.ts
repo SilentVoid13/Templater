@@ -22,7 +22,7 @@ export class InternalModuleWeb extends InternalModule {
         this.static_functions.set("request", this.generate_request());
         this.static_functions.set(
             "random_picture",
-            this.generate_random_picture()
+            this.generate_random_picture(),
         );
     }
 
@@ -37,7 +37,7 @@ export class InternalModuleWeb extends InternalModule {
                 throw new TemplaterError("Error performing GET request");
             }
             return response;
-        } catch (_error) {
+        } catch {
             throw new TemplaterError("Error performing GET request");
         }
     }
@@ -46,7 +46,7 @@ export class InternalModuleWeb extends InternalModule {
         return async () => {
             try {
                 const response = await this.getRequest(
-                    "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json"
+                    "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json",
                 );
                 const quotes = response.json as DailyQuote[];
                 const random_quote =
@@ -56,7 +56,7 @@ export class InternalModuleWeb extends InternalModule {
                 const new_content = `> [!quote] ${quote}\n> — ${author}`;
 
                 return new_content;
-            } catch (_error) {
+            } catch {
                 new TemplaterError("Error generating daily quote");
                 return "Error generating daily quote";
             }
@@ -66,14 +66,14 @@ export class InternalModuleWeb extends InternalModule {
     generate_random_picture(): (
         size: string,
         query?: string,
-        include_size?: boolean
+        include_size?: boolean,
     ) => Promise<string> {
         return async (size: string, query?: string, include_size = false) => {
             try {
                 const response = await this.getRequest(
                     `https://templater-unsplash-2.fly.dev/${
                         query ? "?q=" + query : ""
-                    }`
+                    }`,
                 ).then((res) => res.json as UnsplashPhoto);
                 let url = response.full;
                 if (size && !include_size) {
@@ -88,7 +88,7 @@ export class InternalModuleWeb extends InternalModule {
                     return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash|${size}](${url})`;
                 }
                 return `![photo by ${response.photog}(${response.photogUrl}) on Unsplash](${url})`;
-            } catch (_error) {
+            } catch {
                 new TemplaterError("Error generating random picture");
                 return "Error generating random picture";
             }
@@ -111,7 +111,7 @@ export class InternalModuleWeb extends InternalModule {
                                 return obj[key] as Record<string, unknown>;
                             } else {
                                 throw new Error(
-                                    `Path ${path} not found in the JSON response`
+                                    `Path ${path} not found in the JSON response`,
                                 );
                             }
                         }, jsonData) as unknown as string;

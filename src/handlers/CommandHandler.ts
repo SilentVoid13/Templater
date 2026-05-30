@@ -49,6 +49,7 @@ export class CommandHandler {
 
         this.plugin.addCommand({
             id: "jump-to-next-cursor-location",
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- cursor should be lowercase
             name: "Jump to next cursor location",
             icon: "text-cursor",
             // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys -- It would require a lot of support to help users migrate because this plugin is old

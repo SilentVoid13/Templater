@@ -193,7 +193,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     getNumberOfArguments(args: object): number {
         try {
             return new Map(Object.entries(args)).size;
-        } catch (_error) {
+        } catch {
             return 0;
         }
     }

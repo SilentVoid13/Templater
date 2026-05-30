@@ -1,4 +1,4 @@
-import { App, ButtonComponent, Modal, Setting } from "obsidian";
+import { App, ButtonComponent, Modal } from "obsidian";
 import TemplaterPlugin from "main";
 import {
     FileSuggest,
