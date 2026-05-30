@@ -15,8 +15,15 @@
 ##### Arguments
 
 {% for arg in fn.args %}
-- `{{ arg.name }}`: {{ arg.description }}
+- `{{ arg.name }}` (*{{ arg.type }}*): {{ arg.description }}
+{% if arg.default != undefined %} (default: `{{ arg.default }}`){% endif %}
 {% endfor %}
+{% endif %}
+
+{% if fn.return %}
+##### Returns
+
+- *{{ fn.return.type }}*: {{ fn.return.description }}
 {% endif %}
 
 {% if fn.example %}
