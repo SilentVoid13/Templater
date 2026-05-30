@@ -11,6 +11,7 @@ import { errorWrapperSync } from "utils/Error";
 import { arraymove, get_tfiles_from_folder } from "utils/Utils";
 import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
 import { FolderSuggest } from "./suggesters/FolderSuggester";
+import { ConfirmDangerousSettingModal } from "./modals/ConfirmDangerousSettingModal";
 import { IgnoreFolderModal } from "./modals/IgnoreFolderModal";
 import { StartupTemplateModal } from "./modals/StartupTemplateModal";
 import { SystemCommandModal } from "./modals/SystemCommandModal";
@@ -119,6 +120,51 @@ export class TemplaterSettingTab extends PluginSettingTab {
         key: keyof Settings | keyof LocalSettings,
         value: unknown,
     ) {
+        const dangerousConfig: Partial<
+            Record<keyof LocalSettings, { title: string; warning: string }>
+        > = {
+            enable_startup_templates: {
+                title: "Enable startup templates",
+                warning:
+                    "This can be dangerous if you set a startup template with unknown/unsafe content. Make sure that every startup template's content is safe.",
+            },
+            trigger_on_file_creation: {
+                title: "Trigger Templater on new file creation",
+                warning:
+                    "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.",
+            },
+            enable_system_commands: {
+                title: "Enable user system command functions",
+                warning:
+                    "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
+            },
+        };
+
+        if (
+            this.isLocalSettingsKey(key) &&
+            value === true &&
+            key in dangerousConfig
+        ) {
+            const config = dangerousConfig[key]!;
+            new ConfirmDangerousSettingModal(
+                this.app,
+                config.title,
+                config.warning,
+                async () => {
+                    await this.commitControlValue(key, value);
+                },
+            ).open();
+            this.update();
+            return;
+        }
+
+        await this.commitControlValue(key, value);
+    }
+
+    private async commitControlValue(
+        key: keyof Settings | keyof LocalSettings,
+        value: unknown,
+    ) {
         if (this.isLocalSettingsKey(key)) {
             saveLocalSetting(
                 this.plugin.app,
@@ -132,6 +178,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "trigger_on_file_creation",
             "trigger_on_file_creation_mode",
             "enable_startup_templates",
+            "enable_system_commands",
         ];
         if (rerenderKeys.contains(key)) {
             this.update();
@@ -261,20 +308,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             items: [
                 {
                     name: "Enable startup templates",
-                    desc: (() => {
-                        const startupTemplatesDesc = createFragment();
-                        startupTemplatesDesc.append(
-                            "Enables templates to run automatically when Templater starts.",
-                            startupTemplatesDesc.createEl("br"),
-                            startupTemplatesDesc.createEl("br"),
-                            startupTemplatesDesc.createEl("b", {
-                                text: "Warning: ",
-                                cls: "mod-warning",
-                            }),
-                            "This can be dangerous if you set a startup template with unknown/unsafe content. Make sure that every startup template's content is safe.",
-                        );
-                        return startupTemplatesDesc;
-                    })(),
+                    desc: "Enables templates to run automatically when Templater starts.",
                     control: {
                         type: "toggle",
                         key: "enable_startup_templates",
@@ -312,13 +346,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
         triggerDesc.append(
             "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
-            triggerDesc.createEl("br"),
-            triggerDesc.createEl("br"),
-            triggerDesc.createEl("b", {
-                text: "Warning: ",
-                cls: "mod-warning",
-            }),
-            "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.",
         );
         const modeDescList = createEl("ul");
         modeDescList.appendChild(
@@ -781,15 +808,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
     private systemCommandItems(
         localSettings: LocalSettings,
     ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
-        const enableDesc = createFragment();
-        enableDesc.append(
-            "Allows you to create user functions linked to system commands.",
-            enableDesc.createEl("br"),
-            enableDesc.createEl("br"),
-            enableDesc.createEl("b", { text: "Warning: ", cls: "mod-warning" }),
-            "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
-        );
-
         const shellDesc = createFragment();
         shellDesc.append(
             "Full path to the shell binary to execute the command with.",
@@ -804,7 +822,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         return [
             {
                 name: "Enable user system command functions",
-                desc: enableDesc,
+                desc: "Allows you to create user functions linked to system commands.",
                 control: {
                     type: "toggle",
                     key: "enable_system_commands",
