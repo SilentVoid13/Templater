@@ -66,10 +66,18 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
                 void this.plugin.templater.append_template_to_active_file(item);
                 break;
             case OpenMode.CreateNoteTemplate:
-                void this.plugin.templater.create_new_note_from_template(
-                    item,
-                    this.creation_folder,
-                );
+                this.app.workspace.activeEditor?.editor ? 
+                    void this.plugin.templater.create_new_note_from_template(
+                        item,
+                        this.creation_folder,
+                    ) : 
+                    // Wait for editor initialization before template execution
+                    setTimeout(() => {
+                        void this.plugin.templater.create_new_note_from_template(
+                            item,
+                            this.creation_folder,
+                        );
+                    }, 100);
                 break;
         }
     }
