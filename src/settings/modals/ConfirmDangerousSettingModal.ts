@@ -9,6 +9,7 @@ export class ConfirmDangerousSettingModal extends ConfirmationModal {
     ) {
         super(app);
         this.setTitle(title);
+        this.modalEl.addClass("templater-confirm-dangerous-setting-modal");
         this.contentEl.createEl("p", { text: warningText });
         this.contentEl.createEl("p", {
             text: "Only enable this if you trust the current and future contents of this vault, including files you may later download, copy, or sync from other people.",

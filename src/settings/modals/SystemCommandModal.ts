@@ -20,6 +20,7 @@ export class SystemCommandModal extends Modal {
 
     onOpen() {
         this.setTitle("User function");
+        this.modalEl.addClass("templater-system-command-modal");
         const { contentEl } = this;
 
         const functionNameSetting = new Setting(contentEl)

@@ -11,9 +11,12 @@ declare module "obsidian" {
             ): { options: Record<string, string> } | null;
         };
         setting?: {
+            open?(): void;
+            close?(): void;
             openTabById?(id: string): void;
             activeTab?: {
                 setQuery?(query: string): void;
+                update?(): void;
             };
         };
         openWithDefaultApp(path: string): void;
