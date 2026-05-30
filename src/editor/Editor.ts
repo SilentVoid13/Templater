@@ -43,6 +43,18 @@ export class Editor {
         this.cursor_jumper = new CursorJumper(plugin.app);
         this.activeEditorExtensions = [];
     }
+    private cursor_jumper: CursorJumper;
+    private activeEditorExtensions: Array<Extension>;
+
+    // Note that this is `undefined` until `setup` has run.
+    private templaterLanguage: Extension | undefined;
+
+    private autocomplete: Autocomplete;
+
+    public constructor(private plugin: TemplaterPlugin) {
+        this.cursor_jumper = new CursorJumper(plugin.app);
+        this.activeEditorExtensions = [];
+    }
 
     desktopShouldHighlight(): boolean {
         return (
@@ -125,6 +137,26 @@ export class Editor {
             return;
         }
         await this.cursor_jumper.jump_to_next_cursor_location();
+    }
+
+    // Support editor operations in reading view context
+    async apply_template_in_reading_view(template_content: string): Promise<void> {
+        const active_view = this.plugin.app.workspace.getActiveViewOfType(
+            this.plugin.app.workspace.getLeavesOfType("markdown").first()?.view?.constructor
+        );
+        
+        if (active_view && active_view.editor) {
+            const editor = active_view.editor;
+            const cursor_pos = editor.getCursor();
+            editor.replaceRange(template_content, cursor_pos);
+        } else {
+            // Fallback: use workspace editor if available
+            const workspace_editor = this.plugin.app.workspace.activeEditor?.editor;
+            if (workspace_editor) {
+                const cursor_pos = workspace_editor.getCursor();
+                workspace_editor.replaceRange(template_content, cursor_pos);
+            }
+        }
     }
 
     async registerCodeMirrorMode(): Promise<void> {
