@@ -588,6 +588,32 @@ describe("Settings", () => {
         });
     });
 
+    describe("User scripts", () => {
+        it("shows newly created script after clicking refresh", async () => {
+            await resetVault("test/vault", {});
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName("User scripts");
+
+            await browser.executeObsidian(async ({ app }) => {
+                await app.vault.create(
+                    "user scripts/my_script.js",
+                    "module.exports = function() { return 'hello'; }",
+                );
+            });
+
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Reload user scripts",
+            );
+
+            await expect(
+                TemplaterSettingsPage.settingsContentEl.$(
+                    ".setting-item-name=tp.user.my_script",
+                ),
+            ).toBeDisplayed();
+        });
+    });
+
     describe("User script intellisense", () => {
         it("updates intellisense_render when a different option is selected", async () => {
             await resetVault("test/vault", {});
