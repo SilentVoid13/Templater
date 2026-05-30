@@ -37,7 +37,6 @@ export class UserScriptsPage extends SettingPage {
         this.userScripts = Array.isArray(files)
             ? files.filter((file) => file.extension === "js")
             : [];
-        this.pluginSettingTab.update();
     }
 
     openUserScriptsFolderInDefaultApp() {
@@ -56,7 +55,10 @@ export class UserScriptsPage extends SettingPage {
                 .addExtraButton((cb) => {
                     cb.setIcon("sync")
                         .setTooltip("Reload user scripts")
-                        .onClick(() => this.loadUserScripts());
+                        .onClick(() => {
+                            this.loadUserScripts();
+                            this.pluginSettingTab.update();
+                        });
                 })
                 .addExtraButton((cb) => {
                     cb.setIcon("folder")
