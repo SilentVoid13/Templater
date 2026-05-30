@@ -71,12 +71,15 @@ export default class EventHandler {
         if (this.settings.trigger_on_file_creation) {
             this.trigger_on_file_creation_event = this.plugin.app.vault.on(
                 "create",
-                (file: TAbstractFile) =>
+                async (file: TAbstractFile) => {
+                    // Wait for the file to be fully created and opened
+                    await this.plugin.app.workspace.onLayoutReady();
                     Templater.on_file_creation(
                         this.templater,
                         this.plugin.app,
                         file,
-                    ),
+                    );
+                },
             );
             this.plugin.registerEvent(this.trigger_on_file_creation_event);
         } else {
