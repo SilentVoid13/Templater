@@ -15,6 +15,12 @@ import { IgnoreFolderModal } from "./modals/IgnoreFolderModal";
 import { StartupTemplateModal } from "./modals/StartupTemplateModal";
 import { SystemCommandModal } from "./modals/SystemCommandModal";
 import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
+import {
+    DEFAULT_LOCAL_SETTINGS,
+    type LocalSettings,
+    getLocalSettings,
+    saveLocalSetting,
+} from "./LocalSettings";
 import { set } from "utils/set";
 import { get, type Paths } from "utils/get";
 import { UserScriptsPage } from "./UserScriptsPage";
@@ -37,21 +43,16 @@ export const DEFAULT_SETTINGS: Settings = {
     command_timeout: 5,
     templates_folder: "",
     templates_pairs: [],
-    trigger_on_file_creation: false,
     trigger_on_file_creation_mode: "none",
     auto_jump_to_cursor: false,
-    enable_system_commands: false,
     shell_path: "",
     user_scripts_folder: "",
-    // enable_folder_templates: true,
     folder_templates: [],
-    // enable_file_templates: false,
     file_templates: [],
     syntax_highlighting: true,
     syntax_highlighting_mobile: false,
     enabled_templates_hotkeys: [],
     startup_templates: [],
-    enable_startup_templates: true,
     intellisense_render:
         IntellisenseRenderOption.RenderDescriptionParameterReturn,
     ignore_folders_on_creation: [],
@@ -62,19 +63,16 @@ export interface Settings {
     syntax_highlighting: boolean;
     syntax_highlighting_mobile: boolean;
     auto_jump_to_cursor: boolean;
-    trigger_on_file_creation: boolean;
     trigger_on_file_creation_mode: "none" | "folder" | "regex";
     folder_templates: Array<FolderTemplate>;
     file_templates: Array<FileTemplate>;
     ignore_folders_on_creation: Array<IgnoreFolderOnCreation>;
     command_timeout: number;
     templates_pairs: Array<[string, string]>;
-    enable_system_commands: boolean;
     shell_path: string;
     user_scripts_folder: string;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
-    enable_startup_templates: boolean;
     intellisense_render: IntellisenseRenderOption;
 }
 
@@ -103,18 +101,33 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
     }
 
+    private isLocalSettingsKey(key: string): key is keyof LocalSettings {
+        return key in DEFAULT_LOCAL_SETTINGS;
+    }
+
     // Overriding `getControlValue` to support dot notation keys for nested settings
-    getControlValue(key: Paths<Settings>): unknown {
+    getControlValue(key: Paths<Settings> | keyof LocalSettings): unknown {
+        if (this.isLocalSettingsKey(key)) {
+            return getLocalSettings(this.plugin.app)[key];
+        }
         return get(this.plugin.settings, key);
     }
 
     // Overriding `setControlValue` to trigger UI changes on save,
     // and to support dot notation keys for nested settings
-    async setControlValue<K extends keyof Settings>(
-        key: K,
-        value: Settings[K],
+    async setControlValue(
+        key: keyof Settings | keyof LocalSettings,
+        value: unknown,
     ) {
-        set(this.plugin.settings, key, value);
+        if (this.isLocalSettingsKey(key)) {
+            saveLocalSetting(
+                this.plugin.app,
+                key,
+                value as LocalSettings[typeof key],
+            );
+        } else {
+            set(this.plugin.settings, key as Paths<Settings>, value);
+        }
         const rerenderKeys = [
             "trigger_on_file_creation",
             "trigger_on_file_creation_mode",
@@ -126,8 +139,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
         await this.plugin.save_settings();
     }
 
-    getSettingDefinitions(): SettingDefinitionItem<keyof Settings>[] {
-        const items: SettingDefinitionItem<keyof Settings>[] = [];
+    getSettingDefinitions(): SettingDefinitionItem<
+        keyof Settings | keyof LocalSettings
+    >[] {
+        const items: SettingDefinitionItem<
+            keyof Settings | keyof LocalSettings
+        >[] = [];
+        const localSettings = getLocalSettings(this.plugin.app);
 
         items.push({
             type: "group",
@@ -234,7 +252,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         items.push({
             type: "group",
             heading: "File creation",
-            items: this.fileCreationGroup(),
+            items: this.fileCreationGroup(localSettings),
         });
 
         items.push({
@@ -267,8 +285,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     name: "Startup templates",
                     desc: "Templates that run once when Templater starts. These output nothing and are useful for setting up event hooks.",
                     items: [this.startupTemplatesGroup()],
-                    visible: () =>
-                        this.plugin.settings.enable_startup_templates,
+                    visible: () => localSettings.enable_startup_templates,
                 },
             ],
         });
@@ -282,13 +299,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
         items.push({
             type: "group",
             heading: "User system commands",
-            items: this.systemCommandItems(),
+            items: this.systemCommandItems(localSettings),
         });
 
         return items;
     }
 
-    private fileCreationGroup(): SettingGroupItem<keyof Settings>[] {
+    private fileCreationGroup(
+        localSettings: LocalSettings,
+    ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
         const triggerDesc = createFragment();
         triggerDesc.append(
             "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
@@ -360,7 +379,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 name: "Excluded folders",
                 desc: "New files created in these folders will never trigger Templater.",
                 items: [this.ignoreFoldersGroup()],
-                visible: () => this.plugin.settings.trigger_on_file_creation,
+                visible: () => localSettings.trigger_on_file_creation,
             },
             {
                 name: "Template matching mode",
@@ -374,7 +393,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         regex: "File regex templates",
                     },
                 },
-                visible: () => this.plugin.settings.trigger_on_file_creation,
+                visible: () => localSettings.trigger_on_file_creation,
             },
             {
                 type: "page",
@@ -382,7 +401,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 desc: folderTriggerDesc,
                 items: [this.folderTemplatesGroup()],
                 visible: () =>
-                    this.plugin.settings.trigger_on_file_creation &&
+                    localSettings.trigger_on_file_creation &&
                     this.plugin.settings.trigger_on_file_creation_mode ===
                         "folder",
             },
@@ -392,7 +411,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 desc: fileRegexTriggerDesc,
                 items: [this.fileTemplatesGroup()],
                 visible: () =>
-                    this.plugin.settings.trigger_on_file_creation &&
+                    localSettings.trigger_on_file_creation &&
                     this.plugin.settings.trigger_on_file_creation_mode ===
                         "regex",
             },
@@ -759,7 +778,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
         return items;
     }
 
-    private systemCommandItems(): SettingGroupItem<keyof Settings>[] {
+    private systemCommandItems(
+        localSettings: LocalSettings,
+    ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
         const enableDesc = createFragment();
         enableDesc.append(
             "Allows you to create user functions linked to system commands.",
@@ -802,7 +823,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         return undefined;
                     },
                 },
-                visible: () => this.plugin.settings.enable_system_commands,
+                visible: () => localSettings.enable_system_commands,
             },
             {
                 name: "Shell binary location",
@@ -812,13 +833,13 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     key: "shell_path",
                     placeholder: "/bin/bash",
                 },
-                visible: () => this.plugin.settings.enable_system_commands,
+                visible: () => localSettings.enable_system_commands,
             },
             {
                 type: "page",
                 name: "User system command functions",
                 items: [this.systemCommandPairsGroup()],
-                visible: () => this.plugin.settings.enable_system_commands,
+                visible: () => localSettings.enable_system_commands,
             },
         ];
     }

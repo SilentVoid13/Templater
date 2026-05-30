@@ -31,11 +31,7 @@ export default class TemplaterPlugin extends Plugin {
 
         this.fuzzy_suggester = new FuzzySuggester(this);
 
-        this.event_handler = new EventHandler(
-            this,
-            this.templater,
-            this.settings,
-        );
+        this.event_handler = new EventHandler(this, this.templater);
         await this.event_handler.setup();
 
         this.command_handler = new CommandHandler(this);
@@ -69,7 +65,6 @@ export default class TemplaterPlugin extends Plugin {
             this.settings.intellisense_render,
         );
         await this.event_handler.update_syntax_highlighting();
-        this.event_handler.update_trigger_file_on_creation();
     }
 
     async load_settings(): Promise<void> {

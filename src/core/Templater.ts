@@ -26,6 +26,7 @@ import {
 import { errorWrapper, errorWrapperSync, TemplaterError } from "utils/Error";
 import { Parser } from "./parser/Parser";
 import { log_error } from "utils/Log";
+import { getLocalSettings } from "settings/LocalSettings";
 
 export enum RunMode {
     CreateNewFromTemplate,
@@ -533,6 +534,10 @@ export class Templater {
         app: App,
         file: TAbstractFile,
     ): Promise<void> {
+        if (!getLocalSettings(app).trigger_on_file_creation) {
+            return;
+        }
+
         if (!(file instanceof TFile) || file.extension !== "md") {
             return;
         }
@@ -570,7 +575,7 @@ export class Templater {
 
         if (
             content_size == 0 &&
-            templater.plugin.settings.enable_folder_templates
+            templater.plugin.settings.trigger_on_file_creation_mode === "folder"
         ) {
             if (!(file.parent instanceof TFolder)) {
                 return;
@@ -593,7 +598,7 @@ export class Templater {
             await templater.write_template_to_file(template_file, file);
         } else if (
             content_size == 0 &&
-            templater.plugin.settings.enable_file_templates
+            templater.plugin.settings.trigger_on_file_creation_mode === "regex"
         ) {
             const file_template_match =
                 templater.get_new_file_template_for_file(file);
@@ -625,6 +630,9 @@ export class Templater {
     }
 
     async execute_startup_scripts(): Promise<void> {
+        if (!getLocalSettings(this.plugin.app).enable_startup_templates) {
+            return;
+        }
         for (const template of this.plugin.settings.startup_templates) {
             if (!template) {
                 continue;
