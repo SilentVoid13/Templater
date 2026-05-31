@@ -32,21 +32,6 @@ textarea.templater-prompt-input:focus {
     margin: 1.5em 0;
 }
 
-.templater-settings-hide-info.setting-item {
-    & .setting-item-info {
-        display: none;
-    }
-    & input:last-of-type {
-        margin-right: auto;
-    }
-    &.is-invalid .setting-item-control {
-        max-width: unset;
-
-        & .setting-item-error {
-            text-align: start;
-        }
-    }
-}
 
 .cm-s-obsidian .templater-command-bg {
     left: 0px;

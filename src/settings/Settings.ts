@@ -1,17 +1,14 @@
 import TemplaterPlugin from "main";
 import {
-    Setting,
     type SettingDefinitionItem,
     type SettingDefinitionList,
     type SettingGroupItem,
     PluginSettingTab,
-    TFile,
 } from "obsidian";
-import { errorWrapperSync } from "utils/Error";
-import { arraymove, get_tfiles_from_folder } from "utils/Utils";
-import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
-import { FolderSuggest } from "./suggesters/FolderSuggester";
+import { arraymove } from "utils/Utils";
 import { ConfirmDangerousSettingModal } from "./modals/ConfirmDangerousSettingModal";
+import { FileRegexTemplateModal } from "./modals/FileRegexTemplateModal";
+import { FolderTemplateModal } from "./modals/FolderTemplateModal";
 import { IgnoreFolderModal } from "./modals/IgnoreFolderModal";
 import { StartupTemplateModal } from "./modals/StartupTemplateModal";
 import { SystemCommandModal } from "./modals/SystemCommandModal";
@@ -24,6 +21,7 @@ import {
 } from "./LocalSettings";
 import { set } from "utils/set";
 import { get, type Paths } from "utils/get";
+import { TemplateHotkeysPage } from "./TemplateHotkeysPage";
 import { UserScriptsPage } from "./UserScriptsPage";
 
 export interface FolderTemplate {
@@ -100,12 +98,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
             },
             true,
         );
-        // Some settings require files/folders to be loaded to properly render.
-        if (!this.app.workspace.layoutReady) {
-            this.app.workspace.onLayoutReady(() => {
-                this.update();
-            });
-        }
     }
 
     private isLocalSettingsKey(key: string): key is keyof LocalSettings {
@@ -251,7 +243,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         return templateHotkeysDesc;
                     })(),
-                    items: this.templateHotkeysGroup(),
+                    page: () => new TemplateHotkeysPage(this, this.plugin),
                 },
                 {
                     name: "Automatic jump to cursor",
@@ -485,17 +477,47 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     private folderTemplatesGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: { folder: string; template: string },
+            onSubmit: (
+                folder: string,
+                template: string,
+            ) => Promise<void> | void,
+            excludeIndex?: number,
+        ) => {
+            new FolderTemplateModal(
+                this.app,
+                this.plugin,
+                initialValues,
+                onSubmit,
+                (folder) => {
+                    if (
+                        this.plugin.settings.folder_templates.some(
+                            (e, i) => e.folder === folder && i !== excludeIndex,
+                        )
+                    ) {
+                        return "This folder already has a template associated with it";
+                    }
+                },
+            ).open();
+        };
+
         return {
             type: "list",
             addItem: {
                 name: "Add folder template",
                 action: () => {
-                    this.plugin.settings.folder_templates.push({
-                        folder: "",
-                        template: "",
-                    });
-                    this.update();
-                    void this.plugin.save_settings();
+                    openModal(
+                        { folder: "", template: "" },
+                        (folder, template) => {
+                            this.plugin.settings.folder_templates.push({
+                                folder,
+                                template,
+                            });
+                            this.update();
+                            void this.plugin.save_settings();
+                        },
+                    );
                 },
             },
             onReorder: (oldIndex, newIndex) => {
@@ -512,50 +534,29 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 this.update();
                 void this.plugin.save_settings();
             },
+            emptyState: "No folder templates added.",
             items: this.plugin.settings.folder_templates.map(
                 (folder_template, index) => ({
-                    name: "Folder template",
-                    searchable: false,
-                    render: (setting: Setting) => {
-                        setting.setClass("templater-settings-hide-info");
-                        setting.addText((cb) => {
-                            new FolderSuggest(this.app, cb.inputEl);
-                            cb.setPlaceholder("Folder")
-                                .setValue(folder_template.folder)
-                                .onChange(async (new_folder) => {
-                                    if (
-                                        new_folder &&
-                                        this.plugin.settings.folder_templates.some(
-                                            (e) => e.folder === new_folder,
-                                        )
-                                    ) {
-                                        setting.setErrorMessage(
-                                            "This folder already has a template associated with it",
-                                        );
-                                        return;
-                                    }
-                                    setting.setErrorMessage("");
-                                    this.plugin.settings.folder_templates[
-                                        index
-                                    ].folder = new_folder;
-                                    await this.plugin.save_settings();
-                                });
-                        });
-                        setting.addText((cb) => {
-                            new FileSuggest(
-                                cb.inputEl,
-                                this.plugin,
-                                FileSuggestMode.TemplateFiles,
-                            );
-                            cb.setPlaceholder("Template")
-                                .setValue(folder_template.template)
-                                .onChange(async (new_template) => {
-                                    this.plugin.settings.folder_templates[
-                                        index
-                                    ].template = new_template;
-                                    await this.plugin.save_settings();
-                                });
-                        });
+                    name: folder_template.folder,
+                    desc: folder_template.template,
+                    action: () => {
+                        openModal(
+                            {
+                                folder: folder_template.folder,
+                                template: folder_template.template,
+                            },
+                            async (folder, template) => {
+                                this.plugin.settings.folder_templates[
+                                    index
+                                ].folder = folder;
+                                this.plugin.settings.folder_templates[
+                                    index
+                                ].template = template;
+                                this.update();
+                                await this.plugin.save_settings();
+                            },
+                            index,
+                        );
                     },
                 }),
             ),
@@ -563,17 +564,34 @@ export class TemplaterSettingTab extends PluginSettingTab {
     }
 
     private fileTemplatesGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: { regex: string; template: string },
+            onSubmit: (regex: string, template: string) => Promise<void> | void,
+        ) => {
+            new FileRegexTemplateModal(
+                this.app,
+                this.plugin,
+                initialValues,
+                onSubmit,
+            ).open();
+        };
+
         return {
             type: "list",
             addItem: {
                 name: "Add file regex template",
                 action: () => {
-                    this.plugin.settings.file_templates.push({
-                        regex: "",
-                        template: "",
-                    });
-                    this.update();
-                    void this.plugin.save_settings();
+                    openModal(
+                        { regex: "", template: "" },
+                        (regex, template) => {
+                            this.plugin.settings.file_templates.push({
+                                regex,
+                                template,
+                            });
+                            this.update();
+                            void this.plugin.save_settings();
+                        },
+                    );
                 },
             },
             onReorder: (oldIndex, newIndex) => {
@@ -590,119 +608,32 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 this.update();
                 void this.plugin.save_settings();
             },
+            emptyState: "No file regex templates added.",
             items: this.plugin.settings.file_templates.map(
                 (file_template, index) => ({
-                    name: "File regex template",
-                    searchable: false,
-                    render: (setting: Setting) => {
-                        setting.setClass("templater-settings-hide-info");
-                        setting.addText((cb) => {
-                            cb.setPlaceholder("File regex")
-                                .setValue(file_template.regex)
-                                .onChange(async (new_regex) => {
-                                    this.plugin.settings.file_templates[
-                                        index
-                                    ].regex = new_regex;
-                                    await this.plugin.save_settings();
-                                });
-                        });
-                        setting.addText((cb) => {
-                            new FileSuggest(
-                                cb.inputEl,
-                                this.plugin,
-                                FileSuggestMode.TemplateFiles,
-                            );
-                            cb.setPlaceholder("Template")
-                                .setValue(file_template.template)
-                                .onChange(async (new_template) => {
-                                    this.plugin.settings.file_templates[
-                                        index
-                                    ].template = new_template;
-                                    await this.plugin.save_settings();
-                                });
-                        });
+                    name: file_template.regex,
+                    desc: file_template.template,
+                    action: () => {
+                        openModal(
+                            {
+                                regex: file_template.regex,
+                                template: file_template.template,
+                            },
+                            async (regex, template) => {
+                                this.plugin.settings.file_templates[
+                                    index
+                                ].regex = regex;
+                                this.plugin.settings.file_templates[
+                                    index
+                                ].template = template;
+                                this.update();
+                                await this.plugin.save_settings();
+                            },
+                        );
                     },
                 }),
             ),
         };
-    }
-
-    private templateHotkeysGroup(): SettingDefinitionList<keyof Settings>[] {
-        if (!this.app.workspace.layoutReady) {
-            return [];
-        }
-        const allTemplates = errorWrapperSync(
-            () =>
-                get_tfiles_from_folder(
-                    this.app,
-                    this.plugin.settings.templates_folder,
-                ),
-            "Templates folder doesn't exist",
-        );
-        const mappedTemplates: TFile[] = [];
-        const unmappedTemplates: TFile[] = [];
-
-        if (Array.isArray(allTemplates)) {
-            allTemplates.forEach((file) => {
-                if (
-                    this.plugin.settings.enabled_templates_hotkeys.includes(
-                        file.path,
-                    )
-                ) {
-                    mappedTemplates.push(file);
-                } else {
-                    unmappedTemplates.push(file);
-                }
-            });
-        }
-
-        const items: SettingDefinitionList<keyof Settings>[] = [];
-
-        if (mappedTemplates.length > 0) {
-            items.push({
-                type: "list",
-                heading: "Bound templates",
-                onDelete: (index) => {
-                    this.plugin.command_handler.remove_template_hotkey(
-                        this.plugin.settings.enabled_templates_hotkeys[index],
-                    );
-                    this.plugin.settings.enabled_templates_hotkeys.splice(
-                        index,
-                        1,
-                    );
-                    this.update();
-                    void this.plugin.save_settings();
-                },
-                items: mappedTemplates.map((template, index) => ({
-                    name: template.path,
-                    searchable: false,
-                })),
-            });
-        }
-
-        if (unmappedTemplates.length > 0) {
-            items.push({
-                type: "list",
-                heading: "Unbound templates",
-                items: unmappedTemplates.map((template) => ({
-                    name: template.path,
-                    searchable: false,
-                    action: () => {
-                        this.plugin.command_handler.add_template_hotkey(
-                            null,
-                            template.path,
-                        );
-                        this.plugin.settings.enabled_templates_hotkeys.push(
-                            template.path,
-                        );
-                        this.update();
-                        void this.plugin.save_settings();
-                    },
-                })),
-            });
-        }
-
-        return items;
     }
 
     private startupTemplatesGroup(): SettingDefinitionList<keyof Settings> {
@@ -780,36 +711,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
             },
         });
 
-        let scriptDesc: string;
-        if (!this.plugin.settings.user_scripts_folder) {
-            scriptDesc = "No user scripts folder set";
-        } else if (!this.app.workspace.layoutReady) {
-            scriptDesc = "Loading...";
-        } else {
-            const files = errorWrapperSync(
-                () =>
-                    get_tfiles_from_folder(
-                        this.app,
-                        this.plugin.settings.user_scripts_folder,
-                    ),
-                `User scripts folder doesn't exist`,
-            );
-            let count = 0;
-            if (Array.isArray(files)) {
-                count = files.reduce((acc, file) => {
-                    if (file.extension === "js") {
-                        return acc + 1;
-                    }
-                    return acc;
-                }, 0);
-            }
-            scriptDesc = `Detected ${count} user script${count !== 1 ? "s" : ""}`;
-        }
         items.push({
             type: "page",
             name: "User scripts",
             searchable: false,
-            desc: scriptDesc,
             page: () => new UserScriptsPage(this, this.plugin),
         });
 
@@ -898,7 +803,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         return {
             type: "list",
-            emptyState: "No user functions added.",
             addItem: {
                 name: "Add new user function",
                 action: () => {
@@ -917,6 +821,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                 this.update();
                 void this.plugin.save_settings();
             },
+            emptyState: "No user functions added.",
             items: this.plugin.settings.templates_pairs.map(
                 (template_pair, index) => ({
                     name: template_pair[0],

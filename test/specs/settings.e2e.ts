@@ -1,6 +1,8 @@
 import TemplaterSettingsPage from "../page-objects/TemplaterSettingsPage.page";
 import TemplaterDataFilePage from "../page-objects/TemplaterDataFile.page";
 import ConfirmDangerousSettingModalPage from "../page-objects/ConfirmDangerousSettingModal.page";
+import FileRegexTemplateModalPage from "../page-objects/FileRegexTemplateModal.page";
+import FolderTemplateModalPage from "../page-objects/FolderTemplateModal.page";
 import SystemCommandModalPage from "../page-objects/SystemCommandModal.page";
 import StartupTemplateModalPage from "../page-objects/StartupTemplateModal.page";
 import IgnoreFolderModalPage from "../page-objects/IgnoreFolderModal.page";
@@ -8,10 +10,6 @@ import { resetVault } from "../utils/reset-vault";
 import { IntellisenseRenderOption } from "../../src/settings/RenderSettings/IntellisenseRenderOption";
 
 describe("Settings", () => {
-    afterEach(async () => {
-        await TemplaterSettingsPage.close();
-    });
-
     describe("Automatic jump to cursor", () => {
         it("enables auto_jump_to_cursor when toggled on", async () => {
             await resetVault("test/vault", {});
@@ -21,7 +19,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickToggleByName("Automatic jump to cursor");
+            await TemplaterSettingsPage.clickToggleByName(
+                "Automatic jump to cursor",
+            );
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "auto_jump_to_cursor",
@@ -37,7 +37,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickToggleByName("Automatic jump to cursor");
+            await TemplaterSettingsPage.clickToggleByName(
+                "Automatic jump to cursor",
+            );
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "auto_jump_to_cursor",
@@ -88,8 +90,7 @@ describe("Settings", () => {
         it("enables syntax_highlighting_mobile when toggled on", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.syntax_highlighting_mobile =
-                    false;
+                plugins.templaterObsidian.settings.syntax_highlighting_mobile = false;
                 await plugins.templaterObsidian.save_settings();
             });
             await TemplaterSettingsPage.open();
@@ -107,8 +108,7 @@ describe("Settings", () => {
         it("disables syntax_highlighting_mobile when toggled off", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.syntax_highlighting_mobile =
-                    true;
+                plugins.templaterObsidian.settings.syntax_highlighting_mobile = true;
                 await plugins.templaterObsidian.save_settings();
             });
             await TemplaterSettingsPage.open();
@@ -208,7 +208,9 @@ describe("Settings", () => {
             await ConfirmDangerousSettingModalPage.clickEnable();
 
             // If Excluded folders is now visible, navigating to it will succeed
-            await TemplaterSettingsPage.clickSettingRowByName("Excluded folders");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Excluded folders",
+            );
         });
     });
 
@@ -264,7 +266,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Excluded folders");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Excluded folders",
+            );
             await TemplaterSettingsPage.clickButtonWithText("Add folder");
             await IgnoreFolderModalPage.waitForDisplayed();
             await IgnoreFolderModalPage.setFolderPath("meta/templates");
@@ -288,7 +292,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Excluded folders");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Excluded folders",
+            );
             await TemplaterSettingsPage.clickButtonWithText("Add folder");
             await IgnoreFolderModalPage.waitForDisplayed();
             await IgnoreFolderModalPage.setFolderPath("meta/templates");
@@ -312,7 +318,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Excluded folders");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Excluded folders",
+            );
             await TemplaterSettingsPage.clickButtonWithText("Delete");
 
             await TemplaterDataFilePage.expectSettingToEqual(
@@ -338,43 +346,53 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Folder templates");
-            await TemplaterSettingsPage.clickButtonWithText("Add folder template");
-            // Inputs use placeholders "Folder" and "Template"; .setting-item-info is hidden
-            await TemplaterSettingsPage.setInputByPlaceholder("Folder", "notes");
-            await TemplaterSettingsPage.setInputByPlaceholder(
-                "Template",
-                "templates/default.md",
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Folder templates",
             );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add folder template",
+            );
+            await FolderTemplateModalPage.waitForDisplayed();
+            await FolderTemplateModalPage.setFolder("notes");
+            await FolderTemplateModalPage.setTemplate("templates/default.md");
+            await FolderTemplateModalPage.clickDone();
 
-            await TemplaterDataFilePage.expectSettingToEqual("folder_templates", [
-                { folder: "notes", template: "templates/default.md" },
-            ]);
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "folder_templates",
+                [{ folder: "notes", template: "templates/default.md" }],
+            );
         });
 
         it("shows an error when a duplicate folder is used", async () => {
-            await resetVault("test/vault", {});
+            await resetVault("test/vault", {
+                "templates/default.md": "Default template",
+            });
             await browser.executeObsidian(async ({ app, plugins }) => {
                 app.saveLocalStorage("templater-local-settings", {
                     trigger_on_file_creation: true,
                 });
                 plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
                     "folder";
-                // Pre-seed one entry so the page loads with one existing item
                 plugins.templaterObsidian.settings.folder_templates = [
-                    { folder: "notes", template: "" },
+                    { folder: "notes", template: "templates/default.md" },
                 ];
                 await plugins.templaterObsidian.save_settings();
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Folder templates");
-            // Add a second item — now there are two "Folder" placeholder inputs; use index 1
-            await TemplaterSettingsPage.clickButtonWithText("Add folder template");
-            await TemplaterSettingsPage.setInputByPlaceholder("Folder", "notes", 1);
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Folder templates",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add folder template",
+            );
+            await FolderTemplateModalPage.waitForDisplayed();
+            await FolderTemplateModalPage.setFolder("notes");
+            await FolderTemplateModalPage.setTemplate("templates/default.md");
+            await FolderTemplateModalPage.clickDone();
 
             await expect(
-                TemplaterSettingsPage.settingItemErrorEl,
+                FolderTemplateModalPage.errorMessageEl,
             ).toBeDisplayed();
         });
 
@@ -393,12 +411,47 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Folder templates");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Folder templates",
+            );
             await TemplaterSettingsPage.clickButtonWithText("Delete");
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "folder_templates",
                 [],
+            );
+        });
+
+        it("edits a folder template when the list item is clicked", async () => {
+            await resetVault("test/vault", {
+                "templates/default.md": "Default template",
+                "templates/other.md": "Other template",
+            });
+            await browser.executeObsidian(async ({ app, plugins }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: true,
+                });
+                plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                    "folder";
+                plugins.templaterObsidian.settings.folder_templates = [
+                    { folder: "notes", template: "templates/default.md" },
+                ];
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Folder templates",
+            );
+            await TemplaterSettingsPage.clickSettingRowByName("notes");
+            await FolderTemplateModalPage.waitForDisplayed();
+            await FolderTemplateModalPage.setFolder("journal");
+            await FolderTemplateModalPage.setTemplate("templates/other.md");
+            await FolderTemplateModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "folder_templates",
+                [{ folder: "journal", template: "templates/other.md" }],
             );
         });
     });
@@ -425,18 +478,50 @@ describe("Settings", () => {
             await TemplaterSettingsPage.clickButtonWithText(
                 "Add file regex template",
             );
-            // Inputs use placeholders "File regex" and "Template"; .setting-item-info is hidden
-            await TemplaterSettingsPage.setInputByPlaceholder(
-                "File regex",
-                "notes/.*\\.md",
-            );
-            await TemplaterSettingsPage.setInputByPlaceholder(
-                "Template",
+            await FileRegexTemplateModalPage.waitForDisplayed();
+            await FileRegexTemplateModalPage.setRegex("notes/.*\\.md");
+            await FileRegexTemplateModalPage.setTemplate(
                 "templates/default.md",
             );
+            await FileRegexTemplateModalPage.clickDone();
 
             await TemplaterDataFilePage.expectSettingToEqual("file_templates", [
                 { regex: "notes/.*\\.md", template: "templates/default.md" },
+            ]);
+        });
+
+        it("edits a file regex template when the list item is clicked", async () => {
+            await resetVault("test/vault", {
+                "templates/default.md": "Default template",
+                "templates/other.md": "Other template",
+            });
+            await browser.executeObsidian(async ({ app, plugins }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: true,
+                });
+                plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                    "regex";
+                plugins.templaterObsidian.settings.file_templates = [
+                    {
+                        regex: "notes/.*\\.md",
+                        template: "templates/default.md",
+                    },
+                ];
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "File regex templates",
+            );
+            await TemplaterSettingsPage.clickSettingRowByName("notes/.*\\.md");
+            await FileRegexTemplateModalPage.waitForDisplayed();
+            await FileRegexTemplateModalPage.setRegex("journal/.*\\.md");
+            await FileRegexTemplateModalPage.setTemplate("templates/other.md");
+            await FileRegexTemplateModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual("file_templates", [
+                { regex: "journal/.*\\.md", template: "templates/other.md" },
             ]);
         });
     });
@@ -523,17 +608,22 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Startup templates");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Startup templates",
+            );
             await TemplaterSettingsPage.clickButtonWithText(
                 "Add new startup template",
             );
             await StartupTemplateModalPage.waitForDisplayed();
-            await StartupTemplateModalPage.setTemplatePath("templates/daily.md");
+            await StartupTemplateModalPage.setTemplatePath(
+                "templates/daily.md",
+            );
             await StartupTemplateModalPage.clickDone();
 
-            await TemplaterDataFilePage.expectSettingToEqual("startup_templates", [
-                "templates/daily.md",
-            ]);
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "startup_templates",
+                ["templates/daily.md"],
+            );
         });
 
         it("cancelling does not add a startup template", async () => {
@@ -549,12 +639,16 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Startup templates");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Startup templates",
+            );
             await TemplaterSettingsPage.clickButtonWithText(
                 "Add new startup template",
             );
             await StartupTemplateModalPage.waitForDisplayed();
-            await StartupTemplateModalPage.setTemplatePath("templates/daily.md");
+            await StartupTemplateModalPage.setTemplatePath(
+                "templates/daily.md",
+            );
             await StartupTemplateModalPage.clickCancel();
 
             await TemplaterDataFilePage.expectSettingToEqual(
@@ -578,7 +672,9 @@ describe("Settings", () => {
             });
             await TemplaterSettingsPage.open();
 
-            await TemplaterSettingsPage.clickSettingRowByName("Startup templates");
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Startup templates",
+            );
             await TemplaterSettingsPage.clickButtonWithText("Delete");
 
             await TemplaterDataFilePage.expectSettingToEqual(
@@ -617,14 +713,11 @@ describe("Settings", () => {
     describe("User script intellisense", () => {
         it("updates intellisense_render when a different option is selected", async () => {
             await resetVault("test/vault", {});
-            await browser.executeObsidian(
-                async ({ plugins }, initial) => {
-                    plugins.templaterObsidian.settings.intellisense_render =
-                        initial;
-                    await plugins.templaterObsidian.save_settings();
-                },
-                IntellisenseRenderOption.RenderDescriptionParameterReturn,
-            );
+            await browser.executeObsidian(async ({ plugins }, initial) => {
+                plugins.templaterObsidian.settings.intellisense_render =
+                    initial;
+                await plugins.templaterObsidian.save_settings();
+            }, IntellisenseRenderOption.RenderDescriptionParameterReturn);
             await TemplaterSettingsPage.open();
 
             await TemplaterSettingsPage.selectDropdownOptionByName(
@@ -777,9 +870,10 @@ describe("Settings", () => {
             await SystemCommandModalPage.setSystemCommand("echo hello");
             await SystemCommandModalPage.clickDone();
 
-            await TemplaterDataFilePage.expectSettingToEqual("templates_pairs", [
-                ["myFunc", "echo hello"],
-            ]);
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "templates_pairs",
+                [["myFunc", "echo hello"]],
+            );
         });
 
         it("shows validation error when function name is a duplicate", async () => {

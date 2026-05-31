@@ -10,6 +10,10 @@ declare module "obsidian" {
             key: "templater-local-settings",
         ): Partial<LocalSettings> | undefined;
     }
+
+    interface Setting {
+        setAction?(cb: () => void): this;
+    }
 }
 
 declare module "wdio-obsidian-service" {

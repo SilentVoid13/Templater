@@ -200,6 +200,8 @@ class TemplaterSettingsPage {
                         .getText();
                     if (text === name) {
                         await setting.click();
+                        // eslint-disable-next-line wdio/no-pause -- Need to wait for page transition
+                        await browser.pause(500);
                         return true;
                     }
                 } catch {
