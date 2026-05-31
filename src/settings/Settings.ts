@@ -39,6 +39,7 @@ export interface IgnoreFolderOnCreation {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+    data_version: 2,
     command_timeout: 5,
     templates_folder: "",
     templates_pairs: [],
@@ -58,6 +59,7 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 export interface Settings {
+    data_version: number;
     templates_folder: string;
     syntax_highlighting: boolean;
     syntax_highlighting_mobile: boolean;
@@ -73,6 +75,15 @@ export interface Settings {
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
     intellisense_render: IntellisenseRenderOption;
+}
+
+export function isSettingsV2(obj: unknown): obj is Settings {
+    return !!(
+        obj &&
+        typeof obj === "object" &&
+        "data_version" in obj &&
+        (obj as Record<string, unknown>)["data_version"] === 2
+    );
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
