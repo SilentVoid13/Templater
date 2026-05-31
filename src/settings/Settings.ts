@@ -306,7 +306,17 @@ export class TemplaterSettingTab extends PluginSettingTab {
             items: [
                 {
                     name: "Enable startup templates",
-                    desc: "Enables templates to run automatically when Templater starts.",
+                    desc: createFragment((f) => {
+                        f.append(
+                            "Enables templates to run automatically when Templater starts.",
+                            createEl("br"),
+                            createEl("br"),
+                            createEl("span", {
+                                text: "This setting is stored on this device only and must be enabled separately on each device.",
+                                cls: "mod-warning",
+                            }),
+                        );
+                    }),
                     control: {
                         type: "toggle",
                         key: "enable_startup_templates",
@@ -344,6 +354,12 @@ export class TemplaterSettingTab extends PluginSettingTab {
         triggerDesc.append(
             "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
+            createEl("br"),
+            createEl("br"),
+            createEl("span", {
+                text: "This setting is stored on this device only and must be enabled separately on each device.",
+                cls: "mod-warning",
+            }),
         );
         const modeDescList = createEl("ul");
         modeDescList.appendChild(
@@ -738,7 +754,17 @@ export class TemplaterSettingTab extends PluginSettingTab {
         return [
             {
                 name: "Enable user system command functions",
-                desc: "Allows you to create user functions linked to system commands.",
+                desc: createFragment((f) => {
+                    f.append(
+                        "Allows you to create user functions linked to system commands.",
+                        createEl("br"),
+                        createEl("br"),
+                        createEl("span", {
+                            text: "This setting is stored on this device only and must be enabled separately on each device.",
+                            cls: "mod-warning",
+                        }),
+                    );
+                }),
                 control: {
                     type: "toggle",
                     key: "enable_system_commands",
