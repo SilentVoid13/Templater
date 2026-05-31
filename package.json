@@ -9,6 +9,7 @@
         "typecheck": "tsc --noEmit",
         "lint": "eslint src/",
         "test:lint": "npm run lint",
+        "pretest": "node esbuild.config.mjs production",
         "test": "wdio run ./wdio.conf.mts",
         "docs-dev": "mdbook serve docs",
         "commit": "cz",
