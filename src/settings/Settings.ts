@@ -169,6 +169,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     await this.commitControlValue(key, value);
                 },
             ).open();
+            this.update();
             return;
         }
 

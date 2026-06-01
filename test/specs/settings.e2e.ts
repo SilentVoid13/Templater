@@ -169,6 +169,28 @@ describe("Settings", () => {
             );
         });
 
+        it("cancelling leaves toggle visually off", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Trigger Templater on new file creation",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickCancel();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Trigger Templater on new file creation",
+                false,
+            );
+        });
+
         it("confirming enables trigger_on_file_creation", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(({ app }) => {
@@ -187,6 +209,28 @@ describe("Settings", () => {
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "trigger_on_file_creation",
+                true,
+            );
+        });
+
+        it("confirming shows toggle visually on", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Trigger Templater on new file creation",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickEnable();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Trigger Templater on new file creation",
                 true,
             );
         });
@@ -571,6 +615,28 @@ describe("Settings", () => {
             );
         });
 
+        it("cancelling leaves toggle visually off", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    enable_startup_templates: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Enable startup templates",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickCancel();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Enable startup templates",
+                false,
+            );
+        });
+
         it("confirming enables startup templates", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(({ app }) => {
@@ -589,6 +655,28 @@ describe("Settings", () => {
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "enable_startup_templates",
+                true,
+            );
+        });
+
+        it("confirming shows toggle visually on", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    enable_startup_templates: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Enable startup templates",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickEnable();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Enable startup templates",
                 true,
             );
         });
@@ -773,6 +861,28 @@ describe("Settings", () => {
             );
         });
 
+        it("cancelling leaves toggle visually off", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    enable_system_commands: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Enable user system command functions",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickCancel();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Enable user system command functions",
+                false,
+            );
+        });
+
         it("confirming enables system commands", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(({ app }) => {
@@ -791,6 +901,28 @@ describe("Settings", () => {
 
             await TemplaterDataFilePage.expectSettingToEqual(
                 "enable_system_commands",
+                true,
+            );
+        });
+
+        it("confirming shows toggle visually on", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(({ app }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    enable_system_commands: false,
+                });
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Enable user system command functions",
+            );
+            await ConfirmDangerousSettingModalPage.waitForDisplayed();
+            await ConfirmDangerousSettingModalPage.checkUnderstandRisks();
+            await ConfirmDangerousSettingModalPage.clickEnable();
+
+            await TemplaterSettingsPage.expectToggleValueByName(
+                "Enable user system command functions",
                 true,
             );
         });

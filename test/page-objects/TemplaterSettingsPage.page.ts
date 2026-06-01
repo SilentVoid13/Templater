@@ -37,6 +37,45 @@ class TemplaterSettingsPage {
     }
 
     /**
+     * Polls until the toggle inside a .setting-item whose .setting-item-name
+     * exactly matches the given name reaches the expected state. Reads the
+     * visual state via the .is-enabled class on .checkbox-container, which is
+     * what Obsidian uses to reflect the on/off state rather than checkbox.checked.
+     */
+    async expectToggleValueByName(name: string, expected: boolean) {
+        await browser.waitUntil(() =>
+            browser.execute(
+                (name, expected) => {
+                    const container = activeDocument.querySelector(
+                        ".modal.mod-settings .vertical-tab-content",
+                    );
+                    if (!container) return false;
+                    for (const setting of Array.from(
+                        container.querySelectorAll<HTMLElement>(".setting-item"),
+                    )) {
+                        const nameEl = setting.querySelector(
+                            ".setting-item-name",
+                        );
+                        if (nameEl?.textContent?.trim() === name) {
+                            const checkboxContainer =
+                                setting.querySelector(".checkbox-container");
+                            if (!checkboxContainer) return false;
+                            const isEnabled =
+                                checkboxContainer.classList.contains(
+                                    "is-enabled",
+                                );
+                            return isEnabled === expected;
+                        }
+                    }
+                    return false;
+                },
+                name,
+                expected,
+            ),
+        );
+    }
+
+    /**
      * Click a toggle (checkbox) inside a .setting-item whose .setting-item-name
      * exactly matches the given name.
      */
