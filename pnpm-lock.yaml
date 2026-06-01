@@ -86,7 +86,7 @@ importers:
         version: 9.39.4(jiti@2.6.1)
       eslint-plugin-obsidianmd:
         specifier: latest
-        version: 0.3.0(@eslint/js@9.39.4)(@eslint/json@0.14.0)(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))(eslint@9.39.4(jiti@2.6.1))(obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(typescript-eslint@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))
+        version: 0.3.0(@eslint/js@9.39.4)(@eslint/json@0.14.0)(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))(eslint@9.39.4(jiti@2.6.1))(obsidian@1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(typescript-eslint@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))
       eslint-plugin-wdio:
         specifier: ^9.16.2
         version: 9.27.0(eslint@9.39.4(jiti@2.6.1))(globals@16.5.0)(typescript-eslint@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))
@@ -100,8 +100,8 @@ importers:
         specifier: ^2.29.4
         version: 2.30.1
       obsidian:
-        specifier: obsidianmd/obsidian-api#cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be
-        version: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
+        specifier: 1.13.0
+        version: 1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
       standard-version:
         specifier: ^9.5.0
         version: 9.5.0
@@ -122,7 +122,7 @@ importers:
         version: 2.4.0
       wdio-obsidian-service:
         specifier: ^2.1.6
-        version: 2.4.0(obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(webdriverio@9.27.0)
+        version: 2.4.0(obsidian@1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(webdriverio@9.27.0)
       webdriverio:
         specifier: ^9.20.0
         version: 9.27.0
@@ -1906,7 +1906,6 @@ packages:
 
   eslint-plugin-obsidianmd@0.3.0:
     resolution: {integrity: sha512-QvGDI6B2nxJBrsZKGTg31da2A/fEJNlnwN+fRZkaoPIu1QL3fYXUdpP7ThyMdr/0iTYQxifb9lt2X9cpydQx1w==}
-    version: 0.3.0
     engines: {node: '>= 18'}
     hasBin: true
     peerDependencies:
@@ -3108,9 +3107,8 @@ packages:
     engines: {node: '>=18.20.0'}
     hasBin: true
 
-  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be:
-    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be}
-    version: 1.13.0
+  obsidian@1.13.0:
+    resolution: {integrity: sha512-PHw5+SAPlJ0S3leFvJ0wgFg63Z3DavxL6+d1ll+8toXR2ZlYKc1rMWqdUv9LgUbTwPQUyY6yfhOMMivampRRiQ==}
     peerDependencies:
       '@codemirror/state': 6.5.0
       '@codemirror/view': 6.38.6
@@ -4031,7 +4029,6 @@ packages:
 
   wdio-obsidian-service@2.4.0:
     resolution: {integrity: sha512-n7PSEbwDyiG5zm64PLJ2Gss7L/0lazkt7uUJOsLVXUsCaYlzoJR28MJK7RrXJPtcIaNHZ0CzBeUA5M5iWlDOJA==}
-    version: 2.4.0
     engines: {node: '>=18.20.0'}
     peerDependencies:
       appium: '>=2.19.0'
@@ -6345,7 +6342,7 @@ snapshots:
     dependencies:
       eslint: 9.39.4(jiti@2.6.1)
 
-  eslint-plugin-obsidianmd@0.3.0(@eslint/js@9.39.4)(@eslint/json@0.14.0)(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))(eslint@9.39.4(jiti@2.6.1))(obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(typescript-eslint@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5)):
+  eslint-plugin-obsidianmd@0.3.0(@eslint/js@9.39.4)(@eslint/json@0.14.0)(@typescript-eslint/parser@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5))(eslint@9.39.4(jiti@2.6.1))(obsidian@1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(typescript-eslint@8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5)):
     dependencies:
       '@eslint/config-helpers': 0.4.2
       '@eslint/js': 9.39.4
@@ -6362,7 +6359,7 @@ snapshots:
       eslint-plugin-no-unsanitized: 4.1.5(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-security: 2.1.1
       globals: 14.0.0
-      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
+      obsidian: 1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
       semver: 7.7.4
       typescript: 5.4.5
       typescript-eslint: 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5)
@@ -7724,7 +7721,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6):
+  obsidian@1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6):
     dependencies:
       '@codemirror/state': 6.5.0
       '@codemirror/view': 6.38.6
@@ -8747,10 +8744,10 @@ snapshots:
       '@wdio/reporter': 9.27.0
       '@wdio/spec-reporter': 9.27.0
 
-  wdio-obsidian-service@2.4.0(obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(webdriverio@9.27.0):
+  wdio-obsidian-service@2.4.0(obsidian@1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6))(webdriverio@9.27.0):
     dependencies:
       lodash: 4.17.21
-      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/cf9ef454f6e0fa0f1f275b3e51991dfc557cc7be(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
+      obsidian: 1.13.0(@codemirror/state@6.5.0)(@codemirror/view@6.38.6)
       obsidian-launcher: 2.4.0
       semver: 7.7.4
       tar: 7.5.13
