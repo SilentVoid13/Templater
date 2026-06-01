@@ -1,4 +1,5 @@
 import { DEFAULT_SETTINGS, type Settings } from "./Settings";
+import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
 import { isSettingsV1, type SettingsV1 } from "./SettingsV1";
 
 export interface MigrationResult {
@@ -61,6 +62,12 @@ function migrateV1ToV2(v1: SettingsV1): MigrationResult {
             v1.ignore_folders_on_creation ?? []
         ).filter((f) => f.folder),
     });
+
+    if (typeof (v1.intellisense_render as unknown) === "number") {
+        settings.intellisense_render = String(
+            v1.intellisense_render,
+        ) as IntellisenseRenderOption;
+    }
 
     for (const k of [
         "trigger_on_file_creation",

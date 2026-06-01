@@ -51,14 +51,6 @@ export class TemplateHotkeysPage extends SettingPage {
         this.containerEl.empty();
         this.loadTemplates();
 
-        new Setting(this.containerEl).setHeading().addExtraButton((cb) => {
-            cb.setIcon("sync")
-                .setTooltip("Reload templates")
-                .onClick(() => {
-                    this.display();
-                });
-        });
-
         if (!this.plugin.settings.templates_folder) {
             new Setting(this.containerEl)
                 .setName(

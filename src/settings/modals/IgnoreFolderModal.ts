@@ -1,4 +1,4 @@
-import { App, ButtonComponent, Modal } from "obsidian";
+import { App, ButtonComponent, Modal, Setting } from "obsidian";
 import { FolderSuggest } from "settings/suggesters/FolderSuggester";
 
 export class IgnoreFolderModal extends Modal {
@@ -17,23 +17,26 @@ export class IgnoreFolderModal extends Modal {
 
         this.modalEl.addClass("templater-ignore-folder-modal");
 
-        const input = contentEl.createEl("input", { type: "text" });
-        new FolderSuggest(this.app, input);
-        input.addEventListener("input", () => {
-            this.folder = input.value;
-        });
-
-        contentEl.createEl("p", {
+        const folderSetting = new Setting(contentEl)
+            .setName("Folder")
             // eslint-disable-next-line obsidianmd/ui/sentence-case -- This is sentence case, the e.g. is throwing off the linter
-            text: "Enter a path, e.g. meta/templates",
-            cls: "setting-item-description",
-        });
+            .setDesc("Enter a path, e.g. meta/templates")
+            .addText((cb) => {
+                new FolderSuggest(this.app, cb.inputEl);
+                cb.onChange((value) => {
+                    this.folder = value;
+                });
+            });
 
         const buttonContainer = contentEl.createDiv("modal-button-container");
         new ButtonComponent(buttonContainer)
             .setButtonText("Done")
             .setCta()
             .onClick(async () => {
+                if (!this.folder) {
+                    folderSetting.setErrorMessage("Folder cannot be empty");
+                    return;
+                }
                 await this.onSubmit(this.folder);
                 this.close();
             });

@@ -3,6 +3,7 @@ import {
     type SettingDefinitionItem,
     type SettingDefinitionList,
     type SettingGroupItem,
+    debounce,
     PluginSettingTab,
 } from "obsidian";
 import { arraymove } from "utils/Utils";
@@ -109,6 +110,11 @@ export class TemplaterSettingTab extends PluginSettingTab {
             },
             true,
         );
+
+        const refresh = debounce(() => this.update(), 200, true);
+        plugin.registerEvent(this.app.vault.on("create", refresh));
+        plugin.registerEvent(this.app.vault.on("delete", refresh));
+        plugin.registerEvent(this.app.vault.on("rename", refresh));
     }
 
     private isLocalSettingsKey(key: string): key is keyof LocalSettings {
@@ -163,7 +169,6 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     await this.commitControlValue(key, value);
                 },
             ).open();
-            this.update();
             return;
         }
 
@@ -399,7 +404,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         folderTriggerDesc.append(
             "If there is a match, Templater will apply the corresponding template to the new file.",
             folderTriggerDesc.createEl("br"),
-            "Folder templates are processed in order, so if a file matches multiple folder templates, only the first match will be applied.",
+            "The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.",
             folderTriggerDesc.createEl("br"),
             "Add a rule for ",
             folderTriggerDesc.createEl("code", { text: "/" }),

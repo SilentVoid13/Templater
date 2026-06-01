@@ -188,27 +188,36 @@ class TemplaterSettingsPage {
      * .setting-item-name exactly matches the given name. Headings are excluded
      * so that groups whose heading shares a name with a page item (e.g.
      * "Startup templates") don't accidentally intercept the click.
+     *
+     * Uses browser.execute to perform the query and click atomically inside the
+     * browser, avoiding stale-element errors from Obsidian re-rendering the
+     * settings DOM between WebDriver round-trips.
      */
     async clickSettingRowByName(name: string) {
         await browser.waitUntil(async () => {
-            for await (const setting of this.settingsContentEl.$$(
-                ".setting-item:not(.setting-item-heading)",
-            )) {
-                try {
-                    const text = await setting
-                        .$(".setting-item-name")
-                        .getText();
-                    if (text === name) {
-                        await setting.click();
-                        // eslint-disable-next-line wdio/no-pause -- Need to wait for page transition
-                        await browser.pause(500);
+            const clicked = await browser.execute((name) => {
+                const container = activeDocument.querySelector(
+                    ".modal.mod-settings .vertical-tab-content",
+                );
+                if (!container) return false;
+                for (const setting of Array.from(
+                    container.querySelectorAll<HTMLElement>(
+                        ".setting-item:not(.setting-item-heading)",
+                    ),
+                )) {
+                    const nameEl = setting.querySelector(".setting-item-name");
+                    if (nameEl?.textContent?.trim() === name) {
+                        setting.click();
                         return true;
                     }
-                } catch {
-                    continue;
                 }
+                return false;
+            }, name);
+            if (clicked) {
+                // eslint-disable-next-line wdio/no-pause -- Need to wait for page transition
+                await browser.pause(500);
             }
-            return false;
+            return clicked;
         });
     }
 }

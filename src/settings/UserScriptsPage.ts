@@ -22,7 +22,6 @@ export class UserScriptsPage extends SettingPage {
         super();
         this.pluginSettingTab = pluginSettingTab;
         this.plugin = plugin;
-        this.loadUserScripts();
     }
 
     loadUserScripts() {
@@ -48,18 +47,11 @@ export class UserScriptsPage extends SettingPage {
 
     display(): void {
         this.containerEl.empty();
+        this.loadUserScripts();
 
         if (this.plugin.settings.user_scripts_folder) {
             new Setting(this.containerEl)
                 .setHeading()
-                .addExtraButton((cb) => {
-                    cb.setIcon("sync")
-                        .setTooltip("Reload user scripts")
-                        .onClick(() => {
-                            this.loadUserScripts();
-                            this.pluginSettingTab.update();
-                        });
-                })
                 .addExtraButton((cb) => {
                     cb.setIcon("folder")
                         .setTooltip("Open user scripts folder")

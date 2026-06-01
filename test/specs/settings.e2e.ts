@@ -685,8 +685,8 @@ describe("Settings", () => {
     });
 
     describe("User scripts", () => {
-        it("shows newly created script after clicking refresh", async () => {
-            await resetVault("test/vault", {});
+        it("shows newly created script after vault event", async () => {
+            await resetVault("test/vault");
             await TemplaterSettingsPage.open();
 
             await TemplaterSettingsPage.clickSettingRowByName("User scripts");
@@ -697,10 +697,6 @@ describe("Settings", () => {
                     "module.exports = function() { return 'hello'; }",
                 );
             });
-
-            await TemplaterSettingsPage.clickButtonWithText(
-                "Reload user scripts",
-            );
 
             await expect(
                 TemplaterSettingsPage.settingsContentEl.$(

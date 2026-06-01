@@ -1,4 +1,5 @@
 {
+  "data_version": 2,
   "command_timeout": 5,
   "templates_folder": "templates",
   "templates_pairs": [],
@@ -12,6 +13,6 @@
   "syntax_highlighting_mobile": true,
   "enabled_templates_hotkeys": [],
   "startup_templates": [],
-  "intellisense_render": 1,
+  "intellisense_render": "1",
   "ignore_folders_on_creation": []
 }

@@ -28,7 +28,7 @@ Once `Trigger Templater on new file creation` is enabled, the following settings
 
 Shown when `Template matching mode` is set to **Folder templates**.
 
-You can specify a template that will automatically be used on a selected folder and its children. Folder templates are processed in order, so if a file matches multiple folder templates, only the first match will be applied.
+You can specify a template that will automatically be used on a selected folder and its children. The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.
 
 Add a rule for "`/`" if you need a catch-all.
 

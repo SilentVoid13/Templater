@@ -256,6 +256,20 @@ describe("Migration", () => {
             });
         });
 
+        it("removes enable_system_commands from data.json after migration", async () => {
+            await resetVault("test/vault", {});
+            await seedLegacyDataAndMigrate({ enable_system_commands: true });
+
+            await browser.waitUntil(async () => {
+                const raw = await obsidianPage.read(
+                    // eslint-disable-next-line obsidianmd/hardcoded-config-path -- test only
+                    ".obsidian/plugins/templater-obsidian/data.json",
+                );
+                const data = JSON.parse(raw) as Record<string, unknown>;
+                return !("enable_system_commands" in data);
+            });
+        });
+
         it("does not show a notice when startup_templates contains only empty placeholders", async () => {
             await resetVault("test/vault", {});
             await seedLegacyDataAndMigrate({ startup_templates: [""] });
