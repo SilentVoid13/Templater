@@ -13,7 +13,7 @@ export const config: WebdriverIO.Config = {
     runner: "local",
     framework: "mocha",
     specs: ["./test/specs/**/*.e2e.ts"],
-    maxInstances: 1,
+    maxInstances: 5,
     capabilities: desktopVersions.map<WebdriverIO.Capabilities>(
         ([appVersion, installerVersion]) => ({
             browserName: "obsidian",
