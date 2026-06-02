@@ -1,0 +1,52 @@
+class FolderTemplateModal {
+    get modalEl() {
+        return browser.$(".templater-folder-template-modal");
+    }
+
+    get folderInputEl() {
+        return this.modalEl.$(".setting-item:first-child input[type='text']");
+    }
+
+    get templateInputEl() {
+        return this.modalEl.$(".setting-item:nth-child(2) input[type='text']");
+    }
+
+    get doneBtnEl() {
+        return this.modalEl.$("button.mod-cta");
+    }
+
+    get cancelBtnEl() {
+        return this.modalEl.$("button:not(.mod-cta)");
+    }
+
+    get errorMessageEl() {
+        return this.modalEl.$(".setting-item-error");
+    }
+
+    async waitForDisplayed() {
+        await this.modalEl.waitForDisplayed();
+    }
+
+    async setFolder(path: string) {
+        await this.folderInputEl.clearValue();
+        await this.folderInputEl.addValue(path);
+        await browser.execute((el) => el.blur(), await this.folderInputEl);
+    }
+
+    async setTemplate(path: string) {
+        await this.templateInputEl.clearValue();
+        await this.templateInputEl.addValue(path);
+        await browser.execute((el) => el.blur(), await this.templateInputEl);
+    }
+
+    async clickDone() {
+        await this.doneBtnEl.click();
+    }
+
+    async clickCancel() {
+        await this.cancelBtnEl.click();
+        await this.modalEl.waitForDisplayed({ reverse: true });
+    }
+}
+
+export default new FolderTemplateModal();

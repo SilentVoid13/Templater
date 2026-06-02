@@ -5,6 +5,7 @@ import {
 } from "wdio-obsidian-service";
 import { Key } from "webdriverio";
 import NoticePage from "../page-objects/Notice.page";
+import TemplaterSettingsPage from "../page-objects/TemplaterSettingsPage.page";
 
 /**
  * Updates the vault by modifying files in place without reloading Obsidian. Can be used to reset the vault back to
@@ -46,6 +47,7 @@ export async function resetVault(
     await obsidianPage.resetVault(...vaults);
     await obsidianPage.loadWorkspaceLayout("empty");
     await NoticePage.dismissAll();
+    await TemplaterSettingsPage.close();
     // Close any open modals/menus
     await browser.keys(Key.Escape);
     await browser.keys(Key.Escape);

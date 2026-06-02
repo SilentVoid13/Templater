@@ -120,6 +120,25 @@ Run mode: 3`;
     // Deprecated, do not need to test this functionality
     it.skip("reports correct config on dynamic processor", () => {});
 
+    it("startup templates do not run when enable_startup_templates is disabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.config.md":
+                "<%*\nnew Notice('Startup template ran')\n%>",
+        });
+        await browser.executeObsidian(async ({ app, plugins }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                enable_startup_templates: false,
+            });
+            plugins.templaterObsidian.settings.startup_templates = [
+                "templates/tp.config.md",
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await browser.reloadObsidian();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await NoticePage.expectNoErrorNotice();
+    });
+
     it("tp.config reports correct config on startup template with no active file", async () => {
         await resetVault("test/vault", {
             "templates/tp.config.md":
@@ -130,7 +149,10 @@ Run mode: 3`;
                 "Run mode: ${tp.config.run_mode}`)\n" +
                 "%>",
         });
-        await browser.executeObsidian(async ({ plugins }) => {
+        await browser.executeObsidian(async ({ app, plugins }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                enable_startup_templates: true,
+            });
             plugins.templaterObsidian.settings.startup_templates = [
                 "templates/tp.config.md",
             ];
@@ -156,7 +178,10 @@ Run mode: 5`;
                 "%>",
             "notes/note.md": "\n",
         });
-        await browser.executeObsidian(async ({ plugins }) => {
+        await browser.executeObsidian(async ({ app, plugins }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                enable_startup_templates: true,
+            });
             plugins.templaterObsidian.settings.startup_templates = [
                 "templates/tp.config.md",
             ];

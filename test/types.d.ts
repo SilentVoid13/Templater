@@ -1,3 +1,4 @@
+import { LocalSettings } from "settings/LocalSettings";
 import type TemplaterPlugin from "../src/main";
 
 declare module "obsidian" {
@@ -5,6 +6,13 @@ declare module "obsidian" {
         plugins: {
             getPlugin(id: "templater-obsidian"): TemplaterPlugin | null;
         };
+        loadLocalStorage(
+            key: "templater-local-settings",
+        ): Partial<LocalSettings> | undefined;
+    }
+
+    interface Setting {
+        setAction?(cb: () => void): this;
     }
 }
 

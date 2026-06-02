@@ -22,7 +22,7 @@ import {
 } from "obsidian";
 
 export function delay(ms: number): Promise<void> {
-    return new Promise((resolve) => activeWindow.setTimeout(resolve, ms));
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 export function escape_RegExp(str: string): string {
@@ -67,7 +67,7 @@ export function resolve_tfile(app: App, file_str: string): TFile {
 
 export function get_tfiles_from_folder(
     app: App,
-    folder_str: string
+    folder_str: string,
 ): Array<TFile> {
     const folder = resolve_tfolder(app, folder_str);
 
@@ -87,7 +87,7 @@ export function get_tfiles_from_folder(
 
 export async function populate_docs_from_user_scripts(
     app: App,
-    files: Array<TFile>
+    files: Array<TFile>,
 ): Promise<TJDocFile[]> {
     const docFiles = await Promise.all(
         files.map(async (file) => {
@@ -97,7 +97,7 @@ export async function populate_docs_from_user_scripts(
             const newDocFile = generate_jsdoc(file, content);
 
             return newDocFile;
-        })
+        }),
     );
 
     return docFiles;
@@ -112,13 +112,13 @@ function generate_jsdoc(file: TFile, content: string): TJDocFile {
     const newDocFile = new TJDocFile(file);
 
     newDocFile.description = generate_jsdoc_description(
-        parsedDoc.docComment.summarySection
+        parsedDoc.docComment.summarySection,
     );
     newDocFile.returns = generate_jsdoc_return(
-        parsedDoc.docComment.returnsBlock
+        parsedDoc.docComment.returnsBlock,
     );
     newDocFile.arguments = generate_jsdoc_arguments(
-        parsedDoc.docComment.params
+        parsedDoc.docComment.params,
     );
 
     return newDocFile;
@@ -131,11 +131,11 @@ function generate_jsdoc_description(summarySection: DocSection): string {
                 .getChildNodes()
                 .filter((node: DocNode) => node instanceof DocPlainText)
                 .map((x: DocPlainText) => x.text)
-                .join("\n")
+                .join("\n"),
         );
 
         return description.join("\n");
-    } catch (_error) {
+    } catch {
         console.error("Failed to parse summary section");
         return "";
     }
@@ -156,7 +156,7 @@ function generate_jsdoc_return(returnSection: DocBlock | undefined): string {
 }
 
 function generate_jsdoc_arguments(
-    paramSection: DocParamCollection
+    paramSection: DocParamCollection,
 ): TJDocFileArgument[] {
     try {
         const blocks = paramSection.blocks;
@@ -172,7 +172,7 @@ function generate_jsdoc_arguments(
         });
 
         return args;
-    } catch (_error) {
+    } catch {
         return [];
     }
 }
@@ -180,14 +180,13 @@ function generate_jsdoc_arguments(
 export function arraymove<T>(
     arr: T[],
     fromIndex: number,
-    toIndex: number
+    toIndex: number,
 ): void {
     if (toIndex < 0 || toIndex === arr.length) {
         return;
     }
-    const element = arr[fromIndex];
-    arr[fromIndex] = arr[toIndex];
-    arr[toIndex] = element;
+    const element = arr.splice(fromIndex, 1)[0];
+    arr.splice(toIndex, 0, element);
 }
 
 export function get_active_file(app: App) {
@@ -229,7 +228,7 @@ export function get_fn_params(func: (...args: unknown[]) => unknown) {
 export function append_bolded_label_with_value_to_parent(
     parent: HTMLElement,
     title: string,
-    value: string
+    value: string,
 ): HTMLElement {
     const tag = parent.instanceOf(HTMLOListElement) ? "li" : "p";
 
@@ -250,7 +249,7 @@ export function append_bolded_label_with_value_to_parent(
  */
 export function merge_objects(
     target: Record<string, unknown>,
-    source: Record<string, unknown>
+    source: Record<string, unknown>,
 ) {
     if (Object.keys(source).length === 0) return;
     for (const key in source) {
@@ -289,7 +288,10 @@ export function get_frontmatter_and_content(content: string) {
     const front_matter_info = getFrontMatterInfo(content);
     if (front_matter_info.frontmatter) {
         try {
-            frontmatter = parseYaml(front_matter_info.frontmatter) as Record<string, unknown>;
+            frontmatter = parseYaml(front_matter_info.frontmatter) as Record<
+                string,
+                unknown
+            >;
         } catch {
             // Invalid YAML — preserve full content as body with no frontmatter merging
             return { frontmatter, content };

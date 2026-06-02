@@ -3,6 +3,7 @@ import { RunningConfig } from "core/Templater";
 import { IGenerateObject } from "../IGenerateObject";
 import { UserSystemFunctions } from "./UserSystemFunctions";
 import { UserScriptFunctions } from "./UserScriptFunctions";
+import { getLocalSettings } from "settings/LocalSettings";
 
 export class UserFunctions implements IGenerateObject {
     private user_system_functions: UserSystemFunctions;
@@ -19,7 +20,7 @@ export class UserFunctions implements IGenerateObject {
         let user_system_functions = {};
         let user_script_functions = {};
 
-        if (this.plugin.settings.enable_system_commands) {
+        if (getLocalSettings(this.plugin.app).enable_system_commands) {
             user_system_functions =
                 await this.user_system_functions.generate_object(config);
         }

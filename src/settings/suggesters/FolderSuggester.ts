@@ -1,4 +1,4 @@
-import { AbstractInputSuggest, App, TAbstractFile, TFolder } from "obsidian";
+import { AbstractInputSuggest, App, TFolder } from "obsidian";
 
 export class FolderSuggest extends AbstractInputSuggest<TFolder> {
     constructor(
@@ -9,18 +9,12 @@ export class FolderSuggest extends AbstractInputSuggest<TFolder> {
     }
 
     getSuggestions(inputStr: string): TFolder[] {
-        const abstractFiles = this.app.vault.getAllLoadedFiles();
-        const folders: TFolder[] = [];
         const lowerCaseInputStr = inputStr.toLowerCase();
-
-        abstractFiles.forEach((folder: TAbstractFile) => {
-            if (
-                folder instanceof TFolder &&
-                folder.path.toLowerCase().includes(lowerCaseInputStr)
-            ) {
-                folders.push(folder);
-            }
-        });
+        const folders = this.app.vault
+            .getAllFolders()
+            .filter((folder) =>
+                folder.path.toLowerCase().includes(lowerCaseInputStr),
+            );
 
         return folders.slice(0, 1000);
     }

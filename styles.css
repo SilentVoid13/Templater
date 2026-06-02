@@ -1,67 +1,6 @@
-.templater_search {
-    width: calc(100% - 20px);
-}
-
-.templater_div {
-    border-top: 1px solid var(--background-modifier-border);
-}
-
-.templater_div > .setting-item {
-    border-top: none !important;
-    align-self: center;
-}
-
-.templater_div > .setting-item > .setting-item-control {
-    justify-content: space-around;
-    padding: 0;
-    width: 100%;
-}
-
-.templater_div
-    > .setting-item
-    > .setting-item-control
-    > .setting-editor-extra-setting-button {
-    align-self: center;
-}
-
-.templater_donating {
-    margin: 10px;
-}
-
-.templater_title {
-    margin: 0;
-    padding: 0;
-    margin-top: 5px;
-    text-align: center;
-}
-
-.templater_template {
-    align-self: center;
-    margin-left: 5px;
-    margin-right: 5px;
-    width: 70%;
-}
-
-.templater_cmd {
-    margin-left: 5px;
-    margin-right: 5px;
-    font-size: 14px;
-    width: 100%;
-}
-
-.templater_div2 > .setting-item {
-    align-content: center;
-    justify-content: center;
-}
-
 .templater-prompt-div,
 .templater-multisuggester-div {
     display: flex;
-}
-
-.templater-prompt-form {
-    display: flex;
-    flex-grow: 1;
 }
 
 .templater-prompt-input,
@@ -78,6 +17,11 @@
 
 textarea.templater-prompt-input {
     height: 10rem;
+}
+
+.templater-ignore-folder-modal .modal-content input[type="text"],
+.templater-startup-template-modal .modal-content input[type="text"] {
+    width: 100%;
 }
 
 textarea.templater-prompt-input:focus {

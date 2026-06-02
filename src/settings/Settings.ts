@@ -1,11 +1,29 @@
 import TemplaterPlugin from "main";
-import { ButtonComponent, PluginSettingTab, Setting } from "obsidian";
-import { errorWrapperSync, TemplaterError } from "utils/Error";
-import { log_error } from "utils/Log";
-import { arraymove, get_tfiles_from_folder } from "utils/Utils";
-import { FileSuggest, FileSuggestMode } from "./suggesters/FileSuggester";
-import { FolderSuggest } from "./suggesters/FolderSuggester";
+import {
+    type SettingDefinitionItem,
+    type SettingDefinitionList,
+    type SettingGroupItem,
+    debounce,
+    PluginSettingTab,
+} from "obsidian";
+import { arraymove } from "utils/Utils";
+import { ConfirmDangerousSettingModal } from "./modals/ConfirmDangerousSettingModal";
+import { FileRegexTemplateModal } from "./modals/FileRegexTemplateModal";
+import { FolderTemplateModal } from "./modals/FolderTemplateModal";
+import { IgnoreFolderModal } from "./modals/IgnoreFolderModal";
+import { StartupTemplateModal } from "./modals/StartupTemplateModal";
+import { SystemCommandModal } from "./modals/SystemCommandModal";
 import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
+import {
+    DEFAULT_LOCAL_SETTINGS,
+    type LocalSettings,
+    getLocalSettings,
+    saveLocalSetting,
+} from "./LocalSettings";
+import { set } from "utils/set";
+import { get, type Paths } from "utils/get";
+import { TemplateHotkeysPage } from "./TemplateHotkeysPage";
+import { UserScriptsPage } from "./UserScriptsPage";
 
 export interface FolderTemplate {
     folder: string;
@@ -22,46 +40,51 @@ export interface IgnoreFolderOnCreation {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+    data_version: 2,
     command_timeout: 5,
     templates_folder: "",
-    templates_pairs: [["", ""]],
-    trigger_on_file_creation: false,
+    templates_pairs: [],
+    trigger_on_file_creation_mode: "none",
     auto_jump_to_cursor: false,
-    enable_system_commands: false,
     shell_path: "",
     user_scripts_folder: "",
-    enable_folder_templates: true,
-    folder_templates: [{ folder: "", template: "" }],
-    enable_file_templates: false,
-    file_templates: [{ regex: ".*", template: "" }],
+    folder_templates: [],
+    file_templates: [],
     syntax_highlighting: true,
     syntax_highlighting_mobile: false,
-    enabled_templates_hotkeys: [""],
-    startup_templates: [""],
+    enabled_templates_hotkeys: [],
+    startup_templates: [],
     intellisense_render:
         IntellisenseRenderOption.RenderDescriptionParameterReturn,
-    ignore_folders_on_creation: [{ folder: "" }],
+    ignore_folders_on_creation: [],
 };
 
 export interface Settings {
-    command_timeout: number;
+    data_version: number;
     templates_folder: string;
-    templates_pairs: Array<[string, string]>;
-    trigger_on_file_creation: boolean;
-    auto_jump_to_cursor: boolean;
-    enable_system_commands: boolean;
-    shell_path: string;
-    user_scripts_folder: string;
-    enable_folder_templates: boolean;
-    folder_templates: Array<FolderTemplate>;
-    enable_file_templates: boolean;
-    file_templates: Array<FileTemplate>;
     syntax_highlighting: boolean;
     syntax_highlighting_mobile: boolean;
+    auto_jump_to_cursor: boolean;
+    trigger_on_file_creation_mode: "none" | "folder" | "regex";
+    folder_templates: Array<FolderTemplate>;
+    file_templates: Array<FileTemplate>;
+    ignore_folders_on_creation: Array<IgnoreFolderOnCreation>;
+    command_timeout: number;
+    templates_pairs: Array<[string, string]>;
+    shell_path: string;
+    user_scripts_folder: string;
     enabled_templates_hotkeys: Array<string>;
     startup_templates: Array<string>;
-    intellisense_render: number;
-    ignore_folders_on_creation: Array<IgnoreFolderOnCreation>;
+    intellisense_render: IntellisenseRenderOption;
+}
+
+export function isSettingsV2(obj: unknown): obj is Settings {
+    return !!(
+        obj &&
+        typeof obj === "object" &&
+        "data_version" in obj &&
+        (obj as Record<string, unknown>)["data_version"] === 2
+    );
 }
 
 export class TemplaterSettingTab extends PluginSettingTab {
@@ -69,1027 +92,803 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
     constructor(private plugin: TemplaterPlugin) {
         super(plugin.app, plugin);
-    }
-
-    display(): void {
-        this.containerEl.empty();
-
-        this.add_template_folder_setting();
-        this.add_internal_functions_setting();
-        this.add_syntax_highlighting_settings();
-        this.add_auto_jump_to_cursor();
-        this.add_trigger_on_new_file_creation_setting();
-        if (this.plugin.settings.trigger_on_file_creation) {
-            this.add_ignore_folders_on_creation_setting();
-            this.add_folder_templates_setting();
-            this.add_file_templates_setting();
-        }
-        this.add_templates_hotkeys_setting();
-        this.add_startup_templates_setting();
-        this.add_user_script_functions_setting();
-        this.add_user_system_command_functions_setting();
-    }
-
-    add_template_folder_setting(): void {
-        new Setting(this.containerEl)
-            .setName("Template folder location")
-            .setDesc("Files in this folder will be available as templates.")
-            .addSearch((cb) => {
-                new FolderSuggest(this.app, cb.inputEl);
-                cb.setPlaceholder("Example: folder1/folder2")
-                    .setValue(this.plugin.settings.templates_folder)
-                    .onChange(async (new_folder) => {
-                        // Trim folder and Strip ending slash if there
-                        new_folder = new_folder.trim();
-                        new_folder = new_folder.replace(/\/$/, "");
-
-                        this.plugin.settings.templates_folder = new_folder;
-                        await this.plugin.save_settings();
-                    });
-                cb.containerEl.addClass("templater_search");
-            });
-    }
-
-    add_internal_functions_setting(): void {
-        const desc = createFragment();
-        desc.append(
-            "Templater provides multiples predefined variables / functions that you can use.",
-            desc.createEl("br"),
-            "Check the ",
-            desc.createEl("a", {
-                href: "https://silentvoid13.github.io/Templater/",
-                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
-                text: "documentation",
-            }),
-            " to get a list of all the available internal variables / functions.",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Internal variables and functions")
-            .setDesc(desc);
-    }
-
-    add_syntax_highlighting_settings(): void {
-        const desktopDesc = createFragment();
-        desktopDesc.append(
-            "Adds syntax highlighting for Templater commands in edit mode.",
-        );
-
-        const mobileDesc = createFragment();
-        mobileDesc.append(
-            "Adds syntax highlighting for Templater commands in edit mode on " +
-                "mobile. Use with caution: this may break live preview on mobile " +
-                "platforms.",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Syntax highlighting on desktop")
-            .setDesc(desktopDesc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.syntax_highlighting)
-                    .onChange(async (syntax_highlighting) => {
-                        this.plugin.settings.syntax_highlighting =
-                            syntax_highlighting;
-                        await this.plugin.save_settings();
-                        await this.plugin.event_handler.update_syntax_highlighting();
-                    });
-            });
-
-        new Setting(this.containerEl)
-            .setName("Syntax highlighting on mobile")
-            .setDesc(mobileDesc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.syntax_highlighting_mobile)
-                    .onChange(async (syntax_highlighting_mobile) => {
-                        this.plugin.settings.syntax_highlighting_mobile =
-                            syntax_highlighting_mobile;
-                        await this.plugin.save_settings();
-                        await this.plugin.event_handler.update_syntax_highlighting();
-                    });
-            });
-    }
-
-    add_auto_jump_to_cursor(): void {
-        const desc = createFragment();
-        desc.append(
-            "Automatically triggers ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
-            desc.createEl("code", { text: "tp.file.cursor" }),
-            " after inserting a template.",
-            desc.createEl("br"),
-            "You can also set a hotkey to manually trigger ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
-            desc.createEl("code", { text: "tp.file.cursor" }),
-            ".",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Automatic jump to cursor")
-            .setDesc(desc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.auto_jump_to_cursor)
-                    .onChange(async (auto_jump_to_cursor) => {
-                        this.plugin.settings.auto_jump_to_cursor =
-                            auto_jump_to_cursor;
-                        await this.plugin.save_settings();
-                    });
-            });
-    }
-
-    add_trigger_on_new_file_creation_setting(): void {
-        const desc = createFragment();
-        desc.append(
-            "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
-            "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
-            desc.createEl("br"),
-            desc.createEl("br"),
-            "Make sure to set up rules under either folder templates or file regex template below.",
-            desc.createEl("br"),
-            desc.createEl("br"),
-            desc.createEl("b", {
-                text: "Warning: ",
-            }),
-            "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.",
-        );
-
-        new Setting(this.containerEl)
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- "Templater" is a proper noun requiring capitalization
-            .setName("Trigger Templater on new file creation")
-            .setDesc(desc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.trigger_on_file_creation)
-                    .onChange(async (trigger_on_file_creation) => {
-                        this.plugin.settings.trigger_on_file_creation =
-                            trigger_on_file_creation;
-                        await this.plugin.save_settings();
-                        this.plugin.event_handler.update_trigger_file_on_creation();
-                        // Force refresh
-                        this.display();
-                    });
-            });
-    }
-
-    add_templates_hotkeys_setting(): void {
-        new Setting(this.containerEl).setName("Template hotkeys").setHeading();
-
-        const desc = createFragment();
-        desc.append(
-            "Template hotkeys allows you to bind a template to a hotkey.",
-        );
-
-        new Setting(this.containerEl).setDesc(desc);
-
-        this.plugin.settings.enabled_templates_hotkeys.forEach(
-            (template, index) => {
-                const s = new Setting(this.containerEl)
-                    .addSearch((cb) => {
-                        new FileSuggest(
-                            cb.inputEl,
-                            this.plugin,
-                            FileSuggestMode.TemplateFiles,
-                        );
-                        cb.setPlaceholder("Example: folder1/template_file")
-                            .setValue(template)
-                            .onChange(async (new_template) => {
-                                if (
-                                    new_template &&
-                                    this.plugin.settings.enabled_templates_hotkeys.contains(
-                                        new_template,
-                                    )
-                                ) {
-                                    log_error(
-                                        new TemplaterError(
-                                            "This template is already bound to a hotkey",
-                                        ),
-                                    );
-                                    return;
-                                }
-                                this.plugin.command_handler.add_template_hotkey(
-                                    this.plugin.settings
-                                        .enabled_templates_hotkeys[index],
-                                    new_template,
-                                );
-                                this.plugin.settings.enabled_templates_hotkeys[
-                                    index
-                                ] = new_template;
-                                await this.plugin.save_settings();
-                            });
-                        cb.containerEl.addClass("templater_search");
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("any-key")
-                            .setTooltip("Configure hotkey")
-                            .onClick(() => {
-                                // TODO: Replace with future "official" way to do this
-                                this.app.setting.openTabById("hotkeys");
-                                const tab = this.app.setting.activeTab;
-                                tab.searchComponent.inputEl.value = template;
-                                tab.updateHotkeyVisibility();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("up-chevron-glyph")
-                            .setTooltip("Move up")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings
-                                        .enabled_templates_hotkeys,
-                                    index,
-                                    index - 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("down-chevron-glyph")
-                            .setTooltip("Move down")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings
-                                        .enabled_templates_hotkeys,
-                                    index,
-                                    index + 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("cross")
-                            .setTooltip("Delete")
-                            .onClick(async () => {
-                                this.plugin.command_handler.remove_template_hotkey(
-                                    this.plugin.settings
-                                        .enabled_templates_hotkeys[index],
-                                );
-                                this.plugin.settings.enabled_templates_hotkeys.splice(
-                                    index,
-                                    1,
-                                );
-                                await this.plugin.save_settings();
-                                // Force refresh
-                                this.display();
-                            });
-                    });
-                s.infoEl.remove();
+        // Obsidian's page-row handler intercepts clicks in the capture phase,
+        // so onclick/addEventListener on the <a> itself never fires.
+        // Adding a capture listener here (on the ancestor) fires first and lets
+        // external links open without triggering sub-page navigation.
+        this.containerEl.addEventListener(
+            "click",
+            (e) => {
+                if (
+                    e.target &&
+                    "href" in e.target &&
+                    e.target.href &&
+                    typeof e.target.href === "string"
+                ) {
+                    e.stopPropagation();
+                }
             },
+            true,
         );
 
-        new Setting(this.containerEl).addButton((cb) => {
-            cb.setButtonText("Add new hotkey for template")
-                .setCta()
-                .onClick(async () => {
-                    this.plugin.settings.enabled_templates_hotkeys.push("");
-                    await this.plugin.save_settings();
-                    // Force refresh
-                    this.display();
-                });
-        });
+        const refresh = debounce(() => this.update(), 200, true);
+        plugin.registerEvent(this.app.vault.on("create", refresh));
+        plugin.registerEvent(this.app.vault.on("delete", refresh));
+        plugin.registerEvent(this.app.vault.on("rename", refresh));
     }
 
-    add_folder_templates_setting(): void {
-        new Setting(this.containerEl).setName("Folder templates").setHeading();
+    private isLocalSettingsKey(key: string): key is keyof LocalSettings {
+        return key in DEFAULT_LOCAL_SETTINGS;
+    }
 
-        const descHeading = createFragment();
-        descHeading.append(
-            "Folder templates are triggered when a new ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline emphasis within a sentence, not a standalone UI label
-            descHeading.createEl("strong", { text: "empty " }),
-            "file is created in a given folder.",
-            descHeading.createEl("br"),
-            "Templater will fill the empty file with the specified template.",
-            descHeading.createEl("br"),
-            "The deepest match is used. A global default template would be defined on the root ",
-            descHeading.createEl("code", { text: "/" }),
-            ".",
-        );
+    // Overriding `getControlValue` to support dot notation keys for nested settings
+    getControlValue(key: Paths<Settings> | keyof LocalSettings): unknown {
+        if (this.isLocalSettingsKey(key)) {
+            return getLocalSettings(this.plugin.app)[key];
+        }
+        return get(this.plugin.settings, key);
+    }
 
-        new Setting(this.containerEl).setDesc(descHeading);
+    // Overriding `setControlValue` to trigger UI changes on save,
+    // and to support dot notation keys for nested settings
+    async setControlValue(
+        key: keyof Settings | keyof LocalSettings,
+        value: unknown,
+    ) {
+        const dangerousConfig: Partial<
+            Record<keyof LocalSettings, { title: string; warning: string }>
+        > = {
+            enable_startup_templates: {
+                title: "Enable startup templates",
+                warning:
+                    "This can be dangerous if you set a startup template with unknown/unsafe content. Make sure that every startup template's content is safe.",
+            },
+            trigger_on_file_creation: {
+                title: "Trigger Templater on new file creation",
+                warning:
+                    "This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.",
+            },
+            enable_system_commands: {
+                title: "Enable user system command functions",
+                warning:
+                    "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
+            },
+        };
 
-        const descUseNewFileTemplate = createFragment();
-        descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the folder templates defined below. This option is mutually exclusive with file regex templates below, so enabling one will disable the other.",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Enable folder templates")
-            .setDesc(descUseNewFileTemplate)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.enable_folder_templates)
-                    .onChange(async (use_new_folder_templates) => {
-                        this.plugin.settings.enable_folder_templates =
-                            use_new_folder_templates;
-                        if (use_new_folder_templates) {
-                            this.plugin.settings.enable_file_templates = false;
-                        }
-                        await this.plugin.save_settings();
-                        // Force refresh
-                        this.display();
-                    });
-            });
-
-        if (!this.plugin.settings.enable_folder_templates) {
+        if (
+            this.isLocalSettingsKey(key) &&
+            value === true &&
+            key in dangerousConfig
+        ) {
+            const config = dangerousConfig[key]!;
+            new ConfirmDangerousSettingModal(
+                this.app,
+                config.title,
+                config.warning,
+                async () => {
+                    await this.commitControlValue(key, value);
+                },
+            ).open();
+            this.update();
             return;
         }
 
-        this.plugin.settings.folder_templates.forEach(
-            (folder_template, index) => {
-                const s = new Setting(this.containerEl)
-                    .addSearch((cb) => {
-                        new FolderSuggest(this.app, cb.inputEl);
-                        cb.setPlaceholder("Folder")
-                            .setValue(folder_template.folder)
-                            .onChange(async (new_folder) => {
-                                if (
-                                    new_folder &&
-                                    this.plugin.settings.folder_templates.some(
-                                        (e) => e.folder == new_folder,
-                                    )
-                                ) {
-                                    log_error(
-                                        new TemplaterError(
-                                            "This folder already has a template associated with it",
-                                        ),
-                                    );
-                                    return;
-                                }
-
-                                this.plugin.settings.folder_templates[
-                                    index
-                                ].folder = new_folder;
-                                await this.plugin.save_settings();
-                            });
-                        cb.containerEl.addClass("templater_search");
-                    })
-                    .addSearch((cb) => {
-                        new FileSuggest(
-                            cb.inputEl,
-                            this.plugin,
-                            FileSuggestMode.TemplateFiles,
-                        );
-                        cb.setPlaceholder("Template")
-                            .setValue(folder_template.template)
-                            .onChange(async (new_template) => {
-                                this.plugin.settings.folder_templates[
-                                    index
-                                ].template = new_template;
-                                await this.plugin.save_settings();
-                            });
-                        cb.containerEl.addClass("templater_search");
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("up-chevron-glyph")
-                            .setTooltip("Move up")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings.folder_templates,
-                                    index,
-                                    index - 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("down-chevron-glyph")
-                            .setTooltip("Move down")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings.folder_templates,
-                                    index,
-                                    index + 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("cross")
-                            .setTooltip("Delete")
-                            .onClick(async () => {
-                                this.plugin.settings.folder_templates.splice(
-                                    index,
-                                    1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    });
-                s.infoEl.remove();
-            },
-        );
-
-        new Setting(this.containerEl).addButton((button: ButtonComponent) => {
-            button
-                .setButtonText("Add new folder template")
-                .setTooltip("Add additional folder template")
-                .setCta()
-                .onClick(async () => {
-                    this.plugin.settings.folder_templates.push({
-                        folder: "",
-                        template: "",
-                    });
-                    await this.plugin.save_settings();
-                    this.display();
-                });
-        });
+        await this.commitControlValue(key, value);
     }
 
-    add_file_templates_setting(): void {
-        new Setting(this.containerEl)
-            .setName("File regex templates")
-            .setHeading();
-
-        const descHeading = createFragment();
-        descHeading.append(
-            "File regex templates are triggered when a new ",
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline emphasis within a sentence, not a standalone UI label
-            descHeading.createEl("strong", { text: "empty" }),
-            " file is created that matches one of them. Templater will fill the empty file with the specified template.",
-            descHeading.createEl("br"),
-            "The first match from the top is used, so the order of the rules is important.",
-            descHeading.createEl("br"),
-            "Use ",
-            descHeading.createEl("code", { text: ".*" }),
-            " as a final catch-all, if you need it.",
-        );
-
-        new Setting(this.containerEl).setDesc(descHeading);
-
-        const descUseNewFileTemplate = createFragment();
-        descUseNewFileTemplate.append(
-            "When enabled, Templater will make use of the file regex templates defined below. This option is mutually exclusive with folder templates above, so enabling one will disable the other.",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Enable file regex templates")
-            .setDesc(descUseNewFileTemplate)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.enable_file_templates)
-                    .onChange(async (use_new_file_templates) => {
-                        this.plugin.settings.enable_file_templates =
-                            use_new_file_templates;
-                        if (use_new_file_templates) {
-                            this.plugin.settings.enable_folder_templates = false;
-                        }
-                        await this.plugin.save_settings();
-                        // Force refresh
-                        this.display();
-                    });
-            });
-
-        if (!this.plugin.settings.enable_file_templates) {
-            return;
-        }
-
-        this.plugin.settings.file_templates.forEach((file_template, index) => {
-            const s = new Setting(this.containerEl)
-                .addText((cb) => {
-                    cb.setPlaceholder("File regex")
-                        .setValue(file_template.regex)
-                        .onChange(async (new_regex) => {
-                            this.plugin.settings.file_templates[index].regex =
-                                new_regex;
-                            await this.plugin.save_settings();
-                        });
-                    cb.inputEl.addClass("templater_search");
-                })
-                .addSearch((cb) => {
-                    new FileSuggest(
-                        cb.inputEl,
-                        this.plugin,
-                        FileSuggestMode.TemplateFiles,
-                    );
-                    cb.setPlaceholder("Template")
-                        .setValue(file_template.template)
-                        .onChange(async (new_template) => {
-                            this.plugin.settings.file_templates[
-                                index
-                            ].template = new_template;
-                            await this.plugin.save_settings();
-                        });
-                    cb.containerEl.addClass("templater_search");
-                })
-                .addExtraButton((cb) => {
-                    cb.setIcon("up-chevron-glyph")
-                        .setTooltip("Move up")
-                        .onClick(async () => {
-                            arraymove(
-                                this.plugin.settings.file_templates,
-                                index,
-                                index - 1,
-                            );
-                            await this.plugin.save_settings();
-                            this.display();
-                        });
-                })
-                .addExtraButton((cb) => {
-                    cb.setIcon("down-chevron-glyph")
-                        .setTooltip("Move down")
-                        .onClick(async () => {
-                            arraymove(
-                                this.plugin.settings.file_templates,
-                                index,
-                                index + 1,
-                            );
-                            await this.plugin.save_settings();
-                            this.display();
-                        });
-                })
-                .addExtraButton((cb) => {
-                    cb.setIcon("cross")
-                        .setTooltip("Delete")
-                        .onClick(async () => {
-                            this.plugin.settings.file_templates.splice(
-                                index,
-                                1,
-                            );
-                            await this.plugin.save_settings();
-                            this.display();
-                        });
-                });
-            s.infoEl.remove();
-        });
-
-        new Setting(this.containerEl).addButton((button: ButtonComponent) => {
-            button
-                .setButtonText("Add new file regex")
-                .setTooltip("Add additional file regex")
-                .setCta()
-                .onClick(async () => {
-                    this.plugin.settings.file_templates.push({
-                        regex: "",
-                        template: "",
-                    });
-                    await this.plugin.save_settings();
-                    this.display();
-                });
-        });
-    }
-
-    add_startup_templates_setting(): void {
-        new Setting(this.containerEl).setName("Startup templates").setHeading();
-
-        const desc = createFragment();
-        desc.append(
-            "Startup templates are templates that will get executed once when Templater starts.",
-            desc.createEl("br"),
-            "These templates won't output anything.",
-            desc.createEl("br"),
-            "This can be useful to set up templates adding hooks to Obsidian events for example.",
-        );
-
-        new Setting(this.containerEl).setDesc(desc);
-
-        this.plugin.settings.startup_templates.forEach((template, index) => {
-            const s = new Setting(this.containerEl)
-                .addSearch((cb) => {
-                    new FileSuggest(
-                        cb.inputEl,
-                        this.plugin,
-                        FileSuggestMode.TemplateFiles,
-                    );
-                    cb.setPlaceholder("Example: folder1/template_file")
-                        .setValue(template)
-                        .onChange(async (new_template) => {
-                            if (
-                                new_template &&
-                                this.plugin.settings.startup_templates.contains(
-                                    new_template,
-                                )
-                            ) {
-                                log_error(
-                                    new TemplaterError(
-                                        "This startup template already exist",
-                                    ),
-                                );
-                                return;
-                            }
-                            this.plugin.settings.startup_templates[index] =
-                                new_template;
-                            await this.plugin.save_settings();
-                        });
-                    cb.containerEl.addClass("templater_search");
-                })
-                .addExtraButton((cb) => {
-                    cb.setIcon("cross")
-                        .setTooltip("Delete")
-                        .onClick(async () => {
-                            this.plugin.settings.startup_templates.splice(
-                                index,
-                                1,
-                            );
-                            await this.plugin.save_settings();
-                            // Force refresh
-                            this.display();
-                        });
-                });
-            s.infoEl.remove();
-        });
-
-        new Setting(this.containerEl).addButton((cb) => {
-            cb.setButtonText("Add new startup template")
-                .setCta()
-                .onClick(async () => {
-                    this.plugin.settings.startup_templates.push("");
-                    await this.plugin.save_settings();
-                    // Force refresh
-                    this.display();
-                });
-        });
-    }
-
-    add_user_script_functions_setting(): void {
-        new Setting(this.containerEl)
-            .setName("User script functions")
-            .setHeading();
-
-        let desc = createFragment();
-        desc.append(
-            "All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.",
-            desc.createEl("br"),
-            "The folder needs to be accessible from the vault.",
-            desc.createEl("br"),
-            "Check the ",
-            desc.createEl("a", {
-                href: "https://silentvoid13.github.io/Templater/",
-                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
-                text: "documentation",
-            }),
-            " for more information.",
-        );
-
-        new Setting(this.containerEl)
-            .setName("Script files folder location")
-            .setDesc(desc)
-            .addSearch((cb) => {
-                new FolderSuggest(this.app, cb.inputEl);
-                cb.setPlaceholder("Example: folder1/folder2")
-                    .setValue(this.plugin.settings.user_scripts_folder)
-                    .onChange(async (new_folder) => {
-                        this.plugin.settings.user_scripts_folder = new_folder;
-                        await this.plugin.save_settings();
-                    });
-                cb.containerEl.addClass("templater_search");
-            });
-
-        new Setting(this.containerEl)
-            .setName("User script intellisense")
-            .setDesc(
-                "Determine how you'd like to have user script intellisense render. Note values will not render if not in the script.",
-            )
-            .addDropdown((cb) => {
-                cb.addOption("0", "Turn off intellisense")
-                    .addOption(
-                        "1",
-                        "Render method description, parameters list, and return",
-                    )
-                    .addOption(
-                        "2",
-                        "Render method description and parameters list",
-                    )
-                    .addOption("3", "Render method description and return")
-                    .addOption("4", "Render method description")
-                    .setValue(
-                        this.plugin.settings.intellisense_render.toString(),
-                    )
-                    .onChange(async (value) => {
-                        this.plugin.settings.intellisense_render =
-                            parseInt(value);
-                        await this.plugin.save_settings();
-                    });
-            });
-
-        desc = createFragment();
-        let name: string;
-        if (!this.plugin.settings.user_scripts_folder) {
-            name = "No user scripts folder set";
-        } else {
-            const files = errorWrapperSync(
-                () =>
-                    get_tfiles_from_folder(
-                        this.app,
-                        this.plugin.settings.user_scripts_folder,
-                    ),
-                `User scripts folder doesn't exist`,
+    private async commitControlValue(
+        key: keyof Settings | keyof LocalSettings,
+        value: unknown,
+    ) {
+        if (this.isLocalSettingsKey(key)) {
+            saveLocalSetting(
+                this.plugin.app,
+                key,
+                value as LocalSettings[typeof key],
             );
-            if (!files || files.length === 0) {
-                name = "No user scripts detected";
-            } else {
-                let count = 0;
-                for (const file of files) {
-                    if (file.extension === "js") {
-                        count++;
-                        desc.append(
-                            desc.createEl("li", {
-                                text: `tp.user.${file.basename}`,
+        } else {
+            set(this.plugin.settings, key as Paths<Settings>, value);
+        }
+        const rerenderKeys = [
+            "trigger_on_file_creation",
+            "trigger_on_file_creation_mode",
+            "enable_startup_templates",
+            "enable_system_commands",
+        ];
+        if (rerenderKeys.contains(key)) {
+            this.update();
+        }
+        await this.plugin.save_settings();
+    }
+
+    getSettingDefinitions(): SettingDefinitionItem<
+        keyof Settings | keyof LocalSettings
+    >[] {
+        const items: SettingDefinitionItem<
+            keyof Settings | keyof LocalSettings
+        >[] = [];
+        const localSettings = getLocalSettings(this.plugin.app);
+
+        items.push({
+            type: "group",
+            items: [
+                {
+                    name: "Internal variables and functions",
+                    desc: (() => {
+                        const internalFunctionsDesc = createFragment();
+                        internalFunctionsDesc.append(
+                            "Templater provides multiples predefined variables / functions that you can use.",
+                            internalFunctionsDesc.createEl("br"),
+                            "Check the ",
+                            internalFunctionsDesc.createEl("a", {
+                                href: "https://silentvoid13.github.io/Templater/",
+                                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
+                                text: "documentation",
+                            }),
+                            " to get a list of all the available internal variables / functions.",
+                        );
+                        return internalFunctionsDesc;
+                    })(),
+                },
+                {
+                    name: "Template folder location",
+                    desc: "Files in this folder will be available as templates.",
+                    control: {
+                        type: "folder",
+                        key: "templates_folder",
+                    },
+                },
+                {
+                    type: "page",
+                    name: "Template hotkeys",
+                    desc: (() => {
+                        const templateHotkeysDesc = createFragment();
+                        templateHotkeysDesc.append(
+                            "Bind templates to ",
+                            templateHotkeysDesc.createEl("a", {
+                                href: "https://obsidian.md/help/plugins/command-palette",
+                                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
+                                text: "commands",
+                            }),
+                            ". Bind commands to ",
+                            templateHotkeysDesc.createEl("a", {
+                                href: "https://obsidian.md/help/hotkeys",
+                                // eslint-disable-next-line obsidianmd/ui/sentence-case
+                                text: "hotkeys",
+                            }),
+                            ' in "Hotkeys" settings.',
+                        );
+                        return templateHotkeysDesc;
+                    })(),
+                    page: () => new TemplateHotkeysPage(this, this.plugin),
+                },
+                {
+                    name: "Automatic jump to cursor",
+                    desc: (() => {
+                        const autoJumpDesc = createFragment();
+                        autoJumpDesc.append(
+                            "Automatically triggers ",
+                            autoJumpDesc.createEl("code", {
+                                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
+                                text: "tp.file.cursor",
+                            }),
+                            " after inserting a template.",
+                            autoJumpDesc.createEl("br"),
+                            "You can also set a hotkey to manually trigger ",
+                            autoJumpDesc.createEl("code", {
+                                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline code identifier, not a UI label
+                                text: "tp.file.cursor",
+                            }),
+                            ".",
+                        );
+                        return autoJumpDesc;
+                    })(),
+                    control: { type: "toggle", key: "auto_jump_to_cursor" },
+                },
+            ],
+        });
+
+        items.push({
+            type: "group",
+            heading: "Syntax highlighting",
+            items: [
+                {
+                    name: "Syntax highlighting on desktop",
+                    desc: "Adds syntax highlighting for Templater commands in edit mode.",
+                    control: {
+                        type: "toggle",
+                        key: "syntax_highlighting",
+                    },
+                },
+                {
+                    name: "Syntax highlighting on mobile",
+                    desc: "Adds syntax highlighting for Templater commands in edit mode on mobile. Use with caution: this may break live preview on mobile platforms.",
+                    control: {
+                        type: "toggle",
+                        key: "syntax_highlighting_mobile",
+                    },
+                },
+            ],
+        });
+
+        items.push({
+            type: "group",
+            heading: "File creation",
+            items: this.fileCreationGroup(localSettings),
+        });
+
+        items.push({
+            type: "group",
+            heading: "Startup templates",
+            items: [
+                {
+                    name: "Enable startup templates",
+                    desc: createFragment((f) => {
+                        f.append(
+                            "Enables templates to run automatically when Templater starts.",
+                            createEl("br"),
+                            createEl("br"),
+                            createEl("span", {
+                                text: "This setting is stored on this device only and must be enabled separately on each device.",
+                                cls: "mod-warning",
                             }),
                         );
-                    }
-                }
-                name = `Detected ${count} User Script(s)`;
-            }
-        }
-
-        new Setting(this.containerEl)
-            .setName(name)
-            .setDesc(desc)
-            .addExtraButton((extra) => {
-                extra
-                    .setIcon("sync")
-                    .setTooltip("Refresh")
-                    .onClick(() => {
-                        // Force refresh
-                        this.display();
-                    });
-            });
-    }
-
-    add_user_system_command_functions_setting(): void {
-        let desc = createFragment();
-        desc.append(
-            "Allows you to create user functions linked to system commands.",
-            desc.createEl("br"),
-            desc.createEl("b", {
-                text: "Warning: ",
-            }),
-            "It can be dangerous to execute arbitrary system commands from untrusted sources. Only run system commands that you understand, from trusted sources.",
-        );
-        new Setting(this.containerEl)
-            .setName("User system command functions")
-            .setHeading();
-
-        new Setting(this.containerEl)
-            .setName("Enable user system command functions")
-            .setDesc(desc)
-            .addToggle((toggle) => {
-                toggle
-                    .setValue(this.plugin.settings.enable_system_commands)
-                    .onChange(async (enable_system_commands) => {
-                        this.plugin.settings.enable_system_commands =
-                            enable_system_commands;
-                        await this.plugin.save_settings();
-                        // Force refresh
-                        this.display();
-                    });
-            });
-
-        if (this.plugin.settings.enable_system_commands) {
-            new Setting(this.containerEl)
-                .setName("Timeout")
-                .setDesc("Maximum timeout in seconds for a system command.")
-                .addText((text) => {
-                    text.setPlaceholder("Timeout")
-                        .setValue(
-                            this.plugin.settings.command_timeout.toString(),
-                        )
-                        .onChange(async (new_value) => {
-                            const new_timeout = Number(new_value);
-                            if (isNaN(new_timeout)) {
-                                log_error(
-                                    new TemplaterError(
-                                        "Timeout must be a number",
-                                    ),
-                                );
-                                return;
-                            }
-                            this.plugin.settings.command_timeout = new_timeout;
-                            await this.plugin.save_settings();
-                        });
-                });
-
-            desc = createFragment();
-            desc.append(
-                "Full path to the shell binary to execute the command with.",
-                desc.createEl("br"),
-                "This setting is optional and will default to the system's default shell if not specified.",
-                desc.createEl("br"),
-                "You can use forward slashes ('/') as path separators on all platforms if in doubt.",
-            );
-            new Setting(this.containerEl)
-                .setName("Shell binary location")
-                .setDesc(desc)
-                .addText((text) => {
-                    text.setPlaceholder("Example: /bin/bash, ...")
-                        .setValue(this.plugin.settings.shell_path)
-                        .onChange(async (shell_path) => {
-                            this.plugin.settings.shell_path = shell_path;
-                            await this.plugin.save_settings();
-                        });
-                });
-
-            let i = 1;
-            this.plugin.settings.templates_pairs.forEach((template_pair) => {
-                const div = this.containerEl.createDiv();
-                div.addClass("templater_div");
-
-                const titleSetting = new Setting(this.containerEl)
-                    .setName("User function n°" + i)
-                    .setHeading();
-                titleSetting.nameEl.addClass("templater_title");
-
-                const setting = new Setting(this.containerEl)
-                    .addExtraButton((extra) => {
-                        extra
-                            .setIcon("cross")
-                            .setTooltip("Delete")
-                            .onClick(async () => {
-                                const index =
-                                    this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair,
-                                    );
-                                if (index > -1) {
-                                    this.plugin.settings.templates_pairs.splice(
-                                        index,
-                                        1,
-                                    );
-                                    await this.plugin.save_settings();
-                                    // Force refresh
-                                    this.display();
-                                }
-                            });
-                    })
-                    .addText((text) => {
-                        const t = text
-                            .setPlaceholder("Function name")
-                            .setValue(template_pair[0])
-                            .onChange(async (new_value) => {
-                                const index =
-                                    this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair,
-                                    );
-                                if (index > -1) {
-                                    this.plugin.settings.templates_pairs[
-                                        index
-                                    ][0] = new_value;
-                                    await this.plugin.save_settings();
-                                }
-                            });
-                        t.inputEl.addClass("templater_template");
-
-                        return t;
-                    })
-                    .addTextArea((text) => {
-                        const t = text
-                            .setPlaceholder("System command")
-                            .setValue(template_pair[1])
-                            .onChange(async (new_cmd) => {
-                                const index =
-                                    this.plugin.settings.templates_pairs.indexOf(
-                                        template_pair,
-                                    );
-                                if (index > -1) {
-                                    this.plugin.settings.templates_pairs[
-                                        index
-                                    ][1] = new_cmd;
-                                    await this.plugin.save_settings();
-                                }
-                            });
-
-                        t.inputEl.setAttr("rows", 2);
-                        t.inputEl.addClass("templater_cmd");
-
-                        return t;
-                    });
-
-                setting.infoEl.remove();
-
-                div.appendChild(titleSetting.settingEl);
-                div.appendChild(this.containerEl.lastChild as Node);
-
-                i += 1;
-            });
-
-            const div = this.containerEl.createDiv();
-            div.addClass("templater_div2");
-
-            const setting = new Setting(this.containerEl).addButton(
-                (button) => {
-                    button
-                        .setButtonText("Add new user function")
-                        .setCta()
-                        .onClick(async () => {
-                            this.plugin.settings.templates_pairs.push(["", ""]);
-                            await this.plugin.save_settings();
-                            // Force refresh
-                            this.display();
-                        });
+                    }),
+                    control: {
+                        type: "toggle",
+                        key: "enable_startup_templates",
+                    },
                 },
-            );
-            setting.infoEl.remove();
+                {
+                    type: "page",
+                    name: "Startup templates",
+                    desc: "Templates that run once when Templater starts. These output nothing and are useful for setting up event hooks.",
+                    items: [this.startupTemplatesGroup()],
+                    visible: () => localSettings.enable_startup_templates,
+                },
+            ],
+        });
 
-            div.appendChild(this.containerEl.lastChild as Node);
-        }
+        items.push({
+            type: "group",
+            heading: "User scripts",
+            items: this.userScriptItems(),
+        });
+
+        items.push({
+            type: "group",
+            heading: "User system commands",
+            items: this.systemCommandItems(localSettings),
+        });
+
+        return items;
     }
 
-    add_ignore_folders_on_creation_setting(): void {
-        new Setting(this.containerEl)
-            .setName("Ignore folders on file creation")
-            .setHeading();
-
-        const descHeading = createFragment();
-        descHeading.append(
-            "Files created in these folders will NOT trigger Templater's file creation handler.",
-            descHeading.createEl("br"),
-            "This prevents Templater syntax from being stripped in files created in these locations.",
-            descHeading.createEl("br"),
-            "The check includes all subfolders.",
+    private fileCreationGroup(
+        localSettings: LocalSettings,
+    ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
+        const triggerDesc = createFragment();
+        triggerDesc.append(
+            "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
+            "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
+            createEl("br"),
+            createEl("br"),
+            createEl("span", {
+                text: "This setting is stored on this device only and must be enabled separately on each device.",
+                cls: "mod-warning",
+            }),
+        );
+        const modeDescList = createEl("ul");
+        modeDescList.appendChild(
+            createEl("li", {
+                text: "None: Do not auto apply templates. Templater will still listen for the new file creation event and replace every command it finds in the new file's content.",
+            }),
+        );
+        modeDescList.appendChild(
+            createEl("li", {
+                text: "Folder templates: Apply templates based on folder structure.",
+            }),
+        );
+        modeDescList.appendChild(
+            createEl("li", {
+                text: "File regex templates: Apply templates based on regex file name patterns.",
+            }),
+        );
+        const modeDesc = createFragment();
+        modeDesc.append(
+            "Choose the matching mode for triggering templates on file creation.",
+            modeDesc.createEl("br"),
+            modeDescList,
         );
 
-        new Setting(this.containerEl).setDesc(descHeading);
+        const folderTriggerDesc = createFragment();
+        folderTriggerDesc.append(
+            "If there is a match, Templater will apply the corresponding template to the new file.",
+            folderTriggerDesc.createEl("br"),
+            "The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.",
+            folderTriggerDesc.createEl("br"),
+            "Add a rule for ",
+            folderTriggerDesc.createEl("code", { text: "/" }),
+            " if you need a catch-all.",
+        );
 
-        this.plugin.settings.ignore_folders_on_creation.forEach(
-            (ignore_folder, index) => {
-                const s = new Setting(this.containerEl)
-                    .addSearch((cb) => {
-                        new FolderSuggest(this.app, cb.inputEl);
-                        cb.setPlaceholder("Folder")
-                            .setValue(ignore_folder.folder)
-                            .onChange(async (new_folder) => {
-                                if (
-                                    new_folder &&
-                                    this.plugin.settings.ignore_folders_on_creation.some(
-                                        (e) => e.folder == new_folder,
-                                    )
-                                ) {
-                                    log_error(
-                                        new TemplaterError(
-                                            "This folder is already in the ignore list",
-                                        ),
-                                    );
-                                    return;
-                                }
+        const fileRegexTriggerDesc = createFragment();
+        fileRegexTriggerDesc.append(
+            "File regex templates are applied based on the regex file path patterns you define.",
+            fileRegexTriggerDesc.createEl("br"),
+            "File regex templates are processed in order, so if a file matches multiple regex templates, only the first match will be applied.",
+            fileRegexTriggerDesc.createEl("br"),
+            "Add a rule for ",
+            fileRegexTriggerDesc.createEl("code", { text: ".*" }),
+            " if you need a catch-all.",
+        );
 
-                                this.plugin.settings.ignore_folders_on_creation[
-                                    index
-                                ].folder = new_folder;
-                                await this.plugin.save_settings();
-                            });
-                        cb.containerEl.addClass("templater_search");
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("up-chevron-glyph")
-                            .setTooltip("Move up")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings
-                                        .ignore_folders_on_creation,
-                                    index,
-                                    index - 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("down-chevron-glyph")
-                            .setTooltip("Move down")
-                            .onClick(async () => {
-                                arraymove(
-                                    this.plugin.settings
-                                        .ignore_folders_on_creation,
-                                    index,
-                                    index + 1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    })
-                    .addExtraButton((cb) => {
-                        cb.setIcon("cross")
-                            .setTooltip("Delete")
-                            .onClick(async () => {
-                                this.plugin.settings.ignore_folders_on_creation.splice(
-                                    index,
-                                    1,
-                                );
-                                await this.plugin.save_settings();
-                                this.display();
-                            });
-                    });
-                s.infoEl.remove();
+        return [
+            {
+                name: "Trigger Templater on new file creation",
+                desc: triggerDesc,
+                control: {
+                    type: "toggle",
+                    key: "trigger_on_file_creation",
+                },
             },
+            {
+                type: "page",
+                name: "Excluded folders",
+                desc: "New files created in these folders will never trigger Templater.",
+                items: [this.ignoreFoldersGroup()],
+                visible: () => localSettings.trigger_on_file_creation,
+            },
+            {
+                name: "Template matching mode",
+                desc: modeDesc,
+                control: {
+                    type: "dropdown",
+                    key: "trigger_on_file_creation_mode",
+                    options: {
+                        none: "None",
+                        folder: "Folder templates",
+                        regex: "File regex templates",
+                    },
+                },
+                visible: () => localSettings.trigger_on_file_creation,
+            },
+            {
+                type: "page",
+                name: "Folder templates",
+                desc: folderTriggerDesc,
+                items: [this.folderTemplatesGroup()],
+                visible: () =>
+                    localSettings.trigger_on_file_creation &&
+                    this.plugin.settings.trigger_on_file_creation_mode ===
+                        "folder",
+            },
+            {
+                type: "page",
+                name: "File regex templates",
+                desc: fileRegexTriggerDesc,
+                items: [this.fileTemplatesGroup()],
+                visible: () =>
+                    localSettings.trigger_on_file_creation &&
+                    this.plugin.settings.trigger_on_file_creation_mode ===
+                        "regex",
+            },
+        ];
+    }
+
+    private ignoreFoldersGroup(): SettingDefinitionList<keyof Settings> {
+        return {
+            type: "list",
+            addItem: {
+                name: "Add folder",
+                action: () => {
+                    new IgnoreFolderModal(this.app, (folder) => {
+                        this.plugin.settings.ignore_folders_on_creation.push({
+                            folder,
+                        });
+                        this.update();
+                        void this.plugin.save_settings();
+                    }).open();
+                },
+            },
+            onDelete: (index) => {
+                this.plugin.settings.ignore_folders_on_creation.splice(
+                    index,
+                    1,
+                );
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No exclusions added.",
+            items: this.plugin.settings.ignore_folders_on_creation.map(
+                (entry) => ({
+                    name: entry.folder,
+                    searchable: false,
+                }),
+            ),
+        };
+    }
+
+    private folderTemplatesGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: { folder: string; template: string },
+            onSubmit: (
+                folder: string,
+                template: string,
+            ) => Promise<void> | void,
+            excludeIndex?: number,
+        ) => {
+            new FolderTemplateModal(
+                this.app,
+                this.plugin,
+                initialValues,
+                onSubmit,
+                (folder) => {
+                    if (
+                        this.plugin.settings.folder_templates.some(
+                            (e, i) => e.folder === folder && i !== excludeIndex,
+                        )
+                    ) {
+                        return "This folder already has a template associated with it";
+                    }
+                },
+            ).open();
+        };
+
+        return {
+            type: "list",
+            addItem: {
+                name: "Add folder template",
+                action: () => {
+                    openModal(
+                        { folder: "", template: "" },
+                        (folder, template) => {
+                            this.plugin.settings.folder_templates.push({
+                                folder,
+                                template,
+                            });
+                            this.update();
+                            void this.plugin.save_settings();
+                        },
+                    );
+                },
+            },
+            onReorder: (oldIndex, newIndex) => {
+                arraymove(
+                    this.plugin.settings.folder_templates,
+                    oldIndex,
+                    newIndex,
+                );
+                this.update();
+                void this.plugin.save_settings();
+            },
+            onDelete: (index) => {
+                this.plugin.settings.folder_templates.splice(index, 1);
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No folder templates added.",
+            items: this.plugin.settings.folder_templates.map(
+                (folder_template, index) => ({
+                    name: folder_template.folder,
+                    desc: folder_template.template,
+                    action: () => {
+                        openModal(
+                            {
+                                folder: folder_template.folder,
+                                template: folder_template.template,
+                            },
+                            async (folder, template) => {
+                                this.plugin.settings.folder_templates[
+                                    index
+                                ].folder = folder;
+                                this.plugin.settings.folder_templates[
+                                    index
+                                ].template = template;
+                                this.update();
+                                await this.plugin.save_settings();
+                            },
+                            index,
+                        );
+                    },
+                }),
+            ),
+        };
+    }
+
+    private fileTemplatesGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: { regex: string; template: string },
+            onSubmit: (regex: string, template: string) => Promise<void> | void,
+        ) => {
+            new FileRegexTemplateModal(
+                this.app,
+                this.plugin,
+                initialValues,
+                onSubmit,
+            ).open();
+        };
+
+        return {
+            type: "list",
+            addItem: {
+                name: "Add file regex template",
+                action: () => {
+                    openModal(
+                        { regex: "", template: "" },
+                        (regex, template) => {
+                            this.plugin.settings.file_templates.push({
+                                regex,
+                                template,
+                            });
+                            this.update();
+                            void this.plugin.save_settings();
+                        },
+                    );
+                },
+            },
+            onReorder: (oldIndex, newIndex) => {
+                arraymove(
+                    this.plugin.settings.file_templates,
+                    oldIndex,
+                    newIndex,
+                );
+                this.update();
+                void this.plugin.save_settings();
+            },
+            onDelete: (index) => {
+                this.plugin.settings.file_templates.splice(index, 1);
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No file regex templates added.",
+            items: this.plugin.settings.file_templates.map(
+                (file_template, index) => ({
+                    name: file_template.regex,
+                    desc: file_template.template,
+                    action: () => {
+                        openModal(
+                            {
+                                regex: file_template.regex,
+                                template: file_template.template,
+                            },
+                            async (regex, template) => {
+                                this.plugin.settings.file_templates[
+                                    index
+                                ].regex = regex;
+                                this.plugin.settings.file_templates[
+                                    index
+                                ].template = template;
+                                this.update();
+                                await this.plugin.save_settings();
+                            },
+                        );
+                    },
+                }),
+            ),
+        };
+    }
+
+    private startupTemplatesGroup(): SettingDefinitionList<keyof Settings> {
+        return {
+            type: "list",
+            addItem: {
+                name: "Add new startup template",
+                action: () => {
+                    new StartupTemplateModal(
+                        this.app,
+                        this.plugin,
+                        (template) => {
+                            this.plugin.settings.startup_templates.push(
+                                template,
+                            );
+                            this.update();
+                            void this.plugin.save_settings();
+                        },
+                    ).open();
+                },
+            },
+            onDelete: (index) => {
+                this.plugin.settings.startup_templates.splice(index, 1);
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No startup templates added.",
+            items: this.plugin.settings.startup_templates.map((template) => ({
+                name: template,
+                searchable: false,
+            })),
+        };
+    }
+
+    private userScriptItems(): SettingGroupItem<keyof Settings>[] {
+        const items: SettingGroupItem<keyof Settings>[] = [];
+        items.push({
+            name: "User scripts folder",
+            desc: (() => {
+                const desc = createFragment();
+                desc.append(
+                    "All JavaScript files in this folder will be loaded as CommonJS modules, to import custom user functions.",
+                    desc.createEl("br"),
+                    "The folder needs to be accessible from the vault.",
+                    desc.createEl("br"),
+                    "Check the ",
+                    desc.createEl("a", {
+                        href: "https://silentvoid13.github.io/Templater/",
+                        // eslint-disable-next-line obsidianmd/ui/sentence-case -- Inline link text within a sentence, not a standalone UI label
+                        text: "documentation",
+                    }),
+                    " for more information.",
+                );
+                return desc;
+            })(),
+            control: {
+                type: "folder",
+                key: "user_scripts_folder",
+            },
+        });
+
+        items.push({
+            name: "User script intellisense",
+            desc: "Determine how you'd like to have user script intellisense render. Note values will not render if not in the script.",
+            control: {
+                type: "dropdown",
+                key: "intellisense_render",
+                options: {
+                    0: "Turn off intellisense",
+                    1: "Render method description, parameters list, and return",
+                    2: "Render method description and parameters list",
+                    3: "Render method description and return",
+                    4: "Render method description",
+                },
+            },
+        });
+
+        items.push({
+            type: "page",
+            name: "User scripts",
+            searchable: false,
+            page: () => new UserScriptsPage(this, this.plugin),
+        });
+
+        return items;
+    }
+
+    private systemCommandItems(
+        localSettings: LocalSettings,
+    ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
+        const shellDesc = createFragment();
+        shellDesc.append(
+            "Full path to the shell binary to execute the command with.",
+            shellDesc.createEl("br"),
+            "This setting is optional and will default to the system's default shell if not specified.",
+            shellDesc.createEl("br"),
+            "You can use forward slashes (",
+            shellDesc.createEl("code", { text: "/" }),
+            ") as path separators on all platforms if in doubt.",
         );
 
-        new Setting(this.containerEl).addButton((button: ButtonComponent) => {
-            button
-                .setButtonText("Add folder to ignore list")
-                .setTooltip("Add folder to ignore on file creation")
-                .setCta()
-                .onClick(async () => {
-                    this.plugin.settings.ignore_folders_on_creation.push({
-                        folder: "",
+        return [
+            {
+                name: "Enable user system command functions",
+                desc: createFragment((f) => {
+                    f.append(
+                        "Allows you to create user functions linked to system commands.",
+                        createEl("br"),
+                        createEl("br"),
+                        createEl("span", {
+                            text: "This setting is stored on this device only and must be enabled separately on each device.",
+                            cls: "mod-warning",
+                        }),
+                    );
+                }),
+                control: {
+                    type: "toggle",
+                    key: "enable_system_commands",
+                },
+            },
+            {
+                name: "Timeout",
+                desc: "Maximum timeout in seconds for a system command.",
+                control: {
+                    type: "number",
+                    key: "command_timeout",
+                    validate: (value) => {
+                        if (isNaN(value) || value <= 0) {
+                            return "Timeout must be a positive number";
+                        }
+                        return undefined;
+                    },
+                },
+                visible: () => localSettings.enable_system_commands,
+            },
+            {
+                name: "Shell binary location",
+                desc: shellDesc,
+                control: {
+                    type: "text",
+                    key: "shell_path",
+                    placeholder: "/bin/bash",
+                },
+                visible: () => localSettings.enable_system_commands,
+            },
+            {
+                type: "page",
+                name: "User system command functions",
+                items: [this.systemCommandPairsGroup()],
+                visible: () => localSettings.enable_system_commands,
+            },
+        ];
+    }
+
+    private systemCommandPairsGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: { name: string; command: string },
+            onSubmit: (name: string, command: string) => Promise<void> | void,
+            excludeIndex?: number,
+        ) => {
+            new SystemCommandModal(
+                this.app,
+                initialValues,
+                onSubmit,
+                (name) => {
+                    if (
+                        this.plugin.settings.templates_pairs.some(
+                            (p, i) => p[0] === name && i !== excludeIndex,
+                        )
+                    ) {
+                        return "This function name is already in use";
+                    }
+                    return undefined;
+                },
+            ).open();
+        };
+
+        return {
+            type: "list",
+            addItem: {
+                name: "Add new user function",
+                action: () => {
+                    openModal({ name: "", command: "" }, (name, command) => {
+                        this.plugin.settings.templates_pairs.push([
+                            name,
+                            command,
+                        ]);
+                        this.update();
+                        void this.plugin.save_settings();
                     });
-                    await this.plugin.save_settings();
-                    this.display();
-                });
-        });
+                },
+            },
+            onDelete: (index) => {
+                this.plugin.settings.templates_pairs.splice(index, 1);
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No user functions added.",
+            items: this.plugin.settings.templates_pairs.map(
+                (template_pair, index) => ({
+                    name: template_pair[0],
+                    desc: template_pair[1] || undefined,
+                    searchable: false,
+                    action: () => {
+                        openModal(
+                            {
+                                name: template_pair[0],
+                                command: template_pair[1],
+                            },
+                            async (name, command) => {
+                                this.plugin.settings.templates_pairs[index][0] =
+                                    name;
+                                this.plugin.settings.templates_pairs[index][1] =
+                                    command;
+                                this.update();
+                                await this.plugin.save_settings();
+                            },
+                            index,
+                        );
+                    },
+                }),
+            ),
+        };
     }
 }

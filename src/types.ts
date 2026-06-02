@@ -10,13 +10,16 @@ declare module "obsidian" {
                 id: string,
             ): { options: Record<string, string> } | null;
         };
-        setting: {
-            openTabById(id: string): void;
-            activeTab: {
-                searchComponent: { inputEl: HTMLInputElement };
-                updateHotkeyVisibility(): void;
+        setting?: {
+            open?(): void;
+            close?(): void;
+            openTabById?(id: string): void;
+            activeTab?: {
+                setQuery?(query: string): void;
+                update?(): void;
             };
         };
+        openWithDefaultApp(path: string): void;
     }
 
     interface Vault {

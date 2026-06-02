@@ -1,10 +1,11 @@
-import { addIcon, Plugin } from "obsidian";
+import { addIcon, Notice, Plugin } from "obsidian";
 
 import {
     DEFAULT_SETTINGS,
     Settings,
     TemplaterSettingTab,
 } from "settings/Settings";
+import { migrateSettings } from "settings/migrate-settings";
 import { FuzzySuggester } from "handlers/FuzzySuggester";
 import { ICON_DATA } from "utils/Constants";
 import { Templater } from "core/Templater";
@@ -13,7 +14,7 @@ import { CommandHandler } from "handlers/CommandHandler";
 import { Editor } from "editor/Editor";
 
 export default class TemplaterPlugin extends Plugin {
-    public settings: Settings;
+    public settings: Settings = { ...DEFAULT_SETTINGS };
     public templater: Templater;
     public event_handler: EventHandler;
     public command_handler: CommandHandler;
@@ -31,11 +32,7 @@ export default class TemplaterPlugin extends Plugin {
 
         this.fuzzy_suggester = new FuzzySuggester(this);
 
-        this.event_handler = new EventHandler(
-            this,
-            this.templater,
-            this.settings
-        );
+        this.event_handler = new EventHandler(this, this.templater);
         await this.event_handler.setup();
 
         this.command_handler = new CommandHandler(this);
@@ -65,14 +62,28 @@ export default class TemplaterPlugin extends Plugin {
 
     async save_settings(): Promise<void> {
         await this.saveData(this.settings);
-        this.editor_handler.updateEditorIntellisenseSetting(this.settings.intellisense_render);
+        this.editor_handler.updateEditorIntellisenseSetting(
+            this.settings.intellisense_render,
+        );
+        await this.event_handler.update_syntax_highlighting();
     }
 
     async load_settings(): Promise<void> {
-        this.settings = Object.assign(
-            {},
-            DEFAULT_SETTINGS,
-            await this.loadData() as Partial<Settings>
-        );
+        const raw = (await this.loadData()) as unknown;
+        const { settings, affectedSecuritySettings, wasMigrated } =
+            migrateSettings(raw);
+        this.settings = settings;
+        if (affectedSecuritySettings.length > 0) {
+            new Notice(
+                "Templater: The following settings were reset because they " +
+                    "are now device-local: " +
+                    affectedSecuritySettings.join(", ") +
+                    ". Re-enable them in Templater settings if you trust this vault.",
+                0,
+            );
+        }
+        if (wasMigrated) {
+            await this.saveData(this.settings);
+        }
     }
 }

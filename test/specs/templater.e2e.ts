@@ -189,13 +189,15 @@ describe("Templater", () => {
             "templates/template.md": templateContent,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.settings.trigger_on_file_creation = true;
-            plugins.templaterObsidian.settings.enable_folder_templates = true;
+            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
+                trigger_on_file_creation: true,
+            });
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "folder";
             plugins.templaterObsidian.settings.folder_templates = [
                 { folder: "notes", template: "templates/template.md" },
             ];
             await plugins.templaterObsidian.save_settings();
-            plugins.templaterObsidian.event_handler.update_trigger_file_on_creation();
         });
         try {
             await browser.executeObsidian(async ({ app }) => {
@@ -208,9 +210,13 @@ describe("Templater", () => {
             );
         } finally {
             await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.trigger_on_file_creation = false;
+                plugins.templaterObsidian.app.saveLocalStorage(
+                    "templater-local-settings",
+                    {
+                        trigger_on_file_creation: false,
+                    },
+                );
                 await plugins.templaterObsidian.save_settings();
-                plugins.templaterObsidian.event_handler.update_trigger_file_on_creation();
             });
         }
     }
