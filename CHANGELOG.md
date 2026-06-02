@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.21.0](https://github.com/SilentVoid13/Templater/compare/2.20.5...2.21.0) (2026-06-02)
+
+
+### Features
+
+* Adopt settings definitions. Update dangerous settings to be per vault to reduce social engineering attack surface This applies to the following settings: "Trigger Templater on new file creation", "Enable startup templates", and "Enable user system function commands" ([957a175](https://github.com/SilentVoid13/Templater/commit/957a17541a3bc87eac0fe6e4729ccbeaef42f199))
+
 ### [2.20.5](https://github.com/SilentVoid13/Templater/compare/2.20.4...2.20.5) (2026-05-20)
 
 
