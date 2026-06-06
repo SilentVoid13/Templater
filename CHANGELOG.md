@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.22.1](https://github.com/SilentVoid13/Templater/compare/2.22.0...2.22.1) (2026-06-06)
+
+
+### Bug Fixes
+
+* Auto jump to note content setting should work with folder templates ([1fad28f](https://github.com/SilentVoid13/Templater/commit/1fad28f90f09b082a1ee50dbe6f8c65ad746eb68)), closes [#1677](https://github.com/SilentVoid13/Templater/issues/1677) [#397](https://github.com/SilentVoid13/Templater/issues/397) [#928](https://github.com/SilentVoid13/Templater/issues/928) [#1176](https://github.com/SilentVoid13/Templater/issues/1176) [#1063](https://github.com/SilentVoid13/Templater/issues/1063) [#781](https://github.com/SilentVoid13/Templater/issues/781) [#673](https://github.com/SilentVoid13/Templater/issues/673)
+
 ## [2.22.0](https://github.com/SilentVoid13/Templater/compare/2.21.0...2.22.0) (2026-06-06)
 
 
