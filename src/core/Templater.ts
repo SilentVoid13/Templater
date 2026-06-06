@@ -382,6 +382,12 @@ export class Templater {
             file,
             true,
         );
+        if (
+            this.plugin.settings.jump_to_cursor_after_file_name &&
+            active_editor?.editor
+        ) {
+            active_editor.editor.focus();
+        }
         await this.end_templater_task(path);
     }
 
