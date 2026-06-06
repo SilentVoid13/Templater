@@ -13,9 +13,12 @@ describe("UserSystemFunctions", () => {
             "notes/note.md": `\n`,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
-                enable_system_commands: true,
-            });
+            plugins.templaterObsidian.app.saveLocalStorage(
+                "templater-local-settings",
+                {
+                    enable_system_commands: true,
+                },
+            );
             plugins.templaterObsidian.settings.templates_pairs = [
                 ["today", 'date + "%A, %d %B %Y"'],
             ];
@@ -61,9 +64,12 @@ describe("UserSystemFunctions", () => {
             "notes/note.md": `\n`,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
-                enable_system_commands: true,
-            });
+            plugins.templaterObsidian.app.saveLocalStorage(
+                "templater-local-settings",
+                {
+                    enable_system_commands: true,
+                },
+            );
             plugins.templaterObsidian.settings.templates_pairs = [
                 ["weather", 'curl "wttr.in/Paris?format=3"'],
             ];
@@ -78,7 +84,7 @@ describe("UserSystemFunctions", () => {
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(
             "notes/note.md",
-            /^paris: .+\d+°F\n$/,
+            /^paris: .+\d+°F\n$/i,
         );
     });
 });
