@@ -230,9 +230,11 @@ export class Templater {
                 true,
             );
 
-            active_leaf.setEphemeralState({
-                rename: "all",
-            });
+            if (!this.plugin.settings.jump_to_cursor_after_file_name) {
+                active_leaf.setEphemeralState({
+                    rename: "all",
+                });
+            }
         }
 
         await this.end_templater_task(path);

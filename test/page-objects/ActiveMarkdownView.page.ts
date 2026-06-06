@@ -106,6 +106,22 @@ class ActiveMarkdownView {
         await browser.keys(text.split(""));
     }
 
+    async expectEditorFocused() {
+        await browser.waitUntil(() =>
+            browser.execute(() =>
+                activeDocument.activeElement?.classList.contains("cm-content") ?? false,
+            ),
+        );
+    }
+
+    async expectInlineTitleFocused() {
+        await browser.waitUntil(() =>
+            browser.execute(() =>
+                activeDocument.activeElement?.classList.contains("inline-title") ?? false,
+            ),
+        );
+    }
+
     async expectPropertiesToBeVisible() {
         await this.propertiesEl.waitForDisplayed();
     }

@@ -48,6 +48,46 @@ describe("Settings", () => {
         });
     });
 
+    describe("Jump to note content after creating note", () => {
+        it("enables jump_to_cursor_after_file_name when toggled on", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(async ({ plugins }) => {
+                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
+                    false;
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Jump to note content after creating note",
+            );
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "jump_to_cursor_after_file_name",
+                true,
+            );
+        });
+
+        it("disables jump_to_cursor_after_file_name when toggled off", async () => {
+            await resetVault("test/vault", {});
+            await browser.executeObsidian(async ({ plugins }) => {
+                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
+                    true;
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickToggleByName(
+                "Jump to note content after creating note",
+            );
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "jump_to_cursor_after_file_name",
+                false,
+            );
+        });
+    });
+
     describe("Syntax highlighting on desktop", () => {
         it("disables syntax_highlighting when toggled off", async () => {
             await resetVault("test/vault", {});

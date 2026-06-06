@@ -46,6 +46,7 @@ export const DEFAULT_SETTINGS: Settings = {
     templates_pairs: [],
     trigger_on_file_creation_mode: "none",
     auto_jump_to_cursor: false,
+    jump_to_cursor_after_file_name: false,
     shell_path: "",
     user_scripts_folder: "",
     folder_templates: [],
@@ -65,6 +66,7 @@ export interface Settings {
     syntax_highlighting: boolean;
     syntax_highlighting_mobile: boolean;
     auto_jump_to_cursor: boolean;
+    jump_to_cursor_after_file_name: boolean;
     trigger_on_file_creation_mode: "none" | "folder" | "regex";
     folder_templates: Array<FolderTemplate>;
     file_templates: Array<FileTemplate>;
@@ -284,6 +286,14 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         return autoJumpDesc;
                     })(),
                     control: { type: "toggle", key: "auto_jump_to_cursor" },
+                },
+                {
+                    name: "Jump to note content after creating note",
+                    desc: "When creating a new note from a template, skip the rename prompt and immediately move the cursor to the note body.",
+                    control: {
+                        type: "toggle",
+                        key: "jump_to_cursor_after_file_name",
+                    },
                 },
             ],
         });

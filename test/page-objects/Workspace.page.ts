@@ -28,6 +28,16 @@ class Workspace {
         return tabs.length;
     }
 
+    async expectViewHeaderTitleFocused() {
+        await browser.waitUntil(() =>
+            browser.execute(() =>
+                !!activeDocument.activeElement?.closest(
+                    ".view-header-title-container",
+                ),
+            ),
+        );
+    }
+
     async waitForAllTemplatesExecuted() {
         await browser.waitUntil(async () => {
             try {
