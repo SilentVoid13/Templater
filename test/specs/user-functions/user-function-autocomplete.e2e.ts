@@ -68,8 +68,13 @@ describe("User function autocomplete", () => {
     it("typing tp.user.<script>. with an object user script shows exported function suggestions", async () => {
         await resetVault("test/vault", {
             "user scripts/foo.js": [
-                "function doSomething() {",
-                `    return "Something was done";`,
+                "/**",
+                " * Does something from an object export.",
+                " * @param name - The name to use",
+                " * @returns The result message",
+                " */",
+                "function doSomething(name) {",
+                `    return "Something was done " + name;`,
                 "}",
                 "",
                 "module.exports = {",
@@ -86,6 +91,15 @@ describe("User function autocomplete", () => {
         const names = await EditorSuggestionsPage.getSuggestionNames();
         expect(names).toContain("func");
         expect(names).toContain("doSomething");
+        const texts = await EditorSuggestionsPage.getSuggestionTexts();
+        const doSomethingText = texts.find((text) =>
+            text.startsWith("doSomething"),
+        );
+        expect(doSomethingText).toContain(
+            "Does something from an object export.",
+        );
+        expect(doSomethingText).toContain("name: The name to use");
+        expect(doSomethingText).toContain("Returns: The result message");
     });
 
     it("typing tp.user. with nonexistent user scripts folder shows error notice", async () => {

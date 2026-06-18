@@ -104,24 +104,33 @@ export async function populate_docs_from_user_scripts(
 }
 
 function generate_jsdoc(file: TFile, content: string): TJDocFile {
-    // Parse the content
-    const tsdocParser = new TSDocParser();
-    const parsedDoc = tsdocParser.parseString(content);
+    const doc = generate_jsdoc_documentation(content);
 
     // Copy and extract information into the TJDocFile
     const newDocFile = new TJDocFile(file);
 
-    newDocFile.description = generate_jsdoc_description(
-        parsedDoc.docComment.summarySection,
-    );
-    newDocFile.returns = generate_jsdoc_return(
-        parsedDoc.docComment.returnsBlock,
-    );
-    newDocFile.arguments = generate_jsdoc_arguments(
-        parsedDoc.docComment.params,
-    );
+    newDocFile.description = doc.description;
+    newDocFile.returns = doc.returns;
+    newDocFile.arguments = doc.arguments;
 
     return newDocFile;
+}
+
+export function generate_jsdoc_documentation(content: string): {
+    description: string;
+    returns: string;
+    arguments: TJDocFileArgument[];
+} {
+    const tsdocParser = new TSDocParser();
+    const parsedDoc = tsdocParser.parseString(content);
+
+    return {
+        description: generate_jsdoc_description(
+            parsedDoc.docComment.summarySection,
+        ),
+        returns: generate_jsdoc_return(parsedDoc.docComment.returnsBlock),
+        arguments: generate_jsdoc_arguments(parsedDoc.docComment.params),
+    };
 }
 
 function generate_jsdoc_description(summarySection: DocSection): string {

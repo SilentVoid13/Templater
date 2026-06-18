@@ -4,6 +4,7 @@ import { errorWrapper } from "utils/Error";
 import { UserScriptFunctions } from "core/functions/user_functions/UserScriptFunctions";
 import type { UserScriptFunction } from "types";
 import {
+    generate_jsdoc_documentation,
     get_fn_params,
     get_tfiles_from_folder,
     is_object,
@@ -60,6 +61,14 @@ export type TpFunctionDocumentation = {
 export type TpArgumentDocumentation = {
     name: string;
     description: string;
+};
+
+type UserScriptMemberDocumentation = {
+    description: string;
+    returns: string;
+    args?: {
+        [key: string]: TpArgumentDocumentation;
+    };
 };
 
 export type TpSuggestDocumentation =
@@ -126,11 +135,6 @@ export class Documentation {
                 `User Scripts folder doesn't exist`,
             );
             if (!jsFiles || jsFiles.length === 0) return;
-            const docFiles = await errorWrapper(
-                () => populate_docs_from_user_scripts(this.plugin.app, jsFiles),
-                `Failed to parse user script documentation`,
-            );
-            if (!docFiles || docFiles.length === 0) return;
 
             const userScriptPath = get_user_script_path(function_name);
             if (userScriptPath) {
@@ -146,6 +150,12 @@ export class Documentation {
                 );
             }
 
+            const docFiles = await errorWrapper(
+                () => populate_docs_from_user_scripts(this.plugin.app, jsFiles),
+                `Failed to parse user script documentation`,
+            );
+            if (!docFiles || docFiles.length === 0) return;
+
             return docFiles.reduce<TpFunctionDocumentation[]>(
                 (acc, file) => [
                     ...acc,
@@ -155,15 +165,7 @@ export class Documentation {
                         definition: "",
                         description: file.description ?? "",
                         returns: file.returns ?? "",
-                        args: (file.arguments ?? []).reduce<{
-                            [key: string]: TpArgumentDocumentation;
-                        }>((argAcc, arg) => {
-                            argAcc[arg.name] = {
-                                name: arg.name,
-                                description: arg.description,
-                            };
-                            return argAcc;
-                        }, {}),
+                        args: get_argument_documentation(file.arguments ?? []),
                         example: "",
                     },
                 ],
@@ -281,6 +283,9 @@ async function get_user_script_object_documentation(
     userScriptFile: TFile,
     scriptName: string,
 ): Promise<TpFunctionDocumentation[]> {
+    const userScriptContent = await plugin.app.vault.cachedRead(userScriptFile);
+    const memberDocumentation =
+        get_user_script_member_documentation(userScriptContent);
     const userScriptFunctions = new Map<string, UserScriptFunction>();
     const loader = new UserScriptFunctions(plugin);
     await errorWrapper(
@@ -301,14 +306,76 @@ async function get_user_script_object_documentation(
         .filter((entry): entry is [string, (...args: unknown[]) => unknown] => {
             return typeof entry[1] === "function";
         })
-        .map(([name, fn]) => ({
-            name,
-            queryKey: `${scriptName}.${name}`,
-            definition: `tp.user.${scriptName}.${name}(${get_fn_params(
-                fn,
-            ).join(", ")})`,
-            description: "",
-            returns: "",
-            example: "",
-        }));
+        .map(([name, fn]) => {
+            const docs =
+                memberDocumentation.get(name) ||
+                memberDocumentation.get(fn.name);
+            return {
+                name,
+                queryKey: `${scriptName}.${name}`,
+                definition: `tp.user.${scriptName}.${name}(${get_fn_params(
+                    fn,
+                ).join(", ")})`,
+                description: docs?.description ?? "",
+                returns: docs?.returns ?? "",
+                args: docs?.args,
+                example: "",
+            };
+        });
+}
+
+function get_user_script_member_documentation(
+    content: string,
+): Map<string, UserScriptMemberDocumentation> {
+    const docs = new Map<string, UserScriptMemberDocumentation>();
+    const docBlock = "\\/\\*\\*[\\s\\S]*?\\*\\/";
+    const identifier = "[$A-Z_a-z][$\\w]*";
+    const patterns = [
+        new RegExp(
+            `(${docBlock})\\s*(?:async\\s+)?function\\s+(${identifier})\\s*\\(`,
+            "g",
+        ),
+        new RegExp(
+            `(${docBlock})\\s*(?:const|let|var)\\s+(${identifier})\\s*=`,
+            "g",
+        ),
+        new RegExp(`(${docBlock})\\s*(${identifier})\\s*:`, "g"),
+        new RegExp(`(${docBlock})\\s*["'](${identifier})["']\\s*:`, "g"),
+        new RegExp(
+            `(${docBlock})\\s*(?:async\\s+)?(${identifier})\\s*\\([^)]*\\)\\s*{`,
+            "g",
+        ),
+        new RegExp(`(${docBlock})\\s*(${identifier})\\s*(?=,|})`, "g"),
+    ];
+
+    for (const pattern of patterns) {
+        for (const match of content.matchAll(pattern)) {
+            const doc = generate_jsdoc_documentation(match[1]);
+            docs.set(match[2], {
+                description: doc.description,
+                returns: doc.returns,
+                args: get_argument_documentation(doc.arguments),
+            });
+        }
+    }
+
+    return docs;
+}
+
+function get_argument_documentation(
+    args: { name: string; description: string }[],
+): { [key: string]: TpArgumentDocumentation } | undefined {
+    if (args.length === 0) {
+        return undefined;
+    }
+
+    return args.reduce<{
+        [key: string]: TpArgumentDocumentation;
+    }>((argAcc, arg) => {
+        argAcc[arg.name] = {
+            name: arg.name,
+            description: arg.description,
+        };
+        return argAcc;
+    }, {});
 }
