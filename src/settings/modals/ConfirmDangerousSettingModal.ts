@@ -1,4 +1,4 @@
-import { App, ConfirmationButton, ConfirmationModal } from "obsidian";
+import { App, ConfirmationButton, ConfirmationModal, Platform } from "obsidian";
 
 export class ConfirmDangerousSettingModal extends ConfirmationModal {
     constructor(
@@ -20,10 +20,19 @@ export class ConfirmDangerousSettingModal extends ConfirmationModal {
         });
 
         let enableBtn!: ConfirmationButton;
-        this.addCheckbox("I understand the risks", (checked) => {
-            enableBtn.setDisabled(!checked);
-        })
-            .addButton((btn) => {
+        if (Platform.isMobile) {
+            this.addButton((btn) => {
+                enableBtn = btn;
+                btn.setButtonText("I understand the risks, enable")
+                    .setCta()
+                    .onClick(async () => {
+                        await onConfirm();
+                    });
+            });
+        } else {
+            this.addCheckbox("I understand the risks", (checked) => {
+                enableBtn.setDisabled(!checked);
+            }).addButton((btn) => {
                 enableBtn = btn;
                 btn.setButtonText("Enable")
                     .setCta()
@@ -31,7 +40,9 @@ export class ConfirmDangerousSettingModal extends ConfirmationModal {
                     .onClick(async () => {
                         await onConfirm();
                     });
-            })
-            .addCancelButton();
+            });
+        }
+
+        this.addCancelButton();
     }
 }
