@@ -65,6 +65,29 @@ describe("User function autocomplete", () => {
         expect(names).toContain("greet");
     });
 
+    it("typing tp.user.<script>. with an object user script shows exported function suggestions", async () => {
+        await resetVault("test/vault", {
+            "user scripts/foo.js": [
+                "function doSomething() {",
+                `    return "Something was done";`,
+                "}",
+                "",
+                "module.exports = {",
+                "    func: () => console.log('test'),",
+                "    doSomething,",
+                "};",
+            ].join("\n"),
+            "notes/show object suggestions.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/show object suggestions.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.foo.");
+        await NoticePage.expectNoErrorNotice();
+        await EditorSuggestionsPage.waitForDisplayed();
+        const names = await EditorSuggestionsPage.getSuggestionNames();
+        expect(names).toContain("func");
+        expect(names).toContain("doSomething");
+    });
+
     it("typing tp.user. with nonexistent user scripts folder shows error notice", async () => {
         await resetVault("test/vault", {
             "notes/nonexistent scripts folder.md": `\n`,
