@@ -16,9 +16,14 @@ class EditorSuggestions {
     }
 
     async getSuggestionNames(): Promise<string[]> {
+        const texts = await this.getSuggestionTexts();
+        return texts.map((text) => text.split("\n")[0]);
+    }
+
+    async getSuggestionTexts(): Promise<string[]> {
         const names: string[] = [];
         for await (const item of this.#suggestionEls) {
-            names.push((await item.getText()).split("\n")[0]);
+            names.push(await item.getText());
         }
         return names;
     }

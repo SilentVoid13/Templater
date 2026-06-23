@@ -65,6 +65,43 @@ describe("User function autocomplete", () => {
         expect(names).toContain("greet");
     });
 
+    it("typing tp.user.<script>. with an object user script shows exported function suggestions", async () => {
+        await resetVault("test/vault", {
+            "user scripts/foo.js": [
+                "/**",
+                " * Does something from an object export.",
+                " * @param name - The name to use",
+                " * @returns The result message",
+                " */",
+                "function doSomething(name) {",
+                `    return "Something was done " + name;`,
+                "}",
+                "",
+                "module.exports = {",
+                "    func: () => console.log('test'),",
+                "    doSomething,",
+                "};",
+            ].join("\n"),
+            "notes/show object suggestions.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/show object suggestions.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.foo.");
+        await NoticePage.expectNoErrorNotice();
+        await EditorSuggestionsPage.waitForDisplayed();
+        const names = await EditorSuggestionsPage.getSuggestionNames();
+        expect(names).toContain("func");
+        expect(names).toContain("doSomething");
+        const texts = await EditorSuggestionsPage.getSuggestionTexts();
+        const doSomethingText = texts.find((text) =>
+            text.startsWith("doSomething"),
+        );
+        expect(doSomethingText).toContain(
+            "Does something from an object export.",
+        );
+        expect(doSomethingText).toContain("name: The name to use");
+        expect(doSomethingText).toContain("Returns: The result message");
+    });
+
     it("typing tp.user. with nonexistent user scripts folder shows error notice", async () => {
         await resetVault("test/vault", {
             "notes/nonexistent scripts folder.md": `\n`,
