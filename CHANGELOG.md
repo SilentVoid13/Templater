@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.23.0](https://github.com/SilentVoid13/Templater/compare/2.22.1...2.23.0) (2026-06-23)
+
+
+### Features
+
+* add autocomplete for object-exported user script functions ([#1753](https://github.com/SilentVoid13/Templater/issues/1753)) fixes [#1752](https://github.com/SilentVoid13/Templater/issues/1752) ([9106cb3](https://github.com/SilentVoid13/Templater/commit/9106cb30e43f3db85a0ea7dc9ca91f165cb36126))
+
+
+### Bug Fixes
+
+* Don't show checkbox when confirming dangerous settings on mobile, instead update button text ([70a24ce](https://github.com/SilentVoid13/Templater/commit/70a24cefece47be55018b989b255b224a9b3b718))
+
 ### [2.22.1](https://github.com/SilentVoid13/Templater/compare/2.22.0...2.22.1) (2026-06-06)
 
 
