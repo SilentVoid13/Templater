@@ -2,4 +2,4 @@ packages:
     - "."
 
 onlyBuiltDependencies:
-    - "@codemirror/language"
+    - "@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/cc6a2cc30288db6be3f879ddf0e3ef64f14ed6ab"
