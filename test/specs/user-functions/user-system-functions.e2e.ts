@@ -6,6 +6,11 @@ import NoticePage from "../../page-objects/Notice.page";
 import { resetVault } from "../../utils/reset-vault";
 
 describe("UserSystemFunctions", () => {
+    const largeOutput = "x".repeat(1_200_000);
+    const largeOutputCommand = `${JSON.stringify(process.execPath)} -e ${JSON.stringify(
+        "process.stdout.write('x'.repeat(1200000))",
+    )}`;
+
     it.skip("tp.user.date example from docs works", async () => {
         await resetVault("test/vault", {
             // TODO: pass arguments
@@ -86,5 +91,35 @@ describe("UserSystemFunctions", () => {
             "notes/note.md",
             /^paris: .+\d+°F\n$/i,
         );
+    });
+
+    it("executes system commands that emit more than Node's default exec maxBuffer", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.large.md": `<% tp.user.large() %>`,
+            "notes/note.md": `\n`,
+        });
+        await browser.executeObsidian(
+            async ({ plugins }, command: string) => {
+                plugins.templaterObsidian.app.saveLocalStorage(
+                    "templater-local-settings",
+                    {
+                        enable_system_commands: true,
+                    },
+                );
+                plugins.templaterObsidian.settings.templates_pairs = [
+                    ["large", command],
+                ];
+                await plugins.templaterObsidian.save_settings();
+            },
+            largeOutputCommand,
+        );
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.user.large",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/note.md", largeOutput);
     });
 });

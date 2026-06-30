@@ -4,14 +4,19 @@ import { IGenerateObject } from "../IGenerateObject";
 import { RunningConfig } from "core/Templater";
 import { UNSUPPORTED_MOBILE_TEMPLATE } from "utils/Constants";
 import { TemplaterError } from "utils/Error";
+import {
+    runSystemCommand,
+    type SystemCommandOptions,
+    type SystemCommandResult,
+} from "utils/runSystemCommand";
 import { FunctionsMode } from "../FunctionsGenerator";
 
 export class UserSystemFunctions implements IGenerateObject {
     private cwd: string;
-    private exec_promise?: (
-        arg1: string,
-        arg2: Record<string, unknown>,
-    ) => Promise<{ stdout: string; stderr: string }>;
+    private run_command?: (
+        command: string,
+        options: SystemCommandOptions,
+    ) => Promise<SystemCommandResult>;
 
     constructor(private plugin: TemplaterPlugin) {
         if (
@@ -21,12 +26,7 @@ export class UserSystemFunctions implements IGenerateObject {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
-            // eslint-disable-next-line @typescript-eslint/no-require-imports, import/no-nodejs-modules -- Node.js built-ins required for shell command execution
-            const { promisify } = require("util") as typeof import("util");
-            const { exec } =
-                // eslint-disable-next-line @typescript-eslint/no-require-imports, import/no-nodejs-modules -- Node.js built-ins required for shell command execution
-                require("child_process") as typeof import("child_process");
-            this.exec_promise = promisify(exec);
+            this.run_command = runSystemCommand;
         }
     }
 
@@ -70,14 +70,14 @@ export class UserSystemFunctions implements IGenerateObject {
                     async (
                         user_args?: Record<string, unknown>,
                     ): Promise<string> => {
-                        if (!this.exec_promise) return "";
+                        if (!this.run_command) return "";
 
                         const process_env = {
                             ...process.env,
                             ...user_args,
-                        };
+                        } as typeof process.env;
 
-                        const cmd_options = {
+                        const cmd_options: SystemCommandOptions = {
                             timeout:
                                 this.plugin.settings.command_timeout * 1000,
                             cwd: this.cwd,
@@ -88,7 +88,7 @@ export class UserSystemFunctions implements IGenerateObject {
                         };
 
                         try {
-                            const { stdout } = await this.exec_promise(
+                            const { stdout } = await this.run_command(
                                 cmd,
                                 cmd_options,
                             );
