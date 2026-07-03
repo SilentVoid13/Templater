@@ -29,9 +29,6 @@ importers:
       child_process:
         specifier: ^1.0.2
         version: 1.0.2
-      typescript:
-        specifier: ^4.8.4
-        version: 4.9.5
     devDependencies:
       '@eslint/js':
         specifier: ^9.35.0
@@ -117,6 +114,9 @@ importers:
       tslib:
         specifier: ^2.4.1
         version: 2.6.2
+      typescript:
+        specifier: ^4.8.4
+        version: 4.9.5
       typescript-eslint:
         specifier: ^8.42.0
         version: 8.59.1(eslint@9.39.4(jiti@2.6.1))(typescript@4.9.5)

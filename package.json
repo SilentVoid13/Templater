@@ -52,6 +52,7 @@
         "stringify-package": "^1.0.1",
         "ts-node": "^9.1.1",
         "tslib": "^2.4.1",
+        "typescript": "^4.8.4",
         "typescript-eslint": "^8.42.0",
         "wdio-obsidian-reporter": "^2.1.6",
         "wdio-obsidian-service": "^2.1.6",
@@ -64,8 +65,7 @@
         "@microsoft/tsdoc": "^0.15.1",
         "@silentvoid13/rusty_engine": "^0.4.0",
         "acorn": "^8.17.0",
-        "child_process": "^1.0.2",
-        "typescript": "^4.8.4"
+        "child_process": "^1.0.2"
     },
     "config": {
         "commitizen": {
