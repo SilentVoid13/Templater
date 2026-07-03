@@ -102,6 +102,36 @@ describe("User function autocomplete", () => {
         expect(doSomethingText).toContain("Returns: The result message");
     });
 
+    it("typing tp.user.<script>. does not execute the user script (no RCE via autocomplete)", async () => {
+        await resetVault("test/vault", {
+            "user scripts/poc.js": [
+                // side effect that fires only if the file runs
+                "activeWindow.__templater_autocomplete_executed = true;",
+                `module.exports = { safeMember: () => "ok" };`,
+            ].join("\n"),
+            "notes/no execute on autocomplete.md": `\n`,
+        });
+        await browser.executeObsidian(() => {
+            delete (activeWindow as unknown as Record<string, unknown>)[
+                "__templater_autocomplete_executed"
+            ];
+        });
+        await obsidianPage.openFile("notes/no execute on autocomplete.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.poc.");
+        await NoticePage.expectNoErrorNotice();
+        await EditorSuggestionsPage.waitForDisplayed();
+        const names = await EditorSuggestionsPage.getSuggestionNames();
+        expect(names).toContain("safeMember");
+        // unset props return null over WebDriver, so check it was never set to true
+        const executed = await browser.executeObsidian(
+            () =>
+                (activeWindow as unknown as Record<string, unknown>)[
+                    "__templater_autocomplete_executed"
+                ] ?? false,
+        );
+        expect(executed).toBe(false);
+    });
+
     it("typing tp.user. with nonexistent user scripts folder shows error notice", async () => {
         await resetVault("test/vault", {
             "notes/nonexistent scripts folder.md": `\n`,

@@ -1,8 +1,7 @@
 import TemplaterPlugin from "main";
 import { TFile } from "obsidian";
+import * as acorn from "acorn";
 import { errorWrapper } from "utils/Error";
-import { UserScriptFunctions } from "core/functions/user_functions/UserScriptFunctions";
-import type { UserScriptFunction } from "types";
 import {
     generate_jsdoc_documentation,
     get_fn_params,
@@ -286,42 +285,170 @@ async function get_user_script_object_documentation(
     const userScriptContent = await plugin.app.vault.cachedRead(userScriptFile);
     const memberDocumentation =
         get_user_script_member_documentation(userScriptContent);
-    const userScriptFunctions = new Map<string, UserScriptFunction>();
-    const loader = new UserScriptFunctions(plugin);
-    await errorWrapper(
-        () =>
-            loader.load_user_script_function(
-                userScriptFile,
-                userScriptFunctions,
-            ),
-        `Failed to load user script at "${userScriptFile.path}"`,
-    );
+    // Enumerate members statically so autocomplete never executes the script.
+    const memberNames = get_user_script_object_member_names(userScriptContent);
 
-    const userScriptFunction = userScriptFunctions.get(scriptName);
-    if (!is_object(userScriptFunction)) {
+    return memberNames.map((name) => {
+        const docs = memberDocumentation.get(name);
+        const params = docs?.args ? Object.keys(docs.args) : [];
+        return {
+            name,
+            queryKey: `${scriptName}.${name}`,
+            definition: `tp.user.${scriptName}.${name}(${params.join(", ")})`,
+            description: docs?.description ?? "",
+            returns: docs?.returns ?? "",
+            args: docs?.args,
+            example: "",
+        };
+    });
+}
+
+// Parse the exported object's member names from the AST without executing the file.
+// Best-effort: returns [] for single-function exports, unresolvable exports, or parse
+// errors.
+function get_user_script_object_member_names(content: string): string[] {
+    let ast: unknown;
+    try {
+        ast = acorn.parse(content, {
+            ecmaVersion: "latest",
+            sourceType: "module",
+        });
+    } catch {
+        try {
+            ast = acorn.parse(content, {
+                ecmaVersion: "latest",
+                sourceType: "script",
+                allowReturnOutsideFunction: true,
+            });
+        } catch {
+            return [];
+        }
+    }
+
+    if (!is_object(ast) || !Array.isArray(ast.body)) {
         return [];
     }
 
-    return Object.entries(userScriptFunction)
-        .filter((entry): entry is [string, (...args: unknown[]) => unknown] => {
-            return typeof entry[1] === "function";
-        })
-        .map(([name, fn]) => {
-            const docs =
-                memberDocumentation.get(name) ||
-                memberDocumentation.get(fn.name);
-            return {
-                name,
-                queryKey: `${scriptName}.${name}`,
-                definition: `tp.user.${scriptName}.${name}(${get_fn_params(
-                    fn,
-                ).join(", ")})`,
-                description: docs?.description ?? "",
-                returns: docs?.returns ?? "",
-                args: docs?.args,
-                example: "",
-            };
-        });
+    const names = new Set<string>();
+    for (const statement of ast.body) {
+        collect_export_member_names(statement, names);
+    }
+    return [...names];
+}
+
+function is_member_access(
+    node: unknown,
+    objectName: string,
+    propertyName: string,
+): boolean {
+    if (!is_object(node) || node.type !== "MemberExpression" || node.computed) {
+        return false;
+    }
+    const object = node.object;
+    const property = node.property;
+    return (
+        is_object(object) &&
+        object.type === "Identifier" &&
+        object.name === objectName &&
+        is_object(property) &&
+        property.type === "Identifier" &&
+        property.name === propertyName
+    );
+}
+
+function collect_object_expression_keys(
+    node: unknown,
+    names: Set<string>,
+): void {
+    if (
+        !is_object(node) ||
+        node.type !== "ObjectExpression" ||
+        !Array.isArray(node.properties)
+    ) {
+        return;
+    }
+    for (const prop of node.properties) {
+        if (!is_object(prop) || prop.type !== "Property" || prop.computed) {
+            continue;
+        }
+        const key = prop.key;
+        if (!is_object(key)) {
+            continue;
+        }
+        if (key.type === "Identifier" && typeof key.name === "string") {
+            names.add(key.name);
+        } else if (key.type === "Literal" && typeof key.value === "string") {
+            names.add(key.value);
+        }
+    }
+}
+
+// Member name for `module.exports.foo` / `exports.foo` / `exports.default.foo`, else null.
+function exports_member_name(left: Record<string, unknown>): string | null {
+    if (left.computed) {
+        return null;
+    }
+    const property = left.property;
+    if (
+        !is_object(property) ||
+        property.type !== "Identifier" ||
+        typeof property.name !== "string"
+    ) {
+        return null;
+    }
+    const object = left.object;
+    const isExportsTarget =
+        is_member_access(object, "module", "exports") ||
+        is_member_access(object, "exports", "default") ||
+        (is_object(object) &&
+            object.type === "Identifier" &&
+            object.name === "exports");
+    return isExportsTarget ? property.name : null;
+}
+
+function collect_export_member_names(
+    node: unknown,
+    names: Set<string>,
+): void {
+    if (!is_object(node)) {
+        return;
+    }
+
+    if (node.type === "ExportDefaultDeclaration") {
+        collect_object_expression_keys(node.declaration, names);
+        return;
+    }
+
+    if (node.type !== "ExpressionStatement") {
+        return;
+    }
+    const expression = node.expression;
+    if (
+        !is_object(expression) ||
+        expression.type !== "AssignmentExpression" ||
+        expression.operator !== "="
+    ) {
+        return;
+    }
+
+    const left = expression.left;
+    if (!is_object(left) || left.type !== "MemberExpression") {
+        return;
+    }
+
+    // module.exports = { ... } / exports.default = { ... }
+    if (
+        is_member_access(left, "module", "exports") ||
+        is_member_access(left, "exports", "default")
+    ) {
+        collect_object_expression_keys(expression.right, names);
+        return;
+    }
+
+    const memberName = exports_member_name(left);
+    if (memberName) {
+        names.add(memberName);
+    }
 }
 
 function get_user_script_member_documentation(
