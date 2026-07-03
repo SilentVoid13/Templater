@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.23.1](https://github.com/SilentVoid13/Templater/compare/2.23.0...2.23.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* Prevent code execution in user scripts autocompletion ([9a08060](https://github.com/SilentVoid13/Templater/commit/9a0806047af3a7288a8b2acb4869e37f0af6ea29))
+
 ## [2.23.0](https://github.com/SilentVoid13/Templater/compare/2.22.1...2.23.0) (2026-06-23)
 
 
