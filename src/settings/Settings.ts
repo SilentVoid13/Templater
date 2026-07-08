@@ -42,6 +42,10 @@ export interface IgnoreFolderOnCreation {
 export const DEFAULT_SETTINGS: Settings = {
     data_version: 2,
     command_timeout: 5,
+    // Maximum stdout/stderr size (bytes) for user system commands.
+    // Overrides Node's 1 MiB `exec` default, which made commands with large
+    // output fail with "stdout maxBuffer length exceeded".
+    command_max_buffer: 1024 * 1024 * 100,
     templates_folder: "",
     templates_pairs: [],
     trigger_on_file_creation_mode: "none",
@@ -72,6 +76,7 @@ export interface Settings {
     file_templates: Array<FileTemplate>;
     ignore_folders_on_creation: Array<IgnoreFolderOnCreation>;
     command_timeout: number;
+    command_max_buffer: number;
     templates_pairs: Array<[string, string]>;
     shell_path: string;
     user_scripts_folder: string;
