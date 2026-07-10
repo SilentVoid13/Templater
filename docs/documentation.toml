@@ -680,12 +680,20 @@ description = "This modules contains every internal function related to the web 
 
 [tp.web.functions.daily_quote]
 name = "daily_quote"
-description = "Retrieves and parses the daily quote from `https://github.com/Zachatoo/quotes-database` as a callout."
-definition = "tp.web.daily_quote()"
+description = "Retrieves and parses a daily quote as a callout. Without arguments it uses the language configured in Obsidian (via `getLanguage()`), falling back to English. English quotes come from `https://github.com/Zachatoo/quotes-database` and Spanish quotes from `https://github.com/wulflo/frases-inventario`."
+definition = "tp.web.daily_quote(language?: string)"
+
+[[tp.web.functions.daily_quote.args]]
+name = "language"
+description = "Optional language code (e.g. `\"en\"`, `\"es\"`) selecting the quotes database. Defaults to Obsidian's display language, falling back to English when no database is registered for that language."
 
 [[tp.web.functions.daily_quote.examples]]
 name = "Daily quote"
 example = "<% await tp.web.daily_quote() %>"
+
+[[tp.web.functions.daily_quote.examples]]
+name = "Daily quote in Spanish"
+example = """<% await tp.web.daily_quote("es") %>"""
 
 [tp.web.functions.random_picture]
 name = "random_picture"

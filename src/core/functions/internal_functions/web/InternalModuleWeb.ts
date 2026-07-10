@@ -1,4 +1,4 @@
-import { requestUrl, RequestUrlResponse } from "obsidian";
+import { getLanguage, requestUrl, RequestUrlResponse } from "obsidian";
 import { TemplaterError } from "utils/Error";
 import { InternalModule } from "../InternalModule";
 import { ModuleName } from "editor/TpDocumentation";
@@ -7,6 +7,18 @@ interface DailyQuote {
     quote: string;
     author: string;
 }
+
+const DEFAULT_QUOTE_LANGUAGE = "en";
+
+/**
+ * Quote databases keyed by language code. Each database is a JSON array of
+ * `{ quote, author }` objects. To add a language, register its database URL
+ * here — any language without an entry falls back to `DEFAULT_QUOTE_LANGUAGE`.
+ */
+const DAILY_QUOTE_DATABASES: Record<string, string> = {
+    en: "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json",
+    es: "https://raw.githubusercontent.com/wulflo/frases-inventario/refs/heads/main/quotes.json",
+};
 
 interface UnsplashPhoto {
     full: string;
@@ -42,12 +54,21 @@ export class InternalModuleWeb extends InternalModule {
         }
     }
 
-    generate_daily_quote(): () => Promise<string> {
-        return async () => {
+    generate_daily_quote(): (language?: string) => Promise<string> {
+        return async (language?: string) => {
             try {
-                const response = await this.getRequest(
-                    "https://raw.githubusercontent.com/Zachatoo/quotes-database/refs/heads/main/quotes.json",
-                );
+                // Resolve the quote language: an explicit argument wins, then
+                // Obsidian's display language, then the English default.
+                const lang = (
+                    language ||
+                    getLanguage() ||
+                    DEFAULT_QUOTE_LANGUAGE
+                ).toLowerCase();
+                const database =
+                    DAILY_QUOTE_DATABASES[lang] ??
+                    DAILY_QUOTE_DATABASES[DEFAULT_QUOTE_LANGUAGE];
+
+                const response = await this.getRequest(database);
                 const quotes = response.json as DailyQuote[];
                 const random_quote =
                     quotes[Math.floor(Math.random() * quotes.length)];
