@@ -514,7 +514,7 @@ example = "<% tp.system.clipboard() %>"
 [tp.system.functions.prompt]
 name = "prompt"
 description = "Spawns a prompt modal and returns the user's input."
-definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false)"
+definition = "tp.system.prompt(prompt_text?: string, default_value?: string, throw_on_cancel: boolean = false, multiline?: boolean = false, select_default_value?: boolean = false)"
 
 [[tp.system.functions.prompt.args]]
 name = "prompt_text"
@@ -532,6 +532,10 @@ description = "Throws an error if the prompt is canceled, instead of returning a
 name = "multiline"
 description = "If set to `true`, the input field will be a multiline textarea. Defaults to `false`."
 
+[[tp.system.functions.prompt.args]]
+name = "select_default_value"
+description = "If set to `true`, the default value shown when the modal opens is selected, so typing replaces it. Defaults to `false`."
+
 [[tp.system.functions.prompt.examples]]
 name = "Prompt"
 example = """<% await tp.system.prompt("Please enter a value") %>"""
@@ -543,6 +547,10 @@ example = """<% await tp.system.prompt("What is your mood today?", "happy") %>""
 [[tp.system.functions.prompt.examples]]
 name = "Multiline prompt"
 example = """<% await tp.system.prompt("What is your mood today?", null, false, true) %>"""
+
+[[tp.system.functions.prompt.examples]]
+name = "Prompt with pre-selected default value"
+example = """<% await tp.system.prompt("What is your mood today?", "Input a mood...", false, false, true) %>"""
 
 [[tp.system.functions.prompt.examples]]
 name = "Reuse output from prompt"

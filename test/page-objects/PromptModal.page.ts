@@ -33,6 +33,16 @@ class PromptModal {
         );
     }
 
+    async getSelectedText() {
+        await this.waitForDisplayed();
+        return browser.execute((selector: string) => {
+            const el = activeDocument.querySelector(selector) as
+                | HTMLInputElement
+                | HTMLTextAreaElement;
+            return el.value.substring(el.selectionStart ?? 0, el.selectionEnd ?? 0);
+        }, ".templater-prompt-input");
+    }
+
     async submit() {
         await this.waitForDisplayed();
         await browser.keys("Enter");
