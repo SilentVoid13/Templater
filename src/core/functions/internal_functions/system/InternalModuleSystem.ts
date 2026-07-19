@@ -32,19 +32,22 @@ export class InternalModuleSystem extends InternalModule {
         prompt_text: string,
         default_value: string,
         throw_on_cancel: boolean,
-        multi_line: boolean
+        multi_line: boolean,
+        select_default_value: boolean
     ) => Promise<string | null> {
         return async (
             prompt_text: string,
             default_value: string,
             throw_on_cancel = false,
-            multi_line = false
+            multi_line = false,
+            select_default_value = false
         ): Promise<string | null> => {
             const prompt = new PromptModal(
                 this.plugin.app,
                 prompt_text,
                 default_value,
-                multi_line
+                multi_line,
+                select_default_value
             );
             const promise = new Promise(
                 (

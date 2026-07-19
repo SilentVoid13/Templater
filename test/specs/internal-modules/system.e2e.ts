@@ -129,6 +129,39 @@ describe("InternalModuleSystem", () => {
         await VaultPage.expectFileToHaveContent("Untitled.md", "");
     });
 
+    it("tp.system.prompt selects default value when select_default_value is true", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value", "default text", false, false, true) %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        expect(await PromptModalPage.getSelectedText()).toBe("default text");
+        await PromptModalPage.enterValue("replaced text");
+        await PromptModalPage.submit();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "replaced text");
+    });
+
+    it("tp.system.prompt does not select default value by default", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter a value", "default text") %>`,
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.system.prompt",
+        );
+        expect(await PromptModalPage.getSelectedText()).toBe("");
+        await PromptModalPage.submit();
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("Untitled.md", "default text");
+    });
+
     it("tp.system.prompt supports multi-line input", async () => {
         await resetVault("test/vault", {
             "templates/tp.system.prompt.md": `<% await tp.system.prompt("Enter text", "", false, true) %>`,

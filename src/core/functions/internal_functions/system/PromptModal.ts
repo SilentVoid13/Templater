@@ -19,6 +19,7 @@ export class PromptModal extends Modal {
         private prompt_text: string,
         private default_value: string,
         private multi_line: boolean,
+        private select_default_value: boolean,
     ) {
         super(app);
     }
@@ -62,6 +63,9 @@ export class PromptModal extends Modal {
         textInput.setValue(this.value);
         textInput.onChange((value) => (this.value = value));
         textInput.inputEl.focus();
+        if (this.select_default_value) {
+            textInput.inputEl.select();
+        }
         textInput.inputEl.addEventListener("keydown", (evt: KeyboardEvent) =>
             this.enterCallback(evt),
         );
