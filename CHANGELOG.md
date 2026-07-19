@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.24.0](https://github.com/SilentVoid13/Templater/compare/2.23.1...2.24.0) (2026-07-19)
+
+
+### Features
+
+* add language parameter to tp.web.daily_quote() ([#1759](https://github.com/SilentVoid13/Templater/issues/1759)) ([bde536f](https://github.com/SilentVoid13/Templater/commit/bde536f079d041a914601cd6a860372d60d9c8af)), closes [#1757](https://github.com/SilentVoid13/Templater/issues/1757)
+* **prompt:** Added ability to auto select default text ([#1761](https://github.com/SilentVoid13/Templater/issues/1761)) ([94ca056](https://github.com/SilentVoid13/Templater/commit/94ca05642cad3cf603fa2a9d9b8e057749b5128e))
+
 ### [2.23.1](https://github.com/SilentVoid13/Templater/compare/2.23.0...2.23.1) (2026-07-03)
 
 
