@@ -4,19 +4,20 @@ import {
     MarkdownPostProcessorContext,
     MarkdownView,
     normalizePath,
-    stringifyYaml,
     TAbstractFile,
     TFile,
     TFolder,
 } from "obsidian";
 import {
+    CommitResult,
     delay,
     generate_dynamic_command_regex,
     get_active_file,
     get_folder_path_from_file_path,
     resolve_tfile,
     get_frontmatter_and_content,
-    merge_objects,
+    merge_output_into_content,
+    merge_rendered_output,
 } from "utils/Utils";
 import TemplaterPlugin from "main";
 import {
@@ -207,11 +208,20 @@ export class Templater {
             return;
         }
 
-        await this.plugin.app.vault.modify(created_note, output_content);
+        // Another plugin may have written to the note while the template was running
+        // https://github.com/SilentVoid13/Templater/issues/1629
+        let written_content = output_content;
+        await this.plugin.app.vault.process(created_note, (data) => {
+            written_content =
+                data === ""
+                    ? output_content
+                    : merge_output_into_content(data, output_content);
+            return written_content;
+        });
 
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
             file: created_note,
-            content: output_content,
+            content: written_content,
         });
 
         if (open_new_note) {
@@ -311,10 +321,6 @@ export class Templater {
     ): Promise<void> {
         const { path } = file;
         this.start_templater_task(path);
-        const active_view =
-            this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
-        const active_editor = this.plugin.app.workspace.activeEditor;
-        const active_file = get_active_file(this.plugin.app);
         const running_config = this.create_running_config(
             template_file,
             file,
@@ -330,26 +336,24 @@ export class Templater {
             return;
         }
 
-        const {
-            content: output_content_body,
-            frontmatter: output_frontmatter,
-        } = get_frontmatter_and_content(output_content);
+        // The active file can change while the template is running (e.g. waiting
+        // on a prompt), so resolve the editor after parsing rather than before
+        const active_view =
+            this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+        const active_editor = this.plugin.app.workspace.activeEditor;
+        const active_file = get_active_file(this.plugin.app);
         if (
             active_file?.path === file.path &&
             active_editor &&
             active_editor.editor &&
             active_view
         ) {
-            let result = "";
-            const { content, frontmatter } = get_frontmatter_and_content(
+            const result = merge_output_into_content(
                 active_editor.editor.getValue(),
+                output_content,
             );
-            merge_objects(frontmatter, output_frontmatter);
-            if (Object.keys(frontmatter).length > 0) {
-                result += `---\n${stringifyYaml(frontmatter)}---\n`;
-            }
-            result += content + output_content_body;
             active_editor.editor.setValue(result);
+            output_content = result;
             // Set cursor to first line of editor (below properties)
             // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
@@ -361,16 +365,11 @@ export class Templater {
             await active_view.save();
         } else {
             await this.plugin.app.vault.process(file, (data) => {
-                let result = "";
-                const { content, frontmatter } =
-                    get_frontmatter_and_content(data);
-                merge_objects(frontmatter, output_frontmatter);
-                if (Object.keys(frontmatter).length > 0) {
-                    result += `---\n${stringifyYaml(frontmatter)}---\n`;
-                }
-                result += content + output_content_body;
-                output_content = result;
-                return result;
+                output_content = merge_output_into_content(
+                    data,
+                    output_content,
+                );
+                return output_content;
             });
         }
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
@@ -414,19 +413,82 @@ export class Templater {
             file,
             active_file ? RunMode.OverwriteActiveFile : RunMode.OverwriteFile,
         );
-        const output_content = await errorWrapper(
-            async () => this.read_and_parse_template(running_config),
-            "Template parsing error, aborting.",
-        );
+        // Keep the content the template was parsed from, so concurrent
+        // changes can be detected when writing the output back
+        let snapshot = "";
+        const output_content = await errorWrapper(async () => {
+            snapshot = await this.plugin.app.vault.read(file);
+            return this.parse_template(running_config, snapshot);
+        }, "Template parsing error, aborting.");
         // errorWrapper failed
         if (output_content == null) {
             await this.end_templater_task(path);
             return;
         }
-        await this.plugin.app.vault.modify(file, output_content);
+        // Don't write (or touch mtime) if there's nothing to change
+        // https://github.com/SilentVoid13/Templater/issues/1719
+        // https://github.com/SilentVoid13/Templater/issues/1755
+        if (output_content === snapshot) {
+            await this.end_templater_task(path);
+            return;
+        }
+        if (!this.plugin.app.vault.getAbstractFileByPath(file.path)) {
+            log_error(
+                new TemplaterError(
+                    `${file.path} was deleted while the template was running, the template output was not applied.`,
+                ),
+            );
+            await this.end_templater_task(path);
+            return;
+        }
+        // If the file is now open in the active editor, write through the
+        // editor so unsaved changes aren't dropped
+        const active_editor = this.plugin.app.workspace.activeEditor;
+        let result: CommitResult;
+        if (active_editor?.file?.path === file.path && active_editor.editor) {
+            result = merge_rendered_output(
+                snapshot,
+                output_content,
+                active_editor.editor.getValue(),
+            );
+            if (result.status !== "conflict") {
+                active_editor.editor.setValue(result.content);
+                const active_view =
+                    this.plugin.app.workspace.getActiveViewOfType(
+                        MarkdownView,
+                    );
+                if (active_view) {
+                    // Wait for view to finish rendering properties widget
+                    await delay(100);
+                    // Save the file to ensure modifications saved to disk by the time `on_all_templates_executed` callback is executed
+                    // https://github.com/SilentVoid13/Templater/issues/1569
+                    await active_view.save();
+                }
+            }
+        } else {
+            result = { status: "clean", content: output_content };
+            await this.plugin.app.vault.process(file, (current) => {
+                result = merge_rendered_output(
+                    snapshot,
+                    output_content,
+                    current,
+                );
+                return result.content;
+            });
+        }
+        if (result.status === "conflict") {
+            log_error(
+                new TemplaterError(
+                    `${file.path} changed while the template was running, the template output was not applied.`,
+                    `Unapplied template output:\n${output_content}`,
+                ),
+            );
+            await this.end_templater_task(path);
+            return;
+        }
         this.plugin.app.workspace.trigger("templater:overwrite-file", {
             file,
-            content: output_content,
+            content: result.content,
         });
         await this.plugin.editor_handler.jump_to_next_cursor_location(
             file,
