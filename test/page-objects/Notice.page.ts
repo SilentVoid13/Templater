@@ -53,6 +53,22 @@ class Notice {
         );
     }
 
+    async expectTemplateOutputNotAppliedNotice(filePath: string) {
+        await this.expectNoticeElWithText(
+            "Templater error:\n" +
+                `${filePath} changed while the template was running, the template output was not applied.\n` +
+                "Check console for more information",
+        );
+    }
+
+    async expectFrontmatterMergeFailedNotice() {
+        await this.expectNoticeElWithText(
+            "Templater error:\n" +
+                "Couldn't merge the template's properties into the note because one of them contains invalid YAML. The template body was appended without them.\n" +
+                "Check console for more information",
+        );
+    }
+
     async expectNoErrorNotice() {
         // eslint-disable-next-line wdio/no-pause
         await browser.pause(500);

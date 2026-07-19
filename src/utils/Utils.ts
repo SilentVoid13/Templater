@@ -10,16 +10,19 @@ import {
 import { TJDocFile, TJDocFileArgument } from "./TJDocFile";
 
 import { TemplaterError } from "./Error";
+import { log_error } from "./Log";
 import {
     App,
     getFrontMatterInfo,
     normalizePath,
     parseYaml,
+    stringifyYaml,
     TAbstractFile,
     TFile,
     TFolder,
     Vault,
 } from "obsidian";
+import { patchApply, patchMake } from "diff-match-patch-es";
 
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -253,6 +256,8 @@ export function append_bolded_label_with_value_to_parent(
 
 /**
  * Merges two objects recursively. Target object will be modified.
+ * Arrays are concatenated and deduplicated, and empty source values
+ * don't overwrite existing target values.
  * @param target The target object to merge into.
  * @param source The source object to merge from.
  */
@@ -310,4 +315,90 @@ export function get_frontmatter_and_content(content: string) {
         frontmatter,
         content: content.slice(front_matter_info.contentStart),
     };
+}
+
+/**
+ * Merges rendered template output into a file's existing content: the
+ * template's frontmatter is merged into the existing frontmatter and the
+ * template's body is appended to the existing body.
+ * Only parses/re-stringifies the existing frontmatter when the template
+ * actually contributes frontmatter, so comments and formatting are
+ * preserved otherwise.
+ */
+export function merge_output_into_content(
+    existing: string,
+    output: string,
+): string {
+    const output_fm_info = getFrontMatterInfo(output);
+    const output_body = output.slice(output_fm_info.contentStart);
+    if (!output_fm_info.exists) {
+        return existing + output_body;
+    }
+    const existing_fm_info = getFrontMatterInfo(existing);
+    if (!existing_fm_info.exists) {
+        return (
+            output.slice(0, output_fm_info.contentStart) +
+            existing +
+            output_body
+        );
+    }
+    let existing_frontmatter: Record<string, unknown>;
+    let output_frontmatter: Record<string, unknown>;
+    try {
+        existing_frontmatter = (parseYaml(existing_fm_info.frontmatter) ??
+            {}) as Record<string, unknown>;
+        output_frontmatter = (parseYaml(output_fm_info.frontmatter) ??
+            {}) as Record<string, unknown>;
+    } catch (e) {
+        // Can't merge invalid YAML, append the body without it rather than
+        // ending up with two frontmatter blocks
+        log_error(
+            new TemplaterError(
+                "Couldn't merge the template's properties into the note because one of them contains invalid YAML. The template body was appended without them.",
+                e instanceof Error ? e.message : String(e),
+            ),
+        );
+        return existing + output_body;
+    }
+    merge_objects(existing_frontmatter, output_frontmatter);
+    const existing_body = existing.slice(existing_fm_info.contentStart);
+    let result = "";
+    if (Object.keys(existing_frontmatter).length > 0) {
+        result += `---\n${stringifyYaml(existing_frontmatter)}---\n`;
+    }
+    return result + existing_body + output_body;
+}
+
+export type CommitResult = {
+    status: "clean" | "merged" | "conflict";
+    content: string;
+};
+
+/**
+ * Computes the content to write for a file whose template `output` was
+ * rendered from a `snapshot` that may be out of date, since other plugins can
+ * write to the file while a template runs. If the file changed, the
+ * template's edits are re-applied onto `current` as a three-way merge.
+ * All-or-nothing: if any hunk fails to apply the result is a conflict and
+ * `content` is `current`, unchanged. Templates are never re-evaluated
+ * because evaluation can have side effects.
+ * https://github.com/SilentVoid13/Templater/issues/1629
+ */
+export function merge_rendered_output(
+    snapshot: string,
+    output: string,
+    current: string,
+): CommitResult {
+    if (current === snapshot) {
+        return { status: "clean", content: output };
+    }
+    const patches = patchMake(snapshot, output);
+    const [merged, applied] = patchApply(patches, current) as [
+        string,
+        boolean[],
+    ];
+    if (applied.every((ok) => ok)) {
+        return { status: "merged", content: merged };
+    }
+    return { status: "conflict", content: current };
 }
