@@ -65,7 +65,8 @@
         "@microsoft/tsdoc": "^0.15.1",
         "@silentvoid13/rusty_engine": "^0.4.0",
         "acorn": "^8.17.0",
-        "child_process": "^1.0.2"
+        "child_process": "^1.0.2",
+        "diff-match-patch-es": "^1.0.1"
     },
     "config": {
         "commitizen": {
