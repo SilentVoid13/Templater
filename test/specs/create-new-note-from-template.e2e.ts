@@ -66,6 +66,27 @@ describe("create_new_note_from_template", () => {
         );
     });
 
+    it("creates a file in the vault root without trimming its first character", async () => {
+        await resetVault("test/vault", {
+            "templates/template.md": "Root test",
+        });
+        const result = await browser.executeObsidian(async ({ app }) => {
+            const plugin = app.plugins.getPlugin("templater-obsidian");
+            if (!plugin) throw new Error("templater-obsidian is not loaded");
+            const handleCreateFromTemplate = Reflect.get(
+                plugin.command_handler,
+                "handle_create_from_template",
+            ) as (params: Record<string, string>) => Promise<string>;
+            return handleCreateFromTemplate.call(plugin.command_handler, {
+                template: "template",
+                file: "root-note.md",
+            });
+        });
+
+        expect(result).toBe("root-note.md");
+        await VaultPage.expectFileToHaveContent("root-note.md", "Root test");
+    });
+
     it("processes frontmatter and body", async () => {
         await resetVault("test/vault", {
             "templates/template.md":

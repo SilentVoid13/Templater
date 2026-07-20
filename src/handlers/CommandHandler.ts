@@ -218,7 +218,7 @@ export class CommandHandler {
             const file_path = normalizePath(file);
             const folder_path = get_folder_path_from_file_path(file_path);
             const filename = file_path
-                .slice(folder_path.length + 1)
+                .slice(folder_path ? folder_path.length + 1 : 0)
                 .replace(/\.md$/, "");
 
             let folder: TFolder | undefined;
