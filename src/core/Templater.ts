@@ -202,7 +202,6 @@ export class Templater {
         }
 
         if (output_content == null) {
-            // eslint-disable-next-line obsidianmd/prefer-file-manager-trash-file -- Hard delete is intentional; the file was just created by Templater and immediately failed
             await this.plugin.app.vault.delete(created_note);
             await this.end_templater_task(path);
             return;
