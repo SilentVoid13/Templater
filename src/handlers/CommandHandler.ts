@@ -15,7 +15,6 @@ export class CommandHandler {
             id: "insert-templater",
             name: "Open insert template modal",
             icon: "templater-icon",
-            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys -- It would require a lot of support to help users migrate because this plugin is old
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
@@ -33,7 +32,6 @@ export class CommandHandler {
             id: "replace-in-file-templater",
             name: "Replace templates in the active file",
             icon: "templater-icon",
-            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys -- It would require a lot of support to help users migrate because this plugin is old
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
@@ -51,7 +49,6 @@ export class CommandHandler {
             id: "jump-to-next-cursor-location",
             name: "Jump to next cursor location",
             icon: "text-cursor",
-            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys -- It would require a lot of support to help users migrate because this plugin is old
             hotkeys: [
                 {
                     modifiers: ["Alt"],
@@ -67,7 +64,6 @@ export class CommandHandler {
             id: "create-new-note-from-template",
             name: "Create new note from template",
             icon: "templater-icon",
-            // eslint-disable-next-line obsidianmd/commands/no-default-hotkeys -- It would require a lot of support to help users migrate because this plugin is old
             hotkeys: Platform.isMacOS
                 ? undefined
                 : [
