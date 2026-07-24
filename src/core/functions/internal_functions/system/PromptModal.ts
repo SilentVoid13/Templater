@@ -72,7 +72,6 @@ export class PromptModal extends Modal {
     }
 
     private enterCallback(evt: KeyboardEvent) {
-        // eslint-disable-next-line @typescript-eslint/no-deprecated -- keyCode is deprecated but required for Korean IME composing fix (issue #1284)
         if (evt.isComposing || evt.keyCode === 229) return;
 
         if (this.multi_line) {
