@@ -19,7 +19,6 @@ export class IgnoreFolderModal extends Modal {
 
         const folderSetting = new Setting(contentEl)
             .setName("Folder")
-            // eslint-disable-next-line obsidianmd/ui/sentence-case -- This is sentence case, the e.g. is throwing off the linter
             .setDesc("Enter a path, e.g. meta/templates")
             .addText((cb) => {
                 new FolderSuggest(this.app, cb.inputEl);
