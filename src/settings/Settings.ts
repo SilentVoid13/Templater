@@ -333,7 +333,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             "Enables templates to run automatically when Templater starts.",
                             createEl("br"),
                             createEl("br"),
-                            createEl("span", {
+                            createSpan({
                                 text: "This setting is stored on this device only and must be enabled separately on each device.",
                                 cls: "mod-warning",
                             }),
@@ -378,7 +378,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
             createEl("br"),
             createEl("br"),
-            createEl("span", {
+            createSpan({
                 text: "This setting is stored on this device only and must be enabled separately on each device.",
                 cls: "mod-warning",
             }),
@@ -780,7 +780,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         "Allows you to create user functions linked to system commands.",
                         createEl("br"),
                         createEl("br"),
-                        createEl("span", {
+                        createSpan({
                             text: "This setting is stored on this device only and must be enabled separately on each device.",
                             cls: "mod-warning",
                         }),
