@@ -5,16 +5,6 @@ import globals from "globals";
 import obsidianmd from "eslint-plugin-obsidianmd";
 import { configs as wdioConfigs } from "eslint-plugin-wdio";
 
-// Pull obsidianmd's own no-restricted-disable config and drop "no-eval" so we
-// don't have to maintain a hard-coded copy of the list. The first element is
-// the severity ("error"); the rest are the restricted rule names.
-const restrictedDisableRule = "eslint-comments/no-restricted-disable";
-const baseRestrictedDisable =
-    obsidianmd.configs.recommended
-        .map((c) => c.rules?.[restrictedDisableRule])
-        .filter(Boolean)
-        .at(-1) ?? ["error"];
-
 const obsidianGlobals = {
     activeWindow: "readonly",
     activeDocument: "readonly",
@@ -48,11 +38,9 @@ export default defineConfig([
     ...obsidianmd.configs.recommended,
     {
         rules: {
-            // Reuse obsidianmd's restricted-disable list, but allow inline
-            // disabling of no-eval (required to run user scripts from the vault).
-            [restrictedDisableRule]: baseRestrictedDisable.filter(
-                (rule) => rule !== "no-eval"
-            ),
+            // eval is required to execute user scripts dynamically loaded
+            // from the vault.
+            "no-eval": "off",
         },
     },
     {
