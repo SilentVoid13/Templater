@@ -4,6 +4,7 @@ import WorkspacePage from "../../page-objects/Workspace.page";
 import VaultPage from "../../page-objects/Vault.page";
 import { resetVault } from "../../utils/reset-vault";
 import PromptModalPage from "../../page-objects/PromptModal.page";
+import NoticePage from "../../page-objects/Notice.page";
 
 describe("UserScriptFunctions", () => {
     it("user script is callable as a function", async () => {
@@ -225,5 +226,60 @@ module.exports = {
         await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent("notes/note.md", "Greeting\n");
+    });
+
+    it("user script receives a callable require", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.use_require() %>`,
+            "user scripts/use_require.js": `
+module.exports = function () {
+    return typeof require;
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/note.md", "function\n");
+    });
+
+    it("user script is callable via default export", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.default_export() %>`,
+            "user scripts/default_export.js": `
+exports.default = function () {
+    return "default export";
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "notes/note.md",
+            "default export\n",
+        );
+    });
+
+    it("user script with a syntax error surfaces an error notice", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.broken() %>`,
+            "user scripts/broken.js": `
+module.exports = function () {
+    return ;;)
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await NoticePage.expectFailedToLoadUserScriptErrorNotice(
+            "user scripts/broken.js",
+        );
     });
 });

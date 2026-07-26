@@ -44,6 +44,14 @@ class Notice {
         await this.expectNoticeElWithText("Templater error:\nCancelled prompt");
     }
 
+    async expectFailedToLoadUserScriptErrorNotice(path: string) {
+        await this.expectNoticeElWithText(
+            "Templater error:\n" +
+                `Failed to load user script at "${path}".\n` +
+                "Check console for more information",
+        );
+    }
+
     async expectMigrationNotice(affectedSettings: string[]) {
         await this.expectNoticeElWithText(
             "Templater: The following settings were reset because they " +
