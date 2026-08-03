@@ -3,7 +3,7 @@
     "name": "Templater",
     "version": "2.24.3",
     "description": "Advanced templating and automation using handlebars-like syntax.",
-    "minAppVersion": "1.13.0",
+    "minAppVersion": "1.12.0",
     "author": "SilentVoid",
     "authorUrl": "https://github.com/SilentVoid13",
     "fundingUrl": {
