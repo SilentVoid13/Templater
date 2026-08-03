@@ -119,6 +119,10 @@ export class TemplaterSettingTab extends PluginSettingTab {
         plugin.registerEvent(this.app.vault.on("rename", refresh));
     }
 
+    display(): void {
+        this.containerEl.empty();
+    }
+
     private isLocalSettingsKey(key: string): key is keyof LocalSettings {
         return key in DEFAULT_LOCAL_SETTINGS;
     }
