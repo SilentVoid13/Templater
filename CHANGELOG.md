@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.25.0](https://github.com/SilentVoid13/Templater/compare/2.24.3...2.25.0) (2026-08-05)
+
+
+### Features
+
+* **cursor:** support decimal and negative orders for cursor jumps ([ee79eee](https://github.com/SilentVoid13/Templater/commit/ee79eeee56d9eedb1e5c0ee834e9ab93544e64d3)), closes [#1734](https://github.com/SilentVoid13/Templater/issues/1734)
+* **template-hotkeys:** implement template hotkey management with insert and create commands ([f68b64b](https://github.com/SilentVoid13/Templater/commit/f68b64bebeb989ccb533494eb5e2d00077e6a463)), closes [#1750](https://github.com/SilentVoid13/Templater/issues/1750)
+
 ### [2.24.3](https://github.com/SilentVoid13/Templater/compare/2.24.2...2.24.3) (2026-07-24)
 
 ### [2.24.2](https://github.com/SilentVoid13/Templater/compare/2.24.1...2.24.2) (2026-07-24)
