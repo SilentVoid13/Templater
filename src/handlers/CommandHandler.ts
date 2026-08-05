@@ -1,5 +1,9 @@
 import TemplaterPlugin from "main";
 import { normalizePath, Platform, TFile, TFolder } from "obsidian";
+import {
+    resolve_template_hotkey,
+    type TemplateHotkeyEntry,
+} from "settings/TemplateHotkeys";
 import { errorWrapperSync } from "utils/Error";
 import {
     resolve_tfile,
@@ -8,6 +12,8 @@ import {
 } from "utils/Utils";
 
 export class CommandHandler {
+    private registered_hotkey_templates = new Set<string>();
+
     constructor(private plugin: TemplaterPlugin) {}
 
     setup(): void {
@@ -82,39 +88,47 @@ export class CommandHandler {
     }
 
     register_templates_hotkeys(): void {
-        this.plugin.settings.enabled_templates_hotkeys.forEach((template) => {
-            if (template) {
-                this.add_template_hotkey(null, template);
-            }
+        this.plugin.settings.enabled_templates_hotkeys.forEach((entry) => {
+            this.add_template_hotkey(entry);
         });
     }
 
-    add_template_hotkey(
-        old_template: string | null,
-        new_template: string,
-    ): void {
-        this.remove_template_hotkey(old_template);
+    sync_template_hotkeys(): void {
+        for (const template of [...this.registered_hotkey_templates]) {
+            this.remove_template_hotkey(template);
+        }
+        this.register_templates_hotkeys();
+    }
 
-        if (new_template) {
-            // Determine started index based on templates folder
-            const template_start_index = this.plugin.settings.templates_folder
-                ? this.plugin.settings.templates_folder.length + 1
-                : 0;
+    add_template_hotkey(entry: TemplateHotkeyEntry): void {
+        const hotkey = resolve_template_hotkey(entry);
+        const template_path = hotkey.template;
+        if (!template_path) {
+            return;
+        }
 
-            const new_template_name = new_template.slice(
-                template_start_index,
-                -3,
+        this.remove_template_hotkey(template_path);
+
+        // Determine started index based on templates folder
+        const template_start_index = this.plugin.settings.templates_folder
+            ? this.plugin.settings.templates_folder.length + 1
+            : 0;
+
+        const template_name = template_path.slice(template_start_index, -3);
+
+        const resolve_template = () =>
+            errorWrapperSync(
+                () => resolve_tfile(this.plugin.app, template_path),
+                `Couldn't find the template file associated with this hotkey`,
             );
 
+        if (hotkey.insert_enabled) {
             this.plugin.addCommand({
-                id: new_template,
-                name: `Insert ${new_template_name}`,
+                id: template_path,
+                name: `Insert ${template_name}`,
                 icon: "templater-icon",
                 callback: async () => {
-                    const template = errorWrapperSync(
-                        () => resolve_tfile(this.plugin.app, new_template),
-                        `Couldn't find the template file associated with this hotkey`,
-                    );
+                    const template = resolve_template();
                     if (!template) {
                         return;
                     }
@@ -123,15 +137,14 @@ export class CommandHandler {
                     );
                 },
             });
+        }
+        if (hotkey.create_enabled) {
             this.plugin.addCommand({
-                id: `create-${new_template}`,
-                name: `Create ${new_template_name}`,
+                id: `create-${template_path}`,
+                name: `Create ${template_name}`,
                 icon: "templater-icon",
                 callback: async () => {
-                    const template = errorWrapperSync(
-                        () => resolve_tfile(this.plugin.app, new_template),
-                        `Couldn't find the template file associated with this hotkey`,
-                    );
+                    const template = resolve_template();
                     if (!template) {
                         return;
                     }
@@ -141,12 +154,15 @@ export class CommandHandler {
                 },
             });
         }
+
+        this.registered_hotkey_templates.add(template_path);
     }
 
     remove_template_hotkey(template: string | null): void {
         if (template) {
             this.plugin.removeCommand(`${template}`);
             this.plugin.removeCommand(`create-${template}`);
+            this.registered_hotkey_templates.delete(template);
         }
     }
 

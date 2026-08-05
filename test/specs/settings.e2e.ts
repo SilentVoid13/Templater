@@ -6,8 +6,10 @@ import FolderTemplateModalPage from "../page-objects/FolderTemplateModal.page";
 import SystemCommandModalPage from "../page-objects/SystemCommandModal.page";
 import StartupTemplateModalPage from "../page-objects/StartupTemplateModal.page";
 import IgnoreFolderModalPage from "../page-objects/IgnoreFolderModal.page";
+import TemplateHotkeyModalPage from "../page-objects/TemplateHotkeyModal.page";
 import { resetVault } from "../utils/reset-vault";
 import { IntellisenseRenderOption } from "../../src/settings/RenderSettings/IntellisenseRenderOption";
+import type { TemplateHotkeyEntry } from "../../src/settings/TemplateHotkeys";
 
 describe("Settings", () => {
     describe("Automatic jump to cursor", () => {
@@ -808,6 +810,300 @@ describe("Settings", () => {
             await TemplaterDataFilePage.expectSettingToEqual(
                 "startup_templates",
                 [],
+            );
+        });
+    });
+
+    describe("Template hotkeys", () => {
+        const INSERT_DAILY_COMMAND_ID = "templater-obsidian:templates/daily.md";
+        const CREATE_DAILY_COMMAND_ID =
+            "templater-obsidian:create-templates/daily.md";
+
+        async function seedHotkeys(entries: TemplateHotkeyEntry[]) {
+            await browser.executeObsidian(async ({ plugins }, entries) => {
+                plugins.templaterObsidian.settings.enabled_templates_hotkeys =
+                    entries;
+                plugins.templaterObsidian.command_handler.sync_template_hotkeys();
+                await plugins.templaterObsidian.save_settings();
+            }, entries);
+        }
+
+        async function expectCommandRegistered(id: string, expected: boolean) {
+            await browser.waitUntil(async () => {
+                const registered = await browser.executeObsidian(
+                    ({ app }, id) => id in app.commands.commands,
+                    id,
+                );
+                return registered === expected;
+            });
+        }
+
+        it("adds a template hotkey with both commands when submitted", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys([]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add template hotkey",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.setTemplatePath("templates/daily.md");
+            await TemplateHotkeyModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                ["templates/daily.md"],
+            );
+            await expectCommandRegistered(INSERT_DAILY_COMMAND_ID, true);
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, true);
+        });
+
+        it("rejects a template that already has a hotkey", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys(["templates/daily.md"]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add template hotkey",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.setTemplatePath("templates/daily.md");
+            await TemplateHotkeyModalPage.clickDoneExpectingError();
+
+            await expect(TemplateHotkeyModalPage.errorEl).toHaveText(
+                "This template already has a hotkey",
+            );
+            await TemplateHotkeyModalPage.clickCancel();
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                ["templates/daily.md"],
+            );
+        });
+
+        it("cancelling does not add a template hotkey", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys([]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add template hotkey",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.setTemplatePath("templates/daily.md");
+            await TemplateHotkeyModalPage.clickCancel();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                [],
+            );
+        });
+
+        it("adds an insert-only hotkey when the create toggle is turned off", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys([]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add template hotkey",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.setTemplatePath("templates/daily.md");
+            await TemplateHotkeyModalPage.clickToggle("Create command");
+            await TemplateHotkeyModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                [
+                    {
+                        template: "templates/daily.md",
+                        insert_enabled: true,
+                        create_enabled: false,
+                    },
+                ],
+            );
+            await expectCommandRegistered(INSERT_DAILY_COMMAND_ID, true);
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, false);
+        });
+
+        it("rejects a hotkey with no commands enabled", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys([]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add template hotkey",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.setTemplatePath("templates/daily.md");
+            await TemplateHotkeyModalPage.clickToggle("Insert command");
+            await TemplateHotkeyModalPage.clickToggle("Create command");
+            await TemplateHotkeyModalPage.clickDoneExpectingError();
+
+            await expect(TemplateHotkeyModalPage.errorEl).toHaveText(
+                "At least one command must be enabled",
+            );
+            await TemplateHotkeyModalPage.clickCancel();
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                [],
+            );
+        });
+
+        it("removes both commands when a template hotkey is deleted", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys(["templates/daily.md"]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickButtonWithText("Delete");
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                [],
+            );
+            await expectCommandRegistered(INSERT_DAILY_COMMAND_ID, false);
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, false);
+        });
+
+        it("unregisters only the create command when it is turned off from the row", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys(["templates/daily.md"]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "templates/daily.md",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.clickToggle("Create command");
+            await TemplateHotkeyModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                [
+                    {
+                        template: "templates/daily.md",
+                        insert_enabled: true,
+                        create_enabled: false,
+                    },
+                ],
+            );
+            await expectCommandRegistered(INSERT_DAILY_COMMAND_ID, true);
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, false);
+        });
+
+        it("stores the plain template path again when both commands are re-enabled", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys([
+                {
+                    template: "templates/daily.md",
+                    insert_enabled: true,
+                    create_enabled: false,
+                },
+            ]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "templates/daily.md",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.expectToggleValue(
+                "Create command",
+                false,
+            );
+            await TemplateHotkeyModalPage.clickToggle("Create command");
+            await TemplateHotkeyModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                ["templates/daily.md"],
+            );
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, true);
+        });
+
+        it("keeps the existing entry editable without a duplicate error", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+            });
+            await seedHotkeys(["templates/daily.md"]);
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Template hotkeys",
+            );
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "templates/daily.md",
+            );
+            await TemplateHotkeyModalPage.waitForDisplayed();
+            await TemplateHotkeyModalPage.expectToggleValue(
+                "Insert command",
+                true,
+            );
+            await TemplateHotkeyModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "enabled_templates_hotkeys",
+                ["templates/daily.md"],
+            );
+        });
+
+        it("registers commands for a mix of string and object entries", async () => {
+            await resetVault("test/vault", {
+                "templates/daily.md": "Daily note",
+                "templates/weekly.md": "Weekly note",
+            });
+            await seedHotkeys([
+                "templates/daily.md",
+                { template: "templates/weekly.md", create_enabled: false },
+            ]);
+
+            await expectCommandRegistered(INSERT_DAILY_COMMAND_ID, true);
+            await expectCommandRegistered(CREATE_DAILY_COMMAND_ID, true);
+            await expectCommandRegistered(
+                "templater-obsidian:templates/weekly.md",
+                true,
+            );
+            await expectCommandRegistered(
+                "templater-obsidian:create-templates/weekly.md",
+                false,
             );
         });
     });

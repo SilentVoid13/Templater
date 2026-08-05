@@ -1,6 +1,7 @@
 import { DEFAULT_SETTINGS, type Settings } from "./Settings";
 import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
 import { isSettingsV1, type SettingsV1 } from "./SettingsV1";
+import { resolve_template_hotkey } from "./TemplateHotkeys";
 
 export interface MigrationResult {
     settings: Settings;
@@ -55,7 +56,7 @@ function migrateV1ToV2(v1: SettingsV1): MigrationResult {
         ),
         templates_pairs: (v1.templates_pairs ?? []).filter(([a, b]) => a || b),
         enabled_templates_hotkeys: (v1.enabled_templates_hotkeys ?? []).filter(
-            (h) => h,
+            (h) => resolve_template_hotkey(h).template,
         ),
         startup_templates: (v1.startup_templates ?? []).filter((t) => t),
         ignore_folders_on_creation: (

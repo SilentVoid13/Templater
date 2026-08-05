@@ -11,6 +11,11 @@
 
 Template Hotkeys allows you to bind a template to a [command](https://obsidian.md/help/plugins/command-palette), and then bind that command to a [hotkey](https://obsidian.md/help/hotkeys) in the "Hotkeys" settings.
 
+Each bound template exposes two commands, and you can choose which of them to register when adding or editing the hotkey:
+
+- `Insert command` adds an `Insert <template>` command, which inserts the template into the active file.
+- `Create command` adds a `Create <template>` command, which creates a new note from the template.
+
 ## File Creation
 
 - `Trigger Templater on new file creation`: [Templater](https://github.com/SilentVoid13/Templater) will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. This makes [Templater](https://github.com/SilentVoid13/Templater) compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc.

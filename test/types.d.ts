@@ -13,10 +13,9 @@ declare module "obsidian" {
         loadLocalStorage(
             key: "templater-local-settings",
         ): Partial<LocalSettings> | undefined;
-    }
-
-    interface Setting {
-        setAction?(cb: () => void): this;
+        commands: {
+            commands: Record<string, unknown>;
+        };
     }
 }
 

@@ -13,6 +13,7 @@ import { FolderTemplateModal } from "./modals/FolderTemplateModal";
 import { IgnoreFolderModal } from "./modals/IgnoreFolderModal";
 import { StartupTemplateModal } from "./modals/StartupTemplateModal";
 import { SystemCommandModal } from "./modals/SystemCommandModal";
+import { TemplateHotkeyModal } from "./modals/TemplateHotkeyModal";
 import { IntellisenseRenderOption } from "./RenderSettings/IntellisenseRenderOption";
 import {
     DEFAULT_LOCAL_SETTINGS,
@@ -22,7 +23,13 @@ import {
 } from "./LocalSettings";
 import { set } from "utils/set";
 import { get, type Paths } from "utils/get";
-import { TemplateHotkeysPage } from "./TemplateHotkeysPage";
+import {
+    describe_template_hotkey_commands,
+    resolve_template_hotkey,
+    serialize_template_hotkey,
+    type ResolvedTemplateHotkey,
+    type TemplateHotkeyEntry,
+} from "./TemplateHotkeys";
 import { UserScriptsPage } from "./UserScriptsPage";
 
 export interface FolderTemplate {
@@ -75,7 +82,7 @@ export interface Settings {
     templates_pairs: Array<[string, string]>;
     shell_path: string;
     user_scripts_folder: string;
-    enabled_templates_hotkeys: Array<string>;
+    enabled_templates_hotkeys: Array<TemplateHotkeyEntry>;
     startup_templates: Array<string>;
     intellisense_render: IntellisenseRenderOption;
 }
@@ -259,7 +266,15 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         );
                         return templateHotkeysDesc;
                     })(),
-                    page: () => new TemplateHotkeysPage(this, this.plugin),
+                    items: [
+                        {
+                            name: "No template folder set. Please set the template folder location on the previous page.",
+                            searchable: false,
+                            visible: () =>
+                                !this.plugin.settings.templates_folder,
+                        },
+                        this.templateHotkeysGroup(),
+                    ],
                 },
                 {
                     name: "Automatic jump to cursor",
@@ -479,6 +494,87 @@ export class TemplaterSettingTab extends PluginSettingTab {
                         "regex",
             },
         ];
+    }
+
+    private templateHotkeysGroup(): SettingDefinitionList<keyof Settings> {
+        const openModal = (
+            initialValues: ResolvedTemplateHotkey,
+            onSubmit: (hotkey: ResolvedTemplateHotkey) => Promise<void> | void,
+            excludeIndex?: number,
+        ) => {
+            new TemplateHotkeyModal(
+                this.app,
+                this.plugin,
+                initialValues,
+                onSubmit,
+                (template) => {
+                    if (
+                        this.plugin.settings.enabled_templates_hotkeys.some(
+                            (entry, i) =>
+                                resolve_template_hotkey(entry).template ===
+                                    template && i !== excludeIndex,
+                        )
+                    ) {
+                        return "This template already has a hotkey";
+                    }
+                },
+            ).open();
+        };
+
+        return {
+            type: "list",
+            addItem: {
+                name: "Add template hotkey",
+                action: () => {
+                    openModal(
+                        {
+                            template: "",
+                            insert_enabled: true,
+                            create_enabled: true,
+                        },
+                        async (hotkey) => {
+                            this.plugin.settings.enabled_templates_hotkeys.push(
+                                serialize_template_hotkey(hotkey),
+                            );
+                            this.plugin.command_handler.sync_template_hotkeys();
+                            this.update();
+                            await this.plugin.save_settings();
+                        },
+                    );
+                },
+            },
+            onDelete: (index) => {
+                this.plugin.settings.enabled_templates_hotkeys.splice(index, 1);
+                this.plugin.command_handler.sync_template_hotkeys();
+                this.update();
+                void this.plugin.save_settings();
+            },
+            emptyState: "No template hotkeys added.",
+            items: this.plugin.settings.enabled_templates_hotkeys.map(
+                (entry, index) => {
+                    const hotkey = resolve_template_hotkey(entry);
+                    return {
+                        name: hotkey.template,
+                        desc: describe_template_hotkey_commands(hotkey),
+                        searchable: false,
+                        action: () => {
+                            openModal(
+                                hotkey,
+                                async (updated) => {
+                                    this.plugin.settings.enabled_templates_hotkeys[
+                                        index
+                                    ] = serialize_template_hotkey(updated);
+                                    this.plugin.command_handler.sync_template_hotkeys();
+                                    this.update();
+                                    await this.plugin.save_settings();
+                                },
+                                index,
+                            );
+                        },
+                    };
+                },
+            ),
+        };
     }
 
     private ignoreFoldersGroup(): SettingDefinitionList<keyof Settings> {
