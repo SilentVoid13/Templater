@@ -312,6 +312,79 @@ describe("InternalModuleFile", () => {
         ]);
     });
 
+    it("tp.file.cursor jumps to decimal order between integer orders when auto jump is enabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `before<% tp.file.cursor(1) %>middle<% tp.file.cursor(1.5) %>after<% tp.file.cursor(2) %>`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "beforemiddle<% tp.file.cursor(1.5) %>after<% tp.file.cursor(2) %>",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([{ line: 0, ch: 6 }]);
+        await browser.executeObsidianCommand(
+            "templater-obsidian:jump-to-next-cursor-location",
+        );
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "beforemiddleafter<% tp.file.cursor(2) %>",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([{ line: 0, ch: 12 }]);
+    });
+
+    it("tp.file.cursor jumps to negative order first when auto jump is enabled", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.file.cursor.md": `<% tp.file.cursor(-1) %>before<% tp.file.cursor(1) %>after`,
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.auto_jump_to_cursor = true;
+            await plugins.templaterObsidian.save_settings();
+        });
+        await EmptyStateViewPage.clickCreateNewNote();
+        await WorkspacePage.expectActiveTabToHaveText("Untitled");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName(
+            "tp.file.cursor",
+        );
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "Untitled.md",
+            "before<% tp.file.cursor(1) %>after",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([{ line: 0, ch: 0 }]);
+    });
+
+    it("tp.file.cursor removes placeholders with the same order written as an integer and a decimal", async () => {
+        // 1.0 can't be produced by executing a template, since it is stringified
+        // as 1, so the placeholders are written to the note directly
+        await resetVault("test/vault", {
+            "notes/cursor.md": `before<% tp.file.cursor(1) %>middle<% tp.file.cursor(1.0) %>after`,
+        });
+        await obsidianPage.openFile("notes/cursor.md");
+        await WorkspacePage.expectActiveTabToHaveText("cursor");
+        await browser.executeObsidianCommand(
+            "templater-obsidian:jump-to-next-cursor-location",
+        );
+        await VaultPage.expectFileToHaveContent(
+            "notes/cursor.md",
+            "beforemiddleafter",
+        );
+        await ActiveMarkdownViewPage.expectCursorsToEqual([
+            { line: 0, ch: 6 },
+            { line: 0, ch: 12 },
+        ]);
+    });
+
     it("tp.file.cursor retains placeholder when auto jump is disabled", async () => {
         await resetVault("test/vault", {
             "templates/tp.file.cursor.md": `<% tp.file.cursor() %>`,

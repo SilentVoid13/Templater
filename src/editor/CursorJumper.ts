@@ -100,7 +100,9 @@ export class CursorJumper {
         cursor_matches?: RegExpExecArray[];
         positions?: EditorPosition[];
     } {
-        const cursor_regex = /<%\s*tp\.file\.cursor\((?<order>[0-9]*)\)\s*%>/g;
+        // The order can be any number, e.g. 1, 1.5 or -1
+        const cursor_regex =
+            /<%\s*tp\.file\.cursor\((?<order>(?:-?[0-9]+(?:\.[0-9]+)?)?)\)\s*%>/g;
         const cursor_matches: RegExpExecArray[] = [];
         let m: RegExpExecArray | null;
         while ((m = cursor_regex.exec(content)) !== null) {
@@ -111,21 +113,25 @@ export class CursorJumper {
             return {};
         }
 
-        cursor_matches.sort(
-            (m1, m2) =>
-                Number(m1.groups?.order || 0) - Number(m2.groups?.order || 0)
-        );
+        const order_of = (match: RegExpExecArray) =>
+            Number(match.groups?.order || 0);
+        // Matches are grouped by their numeric order, so that 1 and 1.0 are
+        // considered the same jump. An omitted order is its own group, so that
+        // tp.file.cursor() never groups with tp.file.cursor(0)
+        const order_key = (match: RegExpExecArray) => {
+            const order = match.groups?.order ?? "";
+            return order === "" ? "" : String(order_of(match));
+        };
 
-        const match_str = cursor_matches[0][0];
-        const filtered_matches = cursor_matches.filter(
-            (m) => m[0] === match_str
-        );
+        cursor_matches.sort((m1, m2) => order_of(m1) - order_of(m2));
+
+        const first_key = order_key(cursor_matches[0]);
 
         // For tp.file.cursor(), we keep the default top to bottom
         const final_matches =
-            filtered_matches[0][1] === ""
-                ? [filtered_matches[0]]
-                : filtered_matches;
+            first_key === ""
+                ? [cursor_matches[0]]
+                : cursor_matches.filter((m) => order_key(m) === first_key);
 
         // Calculate cursor positions accounting for deletions
         const positions: EditorPosition[] = [];

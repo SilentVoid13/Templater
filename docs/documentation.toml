@@ -270,6 +270,7 @@ name = "order"
 description = """
 The order of the different cursors jump, e.g. it will jump from 1 to 2 to 3, and so on.
 If you specify multiple tp.file.cursor with the same order, the editor will switch to multi-cursor.
+The order can be any number, including a decimal one, so you can insert a new jump between two existing ones without renumbering them, e.g. 1.5 jumps after 1 and before 2.
 """
 
 [[tp.file.functions.cursor.examples]]
@@ -279,6 +280,10 @@ example = "<% tp.file.cursor() %>"
 [[tp.file.functions.cursor.examples]]
 name = "File multi-cursor"
 example = "<% tp.file.cursor(1) %>Content<% tp.file.cursor(1) %>"
+
+[[tp.file.functions.cursor.examples]]
+name = "File cursor with a decimal order"
+example = "<% tp.file.cursor(1) %>Content<% tp.file.cursor(1.5) %>Content<% tp.file.cursor(2) %>"
 
 [tp.file.functions.cursor_append]
 name = "cursor_append"
