@@ -82,6 +82,7 @@ export class UserSystemFunctions implements IGenerateObject {
                                 this.plugin.settings.command_timeout * 1000,
                             cwd: this.cwd,
                             env: process_env,
+                            maxBuffer: this.plugin.settings.command_max_buffer,
                             ...(this.plugin.settings.shell_path && {
                                 shell: this.plugin.settings.shell_path,
                             }),
