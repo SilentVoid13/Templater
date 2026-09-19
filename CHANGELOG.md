@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.2-beta.0](https://github.com/SilentVoid13/Templater/compare/2.25.1...2.25.2-beta.0) (2026-09-19)
+
+
+### Bug Fixes
+
+* Attempt to merge contents when multiple plugins updating same file at once ([8818e57](https://github.com/SilentVoid13/Templater/commit/8818e571eae35025f21aec072bc26a009b04758a)), closes [#1629](https://github.com/SilentVoid13/Templater/issues/1629) [#1719](https://github.com/SilentVoid13/Templater/issues/1719) [#1755](https://github.com/SilentVoid13/Templater/issues/1755)
+
 ### [2.25.1](https://github.com/SilentVoid13/Templater/compare/2.25.0...2.25.1) (2026-09-19)
 
 
