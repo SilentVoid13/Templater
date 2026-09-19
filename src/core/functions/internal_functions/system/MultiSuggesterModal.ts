@@ -142,7 +142,7 @@ export class MultiSuggesterModal<T> extends Modal {
 class Suggester<T> extends AbstractInputSuggest<T> {
     constructor(
         app: App,
-        textInputEl: HTMLInputElement | HTMLDivElement,
+        private textInputEl: HTMLInputElement | HTMLDivElement,
         private getItemText: (item: T) => string,
         private items: T[],
         limit?: number,
@@ -175,5 +175,6 @@ class Suggester<T> extends AbstractInputSuggest<T> {
         this.setValue("");
         this.close();
         super.selectSuggestion(value, evt);
+        this.textInputEl.dispatchEvent(new Event("input"));
     }
 }
