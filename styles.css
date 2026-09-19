@@ -30,6 +30,11 @@ textarea.templater-prompt-input:focus {
 
 .templater-multisuggester-list {
     margin: 1.5em 0;
+
+    .templater-multisuggester-list-item {
+        display: flex;
+        justify-content: space-between;
+    }
 }
 
 .cm-s-obsidian .templater-command-bg {
