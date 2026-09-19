@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.25.1](https://github.com/SilentVoid13/Templater/compare/2.25.0...2.25.1) (2026-09-19)
+
+
+### Bug Fixes
+
+* Show suggestions popover after selecting an option for tp.system.multi_suggester ([a11d127](https://github.com/SilentVoid13/Templater/commit/a11d1271a48fe31cecab45867627451a9d1eafd7))
+* Styling of tp.system.multi_suggester selected options looking incorrect on newer Obsidian versions ([1e130f7](https://github.com/SilentVoid13/Templater/commit/1e130f76cd54761258f531aaec011b0c18a71ff0)), closes [#1779](https://github.com/SilentVoid13/Templater/issues/1779)
+
 ## [2.25.0](https://github.com/SilentVoid13/Templater/compare/2.24.3...2.25.0) (2026-08-05)
 
 
