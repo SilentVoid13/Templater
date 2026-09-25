@@ -21,6 +21,8 @@ export class UserSystemFunctions implements IGenerateObject {
             this.cwd = "";
         } else {
             this.cwd = this.plugin.app.vault.adapter.getBasePath();
+        }
+        if (Platform.isDesktop) {
             // eslint-disable-next-line @typescript-eslint/no-require-imports -- Node.js built-ins required for shell command execution
             const { promisify } = require("util") as typeof import("util");
             const { exec } =
