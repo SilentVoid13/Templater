@@ -1,5 +1,5 @@
 import TemplaterPlugin from "main";
-import { normalizePath, Platform, TFile, TFolder } from "obsidian";
+import { normalizePath, TFile, TFolder } from "obsidian";
 import {
     resolve_template_hotkey,
     type TemplateHotkeyEntry,
