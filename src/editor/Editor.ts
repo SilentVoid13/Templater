@@ -65,17 +65,15 @@ export class Editor {
         await this.registerCodeMirrorMode();
         this.templaterLanguage = Prec.high(
             StreamLanguage.define(
-                window.CodeMirror.getMode(
-                    {},
-                    TEMPLATER_MODE_NAME
-                ) as unknown as Parameters<typeof StreamLanguage.define>[0]
-            )
+                // @ts-expect-error TypeScript doesn't know about the CodeMirror global, but it is present in Obsidian's environment.
+                window.CodeMirror.getMode({}, TEMPLATER_MODE_NAME),
+            ),
         );
         if (this.templaterLanguage === undefined) {
             log_error(
                 new TemplaterError(
-                    "Unable to enable syntax highlighting. Could not define language."
-                )
+                    "Unable to enable syntax highlighting. Could not define language.",
+                ),
             );
         }
 
@@ -116,7 +114,7 @@ export class Editor {
 
     async jump_to_next_cursor_location(
         file: TFile | null = null,
-        auto_jump = false
+        auto_jump = false,
     ): Promise<void> {
         if (auto_jump && !this.plugin.settings.auto_jump_to_cursor) {
             return;
@@ -143,8 +141,8 @@ export class Editor {
         if (js_mode.name === "null") {
             log_error(
                 new TemplaterError(
-                    "Javascript syntax mode couldn't be found, can't enable syntax highlighting."
-                )
+                    "Javascript syntax mode couldn't be found, can't enable syntax highlighting.",
+                ),
             );
             return;
         }
@@ -154,8 +152,8 @@ export class Editor {
         if (overlay_mode == null) {
             log_error(
                 new TemplaterError(
-                    "Couldn't find customOverlayMode, can't enable syntax highlighting."
-                )
+                    "Couldn't find customOverlayMode, can't enable syntax highlighting.",
+                ),
             );
             return;
         }
@@ -165,8 +163,7 @@ export class Editor {
             function (config): CodeMirrorMode {
                 const templaterOverlay: CodeMirrorMode = {
                     startState: function (): TemplaterModeState {
-                        const js_state =
-                            window.CodeMirror.startState(js_mode);
+                        const js_state = window.CodeMirror.startState(js_mode);
                         return {
                             ...js_state,
                             inCommand: false,
@@ -175,10 +172,9 @@ export class Editor {
                         };
                     },
                     copyState: function (
-                        state: CodeMirrorModeState
+                        state: CodeMirrorModeState,
                     ): TemplaterModeState {
-                        const js_state =
-                            window.CodeMirror.startState(js_mode);
+                        const js_state = window.CodeMirror.startState(js_mode);
                         const tState = state as TemplaterModeState;
                         return {
                             ...js_state,
@@ -188,7 +184,7 @@ export class Editor {
                         };
                     },
                     blankLine: function (
-                        state: CodeMirrorModeState
+                        state: CodeMirrorModeState,
                     ): string | null {
                         const tState = state as TemplaterModeState;
                         if (tState.inCommand) {
@@ -198,7 +194,7 @@ export class Editor {
                     },
                     token: function (
                         stream: CodeMirrorStream,
-                        state: CodeMirrorModeState
+                        state: CodeMirrorModeState,
                     ): string | null {
                         const tState = state as TemplaterModeState;
                         if (stream.sol() && tState.inCommand) {
@@ -217,12 +213,8 @@ export class Editor {
                             }
 
                             const js_result =
-                                js_mode.token &&
-                                js_mode.token(stream, tState);
-                            if (
-                                stream.peek() == null &&
-                                tState.freeLine
-                            ) {
+                                js_mode.token && js_mode.token(stream, tState);
+                            if (stream.peek() == null && tState.freeLine) {
                                 keywords += ` line-background-templater-command-bg`;
                             }
                             if (!tState.freeLine) {
@@ -234,7 +226,7 @@ export class Editor {
 
                         const match = stream.match(
                             /<%[-_]{0,1}\s*([*+]{0,1})/,
-                            true
+                            true,
                         );
                         if (match) {
                             switch (match[1]) {
@@ -259,9 +251,9 @@ export class Editor {
                 };
                 return overlay_mode(
                     window.CodeMirror.getMode(config, "hypermd"),
-                    templaterOverlay
+                    templaterOverlay,
                 );
-            }
+            },
         );
     }
 
