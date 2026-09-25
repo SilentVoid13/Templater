@@ -37,13 +37,6 @@ export default defineConfig([
     },
     ...obsidianmd.configs.recommended,
     {
-        rules: {
-            // eval is required to execute user scripts dynamically loaded
-            // from the vault.
-            "no-eval": "off",
-        },
-    },
-    {
         files: ["test/**/*.ts"],
         rules: {
             "no-restricted-imports": "off",

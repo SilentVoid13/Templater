@@ -282,4 +282,82 @@ module.exports = function () {
             "user scripts/broken.js",
         );
     });
+
+    it("user script is evaluated in sloppy mode", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.sloppy() %>`,
+            "user scripts/sloppy.js": `
+module.exports = function () {
+    implicit_global_from_user_script = "sloppy";
+    return implicit_global_from_user_script;
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("notes/note.md", "sloppy\n");
+    });
+
+    it("loading a user script leaves nothing behind", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.hello_world() %>`,
+            "user scripts/hello_world.js": `
+module.exports = function () {
+    return "Hello world";
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await WorkspacePage.waitForAllTemplatesExecuted();
+
+        const leftovers = await browser.execute(() => {
+            return {
+                globals: Object.keys(window).filter((key) =>
+                    key.startsWith("__templater_user_script_"),
+                ),
+                scripts: Array.from(
+                    document.querySelectorAll("script[src^='blob:']"),
+                ).length,
+            };
+        });
+        expect(leftovers.globals).toEqual([]);
+        expect(leftovers.scripts).toEqual(0);
+    });
+
+    it("user script that fails to evaluate leaves nothing behind", async () => {
+        await resetVault("test/vault", {
+            "templates/tp.user.md": `<% tp.user.broken() %>`,
+            "user scripts/broken.js": `
+module.exports = function () {
+    return ;;)
+}`,
+            "notes/note.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/note.md");
+        await WorkspacePage.expectActiveTabToHaveText("note");
+        await OpenInsertTemplateModalPage.open();
+        await OpenInsertTemplateModalPage.selectSuggestionByName("tp.user");
+        await NoticePage.expectFailedToLoadUserScriptErrorNotice(
+            "user scripts/broken.js",
+        );
+
+        const leftovers = await browser.execute(() => {
+            return {
+                globals: Object.keys(window).filter((key) =>
+                    key.startsWith("__templater_user_script_"),
+                ),
+                scripts: Array.from(
+                    document.querySelectorAll("script[src^='blob:']"),
+                ).length,
+            };
+        });
+        expect(leftovers.globals).toEqual([]);
+        expect(leftovers.scripts).toEqual(0);
+    });
 });

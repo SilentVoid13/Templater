@@ -5,6 +5,65 @@ import { get_tfiles_from_folder } from "utils/Utils";
 import { errorWrapperSync, TemplaterError } from "utils/Error";
 import { UserScriptFunction } from "types";
 
+type UserScriptRequire = (s: string) => unknown;
+type UserScriptExports = Record<string, UserScriptFunction>;
+type UserScriptModule = { exports: UserScriptExports };
+type UserScriptWrapper = (
+    require: UserScriptRequire,
+    module: UserScriptModule,
+    exports: UserScriptExports,
+) => void;
+
+let script_counter = 0;
+
+async function evaluate_user_script(
+    file_content: string,
+): Promise<UserScriptWrapper> {
+    const key = `__templater_user_script_${script_counter++}`;
+    const url = URL.createObjectURL(
+        new Blob(
+            [
+                `window[${JSON.stringify(key)}] = (function anonymous(require, module, exports){` +
+                    file_content +
+                    "\n});",
+            ],
+            { type: "text/javascript" },
+        ),
+    );
+    const global_scope = window as unknown as Record<string, unknown>;
+    const script = createEl("script");
+    script.src = url;
+
+    let script_error: string | undefined;
+    const on_error = (event: ErrorEvent) => {
+        if (event.filename === url) {
+            script_error = event.message;
+        }
+    };
+    window.addEventListener("error", on_error);
+
+    let wrapping_fn: UserScriptWrapper | undefined;
+    try {
+        await new Promise<void>((resolve) => {
+            script.onload = () => resolve();
+            script.onerror = () => resolve();
+            document.head.appendChild(script);
+        });
+        wrapping_fn = global_scope[key] as UserScriptWrapper | undefined;
+    } finally {
+        delete global_scope[key];
+        window.removeEventListener("error", on_error);
+        script.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    if (!wrapping_fn) {
+        // Thrown bare so the caller can attribute it to the offending file.
+        throw new Error(script_error ?? "Could not evaluate script.");
+    }
+    return wrapping_fn;
+}
+
 export class UserScriptFunctions implements IGenerateObject {
     constructor(private plugin: TemplaterPlugin) {}
 
@@ -40,25 +99,17 @@ export class UserScriptFunctions implements IGenerateObject {
         file: TFile,
         user_script_functions: Map<string, UserScriptFunction>,
     ): Promise<void> {
-        const req = (s: string): unknown => {
+        const req: UserScriptRequire = (s: string): unknown => {
             return window.require && window.require(s);
         };
-        const exp: Record<string, UserScriptFunction> = {};
-        const mod = {
+        const exp: UserScriptExports = {};
+        const mod: UserScriptModule = {
             exports: exp,
         };
 
         const file_content = await this.plugin.app.vault.read(file);
         try {
-            const wrapping_fn = window.eval(
-                "(function anonymous(require, module, exports){" +
-                    file_content +
-                    "\n})",
-            ) as (
-                require: typeof req,
-                module: typeof mod,
-                exports: typeof exp,
-            ) => void;
+            const wrapping_fn = await evaluate_user_script(file_content);
             wrapping_fn(req, mod, exp);
         } catch (err) {
             throw new TemplaterError(
