@@ -18,22 +18,23 @@ Each bound template exposes two commands, and you can choose which of them to re
 
 ## File Creation
 
-- `Trigger Templater on new file creation`: [Templater](https://github.com/SilentVoid13/Templater) will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. This makes [Templater](https://github.com/SilentVoid13/Templater) compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc.
+- `Trigger Templater on new file creation`: [Templater](https://github.com/SilentVoid13/Templater) will listen for the new file creation event and will replace every command it finds in the new file's content, after applying any template rules you've set. This makes [Templater](https://github.com/SilentVoid13/Templater) compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc.
   - **Warning:** This can be dangerous if you create new files with unknown / unsafe content on creation. Make sure that every new file's content is safe on creation.
 
 Once `Trigger Templater on new file creation` is enabled, the following settings become available:
 
 - `Excluded folders`: New files created in these folders will never trigger Templater, regardless of the matching mode.
-- `Template matching mode`: Controls how templates are matched to new files. Options:
+- `Template matching mode`: Controls how templates are matched to new files. Templates are applied only to empty files. Options:
   - **None**: Do not auto-apply templates. Templater will still listen for the new file creation event and replace every command it finds in the new file's content.
   - **Folder templates**: Apply templates based on folder structure.
   - **File regex templates**: Apply templates based on regex file path patterns.
+- `Only trigger for files matching a template rule`: Shown when `Template matching mode` is **Folder templates** or **File regex templates**. When on, Templater only acts on empty new files that match a folder or file regex template. New files that don't match a rule are left untouched, and any Templater commands in them are not run. This is intended to limit Templater's code execution, which can be dangerous with untrusted content, to just the files you've explicitly configured in settings. Leave this off if another plugin, such as the Daily note core plugin, writes Templater commands into new files and relies on Templater running them.
 
 ## Folder Templates
 
 Shown when `Template matching mode` is set to **Folder templates**.
 
-You can specify a template that will automatically be used on a selected folder and its children. The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.
+You can specify a template that will automatically be used for empty new files created in a selected folder and its children. The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.
 
 Add a rule for "`/`" if you need a catch-all.
 
@@ -41,7 +42,7 @@ Add a rule for "`/`" if you need a catch-all.
 
 Shown when `Template matching mode` is set to **File regex templates**.
 
-You can specify regex declarations that a new file's path will be tested against. If a regex matches, the associated template will automatically be used. Rules are tested top-to-bottom, and the first match will be used.
+You can specify regex declarations that the path of an empty new file will be tested against. If a regex matches, the associated template will automatically be used. Rules are tested top-to-bottom, and the first match will be used.
 
 End with a rule for "`.*`" if you need a catch-all.
 
