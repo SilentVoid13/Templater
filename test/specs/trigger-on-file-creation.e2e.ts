@@ -11,6 +11,7 @@ describe("folder template matching", () => {
         await resetVault("test/vault", {
             "templates/parent.md": "parent-template",
             "templates/child.md": "child-template",
+            "notes/.keep": "\n",
             "notes/daily/.keep": "\n",
         });
         await browser.executeObsidian(async ({ plugins }) => {
@@ -42,6 +43,7 @@ describe("folder template matching", () => {
     it("falls back to parent folder template when no direct match exists", async () => {
         await resetVault("test/vault", {
             "templates/parent.md": "parent-template",
+            "notes/.keep": "\n",
             "notes/daily/.keep": "\n",
         });
         await browser.executeObsidian(async ({ plugins }) => {
@@ -72,7 +74,9 @@ describe("folder template matching", () => {
 
 describe("trigger_on_file_creation", () => {
     it("processes template syntax in files created in vault when enabled", async () => {
-        await resetVault("test/vault", {});
+        await resetVault("test/vault", {
+            "notes/.keep": "\n",
+        });
         await browser.executeObsidian(({ app }) => {
             app.saveLocalStorage("templater-local-settings", {
                 trigger_on_file_creation: true,
@@ -91,7 +95,9 @@ describe("trigger_on_file_creation", () => {
     });
 
     it("does not process template syntax in files created when disabled", async () => {
-        await resetVault("test/vault", {});
+        await resetVault("test/vault", {
+            "notes/.keep": "\n",
+        });
         await browser.executeObsidian(({ app }) => {
             app.saveLocalStorage("templater-local-settings", {
                 trigger_on_file_creation: false,
