@@ -13,9 +13,9 @@ describe("User function autocomplete", () => {
         await obsidianPage.openFile("notes/show suggestion.md");
         await ActiveMarkdownViewPage.typeText("tp.user.");
         await NoticePage.expectNoErrorNotice();
-        await EditorSuggestionsPage.waitForDisplayed();
-        const names = await EditorSuggestionsPage.getSuggestionNames();
-        expect(names).toContain("hello_world");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "hello_world",
+        );
     });
 
     it("typing tp.user. with empty user scripts folder shows no suggestions and no error", async () => {
@@ -39,10 +39,8 @@ describe("User function autocomplete", () => {
         await obsidianPage.openFile("notes/show multiple suggestions.md");
         await ActiveMarkdownViewPage.typeText("tp.user.");
         await NoticePage.expectNoErrorNotice();
-        await EditorSuggestionsPage.waitForDisplayed();
-        const names = await EditorSuggestionsPage.getSuggestionNames();
-        expect(names).toContain("alpha");
-        expect(names).toContain("beta");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain("alpha");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain("beta");
     });
 
     it("typing tp.user. with a JSDoc-annotated script shows it as a suggestion", async () => {
@@ -60,9 +58,7 @@ describe("User function autocomplete", () => {
         await obsidianPage.openFile("notes/show jsdoc suggestion.md");
         await ActiveMarkdownViewPage.typeText("tp.user.");
         await NoticePage.expectNoErrorNotice();
-        await EditorSuggestionsPage.waitForDisplayed();
-        const names = await EditorSuggestionsPage.getSuggestionNames();
-        expect(names).toContain("greet");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain("greet");
     });
 
     it("typing tp.user.<script>. with an object user script shows exported function suggestions", async () => {
@@ -87,10 +83,10 @@ describe("User function autocomplete", () => {
         await obsidianPage.openFile("notes/show object suggestions.md");
         await ActiveMarkdownViewPage.typeText("tp.user.foo.");
         await NoticePage.expectNoErrorNotice();
-        await EditorSuggestionsPage.waitForDisplayed();
-        const names = await EditorSuggestionsPage.getSuggestionNames();
-        expect(names).toContain("func");
-        expect(names).toContain("doSomething");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain("func");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "doSomething",
+        );
         const texts = await EditorSuggestionsPage.getSuggestionTexts();
         const doSomethingText = texts.find((text) =>
             text.startsWith("doSomething"),
@@ -119,9 +115,9 @@ describe("User function autocomplete", () => {
         await obsidianPage.openFile("notes/no execute on autocomplete.md");
         await ActiveMarkdownViewPage.typeText("tp.user.poc.");
         await NoticePage.expectNoErrorNotice();
-        await EditorSuggestionsPage.waitForDisplayed();
-        const names = await EditorSuggestionsPage.getSuggestionNames();
-        expect(names).toContain("safeMember");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "safeMember",
+        );
         // unset props return null over WebDriver, so check it was never set to true
         const executed = await browser.executeObsidian(
             () =>
@@ -130,6 +126,127 @@ describe("User function autocomplete", () => {
                 ] ?? false,
         );
         expect(executed).toBe(false);
+    });
+
+    it("selecting a user script inserts it with dot notation", async () => {
+        await resetVault("test/vault", {
+            "user scripts/hello_world.js": `module.exports = function() { return "Hello world"; }`,
+            "notes/select script.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/select script.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.");
+        await EditorSuggestionsPage.selectSuggestionByName("hello_world");
+        await ActiveMarkdownViewPage.expectTextToEqual("tp.user.hello_world\n");
+    });
+
+    it("selecting a user script that isn't a valid identifier inserts bracket notation", async () => {
+        await resetVault("test/vault", {
+            "user scripts/obsidian-linter.js": `module.exports = function() { return "linted"; }`,
+            "notes/select dashed script.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/select dashed script.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.");
+        await EditorSuggestionsPage.selectSuggestionByName("obsidian-linter");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user["obsidian-linter"]\n`,
+        );
+    });
+
+    it("selecting a user script member that isn't a valid identifier inserts bracket notation", async () => {
+        await resetVault("test/vault", {
+            "user scripts/foo.js": [
+                "module.exports = {",
+                `    "my-func": () => "dashed",`,
+                "};",
+            ].join("\n"),
+            "notes/select dashed member.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/select dashed member.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.foo.");
+        await EditorSuggestionsPage.selectSuggestionByName("my-func");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user.foo["my-func"]\n`,
+        );
+    });
+
+    it("keeps suggesting a user script while typing a name that isn't a valid identifier", async () => {
+        await resetVault("test/vault", {
+            "user scripts/obsidian-linter.js": `module.exports = function() { return "linted"; }`,
+            "notes/type dashed script.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/type dashed script.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.obsidian-l");
+        await NoticePage.expectNoErrorNotice();
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "obsidian-linter",
+        );
+    });
+
+    it("suggests the members of a user script accessed with bracket notation", async () => {
+        await resetVault("test/vault", {
+            "user scripts/obsidian-linter.js": [
+                "module.exports = {",
+                `    doSomething: () => "done",`,
+                "};",
+            ].join("\n"),
+            "notes/select bracket member.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/select bracket member.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.");
+        await EditorSuggestionsPage.selectSuggestionByName("obsidian-linter");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user["obsidian-linter"]\n`,
+        );
+        await ActiveMarkdownViewPage.typeText(".");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "doSomething",
+        );
+        await EditorSuggestionsPage.selectSuggestionByName("doSomething");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user["obsidian-linter"].doSomething\n`,
+        );
+    });
+
+    it("suggests the members of a user script whose name contains a dot", async () => {
+        await resetVault("test/vault", {
+            "user scripts/my.script.js": [
+                "module.exports = {",
+                `    doSomething: () => "done",`,
+                "};",
+            ].join("\n"),
+            "notes/select dotted script.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/select dotted script.md");
+        await ActiveMarkdownViewPage.typeText("tp.user.");
+        await EditorSuggestionsPage.selectSuggestionByName("my.script");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user["my.script"]\n`,
+        );
+        await ActiveMarkdownViewPage.typeText(".");
+        await EditorSuggestionsPage.expectSuggestionNamesToContain(
+            "doSomething",
+        );
+        await EditorSuggestionsPage.selectSuggestionByName("doSomething");
+        await ActiveMarkdownViewPage.expectTextToEqual(
+            `tp.user["my.script"].doSomething\n`,
+        );
+    });
+
+    it("does not suggest members of a dotted user script accessed with dot notation", async () => {
+        await resetVault("test/vault", {
+            "user scripts/my.script.js": [
+                "module.exports = {",
+                `    doSomething: () => "done",`,
+                "};",
+            ].join("\n"),
+            "notes/dotted script dot notation.md": `\n`,
+        });
+        await obsidianPage.openFile("notes/dotted script dot notation.md");
+        // `tp.user.my.script` reads as `tp.user.my["script"]`, which isn't the
+        // script, so there is nothing to complete
+        await ActiveMarkdownViewPage.typeText("tp.user.my.script.");
+        await NoticePage.expectNoErrorNotice();
+        expect(await EditorSuggestionsPage.isDisplayed()).toBe(false);
     });
 
     it("typing tp.user. with nonexistent user scripts folder shows error notice", async () => {

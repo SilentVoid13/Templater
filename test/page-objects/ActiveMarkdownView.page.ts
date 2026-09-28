@@ -106,6 +106,21 @@ class ActiveMarkdownView {
         await browser.keys(text.split(""));
     }
 
+    async getText(): Promise<string> {
+        return browser.executeObsidian(({ app }) => {
+            const editor = app.workspace.activeEditor?.editor;
+            if (!editor) throw new Error("No active editor");
+            return editor.getValue();
+        });
+    }
+
+    async expectTextToEqual(expected: string) {
+        await browser.waitUntil(async () => {
+            expect(await this.getText()).toEqual(expected);
+            return true;
+        });
+    }
+
     async expectEditorFocused() {
         await browser.waitUntil(() =>
             browser.execute(() =>

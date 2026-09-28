@@ -24,18 +24,24 @@ import {
 } from "../settings/RenderSettings/IntellisenseRenderOption";
 
 import TemplaterPlugin from "main";
-import { append_bolded_label_with_value_to_parent } from "utils/Utils";
+import {
+    append_bolded_label_with_value_to_parent,
+    format_property_path,
+} from "utils/Utils";
 
 export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     //private in_command = false;
-    // https://regex101.com/r/ocmHzR/1
+    // A standalone `tp` (not `http.` nor `obj.tp.`) followed by the accessor
+    // chain typed so far, e.g. `tp.`, `tp.user.fo` or
+    // `tp.app.plugins.plugins["templater-obsidian"].`
     private tp_keyword_regex =
-        /tp\.(?<module>[a-z]*)?(?<fn_trigger>\.(?<fn>[a-zA-Z_.]*)?)?$/;
+        /(?<![\w$.])tp(?<accessors>(?:\.[\w$-]*|\[(?:"[^"]*"|'[^']*')\])+)$/;
     private documentation: Documentation;
     private latest_trigger_info?: EditorSuggestTriggerInfo;
     private module_name: ModuleName | "" = "";
     private function_trigger: boolean = false;
-    private function_name: string = "";
+    private function_path: string[] = [];
+    private query_path: string[] = [];
     private intellisense_render_setting: IntellisenseRenderOption;
 
     constructor(plugin: TemplaterPlugin) {
@@ -54,46 +60,49 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             { line: cursor.line, ch: cursor.ch },
         );
         const match = this.tp_keyword_regex.exec(range);
-        if (!match) {
+        if (!match || !match.groups) {
+            return null;
+        }
+        const accessors = match.groups["accessors"];
+        const [module_name, ...function_path] = parse_accessors(accessors);
+        if (module_name === undefined) {
             return null;
         }
 
-        let query: string;
-        const module_name = (match.groups && match.groups["module"]) || "";
-        if (is_module_name(module_name)) {
-            this.module_name = module_name;
-        }
-
-        if (match.groups && match.groups["fn_trigger"]) {
-            if (module_name == "" || !is_module_name(module_name)) {
+        if (function_path.length > 0) {
+            if (!is_module_name(module_name)) {
                 return null;
             }
+            this.module_name = module_name;
             this.function_trigger = true;
-            this.function_name = match.groups["fn"] || "";
-            query = this.function_name;
+            this.function_path = function_path;
         } else {
             this.function_trigger = false;
-            query = this.module_name;
         }
+        // Suggestions are matched against the members being completed, which
+        // for a module is the module name itself.
+        this.query_path = this.function_trigger ? function_path : [module_name];
 
         const trigger_info: EditorSuggestTriggerInfo = {
-            start: { line: cursor.line, ch: cursor.ch - query.length },
+            // The whole accessor chain is replaced on completion, so that every
+            // segment can be rewritten to the notation its name requires.
+            start: { line: cursor.line, ch: cursor.ch - accessors.length },
             end: { line: cursor.line, ch: cursor.ch },
-            query: query,
+            query: this.query_path.join("."),
         };
         this.latest_trigger_info = trigger_info;
         return trigger_info;
     }
 
     async getSuggestions(
-        context: EditorSuggestContext,
+        _context: EditorSuggestContext,
     ): Promise<TpSuggestDocumentation[]> {
         let suggestions: Array<TpSuggestDocumentation>;
         if (this.module_name && this.function_trigger) {
             suggestions =
                 (await this.documentation.get_all_functions_documentation(
                     this.module_name,
-                    this.function_name,
+                    this.function_path,
                 )) as TpFunctionDocumentation[];
         } else {
             suggestions = this.documentation.get_all_modules_documentation();
@@ -102,7 +111,7 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             return [];
         }
         return suggestions.filter((s) =>
-            s.queryKey.toLowerCase().startsWith(context.query.toLowerCase()),
+            matches_query_path(s.queryPath, this.query_path),
         );
     }
 
@@ -173,21 +182,19 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
             return;
         }
         if (!this.latest_trigger_info) return;
-        active_editor.editor.replaceRange(
-            value.queryKey,
-            this.latest_trigger_info.start,
-            this.latest_trigger_info.end,
+        const editor = active_editor.editor;
+        const { start, end } = this.latest_trigger_info;
+        // The replaced range covers the whole accessor chain, so the module
+        // name is completed again alongside the function path, and every
+        // segment brings its own leading `.` or `["..."]`.
+        const text = format_property_path(
+            this.function_trigger
+                ? [this.module_name, ...value.queryPath]
+                : value.queryPath,
         );
-        if (
-            this.latest_trigger_info.start.ch == this.latest_trigger_info.end.ch
-        ) {
-            // Dirty hack to prevent the cursor being at the
-            // beginning of the word after completion,
-            // Not sure what's the cause of this bug.
-            const cursor_pos = this.latest_trigger_info.end;
-            cursor_pos.ch += value.queryKey.length;
-            active_editor.editor.setCursor(cursor_pos);
-        }
+
+        editor.replaceRange(text, start, end);
+        editor.setCursor({ line: start.line, ch: start.ch + text.length });
     }
 
     getNumberOfArguments(args: object): number {
@@ -201,4 +208,45 @@ export class Autocomplete extends EditorSuggest<TpSuggestDocumentation> {
     updateAutocompleteIntellisenseSetting(value: IntellisenseRenderOption) {
         this.intellisense_render_setting = value;
     }
+}
+
+/**
+ * Whether a suggestion is a candidate for the members being completed: every
+ * member but the last one has to match exactly, the last one being only
+ * partially typed.
+ * @param suggestion_path The members the suggestion would complete
+ * @param query_path The members being completed
+ * @returns Whether the suggestion matches
+ */
+function matches_query_path(
+    suggestion_path: string[],
+    query_path: string[],
+): boolean {
+    if (suggestion_path.length !== query_path.length) {
+        return false;
+    }
+    return query_path.every((member, index) =>
+        index === query_path.length - 1
+            ? suggestion_path[index]
+                  .toLowerCase()
+                  .startsWith(member.toLowerCase())
+            : suggestion_path[index] === member,
+    );
+}
+
+/**
+ * Split an accessor chain into the member names it accesses, e.g.
+ * `.plugins.plugins["templater-obsidian"].` into
+ * `["plugins", "plugins", "templater-obsidian", ""]`.
+ * @param accessors The accessor chain, as written in the editor
+ * @returns The member names, the last one being what has been typed so far
+ */
+function parse_accessors(accessors: string): string[] {
+    const accessor_regex = /\.([\w$-]*)|\[(?:"([^"]*)"|'([^']*)')\]/g;
+    const members: string[] = [];
+    let match: RegExpExecArray | null;
+    while ((match = accessor_regex.exec(accessors)) !== null) {
+        members.push(match[1] ?? match[2] ?? match[3]);
+    }
+    return members;
 }
