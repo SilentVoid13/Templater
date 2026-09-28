@@ -187,6 +187,7 @@ describe("Templater", () => {
     async function testInvalidYamlFolderTemplate(templateContent: string) {
         await resetVault("test/vault", {
             "templates/template.md": templateContent,
+            "notes/.keep": "\n",
         });
         await browser.executeObsidian(async ({ plugins }) => {
             plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
