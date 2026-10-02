@@ -8,6 +8,7 @@ import StartupTemplateModalPage from "../page-objects/StartupTemplateModal.page"
 import IgnoreFolderModalPage from "../page-objects/IgnoreFolderModal.page";
 import TemplateHotkeyModalPage from "../page-objects/TemplateHotkeyModal.page";
 import EditorSuggestionsPage from "../page-objects/EditorSuggestions.page";
+import VaultPage from "../page-objects/Vault.page";
 import { resetVault } from "../utils/reset-vault";
 import { IntellisenseRenderOption } from "../../src/settings/RenderSettings/IntellisenseRenderOption";
 import type { TemplateHotkeyEntry } from "../../src/settings/TemplateHotkeys";
@@ -55,8 +56,7 @@ describe("Settings", () => {
         it("enables jump_to_cursor_after_file_name when toggled on", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
-                    false;
+                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name = false;
                 await plugins.templaterObsidian.save_settings();
             });
             await TemplaterSettingsPage.open();
@@ -74,8 +74,7 @@ describe("Settings", () => {
         it("disables jump_to_cursor_after_file_name when toggled off", async () => {
             await resetVault("test/vault", {});
             await browser.executeObsidian(async ({ plugins }) => {
-                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
-                    true;
+                plugins.templaterObsidian.settings.jump_to_cursor_after_file_name = true;
                 await plugins.templaterObsidian.save_settings();
             });
             await TemplaterSettingsPage.open();
@@ -1199,12 +1198,10 @@ describe("Settings", () => {
 
             await TemplaterSettingsPage.clickSettingRowByName("User scripts");
 
-            await browser.executeObsidian(async ({ app }) => {
-                await app.vault.create(
-                    "user scripts/my_script.js",
-                    "module.exports = function() { return 'hello'; }",
-                );
-            });
+            await VaultPage.createFile(
+                "user scripts/my_script.js",
+                "module.exports = function() { return 'hello'; }",
+            );
 
             await expect(
                 TemplaterSettingsPage.settingsContentEl.$(

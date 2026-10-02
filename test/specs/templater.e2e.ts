@@ -189,9 +189,12 @@ describe("Templater", () => {
             "templates/template.md": templateContent,
         });
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.app.saveLocalStorage("templater-local-settings", {
-                trigger_on_file_creation: true,
-            });
+            plugins.templaterObsidian.app.saveLocalStorage(
+                "templater-local-settings",
+                {
+                    trigger_on_file_creation: true,
+                },
+            );
             plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
                 "folder";
             plugins.templaterObsidian.settings.folder_templates = [
@@ -200,9 +203,7 @@ describe("Templater", () => {
             await plugins.templaterObsidian.save_settings();
         });
         try {
-            await browser.executeObsidian(async ({ app }) => {
-                await app.vault.create("notes/new-note.md", "");
-            });
+            await VaultPage.createFile("notes/new-note.md", "");
             await WorkspacePage.waitForAllTemplatesExecuted();
             await VaultPage.expectFileToHaveContent(
                 "notes/new-note.md",

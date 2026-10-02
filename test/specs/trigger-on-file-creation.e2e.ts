@@ -31,9 +31,7 @@ describe("folder template matching", () => {
             });
         });
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("notes/daily/today.md", "");
-        });
+        await VaultPage.createFile("notes/daily/today.md", "");
 
         await VaultPage.expectFileToHaveContent(
             "notes/daily/today.md",
@@ -61,9 +59,7 @@ describe("folder template matching", () => {
             });
         });
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("notes/daily/today.md", "");
-        });
+        await VaultPage.createFile("notes/daily/today.md", "");
 
         await VaultPage.expectFileToHaveContent(
             "notes/daily/today.md",
@@ -114,7 +110,8 @@ describe("non-markdown file templates", () => {
         },
         {
             extension: "base",
-            template: "views:\n  - type: table\n    name: <% tp.file.title %>\n",
+            template:
+                "views:\n  - type: table\n    name: <% tp.file.title %>\n",
             expected: /name: Untitled/,
         },
     ];
@@ -209,17 +206,13 @@ describe("non-markdown file templates", () => {
         });
         await enableTrigger();
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("bases/projects.base", "");
-        });
+        await VaultPage.createFile("bases/projects.base", "");
         await VaultPage.expectFileToHaveContent(
             "bases/projects.base",
             "views:\n  - name: projects\n",
         );
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("bases/note.md", "");
-        });
+        await VaultPage.createFile("bases/note.md", "");
         await VaultPage.expectFileToHaveContent(
             "bases/note.md",
             "note-template",
@@ -241,9 +234,7 @@ describe("non-markdown file templates", () => {
         });
         await enableTrigger();
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("board.canvas", "");
-        });
+        await VaultPage.createFile("board.canvas", "");
         // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
         await browser.pause(600);
         await WorkspacePage.waitForAllTemplatesExecuted();
@@ -267,9 +258,7 @@ describe("non-markdown file templates", () => {
         });
         await enableTrigger();
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create("board.canvas", "");
-        });
+        await VaultPage.createFile("board.canvas", "");
 
         await VaultPage.expectFileToHaveContent(
             "board.canvas",
@@ -292,12 +281,10 @@ describe("non-markdown file templates", () => {
         });
         await enableTrigger();
 
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create(
-                "synced.canvas",
-                '{"title":"<% tp.file.title %>"}',
-            );
-        });
+        await VaultPage.createFile(
+            "synced.canvas",
+            '{"title":"<% tp.file.title %>"}',
+        );
         // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
         await browser.pause(600);
         await WorkspacePage.waitForAllTemplatesExecuted();
@@ -316,12 +303,10 @@ describe("trigger_on_file_creation", () => {
                 trigger_on_file_creation: true,
             });
         });
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create(
-                "notes/trigger-test.md",
-                "<% tp.file.title %>",
-            );
-        });
+        await VaultPage.createFile(
+            "notes/trigger-test.md",
+            "<% tp.file.title %>",
+        );
         await VaultPage.expectFileToHaveContent(
             "notes/trigger-test.md",
             "trigger-test",
@@ -335,12 +320,10 @@ describe("trigger_on_file_creation", () => {
                 trigger_on_file_creation: false,
             });
         });
-        await browser.executeObsidian(async ({ app }) => {
-            await app.vault.create(
-                "notes/no-trigger-test.md",
-                "<% tp.file.title %>",
-            );
-        });
+        await VaultPage.createFile(
+            "notes/no-trigger-test.md",
+            "<% tp.file.title %>",
+        );
         // Wait longer than the 300ms delay inside on_file_creation, then confirm
         // Templater has finished (no-op when disabled) before reading content
         // eslint-disable-next-line wdio/no-pause
@@ -360,16 +343,14 @@ describe("jump_to_cursor_after_file_name", () => {
 
     async function enableToggle() {
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
-                true;
+            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name = true;
             await plugins.templaterObsidian.save_settings();
         });
     }
 
     async function disableToggle() {
         await browser.executeObsidian(async ({ plugins }) => {
-            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
-                false;
+            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name = false;
             await plugins.templaterObsidian.save_settings();
         });
     }
@@ -377,8 +358,7 @@ describe("jump_to_cursor_after_file_name", () => {
     afterEach(async () => {
         await browser.executeObsidian(async ({ plugins }) => {
             plugins.templaterObsidian.settings.auto_jump_to_cursor = false;
-            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name =
-                false;
+            plugins.templaterObsidian.settings.jump_to_cursor_after_file_name = false;
             plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
                 "none";
             plugins.templaterObsidian.settings.folder_templates = [];
