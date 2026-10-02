@@ -37,11 +37,13 @@ You can specify a template that will automatically be used on a selected folder 
 
 Add a rule for "`/`" if you need a catch-all.
 
+A rule only applies to new files with the same file extension as its template, so you can add separate rules for the same folder for notes (`.md`), bases (`.base`), canvases (`.canvas`), or any other text file type. Non-markdown files only receive a template if they are empty when created.
+
 ## File Regex Templates
 
 Shown when `Template matching mode` is set to **File regex templates**.
 
-You can specify regex declarations that a new file's path will be tested against. If a regex matches, the associated template will automatically be used. Rules are tested top-to-bottom, and the first match will be used.
+You can specify regex declarations that a new file's path will be tested against. If a regex matches, the associated template will automatically be used. Rules are tested top-to-bottom, and the first match whose template has the same file extension as the new file will be used. Non-markdown files only receive a template if they are empty when created.
 
 End with a rule for "`.*`" if you need a catch-all.
 

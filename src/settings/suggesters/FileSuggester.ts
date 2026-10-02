@@ -54,7 +54,6 @@ export class FileSuggest extends AbstractInputSuggest<TFile> {
         all_files.forEach((file: TAbstractFile) => {
             if (
                 file instanceof TFile &&
-                file.extension === "md" &&
                 file.path.toLowerCase().includes(lowerCaseInputStr)
             ) {
                 files.push(file);

@@ -214,6 +214,21 @@ export function get_folder_path_from_file_path(path: string) {
     return "";
 }
 
+/**
+ * @param path Normalized file path
+ * @returns Lowercased file extension without the leading dot, or an empty string if there is none
+ * @example
+ * get_extension_from_file_path("path/to/folder/file.base") // base
+ */
+export function get_extension_from_file_path(path: string) {
+    const file_name = path.slice(path.lastIndexOf("/") + 1);
+    const extension_separator = file_name.lastIndexOf(".");
+    if (extension_separator > 0) {
+        return file_name.slice(extension_separator + 1).toLowerCase();
+    }
+    return "";
+}
+
 export function is_object(obj: unknown): obj is Record<string, unknown> {
     return obj !== null && typeof obj === "object";
 }

@@ -39,6 +39,12 @@ class FileRegexTemplateModal {
         await browser.execute((el) => el.blur(), await this.templateInputEl);
     }
 
+    /** Types into the template input without blurring it, so the file suggestions stay open */
+    async typeTemplate(text: string) {
+        await this.templateInputEl.clearValue();
+        await this.templateInputEl.addValue(text);
+    }
+
     async clickDone() {
         await this.doneBtnEl.click();
     }

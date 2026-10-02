@@ -7,6 +7,7 @@ import SystemCommandModalPage from "../page-objects/SystemCommandModal.page";
 import StartupTemplateModalPage from "../page-objects/StartupTemplateModal.page";
 import IgnoreFolderModalPage from "../page-objects/IgnoreFolderModal.page";
 import TemplateHotkeyModalPage from "../page-objects/TemplateHotkeyModal.page";
+import EditorSuggestionsPage from "../page-objects/EditorSuggestions.page";
 import { resetVault } from "../utils/reset-vault";
 import { IntellisenseRenderOption } from "../../src/settings/RenderSettings/IntellisenseRenderOption";
 import type { TemplateHotkeyEntry } from "../../src/settings/TemplateHotkeys";
@@ -449,6 +450,47 @@ describe("Settings", () => {
             );
         });
 
+        it("suggests and adds a non-markdown template", async () => {
+            await resetVault("test/vault", {
+                "templates/default.md": "Default template",
+                "templates/table.base": "views:\n  - type: table\n",
+            });
+            await browser.executeObsidian(async ({ app, plugins }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: true,
+                });
+                plugins.templaterObsidian.settings.templates_folder =
+                    "templates";
+                plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                    "folder";
+                plugins.templaterObsidian.settings.folder_templates = [];
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "Folder templates",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add folder template",
+            );
+            await FolderTemplateModalPage.waitForDisplayed();
+            await FolderTemplateModalPage.setFolder("bases");
+            await FolderTemplateModalPage.typeTemplate("templates/");
+            await EditorSuggestionsPage.expectSuggestionNamesToContain(
+                "templates/default.md",
+            );
+            await EditorSuggestionsPage.selectSuggestionByName(
+                "templates/table.base",
+            );
+            await FolderTemplateModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual(
+                "folder_templates",
+                [{ folder: "bases", template: "templates/table.base" }],
+            );
+        });
+
         it("shows an error when a duplicate folder is used", async () => {
             await resetVault("test/vault", {
                 "templates/default.md": "Default template",
@@ -573,6 +615,46 @@ describe("Settings", () => {
 
             await TemplaterDataFilePage.expectSettingToEqual("file_templates", [
                 { regex: "notes/.*\\.md", template: "templates/default.md" },
+            ]);
+        });
+
+        it("suggests and adds a non-markdown template", async () => {
+            await resetVault("test/vault", {
+                "templates/default.md": "Default template",
+                "templates/board.canvas": '{"nodes":[],"edges":[]}',
+            });
+            await browser.executeObsidian(async ({ app, plugins }) => {
+                app.saveLocalStorage("templater-local-settings", {
+                    trigger_on_file_creation: true,
+                });
+                plugins.templaterObsidian.settings.templates_folder =
+                    "templates";
+                plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                    "regex";
+                plugins.templaterObsidian.settings.file_templates = [];
+                await plugins.templaterObsidian.save_settings();
+            });
+            await TemplaterSettingsPage.open();
+
+            await TemplaterSettingsPage.clickSettingRowByName(
+                "File regex templates",
+            );
+            await TemplaterSettingsPage.clickButtonWithText(
+                "Add file regex template",
+            );
+            await FileRegexTemplateModalPage.waitForDisplayed();
+            await FileRegexTemplateModalPage.setRegex(".*\\.canvas");
+            await FileRegexTemplateModalPage.typeTemplate("templates/");
+            await EditorSuggestionsPage.expectSuggestionNamesToContain(
+                "templates/default.md",
+            );
+            await EditorSuggestionsPage.selectSuggestionByName(
+                "templates/board.canvas",
+            );
+            await FileRegexTemplateModalPage.clickDone();
+
+            await TemplaterDataFilePage.expectSettingToEqual("file_templates", [
+                { regex: ".*\\.canvas", template: "templates/board.canvas" },
             ]);
         });
 

@@ -13,6 +13,7 @@ import {
     delay,
     generate_dynamic_command_regex,
     get_active_file,
+    get_extension_from_file_path,
     get_folder_path_from_file_path,
     resolve_tfile,
     get_frontmatter_and_content,
@@ -35,6 +36,17 @@ export enum RunMode {
     OverwriteActiveFile,
     DynamicProcessor,
     StartupTemplate,
+}
+
+/**
+ * Folder and regex templates only apply to new files of the same type,
+ * e.g. a `.base` template is only applied to new `.base` files.
+ */
+function template_has_extension(template: string, extension: string) {
+    return (
+        get_extension_from_file_path(normalizePath(template)) ===
+        extension.toLowerCase()
+    );
 }
 
 export type RunningConfig = {
@@ -330,26 +342,20 @@ export class Templater {
             return;
         }
 
-        const {
-            content: output_content_body,
-            frontmatter: output_frontmatter,
-        } = get_frontmatter_and_content(output_content);
+        const template_output = output_content;
         if (
             active_file?.path === file.path &&
             active_editor &&
             active_editor.editor &&
             active_view
         ) {
-            let result = "";
-            const { content, frontmatter } = get_frontmatter_and_content(
-                active_editor.editor.getValue(),
+            active_editor.editor.setValue(
+                this.merge_template_output(
+                    file,
+                    active_editor.editor.getValue(),
+                    template_output,
+                ),
             );
-            merge_objects(frontmatter, output_frontmatter);
-            if (Object.keys(frontmatter).length > 0) {
-                result += `---\n${stringifyYaml(frontmatter)}---\n`;
-            }
-            result += content + output_content_body;
-            active_editor.editor.setValue(result);
             // Set cursor to first line of editor (below properties)
             // https://github.com/SilentVoid13/Templater/issues/1231
             const editor = active_editor.editor;
@@ -361,16 +367,12 @@ export class Templater {
             await active_view.save();
         } else {
             await this.plugin.app.vault.process(file, (data) => {
-                let result = "";
-                const { content, frontmatter } =
-                    get_frontmatter_and_content(data);
-                merge_objects(frontmatter, output_frontmatter);
-                if (Object.keys(frontmatter).length > 0) {
-                    result += `---\n${stringifyYaml(frontmatter)}---\n`;
-                }
-                result += content + output_content_body;
-                output_content = result;
-                return result;
+                output_content = this.merge_template_output(
+                    file,
+                    data,
+                    template_output,
+                );
+                return output_content;
             });
         }
         this.plugin.app.workspace.trigger("templater:new-note-from-template", {
@@ -388,6 +390,29 @@ export class Templater {
             active_editor.editor.focus();
         }
         await this.end_templater_task(path);
+    }
+
+    private merge_template_output(
+        file: TFile,
+        existing_content: string,
+        template_output: string,
+    ): string {
+        if (file.extension !== "md") {
+            return existing_content + template_output;
+        }
+        const {
+            content: output_content_body,
+            frontmatter: output_frontmatter,
+        } = get_frontmatter_and_content(template_output);
+        const { content, frontmatter } =
+            get_frontmatter_and_content(existing_content);
+        merge_objects(frontmatter, output_frontmatter);
+        let result = "";
+        if (Object.keys(frontmatter).length > 0) {
+            result += `---\n${stringifyYaml(frontmatter)}---\n`;
+        }
+        result += content + output_content_body;
+        return result;
     }
 
     async overwrite_active_file_commands(): Promise<void> {
@@ -509,12 +534,23 @@ export class Templater {
         }
     }
 
-    get_new_file_template_for_folder(folder: TFolder): string | undefined {
+    /**
+     * @param extension When provided, only templates with this file extension are considered.
+     * Optional for backwards compatibility with other plugins that call this method without it,
+     * Templater itself always provides it.
+     */
+    get_new_file_template_for_folder(
+        folder: TFolder,
+        extension?: string,
+    ): string | undefined {
         let current: TFolder | null = folder;
         while (current instanceof TFolder) {
             const f = current;
             const match = this.plugin.settings.folder_templates.find(
-                (e) => e.folder == f.path,
+                (e) =>
+                    e.folder == f.path &&
+                    (extension === undefined ||
+                        template_has_extension(e.template, extension)),
             );
 
             if (match && match.template) {
@@ -528,7 +564,10 @@ export class Templater {
     get_new_file_template_for_file(file: TFile): string | undefined {
         const match = this.plugin.settings.file_templates.find((e) => {
             const eRegex = new RegExp(e.regex);
-            return eRegex.test(file.path);
+            return (
+                eRegex.test(file.path) &&
+                template_has_extension(e.template, file.extension)
+            );
         });
 
         if (match && match.template) {
@@ -545,7 +584,14 @@ export class Templater {
             return;
         }
 
-        if (!(file instanceof TFile) || file.extension !== "md") {
+        if (!(file instanceof TFile)) {
+            return;
+        }
+
+        const is_markdown = file.extension === "md";
+        const mode = templater.plugin.settings.trigger_on_file_creation_mode;
+        // Non-markdown files only receive folder or regex templates, they are never parsed in place
+        if (!is_markdown && mode !== "folder" && mode !== "regex") {
             return;
         }
 
@@ -575,20 +621,26 @@ export class Templater {
             return;
         }
 
-        const file_content = await app.vault.read(file);
-        const frontmatter_info = getFrontMatterInfo(file_content);
-        const content_size =
-            file_content.length - frontmatter_info.contentStart;
+        // Avoids reading binary files and non-markdown files created with content
+        if (!is_markdown && file.stat.size !== 0) {
+            return;
+        }
 
-        if (
-            content_size == 0 &&
-            templater.plugin.settings.trigger_on_file_creation_mode === "folder"
-        ) {
+        const file_content = await app.vault.read(file);
+        const content_size = is_markdown
+            ? file_content.length -
+              getFrontMatterInfo(file_content).contentStart
+            : file_content.length;
+
+        if (content_size == 0 && mode === "folder") {
             if (!(file.parent instanceof TFolder)) {
                 return;
             }
             const folder_template_match =
-                templater.get_new_file_template_for_folder(file.parent);
+                templater.get_new_file_template_for_folder(
+                    file.parent,
+                    file.extension,
+                );
             if (!folder_template_match) {
                 return;
             }
@@ -603,10 +655,7 @@ export class Templater {
                 return;
             }
             await templater.write_template_to_file(template_file, file);
-        } else if (
-            content_size == 0 &&
-            templater.plugin.settings.trigger_on_file_creation_mode === "regex"
-        ) {
+        } else if (content_size == 0 && mode === "regex") {
             const file_template_match =
                 templater.get_new_file_template_for_file(file);
             if (!file_template_match) {
@@ -623,7 +672,7 @@ export class Templater {
                 return;
             }
             await templater.write_template_to_file(template_file, file);
-        } else {
+        } else if (is_markdown) {
             const SIZE_LIMIT = 100_000;
             if (file.stat.size <= SIZE_LIMIT) {
                 //https://github.com/SilentVoid13/Templater/issues/873

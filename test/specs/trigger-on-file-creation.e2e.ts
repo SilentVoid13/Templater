@@ -1,3 +1,5 @@
+import type { WorkspaceLeaf } from "obsidian";
+import { obsidianPage } from "wdio-obsidian-service";
 import ActiveMarkdownViewPage from "../page-objects/ActiveMarkdownView.page";
 import EmptyStateViewPage from "../page-objects/EmptyStateView.page";
 import ObsidianConfigPage from "../page-objects/ObsidianConfig.page";
@@ -66,6 +68,242 @@ describe("folder template matching", () => {
         await VaultPage.expectFileToHaveContent(
             "notes/daily/today.md",
             "parent-template",
+        );
+    });
+});
+
+describe("non-markdown file templates", () => {
+    afterEach(async () => {
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "none";
+            plugins.templaterObsidian.settings.folder_templates = [];
+            plugins.templaterObsidian.settings.file_templates = [];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await browser.executeObsidian(async ({ app }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                trigger_on_file_creation: false,
+            });
+            // Leave an empty tab behind for tests that use the empty state view
+            const leaves: WorkspaceLeaf[] = [];
+            app.workspace.iterateRootLeaves((leaf) => {
+                leaves.push(leaf);
+            });
+            await Promise.all(
+                leaves.map((leaf) => leaf.setViewState({ type: "empty" })),
+            );
+        });
+    });
+
+    async function enableTrigger() {
+        await browser.executeObsidian(({ app }) => {
+            app.saveLocalStorage("templater-local-settings", {
+                trigger_on_file_creation: true,
+            });
+        });
+    }
+
+    const viewCases = [
+        {
+            extension: "canvas",
+            template:
+                '{"nodes":[{"id":"a","type":"text","text":"<% tp.file.title %>","x":0,"y":0,"width":250,"height":60}],"edges":[]}',
+            // The canvas view may re-serialize the JSON when it saves
+            expected: /"text":\s*"Untitled"/,
+        },
+        {
+            extension: "base",
+            template: "views:\n  - type: table\n    name: <% tp.file.title %>\n",
+            expected: /name: Untitled/,
+        },
+    ];
+
+    for (const { extension, template, expected } of viewCases) {
+        it(`keeps the template content after the ${extension} view opens and saves`, async () => {
+            await resetVault("test/vault", {
+                [`templates/new.${extension}`]: template,
+                "other.md": "other",
+            });
+            await browser.executeObsidian(
+                async ({ plugins }, template_path: string) => {
+                    plugins.templaterObsidian.settings.templates_folder =
+                        "templates";
+                    plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                        "folder";
+                    plugins.templaterObsidian.settings.folder_templates = [
+                        { folder: "/", template: template_path },
+                    ];
+                    await plugins.templaterObsidian.save_settings();
+                },
+                `templates/new.${extension}`,
+            );
+            await enableTrigger();
+
+            // Mirrors the file explorer's "New canvas" / "New base" menu items
+            const path = await browser.executeObsidian(
+                async ({ app }, ext: string) => {
+                    const file = await app.fileManager.createNewFile(
+                        app.vault.getRoot(),
+                        undefined,
+                        ext,
+                    );
+                    await app.workspace.getLeaf(false).openFile(file, {
+                        eState: { rename: "all" },
+                    });
+                    return file.path;
+                },
+                extension,
+            );
+            await VaultPage.expectFileToHaveContent(path, expected);
+            await WorkspacePage.waitForAllTemplatesExecuted();
+
+            // Give the view time to write its own state, which happened ~2s after creation when tested manually
+            // eslint-disable-next-line wdio/no-pause -- Waiting to confirm the view doesn't overwrite the file
+            await browser.pause(3000);
+            const view_data = await browser.executeObsidian(
+                ({ app, obsidian }, file_path: string) => {
+                    let data: string | undefined;
+                    app.workspace.iterateRootLeaves((leaf) => {
+                        if (
+                            leaf.view instanceof obsidian.TextFileView &&
+                            leaf.view.file?.path === file_path
+                        ) {
+                            data = leaf.view.getViewData();
+                        }
+                    });
+                    return data;
+                },
+                path,
+            );
+            expect(view_data).toMatch(expected);
+
+            // Navigating away makes the view save its state to disk
+            await browser.executeObsidian(async ({ app }) => {
+                const other = app.vault.getFileByPath("other.md");
+                if (other) {
+                    await app.workspace.getLeaf(false).openFile(other);
+                }
+            });
+            // eslint-disable-next-line wdio/no-pause -- Waiting to confirm the view doesn't overwrite the file
+            await browser.pause(1000);
+            expect(await obsidianPage.read(path)).toMatch(expected);
+        });
+    }
+
+    it("applies a folder template to a new file with the same extension", async () => {
+        await resetVault("test/vault", {
+            "templates/note.md": "note-template",
+            "templates/table.base": "views:\n  - name: <% tp.file.title %>\n",
+            "bases/.keep": "\n",
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.templates_folder = "templates";
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "folder";
+            plugins.templaterObsidian.settings.folder_templates = [
+                { folder: "bases", template: "templates/note.md" },
+                { folder: "bases", template: "templates/table.base" },
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await enableTrigger();
+
+        await browser.executeObsidian(async ({ app }) => {
+            await app.vault.create("bases/projects.base", "");
+        });
+        await VaultPage.expectFileToHaveContent(
+            "bases/projects.base",
+            "views:\n  - name: projects\n",
+        );
+
+        await browser.executeObsidian(async ({ app }) => {
+            await app.vault.create("bases/note.md", "");
+        });
+        await VaultPage.expectFileToHaveContent(
+            "bases/note.md",
+            "note-template",
+        );
+    });
+
+    it("does not apply a folder template with a different extension", async () => {
+        await resetVault("test/vault", {
+            "templates/note.md": "note-template",
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.templates_folder = "templates";
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "folder";
+            plugins.templaterObsidian.settings.folder_templates = [
+                { folder: "/", template: "templates/note.md" },
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await enableTrigger();
+
+        await browser.executeObsidian(async ({ app }) => {
+            await app.vault.create("board.canvas", "");
+        });
+        // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
+        await browser.pause(600);
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent("board.canvas", "");
+    });
+
+    it("skips regex templates with a different extension and uses the next match", async () => {
+        await resetVault("test/vault", {
+            "templates/note.md": "note-template",
+            "templates/board.canvas": '{"nodes":[],"edges":[]}',
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.templates_folder = "templates";
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "regex";
+            plugins.templaterObsidian.settings.file_templates = [
+                { regex: ".*", template: "templates/note.md" },
+                { regex: ".*", template: "templates/board.canvas" },
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await enableTrigger();
+
+        await browser.executeObsidian(async ({ app }) => {
+            await app.vault.create("board.canvas", "");
+        });
+
+        await VaultPage.expectFileToHaveContent(
+            "board.canvas",
+            '{"nodes":[],"edges":[]}',
+        );
+    });
+
+    it("does not process non-markdown files created with content", async () => {
+        await resetVault("test/vault", {
+            "templates/board.canvas": '{"nodes":[],"edges":[]}',
+        });
+        await browser.executeObsidian(async ({ plugins }) => {
+            plugins.templaterObsidian.settings.templates_folder = "templates";
+            plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
+                "folder";
+            plugins.templaterObsidian.settings.folder_templates = [
+                { folder: "/", template: "templates/board.canvas" },
+            ];
+            await plugins.templaterObsidian.save_settings();
+        });
+        await enableTrigger();
+
+        await browser.executeObsidian(async ({ app }) => {
+            await app.vault.create(
+                "synced.canvas",
+                '{"title":"<% tp.file.title %>"}',
+            );
+        });
+        // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
+        await browser.pause(600);
+        await WorkspacePage.waitForAllTemplatesExecuted();
+        await VaultPage.expectFileToHaveContent(
+            "synced.canvas",
+            '{"title":"<% tp.file.title %>"}',
         );
     });
 });
