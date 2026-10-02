@@ -326,7 +326,7 @@ describe("trigger_on_file_creation", () => {
         );
         // Wait longer than the 300ms delay inside on_file_creation, then confirm
         // Templater has finished (no-op when disabled) before reading content
-        // eslint-disable-next-line wdio/no-pause
+        // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
         await browser.pause(600);
         await WorkspacePage.waitForAllTemplatesExecuted();
         await VaultPage.expectFileToHaveContent(

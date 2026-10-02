@@ -30,13 +30,13 @@ class FileRegexTemplateModal {
     async setRegex(value: string) {
         await this.regexInputEl.clearValue();
         await this.regexInputEl.addValue(value);
-        await browser.execute((el) => el.blur(), await this.regexInputEl);
+        await browser.execute((el) => el.blur(), await this.regexInputEl.getElement());
     }
 
     async setTemplate(path: string) {
         await this.templateInputEl.clearValue();
         await this.templateInputEl.addValue(path);
-        await browser.execute((el) => el.blur(), await this.templateInputEl);
+        await browser.execute((el) => el.blur(), await this.templateInputEl.getElement());
     }
 
     /** Types into the template input without blurring it, so the file suggestions stay open */

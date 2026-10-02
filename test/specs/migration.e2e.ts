@@ -28,7 +28,6 @@ describe("Migration", () => {
 
             await browser.waitUntil(async () => {
                 const raw = await obsidianPage.read(
-                    // eslint-disable-next-line obsidianmd/hardcoded-config-path -- test only
                     ".obsidian/plugins/templater-obsidian/data.json",
                 );
                 const data = JSON.parse(raw) as Record<string, unknown>;
@@ -54,7 +53,6 @@ describe("Migration", () => {
 
             await browser.waitUntil(async () => {
                 const raw = await obsidianPage.read(
-                    // eslint-disable-next-line obsidianmd/hardcoded-config-path -- test only
                     ".obsidian/plugins/templater-obsidian/data.json",
                 );
                 const data = JSON.parse(raw) as Record<string, unknown>;
@@ -248,7 +246,6 @@ describe("Migration", () => {
 
             await browser.waitUntil(async () => {
                 const raw = await obsidianPage.read(
-                    // eslint-disable-next-line obsidianmd/hardcoded-config-path -- test only
                     ".obsidian/plugins/templater-obsidian/data.json",
                 );
                 const data = JSON.parse(raw) as Record<string, unknown>;
@@ -262,7 +259,6 @@ describe("Migration", () => {
 
             await browser.waitUntil(async () => {
                 const raw = await obsidianPage.read(
-                    // eslint-disable-next-line obsidianmd/hardcoded-config-path -- test only
                     ".obsidian/plugins/templater-obsidian/data.json",
                 );
                 const data = JSON.parse(raw) as Record<string, unknown>;

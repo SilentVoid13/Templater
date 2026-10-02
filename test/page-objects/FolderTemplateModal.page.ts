@@ -30,13 +30,13 @@ class FolderTemplateModal {
     async setFolder(path: string) {
         await this.folderInputEl.clearValue();
         await this.folderInputEl.addValue(path);
-        await browser.execute((el) => el.blur(), await this.folderInputEl);
+        await browser.execute((el) => el.blur(), await this.folderInputEl.getElement());
     }
 
     async setTemplate(path: string) {
         await this.templateInputEl.clearValue();
         await this.templateInputEl.addValue(path);
-        await browser.execute((el) => el.blur(), await this.templateInputEl);
+        await browser.execute((el) => el.blur(), await this.templateInputEl.getElement());
     }
 
     /** Types into the template input without blurring it, so the file suggestions stay open */
