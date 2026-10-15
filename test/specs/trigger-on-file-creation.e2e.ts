@@ -13,7 +13,6 @@ describe("folder template matching", () => {
         await resetVault("test/vault", {
             "templates/parent.md": "parent-template",
             "templates/child.md": "child-template",
-            "notes/.keep": "\n",
             "notes/daily/.keep": "\n",
         });
         await browser.executeObsidian(async ({ plugins }) => {
@@ -43,7 +42,6 @@ describe("folder template matching", () => {
     it("falls back to parent folder template when no direct match exists", async () => {
         await resetVault("test/vault", {
             "templates/parent.md": "parent-template",
-            "notes/.keep": "\n",
             "notes/daily/.keep": "\n",
         });
         await browser.executeObsidian(async ({ plugins }) => {
@@ -299,9 +297,7 @@ describe("non-markdown file templates", () => {
 
 describe("trigger_on_file_creation", () => {
     it("processes template syntax in files created in vault when enabled", async () => {
-        await resetVault("test/vault", {
-            "notes/.keep": "\n",
-        });
+        await resetVault("test/vault", {});
         await browser.executeObsidian(({ app }) => {
             app.saveLocalStorage("templater-local-settings", {
                 trigger_on_file_creation: true,
@@ -318,9 +314,7 @@ describe("trigger_on_file_creation", () => {
     });
 
     it("does not process template syntax in files created when disabled", async () => {
-        await resetVault("test/vault", {
-            "notes/.keep": "\n",
-        });
+        await resetVault("test/vault", {});
         await browser.executeObsidian(({ app }) => {
             app.saveLocalStorage("templater-local-settings", {
                 trigger_on_file_creation: false,
@@ -373,16 +367,6 @@ describe("only_trigger_for_matching_files", () => {
         });
     }
 
-    async function createFile(path: string, content: string) {
-        await browser.executeObsidian(
-            async ({ app }, path, content) => {
-                await app.vault.create(path, content);
-            },
-            path,
-            content,
-        );
-    }
-
     afterEach(async () => {
         await browser.executeObsidian(async ({ plugins }) => {
             plugins.templaterObsidian.settings.trigger_on_file_creation_mode =
@@ -412,7 +396,7 @@ describe("only_trigger_for_matching_files", () => {
 
             it("still applies the matching template to an empty file when enabled", async () => {
                 await setup(mode, /*onlyRunMatched=*/true);
-                await createFile("ruled/empty.md", "");
+                await VaultPage.createFile("ruled/empty.md", "");
                 await VaultPage.expectFileToHaveContent(
                     "ruled/empty.md",
                     "rule-template",
@@ -421,13 +405,13 @@ describe("only_trigger_for_matching_files", () => {
 
             it("does not process commands in a file with content that matches a rule when enabled", async () => {
                 await setup(mode, /*onlyRunMatched=*/true);
-                await createFile(
+                await VaultPage.createFile(
                     "ruled/content.md",
                     "<% tp.file.title %>",
                 );
                 // Wait longer than the 300ms delay inside on_file_creation, then confirm
                 // Templater has finished (no-op when skipped) before reading content
-                // eslint-disable-next-line wdio/no-pause
+                // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
                 await browser.pause(600);
                 await WorkspacePage.waitForAllTemplatesExecuted();
                 await VaultPage.expectFileToHaveContent(
@@ -438,13 +422,13 @@ describe("only_trigger_for_matching_files", () => {
 
             it("does not process commands in a file with content that matches no rule when enabled", async () => {
                 await setup(mode, /*onlyRunMatched=*/true);
-                await createFile(
+                await VaultPage.createFile(
                     "unruled/content.md",
                     "<% tp.file.title %>",
                 );
                 // Wait longer than the 300ms delay inside on_file_creation, then confirm
                 // Templater has finished (no-op when skipped) before reading content
-                // eslint-disable-next-line wdio/no-pause
+                // eslint-disable-next-line wdio/no-pause -- Wait longer than the 300ms delay inside on_file_creation
                 await browser.pause(600);
                 await WorkspacePage.waitForAllTemplatesExecuted();
                 await VaultPage.expectFileToHaveContent(
@@ -455,7 +439,7 @@ describe("only_trigger_for_matching_files", () => {
 
             it("processes commands in a file with content when disabled", async () => {
                 await setup(mode, /*onlyRunMatched=*/false);
-                await createFile(
+                await VaultPage.createFile(
                     "unruled/content.md",
                     "<% tp.file.title %>",
                 );
@@ -467,7 +451,7 @@ describe("only_trigger_for_matching_files", () => {
 
             it("processes commands in a file with content in a ruled location when disabled", async () => {
                 await setup(mode, /*onlyRunMatched=*/false);
-                await createFile(
+                await VaultPage.createFile(
                     "ruled/content.md",
                     "<% tp.file.title %>",
                 );
@@ -485,7 +469,7 @@ describe("only_trigger_for_matching_files", () => {
             "ruled/.keep": "\n",
         });
         await setup("none", /*onlyRunMatched=*/true);
-        await createFile("ruled/content.md", "<% tp.file.title %>");
+        await VaultPage.createFile("ruled/content.md", "<% tp.file.title %>");
         await VaultPage.expectFileToHaveContent("ruled/content.md", "content");
     });
 });
