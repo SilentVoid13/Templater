@@ -1,6 +1,6 @@
 import {
     obsidianPage,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Referenced by the {@link} in the doc comment below
     ObsidianBrowserCommands,
 } from "wdio-obsidian-service";
 import { Key } from "webdriverio";

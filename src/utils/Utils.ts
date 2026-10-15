@@ -214,8 +214,49 @@ export function get_folder_path_from_file_path(path: string) {
     return "";
 }
 
+/**
+ * @param path Normalized file path
+ * @returns Lowercased file extension without the leading dot, or an empty string if there is none
+ * @example
+ * get_extension_from_file_path("path/to/folder/file.base") // base
+ */
+export function get_extension_from_file_path(path: string) {
+    const file_name = path.slice(path.lastIndexOf("/") + 1);
+    const extension_separator = file_name.lastIndexOf(".");
+    if (extension_separator > 0) {
+        return file_name.slice(extension_separator + 1).toLowerCase();
+    }
+    return "";
+}
+
 export function is_object(obj: unknown): obj is Record<string, unknown> {
     return obj !== null && typeof obj === "object";
+}
+
+const valid_js_identifier_regex = /^[A-Za-z_$][\w$]*$/;
+
+/**
+ * Format a property access for a member name, using bracket notation for names
+ * that aren't valid JavaScript identifiers (e.g. a user script named
+ * `obsidian-linter`, which `tp.user.obsidian-linter` would parse as a
+ * subtraction).
+ * @param name The member name to access
+ * @returns `.name` or `["name"]`
+ */
+function format_property_access(name: string): string {
+    return valid_js_identifier_regex.test(name)
+        ? `.${name}`
+        : `[${JSON.stringify(name)}]`;
+}
+
+/**
+ * Format a chain of property accesses, e.g. `["user", "obsidian-linter"]` into
+ * `.user["obsidian-linter"]`.
+ * @param path The member names to access, from the outermost to the innermost
+ * @returns The accesses, concatenated
+ */
+export function format_property_path(path: string[]): string {
+    return path.map(format_property_access).join("");
 }
 
 export function get_fn_params(func: (...args: unknown[]) => unknown) {

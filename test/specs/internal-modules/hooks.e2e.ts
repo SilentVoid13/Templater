@@ -1,4 +1,3 @@
-import { obsidianPage } from "wdio-obsidian-service";
 import OpenInsertTemplateModalPage from "../../page-objects/OpenInsertTemplateModal.page";
 import WorkspacePage from "../../page-objects/Workspace.page";
 import EmptyStateViewPage from "../../page-objects/EmptyStateView.page";

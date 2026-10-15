@@ -3,6 +3,7 @@ import { TFile } from "obsidian";
 import * as acorn from "acorn";
 import { errorWrapper } from "utils/Error";
 import {
+    format_property_path,
     generate_jsdoc_documentation,
     get_fn_params,
     get_tfiles_from_folder,
@@ -38,7 +39,7 @@ export type TpDocumentation = {
 
 export type TpModuleDocumentation = {
     name: string;
-    queryKey: string;
+    queryPath: string[];
     description: string;
     functions: {
         [key: string]: TpFunctionDocumentation;
@@ -47,7 +48,7 @@ export type TpModuleDocumentation = {
 
 export type TpFunctionDocumentation = {
     name: string;
-    queryKey: string;
+    queryPath: string[];
     definition: string;
     description: string;
     returns: string;
@@ -101,19 +102,19 @@ export class Documentation {
         }
 
         return modules.map((mod) => {
-            mod.queryKey = mod.name;
+            mod.queryPath = [mod.name];
             return mod;
         });
     }
 
     async get_all_functions_documentation(
         module_name: ModuleName,
-        function_name: string
+        function_path: string[]
     ): Promise<TpFunctionDocumentation[] | undefined> {
         if (module_name === "app") {
             return this.get_app_functions_documentation(
                 this.plugin.app,
-                function_name
+                function_path
             );
         }
         if (module_name === "user") {
@@ -135,17 +136,20 @@ export class Documentation {
             );
             if (!jsFiles || jsFiles.length === 0) return;
 
-            const userScriptPath = get_user_script_path(function_name);
-            if (userScriptPath) {
+            // A member of a script is being completed, e.g. `tp.user.foo.ba`
+            // or `tp.user["my.script"].ba`. The script name is the first member
+            // of the path, however it was written in the editor.
+            const [script_name, ...members] = function_path;
+            if (members.length > 0) {
                 const userScriptFile = jsFiles.find(
-                    (file) => file.basename === userScriptPath.scriptName,
+                    (file) => file.basename === script_name,
                 );
                 if (!userScriptFile) return [];
 
                 return get_user_script_object_documentation(
                     this.plugin,
                     userScriptFile,
-                    userScriptPath.scriptName,
+                    script_name,
                 );
             }
 
@@ -160,7 +164,7 @@ export class Documentation {
                     ...acc,
                     {
                         name: file.basename,
-                        queryKey: file.basename,
+                        queryPath: [file.basename],
                         definition: "",
                         description: file.description ?? "",
                         returns: file.returns ?? "",
@@ -176,7 +180,7 @@ export class Documentation {
         }
         return Object.values(this.documentation.tp[module_name].functions).map(
             (mod) => {
-                mod.queryKey = mod.name;
+                mod.queryPath = [mod.name];
                 return mod;
             }
         );
@@ -184,12 +188,12 @@ export class Documentation {
 
     private get_app_functions_documentation(
         obj: unknown,
-        path: string
+        path: string[]
     ): TpFunctionDocumentation[] {
         if (!is_object(obj)) {
             return [];
         }
-        const parts = path.split(".");
+        const parts = path;
         if (parts.length === 0) {
             return [];
         }
@@ -206,19 +210,17 @@ export class Documentation {
             }
         }
 
-        const definitionPrefix = [
-            "tp",
-            "app",
-            ...parts.slice(0, parts.length - 1),
-        ].join(".");
-        const queryKeyPrefix = parts.slice(0, parts.length - 1).join(".");
+        const prefix = parts.slice(0, parts.length - 1);
         const docs: TpFunctionDocumentation[] = [];
         for (const key in currentObj) {
-            const definition = `${definitionPrefix}.${key}`;
-            const queryKey = queryKeyPrefix ? `${queryKeyPrefix}.${key}` : key;
+            const definition = `tp${format_property_path([
+                "app",
+                ...prefix,
+                key,
+            ])}`;
             docs.push({
                 name: key,
-                queryKey,
+                queryPath: [...prefix, key],
                 definition:
                     typeof currentObj[key] === "function"
                         ? `${definition}(${get_fn_params(
@@ -261,22 +263,6 @@ export class Documentation {
     }
 }
 
-function get_user_script_path(
-    function_name: string,
-): { scriptName: string } | null {
-    const separatorIndex = function_name.indexOf(".");
-    if (separatorIndex === -1) {
-        return null;
-    }
-
-    const scriptName = function_name.slice(0, separatorIndex);
-    if (!scriptName) {
-        return null;
-    }
-
-    return { scriptName };
-}
-
 async function get_user_script_object_documentation(
     plugin: TemplaterPlugin,
     userScriptFile: TFile,
@@ -293,8 +279,12 @@ async function get_user_script_object_documentation(
         const params = docs?.args ? Object.keys(docs.args) : [];
         return {
             name,
-            queryKey: `${scriptName}.${name}`,
-            definition: `tp.user.${scriptName}.${name}(${params.join(", ")})`,
+            queryPath: [scriptName, name],
+            definition: `tp${format_property_path([
+                "user",
+                scriptName,
+                name,
+            ])}(${params.join(", ")})`,
             description: docs?.description ?? "",
             returns: docs?.returns ?? "",
             args: docs?.args,

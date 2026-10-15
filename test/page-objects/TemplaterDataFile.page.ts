@@ -45,7 +45,6 @@ class TemplaterDataFile {
     ) {
         await browser.waitUntil(async () => {
             const raw = await obsidianPage.read(
-                // eslint-disable-next-line obsidianmd/hardcoded-config-path -- This is for tests only
                 ".obsidian/plugins/templater-obsidian/data.json",
             );
             const data = JSON.parse(raw) as Partial<Settings>;

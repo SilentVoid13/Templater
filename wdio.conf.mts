@@ -26,6 +26,12 @@ export const config: WebdriverIO.Config = {
         }),
     ),
     services: ["obsidian"],
+    beforeTest: async () => {
+        await browser.sendCommandAndGetResult(
+            "Emulation.setFocusEmulationEnabled",
+            { enabled: true },
+        );
+    },
     reporters: ["obsidian"],
     cacheDir,
     mochaOpts: {

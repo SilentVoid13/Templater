@@ -28,7 +28,7 @@ class TemplateHotkeyModal {
     async setTemplatePath(path: string) {
         await this.inputEl.clearValue();
         await this.inputEl.addValue(path);
-        await browser.execute((el) => el.blur(), await this.inputEl);
+        await browser.execute((el) => el.blur(), await this.inputEl.getElement());
     }
 
     /** Clicks the "Insert command" or "Create command" toggle. */

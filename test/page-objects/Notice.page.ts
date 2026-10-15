@@ -62,7 +62,7 @@ class Notice {
     }
 
     async expectNoErrorNotice() {
-        // eslint-disable-next-line wdio/no-pause
+        // eslint-disable-next-line wdio/no-pause -- Give an error notice time to appear before asserting there is none
         await browser.pause(500);
         const isDisplayed = await this.#noticeEl
             .isDisplayed()

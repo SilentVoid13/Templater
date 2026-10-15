@@ -25,7 +25,7 @@ class Clipboard {
                 "writeText" in electronClipboard &&
                 typeof electronClipboard.writeText === "function"
             ) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call -- Electron clipboard is untyped
                 electronClipboard.writeText(value);
                 return;
             }
