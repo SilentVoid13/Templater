@@ -241,3 +241,57 @@ describe("jump_to_cursor_after_file_name", () => {
         });
     });
 });
+
+describe("templater:create-from-template CLI handler", () => {
+    async function runCreateFromTemplate(params: Record<string, string>) {
+        return browser.executeObsidian(
+            async ({ app }, cliParams: Record<string, string>) => {
+                const plugin = app.plugins.getPlugin("templater-obsidian");
+                if (!plugin)
+                    throw new Error("templater-obsidian is not loaded");
+                // Obsidian doesn't expose a way to invoke a registered CLI
+                // handler, so call the handler directly
+                return plugin.command_handler["handle_create_from_template"](
+                    cliParams,
+                );
+            },
+            params,
+        );
+    }
+
+    beforeEach(async () => {
+        await resetVault("test/vault", {
+            "templates/template.md": "# <% tp.file.title %>",
+        });
+    });
+
+    it("keeps the full filename for a root-level file path", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+    });
+
+    it("keeps the full filename for a root-level file path with an extension", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note.md",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+    });
+
+    it("creates the file in the requested folder for a nested file path", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-folder/nested/my-note",
+        });
+        expect(createdPath).toBe("my-folder/nested/my-note.md");
+        await VaultPage.expectFileToHaveContent(
+            "my-folder/nested/my-note.md",
+            "# my-note",
+        );
+    });
+});
