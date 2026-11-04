@@ -211,6 +211,10 @@ export class CommandHandler {
                 } catch {
                     // Folder will be created by create_new_note_from_template
                 }
+            } else {
+                // Root-level paths belong in the vault root, not the
+                // "Default location for new notes" setting
+                folder = this.plugin.app.vault.getRoot();
             }
 
             const open_note = open === "true";
