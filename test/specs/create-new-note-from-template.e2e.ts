@@ -259,10 +259,28 @@ describe("templater:create-from-template CLI handler", () => {
         );
     }
 
+    async function setNewFileLocation(
+        location: "root" | "current" | "folder",
+        folderPath = "",
+    ) {
+        await browser.executeObsidian(
+            ({ app }, loc: "root" | "current" | "folder", path: string) => {
+                app.vault.setConfig("newFileLocation", loc);
+                app.vault.setConfig("newFileFolderPath", path);
+            },
+            location,
+            folderPath,
+        );
+    }
+
     beforeEach(async () => {
         await resetVault("test/vault", {
             "templates/template.md": "# <% tp.file.title %>",
         });
+    });
+
+    afterEach(async () => {
+        await setNewFileLocation("root");
     });
 
     it("keeps the full filename for a root-level file path", async () => {
@@ -281,6 +299,21 @@ describe("templater:create-from-template CLI handler", () => {
         });
         expect(createdPath).toBe("my-note.md");
         await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+    });
+
+    it("creates a root-level file in the vault root instead of the default new note folder", async () => {
+        await resetVault("test/vault", {
+            "templates/template.md": "# <% tp.file.title %>",
+            "inbox/existing.md": "",
+        });
+        await setNewFileLocation("folder", "inbox");
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+        await VaultPage.expectFileToNotExist("inbox/my-note.md");
     });
 
     it("creates the file in the requested folder for a nested file path", async () => {
