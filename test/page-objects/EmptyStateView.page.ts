@@ -5,13 +5,18 @@ class EmptyStateView {
         );
     }
 
-    get createNewNoteButtonEl() {
-        return this.contentEl.$(`.empty-state-action*=Create new note`);
+    async getCreateNewNoteButtonEl() {
+        for await (const el of this.contentEl.$$(".empty-state-action")) {
+            if (/new note/i.test(await el.getText())) {
+                return el;
+            }
+        }
+        throw new Error("Could not find empty state new note button");
     }
 
     async clickCreateNewNote() {
-        await this.createNewNoteButtonEl.isClickable();
-        await this.createNewNoteButtonEl.click();
+        const button = await this.getCreateNewNoteButtonEl();
+        await button.click();
     }
 }
 
