@@ -52,6 +52,7 @@ export const DEFAULT_SETTINGS: Settings = {
     templates_folder: "",
     templates_pairs: [],
     trigger_on_file_creation_mode: "none",
+    only_trigger_for_matching_files: false,
     auto_jump_to_cursor: false,
     jump_to_cursor_after_file_name: false,
     shell_path: "",
@@ -75,6 +76,7 @@ export interface Settings {
     auto_jump_to_cursor: boolean;
     jump_to_cursor_after_file_name: boolean;
     trigger_on_file_creation_mode: "none" | "folder" | "regex";
+    only_trigger_for_matching_files: boolean;
     folder_templates: Array<FolderTemplate>;
     file_templates: Array<FileTemplate>;
     ignore_folders_on_creation: Array<IgnoreFolderOnCreation>;
@@ -389,7 +391,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
     ): SettingGroupItem<keyof Settings | keyof LocalSettings>[] {
         const triggerDesc = createFragment();
         triggerDesc.append(
-            "Templater will listen for the new file creation event, and, if it matches a rule you've set, replace every command it finds in the new file's content. ",
+            "Templater will listen for the new file creation event and will replace every command it finds in the new file's content, after applying any template rules you've set. ",
             "This makes Templater compatible with other plugins like the Daily note core plugin, Calendar plugin, Review plugin, Note refactor plugin, etc. ",
             createEl("br"),
             createEl("br"),
@@ -401,7 +403,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
         const modeDescList = createEl("ul");
         modeDescList.appendChild(
             createEl("li", {
-                text: "None: Do not auto apply templates. Templater will still listen for the new file creation event and replace every command it finds in the new file's content.",
+                text: "None: Do not auto apply templates. Templater will still replace every command it finds in the new file's content.",
             }),
         );
         modeDescList.appendChild(
@@ -411,19 +413,19 @@ export class TemplaterSettingTab extends PluginSettingTab {
         );
         modeDescList.appendChild(
             createEl("li", {
-                text: "File regex templates: Apply templates based on regex file name patterns.",
+                text: "File regex templates: Apply templates based on regex file path patterns.",
             }),
         );
         const modeDesc = createFragment();
         modeDesc.append(
-            "Choose the matching mode for triggering templates on file creation.",
+            "Choose the matching mode for triggering templates on file creation. Templates are applied only to empty files.",
             modeDesc.createEl("br"),
             modeDescList,
         );
 
         const folderTriggerDesc = createFragment();
         folderTriggerDesc.append(
-            "If there is a match, Templater will apply the corresponding template to the new file.",
+            "If an empty new file is created in a matching folder, Templater will apply the corresponding template to it.",
             folderTriggerDesc.createEl("br"),
             "The most specific (deepest) matching folder wins, so a rule for a subfolder takes precedence over a rule for its parent.",
             folderTriggerDesc.createEl("br"),
@@ -434,13 +436,22 @@ export class TemplaterSettingTab extends PluginSettingTab {
 
         const fileRegexTriggerDesc = createFragment();
         fileRegexTriggerDesc.append(
-            "File regex templates are applied based on the regex file path patterns you define.",
+            "File regex templates are applied to empty new files based on the regex file path patterns you define.",
             fileRegexTriggerDesc.createEl("br"),
             "File regex templates are processed in order, so if a file matches multiple regex templates, only the first match will be applied.",
             fileRegexTriggerDesc.createEl("br"),
             "Add a rule for ",
             fileRegexTriggerDesc.createEl("code", { text: ".*" }),
             " if you need a catch-all.",
+        );
+
+        const onlyMatchedDesc = createFragment();
+        onlyMatchedDesc.append(
+            "When on, Templater only acts on empty new files that match a folder or file regex template. ",
+            "New files that don't match a rule are left untouched, and any Templater commands in them are not run.",
+            onlyMatchedDesc.createEl("br"),
+            "This is intended to limit Templater's code execution, which can be dangerous with untrusted content, to just the files you've explicitly configured here in settings. ",
+            "Leave this off if another plugin, such as the Daily note core plugin, writes Templater commands into new files and relies on Templater running them.",
         );
 
         return [
@@ -472,6 +483,18 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     },
                 },
                 visible: () => localSettings.trigger_on_file_creation,
+            },
+            {
+                name: "Only trigger for files matching a template rule",
+                desc: onlyMatchedDesc,
+                control: {
+                    type: "toggle",
+                    key: "only_trigger_for_matching_files",
+                },
+                visible: () =>
+                    localSettings.trigger_on_file_creation &&
+                    this.plugin.settings.trigger_on_file_creation_mode !==
+                        "none",
             },
             {
                 type: "page",

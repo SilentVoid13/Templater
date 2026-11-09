@@ -673,6 +673,14 @@ export class Templater {
             }
             await templater.write_template_to_file(template_file, file);
         } else if (is_markdown) {
+            // Only folder and regex modes have rules to restrict to, so the
+            // setting is hidden and ignored in "none" mode
+            if (
+                templater.plugin.settings.only_trigger_for_matching_files &&
+                mode !== "none"
+            ) {
+                return;
+            }
             const SIZE_LIMIT = 100_000;
             if (file.stat.size <= SIZE_LIMIT) {
                 //https://github.com/SilentVoid13/Templater/issues/873
