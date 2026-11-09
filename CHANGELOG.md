@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.27.0](https://github.com/SilentVoid13/Templater/compare/2.26.0...2.27.0) (2026-11-09)
+
+
+### Features
+
+* Add setting to only trigger for files matching a template rule ([#1784](https://github.com/SilentVoid13/Templater/issues/1784)) ([c6a4368](https://github.com/SilentVoid13/Templater/commit/c6a436833ddcf64ad539769fdba8ebfef203c78e))
+
 ## [2.26.0](https://github.com/SilentVoid13/Templater/compare/2.25.1...2.26.0) (2026-10-11)
 
 
