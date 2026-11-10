@@ -244,19 +244,11 @@ describe("jump_to_cursor_after_file_name", () => {
 
 describe("templater:create-from-template CLI handler", () => {
     async function runCreateFromTemplate(params: Record<string, string>) {
-        return browser.executeObsidian(
-            async ({ app }, cliParams: Record<string, string>) => {
-                const plugin = app.plugins.getPlugin("templater-obsidian");
-                if (!plugin)
-                    throw new Error("templater-obsidian is not loaded");
-                // Obsidian doesn't expose a way to invoke a registered CLI
-                // handler, so call the handler directly
-                return plugin.command_handler["handle_create_from_template"](
-                    cliParams,
-                );
-            },
-            params,
-        );
+        const { stdout } = await obsidianPage.runObsidianCli([
+            "templater:create-from-template",
+            ...Object.entries(params).map(([key, value]) => `${key}=${value}`),
+        ]);
+        return stdout;
     }
 
     async function setNewFileLocation(
@@ -304,7 +296,7 @@ describe("templater:create-from-template CLI handler", () => {
     it("creates a root-level file in the vault root instead of the default new note folder", async () => {
         await resetVault("test/vault", {
             "templates/template.md": "# <% tp.file.title %>",
-            "inbox/existing.md": "",
+            "inbox/existing.md": "existing",
         });
         await setNewFileLocation("folder", "inbox");
         const createdPath = await runCreateFromTemplate({
