@@ -241,3 +241,82 @@ describe("jump_to_cursor_after_file_name", () => {
         });
     });
 });
+
+describe("templater:create-from-template CLI handler", () => {
+    async function runCreateFromTemplate(params: Record<string, string>) {
+        const { stdout } = await obsidianPage.runObsidianCli([
+            "templater:create-from-template",
+            ...Object.entries(params).map(([key, value]) => `${key}=${value}`),
+        ]);
+        return stdout;
+    }
+
+    async function setNewFileLocation(
+        location: "root" | "current" | "folder",
+        folderPath = "",
+    ) {
+        await browser.executeObsidian(
+            ({ app }, loc: "root" | "current" | "folder", path: string) => {
+                app.vault.setConfig("newFileLocation", loc);
+                app.vault.setConfig("newFileFolderPath", path);
+            },
+            location,
+            folderPath,
+        );
+    }
+
+    beforeEach(async () => {
+        await resetVault("test/vault", {
+            "templates/template.md": "# <% tp.file.title %>",
+        });
+    });
+
+    afterEach(async () => {
+        await setNewFileLocation("root");
+    });
+
+    it("keeps the full filename for a root-level file path", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+    });
+
+    it("keeps the full filename for a root-level file path with an extension", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note.md",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+    });
+
+    it("creates a root-level file in the vault root instead of the default new note folder", async () => {
+        await resetVault("test/vault", {
+            "templates/template.md": "# <% tp.file.title %>",
+            "inbox/existing.md": "existing",
+        });
+        await setNewFileLocation("folder", "inbox");
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-note",
+        });
+        expect(createdPath).toBe("my-note.md");
+        await VaultPage.expectFileToHaveContent("my-note.md", "# my-note");
+        await VaultPage.expectFileToNotExist("inbox/my-note.md");
+    });
+
+    it("creates the file in the requested folder for a nested file path", async () => {
+        const createdPath = await runCreateFromTemplate({
+            template: "template",
+            file: "my-folder/nested/my-note",
+        });
+        expect(createdPath).toBe("my-folder/nested/my-note.md");
+        await VaultPage.expectFileToHaveContent(
+            "my-folder/nested/my-note.md",
+            "# my-note",
+        );
+    });
+});

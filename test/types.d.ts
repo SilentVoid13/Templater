@@ -5,6 +5,11 @@ import type TemplaterPlugin from "../src/main";
 declare module "obsidian" {
     interface Vault {
         setConfig(key: "showInlineTitle" | "showViewHeader", value: boolean): void;
+        setConfig(
+            key: "newFileLocation",
+            value: "root" | "current" | "folder",
+        ): void;
+        setConfig(key: "newFileFolderPath", value: string): void;
     }
 
     interface FileManager {

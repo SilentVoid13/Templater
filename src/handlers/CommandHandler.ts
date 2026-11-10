@@ -198,8 +198,10 @@ export class CommandHandler {
 
             const file_path = normalizePath(file);
             const folder_path = get_folder_path_from_file_path(file_path);
+            // Root-level paths have no folder and no "/" separator to skip
+            const filename_start = folder_path ? folder_path.length + 1 : 0;
             const filename = file_path
-                .slice(folder_path.length + 1)
+                .slice(filename_start)
                 .replace(/\.md$/, "");
 
             let folder: TFolder | undefined;
@@ -209,6 +211,10 @@ export class CommandHandler {
                 } catch {
                     // Folder will be created by create_new_note_from_template
                 }
+            } else {
+                // Root-level paths belong in the vault root, not the
+                // "Default location for new notes" setting
+                folder = this.plugin.app.vault.getRoot();
             }
 
             const open_note = open === "true";
