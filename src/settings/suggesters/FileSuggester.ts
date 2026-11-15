@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { AbstractInputSuggest, TAbstractFile, TFile } from "obsidian";
 import { get_tfiles_from_folder } from "utils/Utils";
 import TemplaterPlugin from "main";

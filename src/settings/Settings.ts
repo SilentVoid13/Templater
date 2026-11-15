@@ -265,7 +265,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                                 href: "https://obsidian.md/help/hotkeys",
                                 text: t("hotkeys"),
                             }),
-                            ' in "Hotkeys" settings.',
+                            t(' in "Hotkeys" settings.'),
                         );
                         return templateHotkeysDesc;
                     })(),
@@ -478,9 +478,9 @@ export class TemplaterSettingTab extends PluginSettingTab {
                     type: "dropdown",
                     key: "trigger_on_file_creation_mode",
                     options: {
-                        none: "None",
-                        folder: "Folder templates",
-                        regex: "File regex templates",
+                        none: t("None"),
+                        folder: t("Folder templates"),
+                        regex: t("File regex templates"),
                     },
                 },
                 visible: () => localSettings.trigger_on_file_creation,
