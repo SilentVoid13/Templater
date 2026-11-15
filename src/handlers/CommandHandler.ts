@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import TemplaterPlugin from "main";
 import { normalizePath, TFile, TFolder } from "obsidian";
 import {
@@ -19,7 +20,7 @@ export class CommandHandler {
     setup(): void {
         this.plugin.addCommand({
             id: "insert-templater",
-            name: "Open insert template modal",
+            name: t("Open insert template modal"),
             icon: "templater-icon",
             callback: () => {
                 this.plugin.fuzzy_suggester.insert_template();
@@ -28,7 +29,7 @@ export class CommandHandler {
 
         this.plugin.addCommand({
             id: "replace-in-file-templater",
-            name: "Replace templates in the active file",
+            name: t("Replace templates in the active file"),
             icon: "templater-icon",
             callback: async () => {
                 await this.plugin.templater.overwrite_active_file_commands();
@@ -37,7 +38,7 @@ export class CommandHandler {
 
         this.plugin.addCommand({
             id: "jump-to-next-cursor-location",
-            name: "Jump to next cursor location",
+            name: t("Jump to next cursor location"),
             icon: "text-cursor",
             callback: async () => {
                 await this.plugin.editor_handler.jump_to_next_cursor_location();
@@ -46,7 +47,7 @@ export class CommandHandler {
 
         this.plugin.addCommand({
             id: "create-new-note-from-template",
-            name: "Create new note from template",
+            name: t("Create new note from template"),
             icon: "templater-icon",
             callback: () => {
                 this.plugin.fuzzy_suggester.create_new_note_from_template();
@@ -95,7 +96,7 @@ export class CommandHandler {
         if (hotkey.insert_enabled) {
             this.plugin.addCommand({
                 id: template_path,
-                name: `Insert ${template_name}`,
+                name: `${t("Insert")} ${template_name}`,
                 icon: "templater-icon",
                 callback: async () => {
                     const template = resolve_template();
@@ -111,7 +112,7 @@ export class CommandHandler {
         if (hotkey.create_enabled) {
             this.plugin.addCommand({
                 id: `create-${template_path}`,
-                name: `Create ${template_name}`,
+                name: `${t("Create")} ${template_name}`,
                 icon: "templater-icon",
                 callback: async () => {
                     const template = resolve_template();

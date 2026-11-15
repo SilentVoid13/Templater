@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { App, Modal, Setting } from "obsidian";
 import TemplaterPlugin from "main";
 import {
@@ -27,20 +28,20 @@ export class TemplateHotkeyModal extends Modal {
     }
 
     onOpen() {
-        this.setTitle("Template hotkey");
+        this.setTitle(t("Template hotkey"));
         this.modalEl.addClass("templater-template-hotkey-modal");
         const { contentEl } = this;
 
         const templateSetting = new Setting(contentEl)
-            .setName("Template")
-            .setDesc("Enter a template path, e.g. meta/templates/daily.md")
+            .setName(t("Template"))
+            .setDesc(t("Enter a template path, e.g. meta/templates/daily.md"))
             .addText((cb) => {
                 new FileSuggest(
                     cb.inputEl,
                     this.plugin,
                     FileSuggestMode.TemplateFiles,
                 );
-                cb.setPlaceholder("Template")
+                cb.setPlaceholder(t("Template"))
                     .setValue(this.template)
                     .onChange((value) => {
                         this.template = value;
@@ -48,9 +49,9 @@ export class TemplateHotkeyModal extends Modal {
             });
 
         const insertSetting = new Setting(contentEl)
-            .setName("Insert command")
+            .setName(t("Insert command"))
             .setDesc(
-                "Adds a command that inserts this template into the active file.",
+                t("Adds a command that inserts this template into the active file."),
             )
             .addToggle((cb) => {
                 cb.setValue(this.insert_enabled).onChange((value) => {
@@ -59,9 +60,9 @@ export class TemplateHotkeyModal extends Modal {
             });
 
         new Setting(contentEl)
-            .setName("Create command")
+            .setName(t("Create command"))
             .setDesc(
-                "Adds a command that creates a new note from this template.",
+                t("Adds a command that creates a new note from this template."),
             )
             .addToggle((cb) => {
                 cb.setValue(this.create_enabled).onChange((value) => {
@@ -72,12 +73,12 @@ export class TemplateHotkeyModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                    .setButtonText("Done")
+                    .setButtonText(t("Done"))
                     .setCta()
                     .onClick(async () => {
                         if (!this.template) {
                             templateSetting.setErrorMessage(
-                                "Template cannot be empty",
+                                t("Template cannot be empty"),
                             );
                             return;
                         }
@@ -88,7 +89,7 @@ export class TemplateHotkeyModal extends Modal {
                         }
                         if (!this.insert_enabled && !this.create_enabled) {
                             insertSetting.setErrorMessage(
-                                "At least one command must be enabled",
+                                t("At least one command must be enabled"),
                             );
                             return;
                         }
@@ -101,7 +102,7 @@ export class TemplateHotkeyModal extends Modal {
                     }),
             )
             .addButton((btn) =>
-                btn.setButtonText("Cancel").onClick(() => this.close()),
+                btn.setButtonText(t("Cancel")).onClick(() => this.close()),
             );
     }
 

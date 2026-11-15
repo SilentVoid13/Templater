@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { App, ButtonComponent, Modal, Setting } from "obsidian";
 import TemplaterPlugin from "main";
 import {
@@ -17,14 +18,14 @@ export class StartupTemplateModal extends Modal {
     }
 
     onOpen() {
-        this.setTitle("Add startup template");
+        this.setTitle(t("Add startup template"));
         const { contentEl } = this;
 
         this.modalEl.addClass("templater-startup-template-modal");
 
         const templateSetting = new Setting(contentEl)
-            .setName("Template")
-            .setDesc("Enter a template path, e.g. meta/templates/daily.md")
+            .setName(t("Template"))
+            .setDesc(t("Enter a template path, e.g. meta/templates/daily.md"))
             .addText((cb) => {
                 new FileSuggest(
                     cb.inputEl,
@@ -38,12 +39,12 @@ export class StartupTemplateModal extends Modal {
 
         const buttonContainer = contentEl.createDiv("modal-button-container");
         new ButtonComponent(buttonContainer)
-            .setButtonText("Done")
+            .setButtonText(t("Done"))
             .setCta()
             .onClick(async () => {
                 if (!this.template) {
                     templateSetting.setErrorMessage(
-                        "Template cannot be empty",
+                        t("Template cannot be empty"),
                     );
                     return;
                 }
@@ -51,7 +52,7 @@ export class StartupTemplateModal extends Modal {
                 this.close();
             });
         new ButtonComponent(buttonContainer)
-            .setButtonText("Cancel")
+            .setButtonText(t("Cancel"))
             .onClick(() => this.close());
     }
 

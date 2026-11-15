@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import TemplaterPlugin from "main";
 import {
     normalizePath,
@@ -54,7 +55,7 @@ export class UserScriptsPage extends SettingPage {
                 .setHeading()
                 .addExtraButton((cb) => {
                     cb.setIcon("folder")
-                        .setTooltip("Open user scripts folder")
+                        .setTooltip(t("Open user scripts folder"))
                         .onClick(() =>
                             this.openUserScriptsFolderInDefaultApp(),
                         );
@@ -68,13 +69,13 @@ export class UserScriptsPage extends SettingPage {
                         const desc = createFragment();
                         if (!this.plugin.settings.user_scripts_folder) {
                             desc.append(
-                                "No user scripts folder set. Please set the user scripts folder on the previous page.",
+                                t("No user scripts folder set. Please set the user scripts folder on the previous page."),
                                 desc.createEl("br"),
                                 desc.createEl("br"),
                             );
                         }
                         desc.append(
-                            "User scripts are JavaScript files that are loaded as CommonJS modules. You can then call these functions from your templates using ",
+                            t("User scripts are JavaScript files that are loaded as CommonJS modules. You can then call these functions from your templates using "),
                             desc.createEl("code", {
                                 text: "<% tp.user.file_name() %>",
                             }),

@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { FuzzySuggestModal, TFile, TFolder, normalizePath } from "obsidian";
 import { get_tfiles_from_folder } from "utils/Utils";
 import TemplaterPlugin from "main";
@@ -17,7 +18,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
     constructor(plugin: TemplaterPlugin) {
         super(plugin.app);
         this.plugin = plugin;
-        this.setPlaceholder("Type name of a template...");
+        this.setPlaceholder(t("Type name of a template..."));
         this.containerEl.addClass("templater-fuzzy-suggester-modal");
     }
 
@@ -31,7 +32,7 @@ export class FuzzySuggester extends FuzzySuggestModal<TFile> {
                     this.plugin.app,
                     this.plugin.settings.templates_folder,
                 ),
-            `Couldn't retrieve template files from templates folder ${this.plugin.settings.templates_folder}`,
+            `${t("Couldn't retrieve template files from templates folder")} ${this.plugin.settings.templates_folder}`,
         );
         if (!files) {
             return [];

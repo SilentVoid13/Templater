@@ -1,3 +1,4 @@
+import { t } from "i18n";
 /**
  * A template hotkey with per-command configuration. Omitted flags default to
  * `true`, so `{ template: "x.md" }` is equivalent to the plain string `"x.md"`.
@@ -68,7 +69,7 @@ export function describe_template_hotkey_commands(
     hotkey: ResolvedTemplateHotkey,
 ): string {
     const commands: string[] = [];
-    if (hotkey.insert_enabled) commands.push("Insert");
-    if (hotkey.create_enabled) commands.push("Create");
-    return commands.length > 0 ? commands.join(", ") : "None";
+    if (hotkey.insert_enabled) commands.push(t("Insert"));
+    if (hotkey.create_enabled) commands.push(t("Create"));
+    return commands.length > 0 ? commands.join(", ") : t("None");
 }
