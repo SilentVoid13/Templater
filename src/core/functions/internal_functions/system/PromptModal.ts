@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import {
     App,
     ButtonComponent,
@@ -59,7 +60,7 @@ export class PromptModal extends Modal {
 
         this.value = this.default_value ?? "";
         textInput.inputEl.addClass("templater-prompt-input");
-        textInput.setPlaceholder("Type text here");
+        textInput.setPlaceholder(t("Type text here"));
         textInput.setValue(this.value);
         textInput.onChange((value) => (this.value = value));
         textInput.inputEl.focus();

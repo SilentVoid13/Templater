@@ -294,7 +294,7 @@ export class TemplaterSettingTab extends PluginSettingTab {
                             autoJumpDesc.createEl("code", {
                                 text: "tp.file.cursor",
                             }),
-                            ".",
+                            t("."),
                         );
                         return autoJumpDesc;
                     })(),

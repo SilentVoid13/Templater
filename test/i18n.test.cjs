@@ -45,7 +45,6 @@ test('every t() call resolves to an imported i18n translator', () => {
     }
     assert.ok(audited.has('src/settings/suggesters/FileSuggester.ts'));
     assert.ok(audited.size > 1);
-    console.log(`Audited translator imports in ${audited.size} source files.`);
 });
 
 for (const [language, templateError, scriptError] of [
@@ -87,3 +86,21 @@ for (const [language, templateError, scriptError] of [
         }
     });
 }
+
+test('t() falls back to window.localStorage language when getLanguage is unavailable', () => {
+    const { t } = load('src/i18n.ts', { obsidian: {} });
+    assert.equal(t('Done'), 'Done');
+    const source = fs.readFileSync(path.join(root, 'src/i18n.ts'), 'utf8');
+    const { outputText } = ts.transpileModule(source, {
+        compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    });
+    const exports = {};
+    vm.runInNewContext(outputText, {
+        exports,
+        window: { localStorage: { getItem: (key) => (key === 'language' ? 'zh-CN' : null) } },
+        require: (name) => (name === 'obsidian' ? {} : undefined),
+    });
+    assert.equal(exports.t('Done'), '完成');
+    assert.equal(exports.t('Type text here'), '在此输入文本');
+    assert.equal(exports.t('.'), '。');
+});

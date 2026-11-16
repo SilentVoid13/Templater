@@ -149,10 +149,32 @@ const zh: Record<string, string> = {
     "User scripts are JavaScript files that are loaded as CommonJS modules. You can then call these functions from your templates using ": "用户脚本是以 CommonJS 模块加载的 JavaScript 文件。随后可在模板中使用 ",
     "Insert": "插入",
     "Create": "创建",
+    ".": "。",
+    "Type text here": "在此输入文本",
 };
 
+function detectLanguage(): string {
+    try {
+        const lang =
+            typeof getLanguage === "function" ? getLanguage() : undefined;
+        if (lang) return lang.toLowerCase();
+    } catch {
+        // Fallback for older Obsidian versions without getLanguage()
+    }
+    try {
+        if (typeof window !== "undefined") {
+            return (
+                window.localStorage?.getItem("language") ?? "en"
+            ).toLowerCase();
+        }
+    } catch {
+        // Ignore storage access failures in sandboxed contexts
+    }
+    return "en";
+}
+
 export function t(text: string): string {
-    const language = getLanguage().toLowerCase();
+    const language = detectLanguage();
     if (language === "en" || language.startsWith("en-")) return text;
     if (language === "zh" || language.startsWith("zh-")) return zh[text] ?? text;
     return text;

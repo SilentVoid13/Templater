@@ -45,6 +45,26 @@ export default defineConfig([
         },
     },
     wdioConfigs["flat/recommended"],
+    {
+        files: ["test/**/*.cjs"],
+        ...tseslint.configs.disableTypeChecked,
+        languageOptions: {
+            globals: globals.node,
+            parserOptions: {
+                program: null,
+                project: false,
+                projectService: false,
+            },
+        },
+        rules: {
+            ...tseslint.configs.disableTypeChecked.rules,
+            "@typescript-eslint/no-require-imports": "off",
+            "wdio/no-floating-promise": "off",
+            "obsidianmd/no-nodejs-modules": "off",
+            "no-restricted-imports": "off",
+            "@typescript-eslint/no-restricted-imports": "off",
+        },
+    },
     globalIgnores([
         "node_modules",
         "dist",
