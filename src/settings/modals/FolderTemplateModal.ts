@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { App, Modal, Setting } from "obsidian";
 import TemplaterPlugin from "main";
 import { FolderSuggest } from "settings/suggesters/FolderSuggester";
@@ -26,16 +27,16 @@ export class FolderTemplateModal extends Modal {
     }
 
     onOpen() {
-        this.setTitle("Folder template");
+        this.setTitle(t("Folder template"));
         this.modalEl.addClass("templater-folder-template-modal");
         const { contentEl } = this;
 
         const folderSetting = new Setting(contentEl)
-            .setName("Folder")
-            .setDesc("Folder to match on. Includes subfolders of this folder.")
+            .setName(t("Folder"))
+            .setDesc(t("Folder to match on. Includes subfolders of this folder."))
             .addText((cb) => {
                 new FolderSuggest(this.app, cb.inputEl);
-                cb.setPlaceholder("Folder")
+                cb.setPlaceholder(t("Folder"))
                     .setValue(this.folder)
                     .onChange((value) => {
                         this.folder = value;
@@ -43,15 +44,15 @@ export class FolderTemplateModal extends Modal {
             });
 
         const templateSetting = new Setting(contentEl)
-            .setName("Template")
-            .setDesc("Template to apply on match.")
+            .setName(t("Template"))
+            .setDesc(t("Template to apply on match."))
             .addText((cb) => {
                 new FileSuggest(
                     cb.inputEl,
                     this.plugin,
                     FileSuggestMode.TemplateFiles,
                 );
-                cb.setPlaceholder("Template")
+                cb.setPlaceholder(t("Template"))
                     .setValue(this.template)
                     .onChange((value) => {
                         this.template = value;
@@ -61,18 +62,18 @@ export class FolderTemplateModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                    .setButtonText("Done")
+                    .setButtonText(t("Done"))
                     .setCta()
                     .onClick(async () => {
                         if (!this.folder) {
                             folderSetting.setErrorMessage(
-                                "Folder cannot be empty",
+                                t("Folder cannot be empty"),
                             );
                             return;
                         }
                         if (!this.template) {
                             templateSetting.setErrorMessage(
-                                "Template cannot be empty",
+                                t("Template cannot be empty"),
                             );
                             return;
                         }
@@ -86,7 +87,7 @@ export class FolderTemplateModal extends Modal {
                     }),
             )
             .addButton((btn) =>
-                btn.setButtonText("Cancel").onClick(() => this.close()),
+                btn.setButtonText(t("Cancel")).onClick(() => this.close()),
             );
     }
 

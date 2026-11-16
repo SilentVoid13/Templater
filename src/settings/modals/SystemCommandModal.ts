@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { App, Modal, Setting } from "obsidian";
 
 export class SystemCommandModal extends Modal {
@@ -19,22 +20,22 @@ export class SystemCommandModal extends Modal {
     }
 
     onOpen() {
-        this.setTitle("User function");
+        this.setTitle(t("User function"));
         this.modalEl.addClass("templater-system-command-modal");
         const { contentEl } = this;
 
         const functionNameSetting = new Setting(contentEl)
-            .setName("Function name")
+            .setName(t("Function name"))
             .addText((cb) => {
-                cb.setPlaceholder("Function name")
+                cb.setPlaceholder(t("Function name"))
                     .setValue(this.name)
                     .onChange((value) => {
                         this.name = value;
                     });
             });
 
-        new Setting(contentEl).setName("System command").addTextArea((cb) => {
-            cb.setPlaceholder("System command")
+        new Setting(contentEl).setName(t("System command")).addTextArea((cb) => {
+            cb.setPlaceholder(t("System command"))
                 .setValue(this.command)
                 .onChange((value) => {
                     this.command = value;
@@ -45,11 +46,11 @@ export class SystemCommandModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                    .setButtonText("Done")
+                    .setButtonText(t("Done"))
                     .setCta()
                     .onClick(async () => {
                         const error = !this.name
-                            ? "Function name cannot be empty"
+                            ? t("Function name cannot be empty")
                             : this.validateName(this.name);
                         if (error) {
                             functionNameSetting.setErrorMessage(error);
@@ -60,7 +61,7 @@ export class SystemCommandModal extends Modal {
                     }),
             )
             .addButton((btn) =>
-                btn.setButtonText("Cancel").onClick(() => this.close()),
+                btn.setButtonText(t("Cancel")).onClick(() => this.close()),
             );
     }
 

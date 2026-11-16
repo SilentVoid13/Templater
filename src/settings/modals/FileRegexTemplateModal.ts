@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { App, Modal, Setting } from "obsidian";
 import TemplaterPlugin from "main";
 import {
@@ -24,17 +25,17 @@ export class FileRegexTemplateModal extends Modal {
     }
 
     onOpen() {
-        this.setTitle("File regex template");
+        this.setTitle(t("File regex template"));
         this.modalEl.addClass("templater-file-regex-template-modal");
         const { contentEl } = this;
 
         const regexSetting = new Setting(contentEl)
-            .setName("File regex")
+            .setName(t("File regex"))
             .setDesc(
-                "Regex to match on. Tests against full file path relative to the root of the vault, including file extension.",
+                t("Regex to match on. Tests against full file path relative to the root of the vault, including file extension."),
             )
             .addText((cb) => {
-                cb.setPlaceholder("File regex")
+                cb.setPlaceholder(t("File regex"))
                     .setValue(this.regex)
                     .onChange((value) => {
                         this.regex = value;
@@ -42,15 +43,15 @@ export class FileRegexTemplateModal extends Modal {
             });
 
         const templateSetting = new Setting(contentEl)
-            .setName("Template")
-            .setDesc("Template to apply on match.")
+            .setName(t("Template"))
+            .setDesc(t("Template to apply on match."))
             .addText((cb) => {
                 new FileSuggest(
                     cb.inputEl,
                     this.plugin,
                     FileSuggestMode.TemplateFiles,
                 );
-                cb.setPlaceholder("Template")
+                cb.setPlaceholder(t("Template"))
                     .setValue(this.template)
                     .onChange((value) => {
                         this.template = value;
@@ -60,18 +61,18 @@ export class FileRegexTemplateModal extends Modal {
         new Setting(contentEl)
             .addButton((btn) =>
                 btn
-                    .setButtonText("Done")
+                    .setButtonText(t("Done"))
                     .setCta()
                     .onClick(async () => {
                         if (!this.regex) {
                             regexSetting.setErrorMessage(
-                                "File regex cannot be empty",
+                                t("File regex cannot be empty"),
                             );
                             return;
                         }
                         if (!this.template) {
                             templateSetting.setErrorMessage(
-                                "Template cannot be empty",
+                                t("Template cannot be empty"),
                             );
                             return;
                         }
@@ -80,7 +81,7 @@ export class FileRegexTemplateModal extends Modal {
                     }),
             )
             .addButton((btn) =>
-                btn.setButtonText("Cancel").onClick(() => this.close()),
+                btn.setButtonText(t("Cancel")).onClick(() => this.close()),
             );
     }
 

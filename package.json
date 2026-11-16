@@ -11,6 +11,7 @@
         "test:lint": "npm run lint",
         "pretest": "node esbuild.config.mjs production",
         "test": "wdio run ./wdio.conf.mts",
+        "test:i18n": "node --test test/i18n.test.cjs",
         "docs-dev": "mdbook serve docs",
         "commit": "cz",
         "release": "standard-version -t ''"

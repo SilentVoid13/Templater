@@ -1,3 +1,4 @@
+import { t } from "i18n";
 import { addIcon, Notice, Plugin } from "obsidian";
 
 import {
@@ -75,10 +76,9 @@ export default class TemplaterPlugin extends Plugin {
         this.settings = settings;
         if (affectedSecuritySettings.length > 0) {
             new Notice(
-                "Templater: The following settings were reset because they " +
-                    "are now device-local: " +
+                t("Templater: The following settings were reset because they are now device-local: ") +
                     affectedSecuritySettings.join(", ") +
-                    ". Re-enable them in Templater settings if you trust this vault.",
+                    t(". Re-enable them in Templater settings if you trust this vault."),
                 0,
             );
         }
